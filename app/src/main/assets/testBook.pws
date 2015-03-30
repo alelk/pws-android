@@ -1,0 +1,34 @@
+<psalm version='1.0'>
+    <name>Psalm Name</name>
+    <numbers>
+        <number edition="Gusli">200</number>
+        <number edition="PV2000">201</number>
+    </numbers>
+    <author>Psalm Author</author>
+    <translator>Psalm Translator</translator>
+    <composer>Psalm Composer</composer>
+    <tonalities>
+        <tonality>e-moll</tonality>
+    </tonalities>
+    <year>2000</year>
+    <text>
+        <verse number='1'>
+            Line 1.
+            Line 2.
+            Line 3.
+            .......
+        </verse>
+        <chorus number='2,4'>
+            Line 1.
+            Line 2.
+            Line 3.
+            .......
+        </chorus>
+        <verse number='3'>
+            Line 1.
+            Line 2.
+            Line 3.
+            .......
+        </verse>
+    </text>
+</psalm>
