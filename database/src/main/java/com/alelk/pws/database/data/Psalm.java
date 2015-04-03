@@ -2,6 +2,7 @@ package com.alelk.pws.database.data;
 
 import com.alelk.pws.database.exception.PwsDatabaseIncorrectValueException;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +20,7 @@ public class Psalm implements PwsObject {
     private String translator;
     private String composer;
     private Date year;
+    private List<String> tonalities = new ArrayList<>();
     private Map<BookEdition, Integer> numbers = new HashMap<>();
     private SortedMap<Integer, PsalmPart> psalmParts = new TreeMap<>();
 
@@ -108,6 +110,17 @@ public class Psalm implements PwsObject {
         if (numbers != null) this.numbers = numbers;
     }
 
+    public List<String> getTonalities() {
+        return tonalities;
+    }
+
+    public void setTonalities(List<String> tonalities) {
+        this.tonalities = new ArrayList<>();
+        if (tonalities != null && tonalities.size() > 0) {
+            this.tonalities.addAll(tonalities);
+        }
+    }
+
     public String toString() {
         String s = "Psalm v" + this.version + " {" +
                 "name='" + this.name +
@@ -123,6 +136,11 @@ public class Psalm implements PwsObject {
                 "psalmPartsTypes=[ ";
         for (int i : psalmParts.keySet()) {
             s += "#" + i + "-" + psalmParts.get(i).getPsalmType() + " ";
+        }
+        s += "] " +
+                "tonalities=[ ";
+        for (String tonality : tonalities) {
+            s += tonality + " ";
         }
         s += "]}";
         return s;

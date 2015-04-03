@@ -1,34 +1,37 @@
-<psalm version='1.0'>
-    <name>Psalm Name</name>
-    <numbers>
-        <number edition="Gusli">200</number>
-        <number edition="PV2000">201</number>
-    </numbers>
-    <author>Psalm Author</author>
-    <translator>Psalm Translator</translator>
-    <composer>Psalm Composer</composer>
-    <tonalities>
-        <tonality>e-moll</tonality>
-    </tonalities>
-    <year>2000</year>
-    <text>
-        <verse number='1'>
-            Line 1.
-            Line 2.
-            Line 3.
-            .......
-        </verse>
-        <chorus number='2,4'>
-            Line 1.
-            Line 2.
-            Line 3.
-            .......
-        </chorus>
-        <verse number='3'>
-            Line 1.
-            Line 2.
-            Line 3.
-            .......
-        </verse>
-    </text>
-</psalm>
+<book version='1.01' name='book name'>
+    <name>Book Name</name> <!-- Instead of book name attribute -->
+    <version>1.01</version> <!-- Instead of version attribute -->
+    <shortName>ShortName</shortName>
+    <displayName>Display Name</displayName>
+    <description>Description</description>
+    <edition>Gusli</edition>
+    <releaseDate>May 2000</releaseDate>
+    <comment>Comment</comment>
+    <authors>
+        <author>Author Name</author>
+        <author>Author2 Name2</author>
+    </authors>
+    <creators>
+        <creator>Creator Name</creator>
+        <creator>Creator2 Name2</creator>
+    </creators>
+    <reviewers>
+        <reviewer>Reviewer Name</reviewer>
+        <reviewer>Reviewer2 Name2</reviewer>
+    </reviewers>
+    <editors>
+        <editor>Editor Name</editor>
+        <editor>Editor2 Name2</editor>
+    </editors>
+    <chapters>
+        <chapter number="1">
+        </chapter>
+    </chapters>
+    <psalms>
+        <psalm version='1.01'>
+            <name>Psalm Name</name>
+        </psalm>
+        <ref>reference</ref>
+    </psalms>
+
+</book>
