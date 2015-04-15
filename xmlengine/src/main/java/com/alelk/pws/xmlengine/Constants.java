@@ -2,6 +2,7 @@ package com.alelk.pws.xmlengine;
 
 /**
  * Created by alelkin on 25.03.2015.
+ * Constants of XmlEngine module.
  */
 public interface Constants {
 
@@ -56,6 +57,7 @@ public interface Constants {
             public static final String REVIEWERS = "reviewers";
             public static final String EDITORS = "editors";
             public static final String PSALMS = "psalms";
+            public static final String CHAPTERS = "chapters";
             public final static class CRTRS {
                 public static final String TAG = BK.CREATORS;
                 public static final String CREATOR = "creator";
@@ -76,6 +78,21 @@ public interface Constants {
                 public static final String TAG = BK.PSALMS;
                 public static final String PSALM = PSLM.TAG;
                 public static final String REF = "ref";
+            }
+            public final static class CHPRS {
+                public static final String TAG = BK.CHAPTERS;
+                public static final String CHAPTER = "chapter";
+                public final static class CHPTR {
+                    public static final String TAG = CHPRS.CHAPTER;
+                    public static final String NUMBER = "number";
+                    public static final String NAME = "name";
+                    public static final String SHORT_NAME = "shortname";
+                    public static final String VERSION = "version";
+                    public static final String DISPLAY_NAME = "displayname";
+                    public static final String DESCRIPTION = "description";
+                    public static final String RELEASE_DATE = "releasedate";
+                    public static final String PSALM_NUMBERS = "psalmnumbers";
+                }
             }
         }
     }

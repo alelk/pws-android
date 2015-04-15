@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.alelk.pws.database.data.Book;
 import com.alelk.pws.database.exception.PwsDatabaseIncorrectValueException;
 import com.alelk.pws.xmlengine.PwsXmlParser;
 import com.alelk.pws.xmlengine.exception.PwsXmlParserIncorrectSourceFormatException;
@@ -25,19 +26,11 @@ public class MainActivity extends ActionBarActivity {
 
         AssetManager am = this.getAssets();
 
+        PwsXmlParser parser = new PwsXmlParser(am);
 
-        PwsXmlParser parser = new PwsXmlParser();
         try {
-            InputStreamReader inputStreamReader = new InputStreamReader(am.open("testBook.pws"));
-            parser.setParserInputStreamReader(inputStreamReader);
-            parser.parse();
-        } catch (XmlPullParserException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            Book book = parser.parseBook("testBook.pws");
         } catch (PwsXmlParserIncorrectSourceFormatException e) {
-            e.printStackTrace();
-        } catch (PwsDatabaseIncorrectValueException e) {
             e.printStackTrace();
         }
     }

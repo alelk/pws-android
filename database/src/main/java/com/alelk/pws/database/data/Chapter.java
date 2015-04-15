@@ -2,7 +2,9 @@ package com.alelk.pws.database.data;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by alelkin on 31.03.2015.
@@ -16,7 +18,7 @@ public class Chapter implements PwsObject {
     private String version;
     private Date releaseDate;
     private BookEdition bookEdition;
-    private List<Integer> psalmNumbers = new ArrayList<>();
+    private Set<Integer> psalmNumbers = new HashSet<>();
     private String comment;
 
     public Chapter(BookEdition bookEdition) {
@@ -39,12 +41,12 @@ public class Chapter implements PwsObject {
         this.number = number;
     }
 
-    public List<Integer> getPsalmNumbers() {
+    public Set<Integer> getPsalmNumbers() {
         return psalmNumbers;
     }
 
-    public void setPsalmNumbers(List<Integer> psalmNumbers) {
-        this.psalmNumbers = new ArrayList<>();
+    public void setPsalmNumbers(Set<Integer> psalmNumbers) {
+        this.psalmNumbers = new HashSet<>();
         if (psalmNumbers != null && psalmNumbers.size() > 0) {
             this.psalmNumbers.addAll(psalmNumbers);
         }
@@ -110,5 +112,22 @@ public class Chapter implements PwsObject {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String toString() {
+        String s = "Chapter v" + this.version + " {" +
+                "name='" + this.name +
+                "' shortName='" + this.shortName +
+                "' displayName='" + this.displayName +
+                "' description='" + this.description +
+                "' releaseDate='" + this.releaseDate +
+                "' bookEdition='" + this.bookEdition +
+                "' comment='" + this.comment +
+                "' psalmNumbers=[ ";
+        for (int number : this.psalmNumbers) {
+            s += "'" + number + "' ";
+        }
+        s += "]}";
+        return s;
     }
 }

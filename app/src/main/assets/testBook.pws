@@ -24,12 +24,43 @@
         <editor>Editor2 Name2</editor>
     </editors>
     <chapters>
-        <chapter number="1">
+        <chapter version="1.01" number="1">
+            <name>Chapter Name</name>
+            <shortName>ChapterShortName</shortName>
+            <displayName>Chapter Display Name</displayName>
+            <version>1.01</version>
+            <releaseDate>2000</releaseDate>
+            <description>Description</description>
+            <psalmNumbers>
+                1
+                2
+                3
+                4
+            </psalmNumbers>
+            <psalmNumbers>5,6,7,1</psalmNumbers>
+            <psalmNumbers>
+                8; 9; 10; 11
+                12 13 14
+            </psalmNumbers>
+        </chapter>
+        <chapter version="1.01" number="2">
+            <name>Chapter2 Name2</name>
+            <shortName>ChapterShortName2</shortName>
+            <displayName>Chapter2 DisplayName2</displayName>
+            <version>1.01</version>
+            <releaseDate>2001</releaseDate>
+            <description>Description2</description>
+            <psalmNumbers>
+                19 20 21 22 23 24
+            </psalmNumbers>
         </chapter>
     </chapters>
     <psalms>
         <psalm version='1.01'>
             <name>Psalm Name</name>
+        </psalm>
+        <psalm version='1.01'>
+            <name>Psalm2 Name2</name>
         </psalm>
         <ref>reference</ref>
     </psalms>

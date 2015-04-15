@@ -1,4 +1,4 @@
-package com.alelk.pws.xmlengine;
+package com.alelk.pws.xmlengine.exception;
 
 /**
  * Created by alelkin on 25.03.2015.
