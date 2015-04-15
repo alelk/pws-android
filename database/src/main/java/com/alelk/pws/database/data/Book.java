@@ -172,7 +172,13 @@ public class Book implements PwsObject {
         for (String reviewer : this.reviewers) {
             s += "'" + reviewer + "' ";
         }
-        s += "]}";
+        s += "] chapters=[ ";
+        for (int key : this.chapters.keySet()) {
+            s += chapters.get(key).getNumber() + "->'" + chapters.get(key).getName() + "' ";
+        }
+        s += "] psalms=[ ";
+        s += "countOfPsalms=" + this.psalms.size();
+        s += " ]}";
         return s;
     }
 }
