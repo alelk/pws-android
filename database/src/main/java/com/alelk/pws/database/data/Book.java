@@ -178,6 +178,7 @@ public class Book implements PwsObject {
         }
         s += "] psalms=[ ";
         s += "countOfPsalms=" + this.psalms.size();
+        s += " numbers: " + psalms.keySet();
         s += " ]}";
         return s;
     }
