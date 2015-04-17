@@ -1,14 +1,21 @@
 package com.alelk.pws.pwapp;
 
+import android.content.Intent;
 import android.content.res.AssetManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alelk.pws.database.data.Book;
 import com.alelk.pws.database.data.Psalm;
+import com.alelk.pws.database.data.PsalmPart;
 import com.alelk.pws.database.exception.PwsDatabaseIncorrectValueException;
 import com.alelk.pws.xmlengine.PwsXmlParser;
 import com.alelk.pws.xmlengine.exception.PwsXmlParserIncorrectSourceFormatException;
@@ -17,28 +24,35 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends ActionBarActivity {
 
     private TextView textView;
-
+    private ListView listView;
+    private ArrayAdapter<Psalm> psalmListAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        listView = (ListView) findViewById(R.id.listView);
 
-        textView = (TextView) findViewById(R.id.txt_view1);
+
         AssetManager am = this.getAssets();
 
         PwsXmlParser parser = new PwsXmlParser(am);
 
         try {
             Book book = parser.parseBook("pwsbooks/testBook.pws");
-            textView.setText(book.toString());
+            List<Psalm> psalms = new ArrayList<>();
             for (int num : book.getPsalms().keySet()) {
-                textView.append("\n " + num + " " + book.getPsalm(num));
+                psalms.add(book.getPsalm(num));
             }
+            psalmListAdapter = new PsalmListAdapter(this, R.layout.psalms_list_layout, psalms);
+            listView.setAdapter(psalmListAdapter);
+            listView.setOnItemClickListener(psalmListClickHandler);
         } catch (PwsXmlParserIncorrectSourceFormatException e) {
             e.printStackTrace();
         }
@@ -66,4 +80,20 @@ public class MainActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    private AdapterView.OnItemClickListener psalmListClickHandler = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            Psalm psalm = (Psalm) parent.getItemAtPosition(position);
+
+            String text = psalm.toString() + "\n";
+            for (PsalmPart part : psalm.getPsalmParts().values()) {
+                text += part + "\n";
+            }
+
+            Intent intent = new Intent(getApplicationContext(), PsalmActivity.class);
+            intent.putExtra("text", text);
+            startActivity(intent);
+        }
+    };
 }
