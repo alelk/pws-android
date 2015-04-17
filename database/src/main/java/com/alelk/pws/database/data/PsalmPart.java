@@ -47,4 +47,17 @@ public abstract class PsalmPart implements PwsObject{
     public void setText(String text) {
         this.text = text;
     }
+
+    @Override
+    public String toString() {
+        String s = "[";
+        for (int i : numbers) {
+            s += i + ",";
+        }
+        s += "] ";
+        if (text != null) {
+            s += text.replaceAll("\n", " ");
+        }
+        return s;
+    }
 }
