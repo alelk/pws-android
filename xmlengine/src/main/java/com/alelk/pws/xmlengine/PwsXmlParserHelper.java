@@ -60,6 +60,14 @@ public abstract class PwsXmlParserHelper implements Constants {
     protected abstract InputStreamReader openPwsBookFile(String filename) throws PwsXmlParserFileNotFoundException;
 
     /**
+     * Returns InputStreamReader for file named filename
+     * @param filename The name of PWS Psalm file. E.q. psalm.pslm
+     * @return InputStreamReader for PWS Psalm file
+     * @throws com.alelk.pws.xmlengine.exception.PwsXmlParserFileNotFoundException if cannot open the file
+     */
+    protected abstract InputStreamReader openPwsPsalmFile(String filename) throws PwsXmlParserFileNotFoundException;
+
+    /**
      * Parse the Pws Book file named filename.
      * @param filename the name of Pws Book file
      * @return Book
@@ -68,6 +76,7 @@ public abstract class PwsXmlParserHelper implements Constants {
      * @throws PwsXmlParserFileNotFoundException if cannot open Pws Book file
      */
     protected Book parseBook(String filename) throws PwsXmlEngineIncorrectValueException, PwsXmlParserIncorrectSourceFormatException, PwsXmlParserFileNotFoundException {
+        Log.i(LOG_TAG, "Start parsing book file: '" + filename + "'");
         Book book = null;
         if (filename == null || filename.isEmpty()) {
             throw new PwsXmlEngineIncorrectValueException();
@@ -85,15 +94,12 @@ public abstract class PwsXmlParserHelper implements Constants {
         try {
             boolean isDone = false;
             String tagName;
-            String currentTagName = "";
 
             while (parser.getEventType() != XmlPullParser.END_DOCUMENT) {
-                int eventType = parser.next();
-                switch (eventType) {
+                switch (parser.getEventType()) {
                     case XmlPullParser.START_TAG:
                         tagName = parser.getName();
                         if (TAG.BK.TAG.equalsIgnoreCase(tagName)) {
-                            currentTagName = tagName;
                             if (isDone == true) {
                                 Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
                                         ": Duplicate book tag: '" + parser.getName() + "'" +
@@ -102,6 +108,7 @@ public abstract class PwsXmlParserHelper implements Constants {
                             }
                             try {
                                 book = parseBook(parser);
+                                continue;
                             } catch (PwsDatabaseIncorrectValueException e) {
                                 e.printStackTrace();
                             }
@@ -116,8 +123,7 @@ public abstract class PwsXmlParserHelper implements Constants {
                         break;
                     case XmlPullParser.END_TAG:
                         tagName = parser.getName();
-                        if (TAG.BK.TAG.equalsIgnoreCase(tagName)
-                                && tagName.equalsIgnoreCase(currentTagName)) {
+                        if (TAG.BK.TAG.equalsIgnoreCase(tagName)) {
                             isDone = true;
                         } else {
                             Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
@@ -126,6 +132,7 @@ public abstract class PwsXmlParserHelper implements Constants {
                         break;
                     default:
                 }
+                parser.next();
             }
             if (isDone != true) {
                 Log.w(LOG_TAG, "Incorrect file format: " + filename);
@@ -137,8 +144,89 @@ public abstract class PwsXmlParserHelper implements Constants {
             Log.e(LOG_TAG, "The exception with parser was occurred.");
             throw new PwsXmlParserIncorrectSourceFormatException();
         }
-
+        Log.i(LOG_TAG, "End parsing book file: '" + filename + "'");
         return book;
+    }
+
+    /**
+     * Parse the Pws Psalm file named filename.
+     * @param filename the name of Pws Psalm file
+     * @return Pws Psalm
+     * @throws PwsXmlEngineIncorrectValueException if incorrect filename
+     * @throws PwsXmlParserIncorrectSourceFormatException if exception with parser was occurred.
+     * @throws PwsXmlParserFileNotFoundException if cannot open Pws Psalm file
+     */
+    protected Psalm parsePsalm(String filename) throws PwsXmlEngineIncorrectValueException, PwsXmlParserIncorrectSourceFormatException, PwsXmlParserFileNotFoundException {
+        Log.i(LOG_TAG, "Start parsing psalm file: '" + filename + "'");
+        Psalm psalm = null;
+        if (filename == null || filename.isEmpty()) {
+            throw new PwsXmlEngineIncorrectValueException();
+        }
+        InputStreamReader inputStreamReader = openPwsPsalmFile(filename);
+        XmlPullParser parser;
+        try {
+            XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+            parser = factory.newPullParser();
+            parser.setInput(inputStreamReader);
+        } catch (XmlPullParserException e) {
+            Log.e(LOG_TAG, "The exception with parser was occurred.");
+            throw new PwsXmlParserIncorrectSourceFormatException();
+        }
+        try {
+            boolean isDone = false;
+            String tagName;
+
+            while (parser.getEventType() != XmlPullParser.END_DOCUMENT) {
+                switch (parser.getEventType()) {
+                    case XmlPullParser.START_TAG:
+                        tagName = parser.getName();
+                        if (TAG.PSLM.TAG.equalsIgnoreCase(tagName)) {
+                            if (isDone == true) {
+                                Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
+                                        ": Duplicate psalm tag: '" + parser.getName() + "'" +
+                                        ". Psalm will be overwritten.");
+                                isDone = false;
+                            }
+                            try {
+                                psalm = parsePsalm(parser);
+                                continue;
+                            } catch (PwsDatabaseIncorrectValueException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
+                                    ": Unexpected tag: '" + tagName + "'");
+                        }
+                        break;
+                    case XmlPullParser.TEXT:
+                        Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
+                                ": Unexpected text: '" + parser.getText() + "'");
+                        break;
+                    case XmlPullParser.END_TAG:
+                        tagName = parser.getName();
+                        if (TAG.PSLM.TAG.equalsIgnoreCase(tagName)) {
+                            isDone = true;
+                        } else {
+                            Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
+                                    ": Unexpected tag: '" + tagName + "'");
+                        }
+                        break;
+                    default:
+                }
+                parser.next();
+            }
+            if (isDone != true) {
+                Log.w(LOG_TAG, "Incorrect file format: " + filename);
+            }
+        } catch (XmlPullParserException e) {
+            Log.e(LOG_TAG, "The exception with parser was occurred.");
+            throw new PwsXmlParserIncorrectSourceFormatException();
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "The exception with parser was occurred.");
+            throw new PwsXmlParserIncorrectSourceFormatException();
+        }
+        Log.i(LOG_TAG, "End parsing psalm file: '" + filename + "'");
+        return psalm;
     }
 
     private Book parseBook(XmlPullParser parser) throws XmlPullParserException, IOException, PwsXmlParserIncorrectSourceFormatException, PwsDatabaseIncorrectValueException {
@@ -261,6 +349,25 @@ public abstract class PwsXmlParserHelper implements Constants {
             }
         }
         if (done == true) {
+            if (psalms.size() > 0) {
+                BookEdition bookEdition = book.getEdition();
+                SortedMap<Integer, Psalm> bookPsalms = new TreeMap<>();
+                for(Psalm psalm : psalms) {
+                    Integer psalmNumber = psalm.getNumber(bookEdition);
+                    if (psalmNumber == null || psalmNumber == 0){
+                        Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
+                                ": The psalm '" + psalm.getName() + "' has no number for the " +
+                                "current book edition: '" + bookEdition + "'");
+                    } else if (bookPsalms.containsKey(psalmNumber)) {
+                        Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
+                                ": The book already contains the psalm with number '" + psalmNumber
+                                + "'. The psalm will be overwritten.");
+                    } else {
+                        bookPsalms.put(psalm.getNumber(bookEdition), psalm);
+                    }
+                }
+                book.setPsalms(bookPsalms);
+            }
             Log.v(LOG_TAG, "Line " + parser.getLineNumber() +
                     ": New book parsed: " + book.toString());
         }
@@ -559,20 +666,20 @@ public abstract class PwsXmlParserHelper implements Constants {
                 Constants.TAG.BK.PSLMS.PSALM,
                 Constants.TAG.BK.PSLMS.REF
         ));
-        String ref;
-        int eventType;
+        String ref = null;
         String tagName;
         String currentTagName = null;
         boolean done = false;
+        parser.next();
         while (!done) {
-            eventType = parser.next();
-            switch (eventType) {
+            switch (parser.getEventType()) {
                 case XmlPullParser.START_TAG:
                     tagName = parser.getName();
                     if (allowedInnerTags.contains(tagName.toLowerCase())) {
                         currentTagName = tagName;
                         if (Constants.TAG.BK.PSLMS.PSALM.equalsIgnoreCase(tagName)) {
                             psalm = parsePsalm(parser);
+                            continue;
                         }
                     } else {
                         Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
@@ -597,7 +704,15 @@ public abstract class PwsXmlParserHelper implements Constants {
                         verifyEndTag(parser, tagName, currentTagName);
                         currentTagName = null;
                         if (Constants.TAG.BK.PSLMS.REF.equalsIgnoreCase(tagName)) {
-                            // todo open file and parse psalm
+                            try {
+                                psalm = parsePsalm(ref);
+                            } catch (PwsXmlEngineIncorrectValueException e) {
+                                Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
+                                        ": Incorrect pws psalm filename: '" + ref + "'");
+                            } catch (PwsXmlParserFileNotFoundException e) {
+                                Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
+                                        ": File not found: '" + ref + "'");
+                            }
                         }
                         if (psalm != null) {
                             Log.v(LOG_TAG, "Line " + parser.getLineNumber() +
@@ -618,6 +733,7 @@ public abstract class PwsXmlParserHelper implements Constants {
                     throw new PwsXmlParserIncorrectSourceFormatException();
                 default:
             }
+            parser.next();
         }
         if (psalms.size() == 0) {
             Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
