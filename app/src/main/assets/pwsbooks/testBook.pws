@@ -57,12 +57,17 @@
     </chapters>
     <psalms>
         <psalm version='1.01'>
-            <name>Psalm Name</name>
+            <name>Psalm 8 Name 8</name>
+            <numbers>
+                <!-- The psalm number can be different in different editions of the Psalm Book -->
+                <number edition="Gusli">8</number>
+                <number edition="PV2000">8</number>
+            </numbers>
         </psalm>
         <psalm version='1.01'>
             <name>Psalm2 Name2</name>
         </psalm>
-        <ref>reference</ref>
+        <ref>psalms/pv2000-n1.pslm</ref>
     </psalms>
 
 </book>

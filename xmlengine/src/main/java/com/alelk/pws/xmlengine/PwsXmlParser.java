@@ -45,6 +45,8 @@ public class PwsXmlParser extends PwsXmlParserHelper implements Constants {
 
     private AssetManager assetManager;
 
+    private String path = "";
+
     public PwsXmlParser(AssetManager assetManager) {
         this.assetManager = assetManager;
     }
@@ -54,6 +56,7 @@ public class PwsXmlParser extends PwsXmlParserHelper implements Constants {
         if (assetManager == null) {
             throw new PwsXmlParserIncorrectSourceFormatException();
         }
+        path = filename.substring(0, filename.lastIndexOf("/"));
         try {
             book = super.parseBook(filename);
         } catch (PwsXmlEngineIncorrectValueException e) {
@@ -67,11 +70,23 @@ public class PwsXmlParser extends PwsXmlParserHelper implements Constants {
 
     @Override
     protected InputStreamReader openPwsBookFile(String filename) throws PwsXmlParserFileNotFoundException{
-        InputStreamReader inputStreamReader = null;
+        InputStreamReader inputStreamReader;
         try {
             inputStreamReader = new InputStreamReader(assetManager.open(filename));
         } catch (IOException e) {
             Log.e(LOG_TAG, "Cannot open file '" + filename + "'");
+            throw new PwsXmlParserFileNotFoundException();
+        }
+        return inputStreamReader;
+    }
+
+    @Override
+    protected InputStreamReader openPwsPsalmFile(String filename) throws PwsXmlParserFileNotFoundException {
+        InputStreamReader inputStreamReader;
+        try {
+            inputStreamReader = new InputStreamReader(assetManager.open(path + "/" + filename));
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Cannot open file '" + path + "/" + filename + "'");
             throw new PwsXmlParserFileNotFoundException();
         }
         return inputStreamReader;

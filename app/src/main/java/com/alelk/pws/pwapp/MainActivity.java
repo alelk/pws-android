@@ -5,8 +5,10 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.alelk.pws.database.data.Book;
+import com.alelk.pws.database.data.Psalm;
 import com.alelk.pws.database.exception.PwsDatabaseIncorrectValueException;
 import com.alelk.pws.xmlengine.PwsXmlParser;
 import com.alelk.pws.xmlengine.exception.PwsXmlParserIncorrectSourceFormatException;
@@ -19,17 +21,24 @@ import java.io.InputStreamReader;
 
 public class MainActivity extends ActionBarActivity {
 
+    private TextView textView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        textView = (TextView) findViewById(R.id.txt_view1);
         AssetManager am = this.getAssets();
 
         PwsXmlParser parser = new PwsXmlParser(am);
 
         try {
-            Book book = parser.parseBook("testBook.pws");
+            Book book = parser.parseBook("pwsbooks/testBook.pws");
+            textView.setText(book.toString());
+            for (int num : book.getPsalms().keySet()) {
+                textView.append("\n " + num + " " + book.getPsalm(num));
+            }
         } catch (PwsXmlParserIncorrectSourceFormatException e) {
             e.printStackTrace();
         }
