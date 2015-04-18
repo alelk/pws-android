@@ -11,19 +11,14 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.alelk.pws.database.data.Book;
 import com.alelk.pws.database.data.Psalm;
 import com.alelk.pws.database.data.PsalmPart;
-import com.alelk.pws.database.exception.PwsDatabaseIncorrectValueException;
+import com.alelk.pws.pwapp.data.PwsPsalmParcelable;
 import com.alelk.pws.xmlengine.PwsXmlParser;
 import com.alelk.pws.xmlengine.exception.PwsXmlParserIncorrectSourceFormatException;
 
-import org.xmlpull.v1.XmlPullParserException;
-
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,7 +45,7 @@ public class MainActivity extends ActionBarActivity {
             for (int num : book.getPsalms().keySet()) {
                 psalms.add(book.getPsalm(num));
             }
-            psalmListAdapter = new PsalmListAdapter(this, R.layout.psalms_list_layout, psalms);
+            psalmListAdapter = new PsalmListAdapter(this, R.layout.layout_psalms_list, psalms);
             listView.setAdapter(psalmListAdapter);
             listView.setOnItemClickListener(psalmListClickHandler);
         } catch (PwsXmlParserIncorrectSourceFormatException e) {
@@ -92,6 +87,7 @@ public class MainActivity extends ActionBarActivity {
             }
 
             Intent intent = new Intent(getApplicationContext(), PsalmActivity.class);
+            intent.putExtra("psalm", new PwsPsalmParcelable(psalm));
             intent.putExtra("text", text);
             startActivity(intent);
         }

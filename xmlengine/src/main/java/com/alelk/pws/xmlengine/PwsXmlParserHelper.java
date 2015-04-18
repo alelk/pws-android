@@ -1032,9 +1032,21 @@ public abstract class PwsXmlParserHelper implements Constants {
                 case XmlPullParser.TEXT:
                     if (currentTagName != null) {
                         if (Constants.TAG.PSLM.TXT.VERSE.equalsIgnoreCase(currentTagName)) {
-                            psalmVerse.setText(psalmVerse.getText() + parser.getText());
+                            String line = parser.getText();
+                            if (line != null && !line.isEmpty()) {
+                                String text = psalmVerse.getText();
+                                if (text == null) text = "";
+                                text += line.replaceAll("\n\\s*+", "\n").trim();
+                                psalmVerse.setText(text);
+                            }
                         } else if (Constants.TAG.PSLM.TXT.CHORUS.equalsIgnoreCase(currentTagName)) {
-                            psalmChorus.setText(psalmChorus.getText() + parser.getText());
+                            String line = parser.getText();
+                            if (line != null && !line.isEmpty()) {
+                                String text = psalmChorus.getText();
+                                if (text == null) text = "";
+                                text += line.replaceAll("\n\\s*+", "\n").trim();
+                                psalmChorus.setText(text);
+                            }
                         } else {
                             Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
                                     ": Unexpected Text: '" + parser.getText());

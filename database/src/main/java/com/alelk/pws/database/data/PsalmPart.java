@@ -2,13 +2,14 @@ package com.alelk.pws.database.data;
 
 import com.alelk.pws.database.exception.PwsDatabaseIncorrectValueException;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by alelkin on 25.03.2015.
  */
-public abstract class PsalmPart implements PwsObject{
+public abstract class PsalmPart implements PwsObject, Serializable{
     private List<Integer> numbers;
     private String text;
 
