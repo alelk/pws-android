@@ -4,7 +4,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
@@ -29,7 +28,7 @@ public class PsalmListAdapter extends ArrayAdapter<Psalm> {
         View v = convertView;
         if (v == null) {
             LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = inflater.inflate(R.layout.psalms_list_layout, null);
+            v = inflater.inflate(R.layout.layout_psalms_list, null);
         }
 
         Psalm psalm = objects.get(position);
