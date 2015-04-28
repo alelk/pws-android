@@ -14,14 +14,17 @@ public class PwsDatabaseVerseHelper extends SQLiteOpenHelper implements PwsDatab
     public static final String TABLE_VERSES = "verses";
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_NUMBER = "number";
-    public static final String COLUMN_PSALM_ID = "psalmid";
+    public static final String COLUMN_PSALMID = "psalmid";
     public static final String COLUMN_TEXT = "text";
 
     private static final String TABLE_CREATE_SCRIPT = "create table " + TABLE_VERSES +
             "(" + COLUMN_ID + " integer primary key autoincrement, " +
             COLUMN_NUMBER + " text not null, " +
-            COLUMN_PSALM_ID + " integer not null " +
-            COLUMN_TEXT + " text);";
+            COLUMN_TEXT + " text, " +
+            COLUMN_PSALMID + " integer not null, " +
+            "FOREIGN KEY (" + COLUMN_PSALMID + ") " +
+            "REFERENCES " + PwsDatabasePsalmHelper.TABLE_PSALMS + " (" +
+            PwsDatabasePsalmHelper.COLUMN_ID + "));";
 
     private static final String TABLE_DROP_SCRIPT = "drop table if exists " + TABLE_VERSES;
 
