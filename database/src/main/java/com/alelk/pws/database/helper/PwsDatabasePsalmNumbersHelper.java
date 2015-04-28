@@ -19,9 +19,15 @@ public class PwsDatabasePsalmNumbersHelper extends SQLiteOpenHelper implements P
 
     private static final String TABLE_CREATE_SCRIPT = "create table " + TABLE_PSALMNUMBERS +
             "(" + COLUMN_ID + " integer primary key autoincrement, " +
+            COLUMN_NUMBER + " integer not null, " +
             COLUMN_PSALMID + " integer not null, " +
             COLUMN_BOOKID + " integer not null, " +
-            COLUMN_NUMBER + " integer not null);";
+            "FOREIGN KEY (" + COLUMN_PSALMID + ") " +
+            "REFERENCES " + PwsDatabasePsalmHelper.TABLE_PSALMS + " (" +
+            PwsDatabasePsalmHelper.COLUMN_ID + "), " +
+            "FOREIGN KEY (" + COLUMN_BOOKID + ") " +
+            "REFERENCES " + PwsDatabaseBookHelper.TABLE_BOOKS + " (" +
+            PwsDatabaseBookHelper.COLUMN_ID + "));";
 
     private static final String TABLE_DROP_SCRIPT = "drop table if exists " + TABLE_PSALMNUMBERS;
 
