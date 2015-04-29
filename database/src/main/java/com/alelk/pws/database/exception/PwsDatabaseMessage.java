@@ -3,7 +3,7 @@ package com.alelk.pws.database.exception;
 import com.alelk.pws.database.R;
 
 /**
- * Created by alelkin on 28.04.2015.
+ * Created by Alex Elkin on 28.04.2015.
  */
 public enum PwsDatabaseMessage {
     BOOK_ID_EXISTS(1, R.string.book_id_exists);

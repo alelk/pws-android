@@ -1,15 +1,11 @@
-package com.alelk.pws.database.helper;
+package com.alelk.pws.database.table;
 
-import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 /**
  * Created by alelkin on 22.04.2015.
  */
-public class PwsDatabaseChorusHelper extends SQLiteOpenHelper implements PwsDatabaseHelper {
-    private static final String LOG_TAG = PwsDatabaseChorusHelper.class.getName();
+public class PwsChorusTable implements PwsTable {
 
     public static final String TABLE_CHORUSES = "choruses";
     public static final String COLUMN_ID = "_id";
@@ -23,25 +19,16 @@ public class PwsDatabaseChorusHelper extends SQLiteOpenHelper implements PwsData
             COLUMN_TEXT + " text, " +
             COLUMN_PSALMID + " integer not null, " +
             "FOREIGN KEY (" + COLUMN_PSALMID + ") " +
-            "REFERENCES " + PwsDatabasePsalmHelper.TABLE_PSALMS + " (" +
-            PwsDatabasePsalmHelper.COLUMN_ID + "));";
+            "REFERENCES " + PwsPsalmTable.TABLE_PSALMS + " (" +
+            PwsPsalmTable.COLUMN_ID + "));";
 
     private static final String TABLE_DROP_SCRIPT = "drop table if exists " + TABLE_CHORUSES;
 
-    public PwsDatabaseChorusHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
-    }
-
-    @Override
-    public void onCreate(SQLiteDatabase db) {
+    public static void createTable(SQLiteDatabase db) {
         db.execSQL(TABLE_CREATE_SCRIPT);
     }
 
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.i(LOG_TAG, "Upgrade PWS database table '" + TABLE_CHORUSES +
-                "' from version " + oldVersion + " to version " + newVersion);
+    public static void dropTable(SQLiteDatabase db) {
         db.execSQL(TABLE_DROP_SCRIPT);
-        onCreate(db);
     }
 }
