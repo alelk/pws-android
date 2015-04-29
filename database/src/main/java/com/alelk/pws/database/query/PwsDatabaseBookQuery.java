@@ -1,30 +1,24 @@
-package com.alelk.pws.database.source;
+package com.alelk.pws.database.query;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 import android.util.Log;
 
-import static com.alelk.pws.database.helper.PwsDatabaseBookHelper.*;
-
+import static com.alelk.pws.database.table.PwsBookTable.*;
 import com.alelk.pws.database.data.Book;
 import com.alelk.pws.database.data.BookEdition;
 import com.alelk.pws.database.data.entity.BookEntity;
 import com.alelk.pws.database.exception.PwsDatabaseMessage;
 import com.alelk.pws.database.exception.PwsDatabaseSourceIdExists;
-import com.alelk.pws.database.helper.PwsDatabaseBookHelper;
 
 /**
- * Created by alelkin on 23.04.2015.
+ * Created by Alex Elkin on 29.04.2015.
  */
-public class PwsBookDataSource implements PwsDataSource {
-    private static final String LOG_TAG = PwsBookDataSource.class.getSimpleName();
-    private SQLiteDatabase database;
-    private PwsDatabaseBookHelper bookHelper;
+public class PwsDatabaseBookQuery extends PwsDatabaseQueryUtils implements PwsDatabaseQuery<Book, BookEntity> {
 
-    public final static String MULTIVALUE_DELIMITER = "; ";
+    private static final String LOG_TAG = PwsDatabaseBookQuery.class.getSimpleName();
 
     private final static String[] ALL_COLUMNS = {
             COLUMN_ID,
@@ -40,51 +34,35 @@ public class PwsBookDataSource implements PwsDataSource {
             COLUMN_EDITORS,
             COLUMN_DESCRIPTION };
 
-    public PwsBookDataSource(Context context) {
-        bookHelper = new PwsDatabaseBookHelper(context);
+    private SQLiteDatabase database;
+
+    public PwsDatabaseBookQuery(SQLiteDatabase database) {
+        this.database = database;
     }
 
-    public void open() {
-        database = bookHelper.getWritableDatabase();
-    }
-
-    public void close() {
-        bookHelper.close();
-    }
-
-    /**
-     * Inserts book into Pws database.
-     * @param book The book to insert
-     * @return BookEntity inserted into database.
-     * @throws PwsDatabaseSourceIdExists if book id already exists and it's version matches the
-     * version of the specified book
-     */
-    public BookEntity insertBook(Book book) throws PwsDatabaseSourceIdExists {
-        final String METHOD_NAME = "insertBook";
+    @Override
+    public BookEntity insert(Book book) throws PwsDatabaseSourceIdExists {
+        final String METHOD_NAME = "insert";
         BookEntity bookEntity = null;
-        bookEntity = selectBookEntityByEdition(book.getEdition());
+        bookEntity = selectByEdition(book.getEdition());
         if (bookEntity != null) {
             Log.d(LOG_TAG, METHOD_NAME + ": Book already exists: " + bookEntity);
-            if (!isVersionMatches(bookEntity, book)) {
+            if (!isVersionMatches(bookEntity.getVersion(), book.getVersion())) {
                 throw new PwsDatabaseSourceIdExists(PwsDatabaseMessage.BOOK_ID_EXISTS, bookEntity.getId());
             }
         } else {
-            ContentValues contentValues = new ContentValues();
-            fillValues(contentValues, book);
+            final ContentValues contentValues = new ContentValues();
+            fillContentValues(contentValues, book);
             long id = database.insert(TABLE_BOOKS, null, contentValues);
-            bookEntity = selectBookEntityById(id);
+            bookEntity = selectById(id);
             Log.d(LOG_TAG, METHOD_NAME + ": New book added: " + bookEntity);
         }
         return bookEntity;
     }
 
-    /**
-     * Returns the BookEntity from Pws database selected by book id
-     * @param id the id of book to select
-     * @return BookEntity with specified id, null if no book found
-     */
-    public BookEntity selectBookEntityById(long id) {
-        final String METHOD_NAME = "selectBookEntityById";
+    @Override
+    public BookEntity selectById(long id) {
+        final String METHOD_NAME = "selectById";
         BookEntity bookEntity = null;
         Cursor cursor = database.query(TABLE_BOOKS, ALL_COLUMNS, COLUMN_ID + " = " + id, null, null, null, "1");
         if (cursor.moveToFirst()) {
@@ -94,8 +72,13 @@ public class PwsBookDataSource implements PwsDataSource {
         return bookEntity;
     }
 
-    public BookEntity selectBookEntityByEdition(BookEdition edition) {
-        final String METHOD_NAME = "selectBookEntityByEdition";
+    /**
+     * Select BookEntity from Pws database by book edition
+     * @param edition book edition to select from database
+     * @return BookEntity with specified book edition. Returns null if book edition not found.
+     */
+    public BookEntity selectByEdition(BookEdition edition) {
+        final String METHOD_NAME = "selectByEdition";
         BookEntity bookEntity = null;
         Cursor cursor = database.query(TABLE_BOOKS, ALL_COLUMNS, COLUMN_EDITION + " = '" + edition.getSignature() + "'", null, null, null, "1");
         if (cursor.moveToFirst()) {
@@ -106,17 +89,34 @@ public class PwsBookDataSource implements PwsDataSource {
         return bookEntity;
     }
 
-    private void fillValues(ContentValues values, Book book) {
-        if (!book.getVersion().isEmpty()) {
+    private BookEntity cursorToBookEntity(Cursor cursor) {
+        BookEntity bookEntity = new BookEntity();
+        bookEntity.setId(cursor.getLong(0));
+        bookEntity.setVersion(cursor.getString(1));
+        bookEntity.setName(cursor.getString(2));
+        bookEntity.setShortName(cursor.getString(3));
+        bookEntity.setDisplayName(cursor.getString(4));
+        bookEntity.setEdition(cursor.getString(5));
+        bookEntity.setReleaseDate(cursor.getString(6));
+        bookEntity.setAuthors(cursor.getString(7));
+        bookEntity.setCreators(cursor.getString(8));
+        bookEntity.setReviewers(cursor.getString(9));
+        bookEntity.setEditors(cursor.getString(10));
+        bookEntity.setDescription(cursor.getString(11));
+        return bookEntity;
+    }
+
+    private void fillContentValues(ContentValues values, Book book) {
+        if (!TextUtils.isEmpty(book.getVersion())) {
             values.put(COLUMN_VERSION, book.getVersion());
         }
-        if (!book.getName().isEmpty()) {
+        if (!TextUtils.isEmpty(book.getName())) {
             values.put(COLUMN_NAME, book.getName());
         }
-        if (!book.getShortName().isEmpty()) {
+        if (!TextUtils.isEmpty(book.getShortName())) {
             values.put(COLUMN_SHORTNAME, book.getShortName());
         }
-        if (!book.getDisplayName().isEmpty()) {
+        if (!TextUtils.isEmpty(book.getDisplayName())) {
             values.put(COLUMN_DISPLAYNAME, book.getDisplayName());
         }
         if (book.getEdition() != null) {
@@ -137,32 +137,8 @@ public class PwsBookDataSource implements PwsDataSource {
         if (book.getEditors() != null && !book.getEditors().isEmpty()) {
             values.put(COLUMN_EDITORS, TextUtils.join(MULTIVALUE_DELIMITER, book.getEditors()));
         }
-        if (!book.getDescription().isEmpty()) {
+        if (!TextUtils.isEmpty(book.getDescription())) {
             values.put(COLUMN_DESCRIPTION, book.getDescription());
         }
-    }
-
-    private BookEntity cursorToBookEntity(Cursor cursor) {
-        BookEntity bookEntity = new BookEntity();
-        bookEntity.setId(cursor.getLong(0));
-        bookEntity.setVersion(cursor.getString(1));
-        bookEntity.setName(cursor.getString(2));
-        bookEntity.setShortName(cursor.getString(3));
-        bookEntity.setDisplayName(cursor.getString(4));
-        bookEntity.setEdition(cursor.getString(5));
-        bookEntity.setReleaseDate(cursor.getString(6));
-        bookEntity.setAuthors(cursor.getString(7));
-        bookEntity.setCreators(cursor.getString(8));
-        bookEntity.setReviewers(cursor.getString(9));
-        bookEntity.setEditors(cursor.getString(10));
-        bookEntity.setDescription(cursor.getString(11));
-        return bookEntity;
-    }
-
-    private boolean isVersionMatches(BookEntity bookEntity, Book book) {
-        if (book.getVersion().equalsIgnoreCase(bookEntity.getVersion())) {
-            return true;
-        }
-        return false;
     }
 }

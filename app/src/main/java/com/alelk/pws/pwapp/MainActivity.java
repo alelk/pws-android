@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.res.AssetManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,14 +11,12 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.alelk.pws.database.data.Book;
 import com.alelk.pws.database.data.Psalm;
 import com.alelk.pws.database.data.PsalmPart;
-import com.alelk.pws.database.data.entity.BookEntity;
-import com.alelk.pws.database.exception.PwsDatabaseSourceIdExists;
-import com.alelk.pws.database.source.PwsBookDataSource;
+import com.alelk.pws.database.source.PwsDataSource;
+import com.alelk.pws.database.source.PwsDataSourceImpl;
 import com.alelk.pws.pwapp.data.PwsPsalmParcelable;
 import com.alelk.pws.xmlengine.PwsXmlParser;
 import com.alelk.pws.xmlengine.exception.PwsXmlParserIncorrectSourceFormatException;
@@ -53,15 +50,17 @@ public class MainActivity extends ActionBarActivity {
             psalmListAdapter = new PsalmListAdapter(this, R.layout.layout_psalms_list, psalms);
             listView.setAdapter(psalmListAdapter);
             listView.setOnItemClickListener(psalmListClickHandler);
-            PwsBookDataSource bookDataSource = new PwsBookDataSource(this);
-            bookDataSource.open();
-            BookEntity bookEntity = null;
-            try {
-                bookEntity = bookDataSource.insertBook(book);
-            } catch (PwsDatabaseSourceIdExists pwsDatabaseSourceIdExists) {
-                pwsDatabaseSourceIdExists.printStackTrace();
+
+            PwsDataSource pwsDataSource = new PwsDataSourceImpl(this, "pws.db", 2);
+            pwsDataSource.open();
+
+            pwsDataSource.addBook(book);
+            for (Psalm psalm : book.getPsalms().values()) {
+                pwsDataSource.addPsalm(psalm);
             }
-            bookDataSource.close();
+
+
+            pwsDataSource.close();
         } catch (PwsXmlParserIncorrectSourceFormatException e) {
             e.printStackTrace();
         }
