@@ -1,15 +1,11 @@
-package com.alelk.pws.database.helper;
+package com.alelk.pws.database.table;
 
-import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 /**
  * Created by alelkin on 22.04.2015.
  */
-public class PwsDatabaseBookHelper extends SQLiteOpenHelper implements PwsDatabaseHelper {
-    private static final String LOG_TAG = PwsDatabaseBookHelper.class.getName();
+public class PwsBookTable implements PwsTable {
 
     public static final String TABLE_BOOKS = "books";
     public static final String COLUMN_ID = "_id";
@@ -41,20 +37,11 @@ public class PwsDatabaseBookHelper extends SQLiteOpenHelper implements PwsDataba
 
     private static final String TABLE_DROP_SCRIPT = "drop table if exists " + TABLE_BOOKS;
 
-    public PwsDatabaseBookHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
-    }
-
-    @Override
-    public void onCreate(SQLiteDatabase db) {
+    public static void createTable(SQLiteDatabase db) {
         db.execSQL(TABLE_CREATE_SCRIPT);
     }
 
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.i(LOG_TAG, "Upgrade PWS database table '" + TABLE_BOOKS +
-                "' from version " + oldVersion + " to version " + newVersion);
+    public static void dropTable(SQLiteDatabase db) {
         db.execSQL(TABLE_DROP_SCRIPT);
-        onCreate(db);
     }
 }
