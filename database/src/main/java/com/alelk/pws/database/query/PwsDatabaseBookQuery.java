@@ -11,7 +11,7 @@ import com.alelk.pws.database.data.Book;
 import com.alelk.pws.database.data.BookEdition;
 import com.alelk.pws.database.data.entity.BookEntity;
 import com.alelk.pws.database.exception.PwsDatabaseMessage;
-import com.alelk.pws.database.exception.PwsDatabaseSourceIdExists;
+import com.alelk.pws.database.exception.PwsDatabaseSourceIdExistsException;
 
 /**
  * Created by Alex Elkin on 29.04.2015.
@@ -41,14 +41,14 @@ public class PwsDatabaseBookQuery extends PwsDatabaseQueryUtils implements PwsDa
     }
 
     @Override
-    public BookEntity insert(Book book) throws PwsDatabaseSourceIdExists {
+    public BookEntity insert(Book book) throws PwsDatabaseSourceIdExistsException {
         final String METHOD_NAME = "insert";
         BookEntity bookEntity = null;
         bookEntity = selectByEdition(book.getEdition());
         if (bookEntity != null) {
             Log.d(LOG_TAG, METHOD_NAME + ": Book already exists: " + bookEntity);
             if (!isVersionMatches(bookEntity.getVersion(), book.getVersion())) {
-                throw new PwsDatabaseSourceIdExists(PwsDatabaseMessage.BOOK_ID_EXISTS, bookEntity.getId());
+                throw new PwsDatabaseSourceIdExistsException(PwsDatabaseMessage.BOOK_ID_EXISTS, bookEntity.getId());
             }
         } else {
             final ContentValues contentValues = new ContentValues();
