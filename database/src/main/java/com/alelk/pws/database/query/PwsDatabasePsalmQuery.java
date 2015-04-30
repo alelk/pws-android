@@ -6,9 +6,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.alelk.pws.database.data.BookEdition;
 import com.alelk.pws.database.data.Psalm;
 import com.alelk.pws.database.data.entity.PsalmEntity;
-import com.alelk.pws.database.exception.PwsDatabaseSourceIdExists;
+import com.alelk.pws.database.exception.PwsDatabaseSourceIdExistsException;
 
 import static com.alelk.pws.database.table.PwsPsalmTable.*;
 
@@ -29,20 +30,32 @@ public class PwsDatabasePsalmQuery extends PwsDatabaseQueryUtils implements PwsD
             COLUMN_TONALITIES,
             COLUMN_YEAR };
 
-    SQLiteDatabase database;
+    private SQLiteDatabase database;
 
     public PwsDatabasePsalmQuery(SQLiteDatabase database) {
         this.database = database;
     }
 
     @Override
-    public PsalmEntity insert(Psalm psalm) throws PwsDatabaseSourceIdExists {
+    public PsalmEntity insert(Psalm psalm) throws PwsDatabaseSourceIdExistsException {
         final String METHOD_NAME = "insert";
         PsalmEntity psalmEntity;
-        final ContentValues contentValues = new ContentValues();
-        fillContentValues(contentValues, psalm);
-        long id = database.insert(TABLE_PSALMS, null, contentValues);
-        psalmEntity = selectById(id);
+        database.beginTransaction();
+        try {
+            final ContentValues contentValues = new ContentValues();
+            fillContentValues(contentValues, psalm);
+            long id = database.insert(TABLE_PSALMS, null, contentValues);
+            insertPsalmNumbers(psalm, id);
+            
+
+            psalmEntity = selectById(id);
+
+            database.setTransactionSuccessful();
+
+            // todo handle insertPsalmNumbers exception
+        } finally {
+            database.endTransaction();
+        }
         Log.d(LOG_TAG, METHOD_NAME + ": New psalm added: " + psalmEntity);
         return psalmEntity;
     }
@@ -57,6 +70,12 @@ public class PwsDatabasePsalmQuery extends PwsDatabaseQueryUtils implements PwsD
         }
         Log.d(LOG_TAG, METHOD_NAME + ": Psalm selected (id = '" + id + "'): " + psalmEntity);
         return  psalmEntity;
+    }
+
+    private void insertPsalmNumbers(Psalm psalm, Long psalmId) throws PwsDatabaseSourceIdExistsException {
+        for (BookEdition bookEdition : psalm.getNumbers().keySet()) {
+            new PwsDatabasePsalmNumberQuery(database, psalmId, bookEdition).insert(psalm);
+        }
     }
 
     private PsalmEntity cursorToPsalmEntity(Cursor cursor) {
