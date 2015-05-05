@@ -79,4 +79,9 @@ public class PwsDatabaseChorusQuery extends PwsDatabaseQueryUtils implements Pws
         }
         values.put(COLUMN_PSALMID, psalmId);
     }
+
+    @Override
+    protected String getLogTag() {
+        return LOG_TAG;
+    }
 }
