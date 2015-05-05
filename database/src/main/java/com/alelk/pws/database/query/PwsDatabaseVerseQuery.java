@@ -79,4 +79,9 @@ public class PwsDatabaseVerseQuery extends PwsDatabaseQueryUtils implements PwsD
         }
         values.put(COLUMN_PSALMID, psalmId);
     }
+
+    @Override
+    protected String getLogTag() {
+        return LOG_TAG;
+    }
 }

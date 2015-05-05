@@ -9,7 +9,15 @@ import android.util.Log;
 import com.alelk.pws.database.data.BookEdition;
 import com.alelk.pws.database.data.Psalm;
 import com.alelk.pws.database.data.entity.PsalmEntity;
+import com.alelk.pws.database.data.entity.PsalmNumberEntity;
+import com.alelk.pws.database.exception.PwsDatabaseException;
+import com.alelk.pws.database.exception.PwsDatabaseIncorrectValueException;
+import com.alelk.pws.database.exception.PwsDatabaseMessage;
 import com.alelk.pws.database.exception.PwsDatabaseSourceIdExistsException;
+
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import static com.alelk.pws.database.table.PwsPsalmTable.*;
 
@@ -37,42 +45,82 @@ public class PwsDatabasePsalmQuery extends PwsDatabaseQueryUtils implements PwsD
     }
 
     @Override
-    public PsalmEntity insert(Psalm psalm) throws PwsDatabaseSourceIdExistsException {
+    public PsalmEntity insert(Psalm psalm) throws PwsDatabaseIncorrectValueException, PwsDatabaseSourceIdExistsException {
         final String METHOD_NAME = "insert";
+        validateSQLiteDatabaseNotNull(METHOD_NAME, database);
+        validatePsalmNotNull(METHOD_NAME, psalm);
+
         PsalmEntity psalmEntity;
         database.beginTransaction();
         try {
-            final ContentValues contentValues = new ContentValues();
-            fillContentValues(contentValues, psalm);
-            long id = database.insert(TABLE_PSALMS, null, contentValues);
-            insertPsalmNumbers(psalm, id);
-            
+            psalmEntity = selectByNumbers(psalm);
+            if (psalmEntity != null) {
+                Log.v(LOG_TAG, METHOD_NAME + ": psalm already exists: " + psalmEntity);
+            } else {
+                final ContentValues contentValues = new ContentValues();
+                fillContentValues(contentValues, psalm);
+                long id = database.insert(TABLE_PSALMS, null, contentValues);
+                insertPsalmNumbers(psalm, id);
 
-            psalmEntity = selectById(id);
+                psalmEntity = selectById(id);
 
-            database.setTransactionSuccessful();
-
-            // todo handle insertPsalmNumbers exception
+                database.setTransactionSuccessful();
+                Log.v(LOG_TAG, METHOD_NAME + ": New psalm added: " + psalmEntity);
+            }
+        } catch (PwsDatabaseException e) {
+            Log.v(LOG_TAG, METHOD_NAME + ": No psalm added. The exception was thrown: " + e.getPwsDatabaseMessage());
+            throw e;
         } finally {
             database.endTransaction();
         }
-        Log.d(LOG_TAG, METHOD_NAME + ": New psalm added: " + psalmEntity);
         return psalmEntity;
     }
 
     @Override
-    public PsalmEntity selectById(long id) {
+    public PsalmEntity selectById(long id) throws PwsDatabaseIncorrectValueException {
         final String METHOD_NAME = "selectById";
+        validateSQLiteDatabaseNotNull(METHOD_NAME, database);
         PsalmEntity psalmEntity = null;
         Cursor cursor = database.query(TABLE_PSALMS, ALL_COLUMNS, COLUMN_ID + " = " + id, null, null, null, "1");
         if (cursor.moveToFirst()) {
             psalmEntity = cursorToPsalmEntity(cursor);
+            Log.v(LOG_TAG, METHOD_NAME + ": Psalm selected: " + psalmEntity);
         }
-        Log.d(LOG_TAG, METHOD_NAME + ": Psalm selected (id = '" + id + "'): " + psalmEntity);
         return  psalmEntity;
     }
 
-    private void insertPsalmNumbers(Psalm psalm, Long psalmId) throws PwsDatabaseSourceIdExistsException {
+    public PsalmEntity selectByNumbers(Psalm psalm) throws PwsDatabaseIncorrectValueException {
+        final String METHOD_NAME = "selectByNumbers";
+        validateSQLiteDatabaseNotNull(METHOD_NAME, database);
+        validatePsalmNotNull(METHOD_NAME, psalm);
+        PsalmEntity psalmEntity = null;
+        validatePsalmNumbersNotEmpty(METHOD_NAME, psalm.getNumbers());
+        Long psalmId = null;
+        for (BookEdition bookEdition : psalm.getBookEditions()) {
+            long psalmNumber = psalm.getNumber(bookEdition);
+            long bookId = new PwsDatabaseBookQuery(database).selectByEdition(bookEdition).getId();
+            PsalmNumberEntity psalmNumberEntity = new PwsDatabasePsalmNumberQuery(database, null, null).selectByNumberAndBookId(psalmNumber, bookId);
+            if (psalmNumberEntity == null) {
+                Log.v(LOG_TAG, METHOD_NAME + ": No psalm number entity found with psalmNumber="
+                        + psalmNumber + " and bookEdition=" + bookEdition + " (bookId=");
+                return null;
+            }
+            if (psalmId == null) {
+                psalmId = psalmNumberEntity.getPsalmId();
+            } else if (!psalmId.equals(psalmNumberEntity.getPsalmId())) {
+                // todo throw exception
+                return null;
+            }
+        }
+        // todo compare all numbers
+        if (psalmId != null) {
+            psalmEntity = selectById(psalmId);
+            Log.v(LOG_TAG, METHOD_NAME + ": Psalm selected" + psalmEntity);
+        }
+        return psalmEntity;
+    }
+
+    private void insertPsalmNumbers(Psalm psalm, Long psalmId) throws PwsDatabaseIncorrectValueException, PwsDatabaseSourceIdExistsException {
         for (BookEdition bookEdition : psalm.getNumbers().keySet()) {
             new PwsDatabasePsalmNumberQuery(database, psalmId, bookEdition).insert(psalm);
         }
@@ -113,5 +161,10 @@ public class PwsDatabasePsalmQuery extends PwsDatabaseQueryUtils implements PwsD
         if (psalm.getYear() != null) {
             values.put(COLUMN_YEAR, psalm.getYear().toString());
         }
+    }
+
+    @Override
+    protected String getLogTag() {
+        return LOG_TAG;
     }
 }

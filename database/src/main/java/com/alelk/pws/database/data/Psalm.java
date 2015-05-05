@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -21,7 +22,7 @@ public class Psalm implements PwsObject {
     private String composer;
     private Date year;
     private List<String> tonalities = new ArrayList<>();
-    private Map<BookEdition, Integer> numbers = new HashMap<>();
+    private Map<BookEdition, Integer> numbers;
     private SortedMap<Integer, PsalmPart> psalmParts = new TreeMap<>();
 
     public String getName() {
@@ -76,6 +77,9 @@ public class Psalm implements PwsObject {
         if (bookEdition == null || psalmNumber <= 0) {
             throw new PwsDatabaseIncorrectValueException();
         }
+        if (numbers == null) {
+            numbers = new HashMap<>();
+        }
         numbers.put(bookEdition, psalmNumber);
     }
 
@@ -96,10 +100,17 @@ public class Psalm implements PwsObject {
      * @return psalm number if book edition is found for this psalm. Returns null otherwise.
      */
     public Integer getNumber(BookEdition bookEdition) {
-        if (!numbers.containsKey(bookEdition)) {
+        if (numbers == null || !numbers.containsKey(bookEdition)) {
             return null;
         }
         return numbers.get(bookEdition);
+    }
+
+    public Set<BookEdition> getBookEditions() {
+        if (getNumbers() == null || getNumbers().isEmpty()) {
+            return null;
+        }
+        return numbers.keySet();
     }
 
     public Map<BookEdition, Integer> getNumbers() {
@@ -107,7 +118,7 @@ public class Psalm implements PwsObject {
     }
 
     public void setNumbers(Map<BookEdition, Integer> numbers) {
-        if (numbers != null) this.numbers = numbers;
+        this.numbers = numbers;
     }
 
     public List<String> getTonalities() {
@@ -129,8 +140,10 @@ public class Psalm implements PwsObject {
                 "' composer='" + this.composer +
                 "' year='" + this.year +
                 "' number=[ ";
-        for (BookEdition bookEdition: this.numbers.keySet()) {
-            s += this.numbers.get(bookEdition) + "->" + bookEdition + " ";
+        if (numbers != null && !numbers.isEmpty()) {
+            for (BookEdition bookEdition : this.numbers.keySet()) {
+                s += this.numbers.get(bookEdition) + "->" + bookEdition + " ";
+            }
         }
         s += "] " +
                 "psalmPartsTypes=[ ";
