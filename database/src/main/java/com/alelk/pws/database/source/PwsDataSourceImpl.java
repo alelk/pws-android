@@ -7,6 +7,7 @@ import com.alelk.pws.database.data.Book;
 import com.alelk.pws.database.data.Psalm;
 import com.alelk.pws.database.data.entity.BookEntity;
 import com.alelk.pws.database.data.entity.PsalmEntity;
+import com.alelk.pws.database.exception.PwsDatabaseIncorrectValueException;
 import com.alelk.pws.database.exception.PwsDatabaseSourceIdExistsException;
 import com.alelk.pws.database.helper.PwsDatabaseHelper;
 import com.alelk.pws.database.query.PwsDatabaseBookQuery;
@@ -42,6 +43,8 @@ public class PwsDataSourceImpl implements PwsDataSource {
             bookEntity = new PwsDatabaseBookQuery(database).insert(book);
         } catch (PwsDatabaseSourceIdExistsException pwsDatabaseSourceIdExists) {
             pwsDatabaseSourceIdExists.printStackTrace();
+        } catch (PwsDatabaseIncorrectValueException e) {
+            e.printStackTrace();
         }
         return bookEntity;
     }
@@ -54,6 +57,8 @@ public class PwsDataSourceImpl implements PwsDataSource {
             psalmEntity = new PwsDatabasePsalmQuery(database).insert(psalm);
         } catch (PwsDatabaseSourceIdExistsException pwsDatabaseSourceIdExists) {
             pwsDatabaseSourceIdExists.printStackTrace();
+        } catch (PwsDatabaseIncorrectValueException e) {
+            e.printStackTrace();
         }
         return psalmEntity;
     }

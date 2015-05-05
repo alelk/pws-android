@@ -10,6 +10,7 @@ import static com.alelk.pws.database.table.PwsBookTable.*;
 import com.alelk.pws.database.data.Book;
 import com.alelk.pws.database.data.BookEdition;
 import com.alelk.pws.database.data.entity.BookEntity;
+import com.alelk.pws.database.exception.PwsDatabaseIncorrectValueException;
 import com.alelk.pws.database.exception.PwsDatabaseMessage;
 import com.alelk.pws.database.exception.PwsDatabaseSourceIdExistsException;
 
@@ -41,8 +42,9 @@ public class PwsDatabaseBookQuery extends PwsDatabaseQueryUtils implements PwsDa
     }
 
     @Override
-    public BookEntity insert(Book book) throws PwsDatabaseSourceIdExistsException {
+    public BookEntity insert(Book book) throws PwsDatabaseSourceIdExistsException, PwsDatabaseIncorrectValueException {
         final String METHOD_NAME = "insert";
+        validateSQLiteDatabaseNotNull(METHOD_NAME, database);
         BookEntity bookEntity = null;
         bookEntity = selectByEdition(book.getEdition());
         if (bookEntity != null) {
@@ -140,5 +142,10 @@ public class PwsDatabaseBookQuery extends PwsDatabaseQueryUtils implements PwsDa
         if (!TextUtils.isEmpty(book.getDescription())) {
             values.put(COLUMN_DESCRIPTION, book.getDescription());
         }
+    }
+
+    @Override
+    protected String getLogTag() {
+        return LOG_TAG;
     }
 }
