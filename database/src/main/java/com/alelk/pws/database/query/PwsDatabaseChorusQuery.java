@@ -10,7 +10,10 @@ import static com.alelk.pws.database.table.PwsChorusTable.*;
 
 import com.alelk.pws.database.data.PsalmChorus;
 import com.alelk.pws.database.data.entity.ChorusEntity;
+import com.alelk.pws.database.exception.PwsDatabaseIncorrectValueException;
 import com.alelk.pws.database.exception.PwsDatabaseSourceIdExistsException;
+
+import java.util.Arrays;
 
 /**
  * Created by Alex Elkin on 30.04.2015.
@@ -34,34 +37,68 @@ public class PwsDatabaseChorusQuery extends PwsDatabaseQueryUtils implements Pws
     }
 
     @Override
-    public ChorusEntity insert(PsalmChorus chorus) throws PwsDatabaseSourceIdExistsException {
+    public ChorusEntity insert(PsalmChorus chorus) throws PwsDatabaseSourceIdExistsException, PwsDatabaseIncorrectValueException {
         final String METHOD_NAME = "insert";
-        if (psalmId == null) {
-            // todo throw exception: incorrect psalm id
-            return null;
+        validateSQLiteDatabaseNotNull(METHOD_NAME, database);
+        validatePsalmIdNotNull(METHOD_NAME, psalmId);
+        validatePsalmPartNumbersNotEmpty(METHOD_NAME, chorus);
+        ChorusEntity chorusEntity = null;
+        Long id = null;
+        for (int number : chorus.getNumbers()) {
+            chorusEntity = selectByNumberAndPsalmId(number, psalmId);
+            if (chorusEntity == null) break;
+            if (id == null){ id = chorusEntity.getId(); } else {
+                if (!id.equals(chorusEntity.getId())) {
+                    // todo throw exception
+                    return null;
+                }
+            }
         }
-        ChorusEntity chorusEntity;
-        final ContentValues contentValues = new ContentValues();
-        fillContentValues(contentValues, chorus, psalmId);
-        final long id = database.insert(TABLE_CHORUSES, null, contentValues);
-        chorusEntity = selectById(id);
-        Log.v(LOG_TAG, METHOD_NAME + ": New chorus added (psalmId=" + psalmId + "): " + chorusEntity);
+        if (chorusEntity == null) {
+            final ContentValues contentValues = new ContentValues();
+            fillContentValues(contentValues, chorus, psalmId);
+            id = database.insert(TABLE_CHORUSES, null, contentValues);
+            chorusEntity = selectById(id);
+            Log.v(LOG_TAG, METHOD_NAME + ": New psalm chorus added: " + chorusEntity);
+        } else {
+            Log.v(LOG_TAG, METHOD_NAME + ": The psalm chorus already exists in database: " + chorusEntity);
+        }
         return chorusEntity;
     }
 
     @Override
-    public ChorusEntity selectById(long id) {
+    public ChorusEntity selectById(long id) throws PwsDatabaseIncorrectValueException {
         final String METHOD_NAME = "selectById";
+        validateSQLiteDatabaseNotNull(METHOD_NAME, database);
         ChorusEntity chorusEntity = null;
         Cursor cursor = database.query(TABLE_CHORUSES, ALL_COLUMNS, COLUMN_ID + " = " + id, null, null, null, "1");
         if (cursor.moveToFirst()) {
-            chorusEntity = cursorToVerseEntity(cursor);
+            chorusEntity = cursorToChorusEntity(cursor);
+            Log.v(LOG_TAG, METHOD_NAME + ": Psalm chorus selected: " + chorusEntity);
+        } else {
+            Log.v(LOG_TAG, METHOD_NAME + ": No psalm chorus found with id=" + id);
         }
-        Log.v(LOG_TAG, METHOD_NAME + ": Psalm chorus selected: " + chorusEntity);
         return chorusEntity;
     }
 
-    private ChorusEntity cursorToVerseEntity(Cursor cursor) {
+    public ChorusEntity selectByNumberAndPsalmId(long number, long psalmId) {
+        final String METHOD_NAME = "selectByNumberAndPsalmId";
+        ChorusEntity chorusEntity = null;
+        final String[] SELECTION_ARGS = new String[2];
+        Arrays.asList(String.valueOf(number), String.valueOf(psalmId)).toArray(SELECTION_ARGS);
+        Cursor cursor = database.query(TABLE_CHORUSES, ALL_COLUMNS,
+                COLUMN_NUMBER + "=? AND " + COLUMN_PSALMID + "=?", SELECTION_ARGS, null, null, "1");
+        if (cursor.moveToFirst()) {
+            chorusEntity = cursorToChorusEntity(cursor);
+            Log.v(LOG_TAG, METHOD_NAME + ": Psalm chorus selected: " + chorusEntity);
+        } else {
+            Log.v(LOG_TAG, METHOD_NAME + ": No psalm chorus found with number='" + number
+                    + "' and psalmId='" + psalmId + '\'');
+        }
+        return chorusEntity;
+    }
+
+    private ChorusEntity cursorToChorusEntity(Cursor cursor) {
         ChorusEntity chorusEntity = new ChorusEntity();
         chorusEntity.setId(cursor.getLong(0));
         chorusEntity.setNumbers(cursor.getString(1));
