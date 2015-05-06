@@ -20,6 +20,7 @@ import com.alelk.pws.database.exception.PwsDatabaseMessage;
 import com.alelk.pws.database.exception.PwsDatabaseSourceIdExistsException;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -110,6 +111,26 @@ public class PwsDatabasePsalmQuery extends PwsDatabaseQueryUtils implements PwsD
             Log.v(LOG_TAG, METHOD_NAME + ": Psalm selected: " + psalmEntity);
         }
         return  psalmEntity;
+    }
+
+    public Set<PsalmEntity> selectByBookId(long bookId) throws PwsDatabaseIncorrectValueException {
+        final String METHOD_NAME = "selectByBookEdition";
+        validateSQLiteDatabaseNotNull(METHOD_NAME, database);
+        Set<PsalmNumberEntity> psalmNumberEntities =
+                new PwsDatabasePsalmNumberQuery(database, null, null).selectByBookId(bookId);
+        Set<PsalmEntity> psalmEntities = null;
+        if (psalmNumberEntities != null && !psalmNumberEntities.isEmpty()) {
+            psalmEntities = new HashSet<>(psalmNumberEntities.size());
+            for (PsalmNumberEntity psalmNumberEntity : psalmNumberEntities) {
+                long psalmId = psalmNumberEntity.getPsalmId();
+                PsalmEntity psalmEntity = selectById(psalmId);
+                psalmEntities.add(psalmEntity);
+            }
+            Log.v(LOG_TAG, METHOD_NAME + ": Count of psalms selected for bookId=" + bookId + ": " + psalmEntities.size());
+        } else {
+            Log.v(LOG_TAG, METHOD_NAME + ": No psalms selected for bookId=" + bookId + ": ");
+        }
+        return  psalmEntities;
     }
 
     public PsalmEntity selectByNumbers(Psalm psalm) throws PwsDatabaseIncorrectValueException {

@@ -14,6 +14,8 @@ import com.alelk.pws.database.exception.PwsDatabaseIncorrectValueException;
 import com.alelk.pws.database.exception.PwsDatabaseSourceIdExistsException;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by Alex Elkin on 30.04.2015.
@@ -96,6 +98,24 @@ public class PwsDatabaseChorusQuery extends PwsDatabaseQueryUtils implements Pws
                     + "' and psalmId='" + psalmId + '\'');
         }
         return chorusEntity;
+    }
+
+    public Set<ChorusEntity> selectByPsalmId(long psalmId) throws PwsDatabaseIncorrectValueException {
+        final String METHOD_NAME = "selectByPsalmId";
+        validateSQLiteDatabaseNotNull(METHOD_NAME, database);
+        Set<ChorusEntity> chorusEntities = null;
+        Cursor cursor = database.query(TABLE_CHORUSES, ALL_COLUMNS,
+                COLUMN_PSALMID + " = " + psalmId, null, null, null, null);
+        if (cursor.moveToFirst()) {
+            chorusEntities = new HashSet<>(cursor.getCount());
+            do {
+                chorusEntities.add(cursorToChorusEntity(cursor));
+            } while (cursor.moveToNext());
+            Log.v(LOG_TAG, METHOD_NAME + ": Count of psalm choruses selected for psalmId=" + psalmId + ": " + chorusEntities.size());
+        } else {
+            Log.v(LOG_TAG, METHOD_NAME + ": No psalm choruses selected for psalmId=" + psalmId);
+        }
+        return chorusEntities;
     }
 
     private ChorusEntity cursorToChorusEntity(Cursor cursor) {
