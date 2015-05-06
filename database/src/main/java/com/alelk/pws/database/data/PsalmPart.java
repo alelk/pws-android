@@ -1,5 +1,7 @@
 package com.alelk.pws.database.data;
 
+import android.text.TextUtils;
+
 import com.alelk.pws.database.exception.PwsDatabaseIncorrectValueException;
 
 import java.io.Serializable;
@@ -51,14 +53,9 @@ public abstract class PsalmPart implements PwsObject, Serializable{
 
     @Override
     public String toString() {
-        String s = "[";
-        for (int i : numbers) {
-            s += i + ",";
-        }
-        s += "] ";
-        if (text != null) {
-            s += text.replaceAll("\n", " ");
-        }
-        return s;
+        return "PsalmPart{" +
+                "numbers=" + numbers +
+                ", text='" + text == null ? "": text.replaceAll("\\W", "") + '\'' +
+                '}';
     }
 }

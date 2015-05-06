@@ -8,6 +8,9 @@ import android.util.Log;
 
 import com.alelk.pws.database.data.BookEdition;
 import com.alelk.pws.database.data.Psalm;
+import com.alelk.pws.database.data.PsalmPart;
+import com.alelk.pws.database.data.PsalmPartType;
+import com.alelk.pws.database.data.PsalmVerse;
 import com.alelk.pws.database.data.entity.PsalmEntity;
 import com.alelk.pws.database.data.entity.PsalmNumberEntity;
 import com.alelk.pws.database.exception.PwsDatabaseException;
@@ -55,12 +58,18 @@ public class PwsDatabasePsalmQuery extends PwsDatabaseQueryUtils implements PwsD
         try {
             psalmEntity = selectByNumbers(psalm);
             if (psalmEntity != null) {
+                if (!isVersionMatches(psalm.getVersion(), psalmEntity.getVersion())) {
+                    Log.d(LOG_TAG, METHOD_NAME + ": Psalm already exists, but it's version does not match the current version: " + psalmEntity
+                            + " (current version: " + psalm.getVersion() + ")");
+                    throw new PwsDatabaseSourceIdExistsException(PwsDatabaseMessage.PSALM_ID_EXISTS, psalmEntity.getId());
+                }
                 Log.v(LOG_TAG, METHOD_NAME + ": psalm already exists: " + psalmEntity);
             } else {
                 final ContentValues contentValues = new ContentValues();
                 fillContentValues(contentValues, psalm);
                 long id = database.insert(TABLE_PSALMS, null, contentValues);
                 insertPsalmNumbers(psalm, id);
+                insertPsalmParts(psalm, id);
 
                 psalmEntity = selectById(id);
 
@@ -123,6 +132,16 @@ public class PwsDatabasePsalmQuery extends PwsDatabaseQueryUtils implements PwsD
     private void insertPsalmNumbers(Psalm psalm, Long psalmId) throws PwsDatabaseIncorrectValueException, PwsDatabaseSourceIdExistsException {
         for (BookEdition bookEdition : psalm.getNumbers().keySet()) {
             new PwsDatabasePsalmNumberQuery(database, psalmId, bookEdition).insert(psalm);
+        }
+    }
+
+    private void insertPsalmParts(Psalm psalm, Long psalmId) throws PwsDatabaseSourceIdExistsException, PwsDatabaseIncorrectValueException {
+        for (PsalmPart psalmPart : psalm.getPsalmPartsValues()) {
+            if (psalmPart.getPsalmType() == PsalmPartType.CHORUS) {
+
+            } else if (psalmPart.getPsalmType() == PsalmPartType.VERSE) {
+                new PwsDatabaseVerseQuery(database, psalmId).insert((PsalmVerse) psalmPart);
+            }
         }
     }
 
