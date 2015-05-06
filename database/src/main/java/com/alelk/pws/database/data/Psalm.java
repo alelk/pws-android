@@ -5,6 +5,7 @@ import com.alelk.pws.database.exception.PwsDatabaseIncorrectValueException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -23,7 +24,7 @@ public class Psalm implements PwsObject {
     private Date year;
     private List<String> tonalities = new ArrayList<>();
     private Map<BookEdition, Integer> numbers;
-    private SortedMap<Integer, PsalmPart> psalmParts = new TreeMap<>();
+    private SortedMap<Integer, PsalmPart> psalmParts;
 
     public String getName() {
         return name;
@@ -87,11 +88,25 @@ public class Psalm implements PwsObject {
         return psalmParts;
     }
 
-    public void setPsalmParts(SortedMap<Integer, PsalmPart> psalmParts) {
-        this.psalmParts = new TreeMap<>();
-        if (psalmParts != null && psalmParts.size() > 0) {
-            this.psalmParts.putAll(psalmParts);
+    /**
+     * Get set of unique values of psalmParts
+     * @return set of unique values of psalmParts
+     */
+    public Set<PsalmPart> getPsalmPartsValues() {
+        Set<PsalmPart> psalmPartSet = null;
+        if (psalmParts != null && !psalmParts.isEmpty()) {
+            psalmPartSet = new HashSet<>();
+            for (PsalmPart psalmPart : psalmParts.values()) {
+                if(!psalmPartSet.contains(psalmPart)){
+                    psalmPartSet.add(psalmPart);
+                }
+            }
         }
+        return psalmPartSet;
+    }
+
+    public void setPsalmParts(SortedMap<Integer, PsalmPart> psalmParts) {
+        this.psalmParts = psalmParts;
     }
 
     /**
@@ -147,8 +162,10 @@ public class Psalm implements PwsObject {
         }
         s += "] " +
                 "psalmPartsTypes=[ ";
-        for (int i : psalmParts.keySet()) {
-            s += "#" + i + "-" + psalmParts.get(i).getPsalmType() + " ";
+        if (psalmParts != null && !psalmParts.isEmpty()) {
+            for (int i : psalmParts.keySet()) {
+                s += "#" + i + "-" + psalmParts.get(i).getPsalmType() + " ";
+            }
         }
         s += "] " +
                 "tonalities=[ ";

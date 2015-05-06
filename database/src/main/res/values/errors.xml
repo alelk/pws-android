@@ -7,6 +7,7 @@
     <string name="no_book_edition_found">No book found with specified book edition</string>
 
     <!-- Pws Psalm -->
+    <string name="psalm_id_exists">The psalm already exists in the database</string>
     <string name="null_psalm_id_value">Incorrect value: psalm id required but is not set</string>
     <string name="null_psalm_value">Incorrect value: psalm required but it is null</string>
 
