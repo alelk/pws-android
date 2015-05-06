@@ -1,6 +1,5 @@
 package com.alelk.pws.xmlengine;
 
-import android.content.res.AssetManager;
 import android.util.Log;
 
 import com.alelk.pws.database.data.Book;
@@ -349,7 +348,7 @@ public abstract class PwsXmlParserHelper implements Constants {
             }
         }
         if (done == true) {
-            if (psalms.size() > 0) {
+            if (psalms != null && psalms.size() > 0) {
                 BookEdition bookEdition = book.getEdition();
                 SortedMap<Integer, Psalm> bookPsalms = new TreeMap<>();
                 for(Psalm psalm : psalms) {
@@ -925,8 +924,23 @@ public abstract class PwsXmlParserHelper implements Constants {
             case Constants.ATTR_VAL.BK.EDITION_GUSLI:
                 bookEdition = BookEdition.GUSLI;
                 break;
-            case Constants.ATTR_VAL.BK.EDITION_PV2000:
-                bookEdition = BookEdition.PV2000;
+            case ATTR_VAL.BK.EDITION_PV3055:
+                bookEdition = BookEdition.PV3055;
+                break;
+            case ATTR_VAL.BK.EDITION_CHYMNS:
+                bookEdition = BookEdition.CHYMNS;
+                break;
+            case ATTR_VAL.BK.EDITION_CPSALMS:
+                bookEdition = BookEdition.CPsalms;
+                break;
+            case ATTR_VAL.BK.EDITION_KIMVAL:
+                bookEdition = BookEdition.Kimval;
+                break;
+            case ATTR_VAL.BK.EDITION_SDP:
+                bookEdition = BookEdition.SDP;
+                break;
+            case ATTR_VAL.BK.EDITION_TYMPAN:
+                bookEdition = BookEdition.Tympan;
                 break;
             default:
                 Log.w(LOG_TAG, "Line " + parser.getLineNumber() +

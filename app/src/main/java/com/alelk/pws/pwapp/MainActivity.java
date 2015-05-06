@@ -13,6 +13,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.alelk.pws.database.data.Book;
+import com.alelk.pws.database.data.BookEdition;
 import com.alelk.pws.database.data.Psalm;
 import com.alelk.pws.database.data.PsalmPart;
 import com.alelk.pws.database.exception.PwsDatabaseIncorrectValueException;
@@ -24,7 +25,10 @@ import com.alelk.pws.xmlengine.PwsXmlParser;
 import com.alelk.pws.xmlengine.exception.PwsXmlParserIncorrectSourceFormatException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -44,19 +48,31 @@ public class MainActivity extends ActionBarActivity {
         PwsXmlParser parser = new PwsXmlParser(am);
 
         try {
-            Book book = parser.parseBook("pwsbooks/testBook.pws");
-            List<Psalm> psalms = new ArrayList<>();
-            for (int num : book.getPsalms().keySet()) {
-                psalms.add(book.getPsalm(num));
+            List<String> bookNames = Arrays.asList("pwsbooks/pv3055.pwsbk",
+                    "pwsbooks/chymns.pwsbk",
+                    "pwsbooks/cpsalms.pwsbk",
+                    "pwsbooks/gusli.pwsbk",
+                    "pwsbooks/kimval.pwsbk",
+                    "pwsbooks/sdp.pwsbk",
+                    "pwsbooks/tympan.pwsbk");
+
+            Map<BookEdition, Book> books = new HashMap();
+
+            for (String bookName : bookNames) {
+                Book book = parser.parseBook(bookName);
+                books.put(book.getEdition(), book);
             }
-            psalmListAdapter = new PsalmListAdapter(this, R.layout.layout_psalms_list, psalms);
-            listView.setAdapter(psalmListAdapter);
-            listView.setOnItemClickListener(psalmListClickHandler);
 
             PwsDataSource pwsDataSource = new PwsDataSourceImpl(this, "pws.db", 2);
             pwsDataSource.open();
-
-            pwsDataSource.addBook(book);
+            for (Book book : books.values()) {
+                pwsDataSource.addBook(book);
+            }
+            List<Psalm> psalms = new ArrayList<>();
+            Book book = books.get(BookEdition.PV3055);
+            for (int num : book.getPsalms().keySet()) {
+                psalms.add(book.getPsalm(num));
+            }
             for (Psalm psalm : book.getPsalms().values()) {
                 try {
                     pwsDataSource.addPsalm(psalm);
@@ -64,9 +80,11 @@ public class MainActivity extends ActionBarActivity {
                 } catch (PwsDatabaseIncorrectValueException e) {
                 }
             }
-
-
             pwsDataSource.close();
+
+            psalmListAdapter = new PsalmListAdapter(this, R.layout.layout_psalms_list, psalms);
+            listView.setAdapter(psalmListAdapter);
+            listView.setOnItemClickListener(psalmListClickHandler);
         } catch (PwsXmlParserIncorrectSourceFormatException e) {
             e.printStackTrace();
         }
