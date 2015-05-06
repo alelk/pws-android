@@ -4,8 +4,13 @@ package com.alelk.pws.database.data;
  * Created by alelkin on 26.03.2015.
  */
 public enum BookEdition {
+    PV3055 ("PV3055"),
     GUSLI ("Gusli"),
-    PV2000 ("PV2000");
+    CHYMNS ("CHymns"),
+    CPsalms ("CPsalms"),
+    SDP ("SDP"),
+    Tympan ("Tympan"),
+    Kimval ("Kimval");
     private String signature;
 
     BookEdition(String signature) {

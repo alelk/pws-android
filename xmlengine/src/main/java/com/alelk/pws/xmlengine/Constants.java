@@ -102,8 +102,13 @@ public interface Constants {
      */
     public final static class ATTR_VAL {
         public final static class BK {
+            public static final String EDITION_PV3055 = "pv3055";
             public static final String EDITION_GUSLI = "gusli";
-            public static final String EDITION_PV2000 = "pv2000";
+            public static final String EDITION_CHYMNS = "chymns";
+            public static final String EDITION_CPSALMS = "cpsalms";
+            public static final String EDITION_KIMVAL = "kimval";
+            public static final String EDITION_SDP = "sdp";
+            public static final String EDITION_TYMPAN = "tympan";
         }
     }
 }

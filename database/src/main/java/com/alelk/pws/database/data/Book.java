@@ -157,24 +157,34 @@ public class Book implements PwsObject {
                 "' releaseDate='" + this.releaseDate +
                 "' comment='" + this.comment +
                 "' authors=[ ";
-        for (String author : this.authors) {
-            s += "'" + author + "' ";
+        if (this.authors != null) {
+            for (String author : this.authors) {
+                s += "'" + author + "' ";
+            }
         }
         s += "] creators=[ ";
-        for (String creator : this.creators) {
-            s += "'" + creator + "' ";
+        if (this.creators != null) {
+            for (String creator : this.creators) {
+                s += "'" + creator + "' ";
+            }
         }
         s += "] editors=[ ";
-        for (String editor : this.editors) {
-            s += "'" + editor + "' ";
+        if (this.editors != null) {
+            for (String editor : this.editors) {
+                s += "'" + editor + "' ";
+            }
         }
         s += "] reviewers=[ ";
-        for (String reviewer : this.reviewers) {
-            s += "'" + reviewer + "' ";
+        if (this.reviewers != null) {
+            for (String reviewer : this.reviewers) {
+                s += "'" + reviewer + "' ";
+            }
         }
         s += "] chapters=[ ";
-        for (int key : this.chapters.keySet()) {
-            s += chapters.get(key).getNumber() + "->'" + chapters.get(key).getName() + "' ";
+        if (this.chapters != null) {
+            for (int key : this.chapters.keySet()) {
+                s += chapters.get(key).getNumber() + "->'" + chapters.get(key).getName() + "' ";
+            }
         }
         s += "] psalms=[ ";
         s += "countOfPsalms=" + this.psalms.size();
