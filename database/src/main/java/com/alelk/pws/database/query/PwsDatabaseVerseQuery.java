@@ -14,6 +14,8 @@ import com.alelk.pws.database.exception.PwsDatabaseIncorrectValueException;
 import com.alelk.pws.database.exception.PwsDatabaseSourceIdExistsException;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by Alex Elkin on 30.04.2015.
@@ -96,6 +98,24 @@ public class PwsDatabaseVerseQuery extends PwsDatabaseQueryUtils implements PwsD
                     + "' and psalmId='" + psalmId + '\'');
         }
         return verseEntity;
+    }
+
+    public Set<VerseEntity> selectByPsalmId(long psalmId) throws PwsDatabaseIncorrectValueException {
+        final String METHOD_NAME = "selectByPsalmId";
+        validateSQLiteDatabaseNotNull(METHOD_NAME, database);
+        Set<VerseEntity> verseEntities = null;
+        Cursor cursor = database.query(TABLE_VERSES, ALL_COLUMNS,
+                COLUMN_PSALMID + " = " + psalmId, null, null, null, null);
+        if (cursor.moveToFirst()) {
+            verseEntities = new HashSet<>(cursor.getCount());
+            do {
+                verseEntities.add(cursorToVerseEntity(cursor));
+            } while (cursor.moveToNext());
+            Log.v(LOG_TAG, METHOD_NAME + ": Count of psalm verses selected for psalmId=" + psalmId + ": " + verseEntities.size());
+        } else {
+            Log.v(LOG_TAG, METHOD_NAME + ": No psalm verses selected for psalmId=" + psalmId);
+        }
+        return verseEntities;
     }
 
     private VerseEntity cursorToVerseEntity(Cursor cursor) {
