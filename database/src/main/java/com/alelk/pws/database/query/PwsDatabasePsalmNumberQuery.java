@@ -17,6 +17,9 @@ import com.alelk.pws.database.exception.PwsDatabaseSourceIdExistsException;
 import com.alelk.pws.database.exception.PwsDatabaseSourceNotFoundException;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Alex Elkin on 30.04.2015.
@@ -124,6 +127,23 @@ public class PwsDatabasePsalmNumberQuery extends PwsDatabaseQueryUtils implement
             Log.v(LOG_TAG, METHOD_NAME + ": Psalm number selected: " + psalmNumberEntity);
         }
         return psalmNumberEntity;
+    }
+
+    public Set<PsalmNumberEntity> selectByBookId(long bookId) throws PwsDatabaseIncorrectValueException {
+        final String METHOD_NAME = "selectByBookId";
+        validateSQLiteDatabaseNotNull(METHOD_NAME, database);
+        Set<PsalmNumberEntity> psalmNumberEntities = null;
+        Cursor cursor = database.query(TABLE_PSALMNUMBERS, ALL_COLUMNS, COLUMN_BOOKID + " = " + bookId, null, null, null, null);
+        if (cursor.moveToFirst()) {
+            psalmNumberEntities = new HashSet<>(cursor.getCount());
+            do {
+                psalmNumberEntities.add(cursorToPsalmNumberEntity(cursor));
+            } while (cursor.moveToNext());
+            Log.v(LOG_TAG, METHOD_NAME + ": Count of psalm numbers selected for bookId=" + bookId + ": " + psalmNumberEntities.size());
+        } else {
+            Log.v(LOG_TAG, METHOD_NAME + ": No psalm numbers selected for bookId=" + bookId);
+        }
+        return  psalmNumberEntities;
     }
 
     private PsalmNumberEntity cursorToPsalmNumberEntity(Cursor cursor) {
