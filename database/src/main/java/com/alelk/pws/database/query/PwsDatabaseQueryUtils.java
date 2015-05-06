@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.alelk.pws.database.data.BookEdition;
 import com.alelk.pws.database.data.Psalm;
+import com.alelk.pws.database.data.PsalmPart;
 import com.alelk.pws.database.exception.PwsDatabaseIncorrectValueException;
 import com.alelk.pws.database.exception.PwsDatabaseMessage;
 
@@ -97,6 +98,19 @@ public abstract class PwsDatabaseQueryUtils {
         if (psalmNumbers == null || psalmNumbers.isEmpty()) {
             Log.d(getLogTag(), methodName + ": Incorrect value: psalmNumbers is null or empty");
             throw new PwsDatabaseIncorrectValueException(PwsDatabaseMessage.NO_PSALM_NUMBERS);
+        }
+    }
+
+    /**
+     * Validate if psalm part numbers contains as least one number
+     * @param methodName method name
+     * @param psalmPart psalm part: psalm verse or psalm chorus
+     * @throws PwsDatabaseIncorrectValueException if psalm part numbers is null or empty. Contains the following PwsDatabaseMessage: NO_PSALM_PART_NUMBERS
+     */
+    protected void validatePsalmPartNumbersNotEmpty(String methodName, PsalmPart psalmPart) throws PwsDatabaseIncorrectValueException {
+        if (psalmPart.getNumbers() == null || psalmPart.getNumbers().isEmpty()) {
+            Log.d(getLogTag(), methodName + ": Incorrect value: psalm part numbers is null or empty");
+            throw new PwsDatabaseIncorrectValueException(PwsDatabaseMessage.NO_PSALM_PART_NUMBERS);
         }
     }
 }

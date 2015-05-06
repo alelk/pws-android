@@ -78,9 +78,11 @@ public class PwsDatabaseBookQuery extends PwsDatabaseQueryUtils implements PwsDa
      * Select BookEntity from Pws database by book edition
      * @param edition book edition to select from database
      * @return BookEntity with specified book edition. Returns null if book edition not found.
+     * @throws PwsDatabaseIncorrectValueException if any value is incorrect
      */
-    public BookEntity selectByEdition(BookEdition edition) {
+    public BookEntity selectByEdition(BookEdition edition) throws PwsDatabaseIncorrectValueException {
         final String METHOD_NAME = "selectByEdition";
+        validateSQLiteDatabaseNotNull(METHOD_NAME, database);
         BookEntity bookEntity = null;
         Cursor cursor = database.query(TABLE_BOOKS, ALL_COLUMNS, COLUMN_EDITION + " = '" + edition.getSignature() + "'", null, null, null, "1");
         if (cursor.moveToFirst()) {

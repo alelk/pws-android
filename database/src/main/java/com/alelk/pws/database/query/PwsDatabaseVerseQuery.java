@@ -41,6 +41,7 @@ public class PwsDatabaseVerseQuery extends PwsDatabaseQueryUtils implements PwsD
         final String METHOD_NAME = "insert";
         validateSQLiteDatabaseNotNull(METHOD_NAME, database);
         validatePsalmIdNotNull(METHOD_NAME, psalmId);
+        validatePsalmPartNumbersNotEmpty(METHOD_NAME, verse);
         VerseEntity verseEntity = null;
         Long id = null;
         for (int number : verse.getNumbers()) {
