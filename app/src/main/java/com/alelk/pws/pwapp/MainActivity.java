@@ -15,6 +15,8 @@ import android.widget.TextView;
 import com.alelk.pws.database.data.Book;
 import com.alelk.pws.database.data.Psalm;
 import com.alelk.pws.database.data.PsalmPart;
+import com.alelk.pws.database.exception.PwsDatabaseIncorrectValueException;
+import com.alelk.pws.database.exception.PwsDatabaseSourceIdExistsException;
 import com.alelk.pws.database.source.PwsDataSource;
 import com.alelk.pws.database.source.PwsDataSourceImpl;
 import com.alelk.pws.pwapp.data.PwsPsalmParcelable;
@@ -56,7 +58,11 @@ public class MainActivity extends ActionBarActivity {
 
             pwsDataSource.addBook(book);
             for (Psalm psalm : book.getPsalms().values()) {
-                pwsDataSource.addPsalm(psalm);
+                try {
+                    pwsDataSource.addPsalm(psalm);
+                } catch (PwsDatabaseSourceIdExistsException e) {
+                } catch (PwsDatabaseIncorrectValueException e) {
+                }
             }
 
 

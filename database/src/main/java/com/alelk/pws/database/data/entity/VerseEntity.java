@@ -51,7 +51,8 @@ public class VerseEntity implements PwsDatabaseEntity {
                 "id=" + id +
                 ", psalmId=" + psalmId +
                 ", numbers='" + numbers + '\'' +
-                ", text='" + TextUtils.concat(text) + '\'' +
+                ", text='" + (text == null ? "" : text.substring(0, 20).replaceAll("\n", "|")) +
+                "... (" + text.length() + " symbols)'" +
                 '}';
     }
 }

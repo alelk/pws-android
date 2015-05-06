@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.alelk.pws.database.data.BookEdition;
 import com.alelk.pws.database.data.Psalm;
+import com.alelk.pws.database.data.PsalmChorus;
 import com.alelk.pws.database.data.PsalmPart;
 import com.alelk.pws.database.data.PsalmPartType;
 import com.alelk.pws.database.data.PsalmVerse;
@@ -47,12 +48,25 @@ public class PwsDatabasePsalmQuery extends PwsDatabaseQueryUtils implements PwsD
         this.database = database;
     }
 
+    /**
+     * Insert PWS Psalm object to database
+     * @param psalm PWS Psalm object
+     * @return PsalmEntity inserted into database
+     * @throws PwsDatabaseIncorrectValueException if any value incorrect. Contains one of the following PwsDatabaseMessage:
+     * NULL_DATABASE_VALUE if database is null,
+     * NULL_PSALM_VALUE if psalm object is null,
+     * NO_PSALM_NUMBERS if the psalm does not contains no one number,
+     * NO_BOOK_EDITION_FOUND if book edition is specified, but no book found with this book edition,
+     * UNEXPECTED_BOOK_EDITION_VALUE if if book edition is specified, but the psalm param has no psalm number for this book edition,
+     * NO_PSALM_PART_NUMBERS if psalm chorus or psalm verse does not contain no one number,
+     * @throws PwsDatabaseSourceIdExistsException if source already exists, but it's version is different from current. Contains one of the following PwsDatabaseMessage:
+     * PSALM_ID_EXISTS if psalm object already exists in database with another version
+     */
     @Override
     public PsalmEntity insert(Psalm psalm) throws PwsDatabaseIncorrectValueException, PwsDatabaseSourceIdExistsException {
         final String METHOD_NAME = "insert";
         validateSQLiteDatabaseNotNull(METHOD_NAME, database);
         validatePsalmNotNull(METHOD_NAME, psalm);
-
         PsalmEntity psalmEntity;
         database.beginTransaction();
         try {
@@ -138,7 +152,7 @@ public class PwsDatabasePsalmQuery extends PwsDatabaseQueryUtils implements PwsD
     private void insertPsalmParts(Psalm psalm, Long psalmId) throws PwsDatabaseSourceIdExistsException, PwsDatabaseIncorrectValueException {
         for (PsalmPart psalmPart : psalm.getPsalmPartsValues()) {
             if (psalmPart.getPsalmType() == PsalmPartType.CHORUS) {
-
+                new PwsDatabaseChorusQuery(database, psalmId).insert((PsalmChorus) psalmPart);
             } else if (psalmPart.getPsalmType() == PsalmPartType.VERSE) {
                 new PwsDatabaseVerseQuery(database, psalmId).insert((PsalmVerse) psalmPart);
             }
