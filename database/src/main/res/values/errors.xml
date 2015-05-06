@@ -13,7 +13,10 @@
 
     <!-- Pws Psalm Numbers -->
     <string name="psalm_number_exists_for_book_id">Psalm number already exists for specified book id</string>
-    <string name="no_psalm_numbers">Psalm has no psalm numbers.</string>
+    <string name="no_psalm_numbers">Psalm has no psalm numbers</string>
+
+    <!-- Pws Psalm part -->
+    <string name="no_psalm_part_numbers">Psalm part has no one number</string>
 
     <!-- common -->
     <string name="null_database_value">Incorrect value: SQLiteDatabase required but is not set</string>
