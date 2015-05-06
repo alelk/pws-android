@@ -31,15 +31,7 @@ public abstract class PsalmPart implements PwsObject, Serializable{
         return numbers;
     }
 
-    public void setNumbers(List<Integer> numbers) throws PwsDatabaseIncorrectValueException{
-        this.numbers = new ArrayList<>(5);
-        if (numbers != null && numbers.size() > 0) {
-            for (int number : numbers) {
-                if (number <= 0) {
-                    throw new PwsDatabaseIncorrectValueException();
-                }
-            }
-        }
+    public void setNumbers(List<Integer> numbers){
         this.numbers = numbers;
     }
 
@@ -54,7 +46,7 @@ public abstract class PsalmPart implements PwsObject, Serializable{
     @Override
     public String toString() {
         return "PsalmPart{" +
-                "numbers=" + numbers +
+                "numbers=" + numbers == null ? "": numbers +
                 ", text='" + text == null ? "": text.replaceAll("\\W", "") + '\'' +
                 '}';
     }
