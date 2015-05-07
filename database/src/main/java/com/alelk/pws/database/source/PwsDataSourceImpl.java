@@ -8,7 +8,6 @@ import com.alelk.pws.database.builder.PsalmBuilder;
 import com.alelk.pws.database.data.Book;
 import com.alelk.pws.database.data.BookEdition;
 import com.alelk.pws.database.data.Psalm;
-import com.alelk.pws.database.data.PsalmChorus;
 import com.alelk.pws.database.data.entity.BookEntity;
 import com.alelk.pws.database.data.entity.ChorusEntity;
 import com.alelk.pws.database.data.entity.PsalmEntity;
@@ -22,8 +21,6 @@ import com.alelk.pws.database.query.PwsDatabasePsalmQuery;
 import com.alelk.pws.database.query.PwsDatabaseVerseQuery;
 
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
