@@ -18,7 +18,10 @@ import com.alelk.pws.database.exception.PwsDatabaseException;
 import com.alelk.pws.database.exception.PwsDatabaseIncorrectValueException;
 import com.alelk.pws.database.exception.PwsDatabaseMessage;
 import com.alelk.pws.database.exception.PwsDatabaseSourceIdExistsException;
+import com.alelk.pws.database.table.PwsBookTable;
+import com.alelk.pws.database.table.PwsPsalmNumbersTable;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -34,14 +37,27 @@ public class PwsDatabasePsalmQuery extends PwsDatabaseQueryUtils implements PwsD
     private static final String LOG_TAG = PwsDatabasePsalmQuery.class.getSimpleName();
 
     private final static String[] ALL_COLUMNS = {
-            COLUMN_ID,
-            COLUMN_VERSION,
-            COLUMN_NAME,
-            COLUMN_AUTHOR,
-            COLUMN_TRANSLATOR,
-            COLUMN_COMPOSER,
-            COLUMN_TONALITIES,
-            COLUMN_YEAR };
+            TABLE_PSALMS + "." + COLUMN_ID,
+            TABLE_PSALMS + "." + COLUMN_VERSION,
+            TABLE_PSALMS + "." + COLUMN_NAME,
+            TABLE_PSALMS + "." + COLUMN_AUTHOR,
+            TABLE_PSALMS + "." + COLUMN_TRANSLATOR,
+            TABLE_PSALMS + "." + COLUMN_COMPOSER,
+            TABLE_PSALMS + "." + COLUMN_TONALITIES,
+            TABLE_PSALMS + "." + COLUMN_YEAR };
+
+    // psalms INNER JOIN psalmnumbers ON psalms._id=psalmnumbers.psalmid
+    // INNER JOIN books ON books._id=psalmnumbers.bookid
+    private static final String TABLE_PSALMS_JOIN_PSALMNUMBERS_JOIN_BOOKS = TABLE_PSALMS +
+            " INNER JOIN " + PwsPsalmNumbersTable.TABLE_PSALMNUMBERS +
+            " ON " + TABLE_PSALMS + "." + COLUMN_ID + "=" +
+            PwsPsalmNumbersTable.TABLE_PSALMNUMBERS + "." + PwsPsalmNumbersTable.COLUMN_PSALMID +
+            " INNER JOIN " + PwsBookTable.TABLE_BOOKS +
+            " ON " + PwsBookTable.TABLE_BOOKS + "." + PwsBookTable.COLUMN_ID + "=" +
+            PwsPsalmNumbersTable.TABLE_PSALMNUMBERS + "." + PwsPsalmNumbersTable.COLUMN_BOOKID;
+
+    private static final String SELECTION_BY_BOOK_EDITION =
+            PwsBookTable.TABLE_BOOKS + "." + PwsBookTable.COLUMN_EDITION + "=?";
 
     private SQLiteDatabase database;
 
@@ -113,8 +129,20 @@ public class PwsDatabasePsalmQuery extends PwsDatabaseQueryUtils implements PwsD
         return  psalmEntity;
     }
 
-    public Set<PsalmEntity> selectByBookId(long bookId) throws PwsDatabaseIncorrectValueException {
+    public Set<PsalmEntity> selectByBookEdition(BookEdition bookEdition) throws PwsDatabaseIncorrectValueException {
         final String METHOD_NAME = "selectByBookEdition";
+        validateSQLiteDatabaseNotNull(METHOD_NAME, database);
+        Set<PsalmEntity> psalmEntities = null;
+        final String[] SELECTION_ARGS = new String[1];
+        Arrays.asList(bookEdition.getSignature()).toArray(SELECTION_ARGS);
+        Cursor cursor = database.query(TABLE_PSALMS_JOIN_PSALMNUMBERS_JOIN_BOOKS, ALL_COLUMNS, SELECTION_BY_BOOK_EDITION, SELECTION_ARGS, null, null, null);
+
+        return psalmEntities;
+    }
+
+    public Set<PsalmEntity> selectByBookId(long bookId) throws PwsDatabaseIncorrectValueException {
+        final String METHOD_NAME = "selectByBookId";
+
         validateSQLiteDatabaseNotNull(METHOD_NAME, database);
         Set<PsalmNumberEntity> psalmNumberEntities =
                 new PwsDatabasePsalmNumberQuery(database, null, null).selectByBookId(bookId);
