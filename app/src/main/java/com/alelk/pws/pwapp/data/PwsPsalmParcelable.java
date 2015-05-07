@@ -39,7 +39,9 @@ public class PwsPsalmParcelable implements PwsParcelableObject {
         year = psalm.getYear();
         tonalities = psalm.getTonalities();
         numbers.putAll(psalm.getNumbers());
-        psalmParts.putAll(psalm.getPsalmParts());
+        if (psalm.getPsalmParts() != null) {
+            psalmParts.putAll(psalm.getPsalmParts());
+        }
     }
 
     public static final Creator<PwsPsalmParcelable> CREATOR = new Creator<PwsPsalmParcelable>() {

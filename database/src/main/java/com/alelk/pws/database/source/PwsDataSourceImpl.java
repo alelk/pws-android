@@ -18,6 +18,7 @@ import com.alelk.pws.database.helper.PwsDatabaseHelper;
 import com.alelk.pws.database.query.PwsDatabaseBookQuery;
 import com.alelk.pws.database.query.PwsDatabaseChorusQuery;
 import com.alelk.pws.database.query.PwsDatabasePsalmQuery;
+import com.alelk.pws.database.query.PwsDatabaseQueryHelper;
 import com.alelk.pws.database.query.PwsDatabaseVerseQuery;
 
 import java.util.HashMap;
@@ -80,10 +81,10 @@ public class PwsDataSourceImpl implements PwsDataSource {
         return psalmEntity;
     }
 
+    @Override
     public Map<Integer, Psalm> getPsalms(BookEdition bookEdition) throws PwsDatabaseIncorrectValueException {
         Map<Integer, Psalm> psalms = null;
-        long bookId = new PwsDatabaseBookQuery(database).selectByEdition(bookEdition).getId();
-        Set<PsalmEntity> psalmEntities = new PwsDatabasePsalmQuery(database).selectByBookId(bookId);
+        Set<PsalmEntity> psalmEntities = new PwsDatabasePsalmQuery(database).selectByBookEdition(bookEdition);
 
         // todo select psalm numbers
 
@@ -92,7 +93,8 @@ public class PwsDataSourceImpl implements PwsDataSource {
             for (PsalmEntity psalmEntity : psalmEntities) {
                 Set<VerseEntity> verseEntities = new PwsDatabaseVerseQuery(database, null).selectByPsalmId(psalmEntity.getId());
                 Set<ChorusEntity> chorusEntities = new PwsDatabaseChorusQuery(database, null).selectByPsalmId(psalmEntity.getId());
-                Psalm psalm = new PsalmBuilder(psalmEntity, verseEntities, chorusEntities).toObject();
+                Map<BookEdition, Integer> numbers = new PwsDatabaseQueryHelper(database).getPsalmNumbersByPsalmId(psalmEntity.getId());
+                Psalm psalm = new PsalmBuilder(psalmEntity, verseEntities, chorusEntities, numbers).toObject();
                 if (psalm != null) {
                     psalms.put(psalm.getNumber(bookEdition), psalm);
                 }
