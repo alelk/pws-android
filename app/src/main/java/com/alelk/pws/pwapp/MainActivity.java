@@ -63,7 +63,7 @@ public class MainActivity extends ActionBarActivity {
                 books.put(book.getEdition(), book);
             }
 
-            PwsDataSource pwsDataSource = new PwsDataSourceImpl(this, "pws.db", 2);
+            PwsDataSource pwsDataSource = new PwsDataSourceImpl(this, "pws.db", 4);
             pwsDataSource.open();
             for (Book book : books.values()) {
                 pwsDataSource.addBook(book);
