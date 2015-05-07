@@ -68,17 +68,23 @@ public class MainActivity extends ActionBarActivity {
             for (Book book : books.values()) {
                 pwsDataSource.addBook(book);
             }
-            List<Psalm> psalms = new ArrayList<>();
+
             Book book = books.get(BookEdition.PV3055);
-            for (int num : book.getPsalms().keySet()) {
-                psalms.add(book.getPsalm(num));
-            }
             for (Psalm psalm : book.getPsalms().values()) {
                 try {
                     pwsDataSource.addPsalm(psalm);
                 } catch (PwsDatabaseSourceIdExistsException e) {
                 } catch (PwsDatabaseIncorrectValueException e) {
                 }
+            }
+
+
+
+            List<Psalm> psalms = new ArrayList<>();
+            try {
+                psalms.addAll(pwsDataSource.getPsalms(BookEdition.PV3055).values());
+            } catch (PwsDatabaseIncorrectValueException e) {
+                e.printStackTrace();
             }
             pwsDataSource.close();
 
@@ -119,8 +125,10 @@ public class MainActivity extends ActionBarActivity {
             Psalm psalm = (Psalm) parent.getItemAtPosition(position);
 
             String text = psalm.toString() + "\n";
-            for (PsalmPart part : psalm.getPsalmParts().values()) {
-                text += part + "\n";
+            if (psalm.getPsalmParts() != null) {
+                for (PsalmPart part : psalm.getPsalmParts().values()) {
+                    text += part + "\n";
+                }
             }
 
             Intent intent = new Intent(getApplicationContext(), PsalmActivity.class);

@@ -15,17 +15,17 @@ import java.util.Set;
  */
 public abstract class PwsBuilderUtils {
     protected List<Integer> parseNumbersFromString(String numbers) {
-        List<Integer> nums = null;
-        List<String> numList = Arrays.asList(TextUtils.split(numbers, PwsDatabaseQuery.MULTIVALUE_DELIMITER));
-        if(!numList.isEmpty()) {
-            nums = new ArrayList<>(numList.size());
-            for (String num : numList) {
-                num = num.trim();
-                if (TextUtils.isEmpty(num)) {
-                    try {
-                        nums.add(Integer.parseInt(num));
-                    } catch (NumberFormatException e) {
-                    }
+        List<Integer> nums = new ArrayList<>();
+        String[] numList = null;
+        if (numbers != null && !numbers.isEmpty()) {
+            numList = numbers.split("\\D");
+        }
+        for (String num : numList) {
+            num = num.trim();
+            if (!TextUtils.isEmpty(num)) {
+                try {
+                    nums.add(Integer.parseInt(num));
+                } catch (NumberFormatException e) {
                 }
             }
         }

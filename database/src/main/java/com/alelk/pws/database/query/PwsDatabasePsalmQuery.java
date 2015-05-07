@@ -136,10 +136,19 @@ public class PwsDatabasePsalmQuery extends PwsDatabaseQueryUtils implements PwsD
         final String[] SELECTION_ARGS = new String[1];
         Arrays.asList(bookEdition.getSignature()).toArray(SELECTION_ARGS);
         Cursor cursor = database.query(TABLE_PSALMS_JOIN_PSALMNUMBERS_JOIN_BOOKS, ALL_COLUMNS, SELECTION_BY_BOOK_EDITION, SELECTION_ARGS, null, null, null);
-
+        if (cursor.moveToFirst()) {
+            psalmEntities = new HashSet<>(cursor.getCount());
+            do {
+                psalmEntities.add(cursorToPsalmEntity(cursor));
+            } while (cursor.moveToNext());
+            Log.v(LOG_TAG, METHOD_NAME + ": Count of psalms selected for bookEdition=" + bookEdition + ": " + psalmEntities.size());
+        } else {
+            Log.v(LOG_TAG, METHOD_NAME + ": No psalms selected for bookEdition=" + bookEdition);
+        }
         return psalmEntities;
     }
 
+    // todo refactor this function
     public Set<PsalmEntity> selectByBookId(long bookId) throws PwsDatabaseIncorrectValueException {
         final String METHOD_NAME = "selectByBookId";
 
@@ -156,7 +165,7 @@ public class PwsDatabasePsalmQuery extends PwsDatabaseQueryUtils implements PwsD
             }
             Log.v(LOG_TAG, METHOD_NAME + ": Count of psalms selected for bookId=" + bookId + ": " + psalmEntities.size());
         } else {
-            Log.v(LOG_TAG, METHOD_NAME + ": No psalms selected for bookId=" + bookId + ": ");
+            Log.v(LOG_TAG, METHOD_NAME + ": No psalms selected for bookId=" + bookId);
         }
         return  psalmEntities;
     }

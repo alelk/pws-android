@@ -1,7 +1,11 @@
 package com.alelk.pws.database.builder;
 
+import android.util.Log;
+
 import com.alelk.pws.database.data.PsalmVerse;
 import com.alelk.pws.database.data.entity.VerseEntity;
+
+
 
 /**
  * Created by Alex Elkin on 06.05.2015.
@@ -19,9 +23,11 @@ public class PsalmVerseBuilder extends PwsBuilderUtils implements PwsBuilder<Psa
     @Override
     public PsalmVerse toObject() {
         PsalmVerse psalmVerse = null;
+        Log.v("PsalmVerseBuilder", "verse: " + verseEntity);
         if (verseEntity != null) {
             psalmVerse = new PsalmVerse();
             psalmVerse.setNumbers(parseNumbersFromString(verseEntity.getNumbers()));
+            Log.v("PsalmVerseBuilder", "numbers: " + parseNumbersFromString(verseEntity.getNumbers()));
             psalmVerse.setText(verseEntity.getText());
         }
         return psalmVerse;
