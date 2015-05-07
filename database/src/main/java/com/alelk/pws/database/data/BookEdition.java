@@ -20,4 +20,13 @@ public enum BookEdition {
     public String getSignature() {
         return signature;
     }
+
+    public static BookEdition getInstanceBySignature(String signature) {
+        for (BookEdition bookEdition : BookEdition.values()) {
+            if (bookEdition.getSignature().equals(signature)) {
+                return bookEdition;
+            }
+        }
+        return null;
+    }
 }
