@@ -87,7 +87,7 @@ public class PwsDataSourceImpl implements PwsDataSource {
         Map<Integer, Psalm> psalms = null;
         long bookId = new PwsDatabaseBookQuery(database).selectByEdition(bookEdition).getId();
         Set<PsalmEntity> psalmEntities = new PwsDatabasePsalmQuery(database).selectByBookId(bookId);
-        
+
         // todo select psalm numbers
 
         if(psalmEntities != null && !psalmEntities.isEmpty()) {
