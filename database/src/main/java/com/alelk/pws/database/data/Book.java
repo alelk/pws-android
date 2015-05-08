@@ -15,7 +15,7 @@ public class Book implements PwsObject {
     private String description;
     private String version;
     private BookEdition edition;
-    private Date releaseDate;
+    private String releaseDate;
     private List<String> authors;
     private List<String> creators;
     private List<String> reviewers;
@@ -73,11 +73,11 @@ public class Book implements PwsObject {
         this.edition = edition;
     }
 
-    public Date getReleaseDate() {
+    public String getReleaseDate() {
         return releaseDate;
     }
 
-    public void setReleaseDate(Date releaseDate) {
+    public void setReleaseDate(String releaseDate) {
         this.releaseDate = releaseDate;
     }
 

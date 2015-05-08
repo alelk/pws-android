@@ -319,7 +319,9 @@ public abstract class PwsXmlParserHelper implements Constants {
                         } else if (Constants.TAG.BK.EDITION.equalsIgnoreCase(currentTagName)) {
                             book.setEdition(parseBookEdition(parser, parser.getText()));
                         } else if (Constants.TAG.BK.RELEASE_DATE.equalsIgnoreCase(currentTagName)) {
-                            book.setReleaseDate(parseDate(parser.getText()));
+                            String date = parser.getText();
+                            validateDateFormat(parser, date);
+                            book.setReleaseDate(date);
                         } else if (Constants.TAG.BK.COMMENT.equalsIgnoreCase(currentTagName)) {
                             book.setComment(parser.getText());
                         } else {
@@ -532,7 +534,9 @@ public abstract class PwsXmlParserHelper implements Constants {
                         } else if (Constants.TAG.BK.CHPRS.CHPTR.DISPLAY_NAME.equalsIgnoreCase(currentTagName)) {
                             chapter.setDisplayName(parser.getText());
                         } else if (Constants.TAG.BK.CHPRS.CHPTR.RELEASE_DATE.equalsIgnoreCase(currentTagName)) {
-                            chapter.setReleaseDate(parseDate(parser.getText()));
+                            final String date = parser.getText();
+                            validateDateFormat(parser, date);
+                            chapter.setReleaseDate(date);
                         } else if (Constants.TAG.BK.CHPRS.CHPTR.DESCRIPTION.equalsIgnoreCase(currentTagName)) {
                             chapter.setDescription(parser.getText());
                         } else if (Constants.TAG.BK.CHPRS.CHPTR.PSALM_NUMBERS.equalsIgnoreCase(currentTagName)) {
@@ -807,7 +811,9 @@ public abstract class PwsXmlParserHelper implements Constants {
                         } else if (Constants.TAG.PSLM.COMPOSER.equalsIgnoreCase(currentTagName)) {
                             psalm.setComposer(parser.getText());
                         } else if (Constants.TAG.PSLM.YEAR.equalsIgnoreCase(currentTagName)) {
-                            psalm.setYear(parseDate(parser.getText()));
+                            final String date = parser.getText();
+                            validateDateFormat(parser, date);
+                            psalm.setYear(date);
                         } else if (Constants.TAG.PSLM.NAME.equalsIgnoreCase(currentTagName)) {
                             psalm.setName(parser.getText());
                         }else {
@@ -919,32 +925,10 @@ public abstract class PwsXmlParserHelper implements Constants {
     }
 
     private BookEdition parseBookEdition(XmlPullParser parser, String s) {
-        BookEdition bookEdition = null;
-        switch (s.trim().toLowerCase()){
-            case Constants.ATTR_VAL.BK.EDITION_GUSLI:
-                bookEdition = BookEdition.GUSLI;
-                break;
-            case ATTR_VAL.BK.EDITION_PV3055:
-                bookEdition = BookEdition.PV3055;
-                break;
-            case ATTR_VAL.BK.EDITION_CHYMNS:
-                bookEdition = BookEdition.CHYMNS;
-                break;
-            case ATTR_VAL.BK.EDITION_CPSALMS:
-                bookEdition = BookEdition.CPsalms;
-                break;
-            case ATTR_VAL.BK.EDITION_KIMVAL:
-                bookEdition = BookEdition.Kimval;
-                break;
-            case ATTR_VAL.BK.EDITION_SDP:
-                bookEdition = BookEdition.SDP;
-                break;
-            case ATTR_VAL.BK.EDITION_TYMPAN:
-                bookEdition = BookEdition.Tympan;
-                break;
-            default:
-                Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
-                        ": Unknown Book Edition: '" + s + "'");
+        BookEdition bookEdition = BookEdition.getInstanceBySignature(s.trim());
+        if (bookEdition == null) {
+            Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
+                    ": Unknown Book Edition: '" + s + "'");
         }
         return bookEdition;
     }
@@ -1169,6 +1153,14 @@ public abstract class PwsXmlParserHelper implements Constants {
                     ": Incorrect end tag: " + endTagName +
                     "(expected tag: '" + currentTagName + "')");
             throw new PwsXmlParserIncorrectSourceFormatException();
+        }
+    }
+
+    private void validateDateFormat(XmlPullParser parser, String text) {
+        Date date = parseDate(text);
+        if (date == null) {
+            Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
+                    ": Cannot parse date. Incorrect format '" + text + "')");
         }
     }
 
