@@ -23,7 +23,7 @@ public enum BookEdition {
 
     public static BookEdition getInstanceBySignature(String signature) {
         for (BookEdition bookEdition : BookEdition.values()) {
-            if (bookEdition.getSignature().equals(signature)) {
+            if (bookEdition.getSignature().equalsIgnoreCase(signature)) {
                 return bookEdition;
             }
         }
