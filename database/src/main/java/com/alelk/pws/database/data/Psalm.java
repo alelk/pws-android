@@ -21,7 +21,7 @@ public class Psalm implements PwsObject {
     private String author;
     private String translator;
     private String composer;
-    private Date year;
+    private String year;
     private List<String> tonalities = new ArrayList<>();
     private Map<BookEdition, Integer> numbers;
     private SortedMap<Integer, PsalmPart> psalmParts;
@@ -50,11 +50,11 @@ public class Psalm implements PwsObject {
         this.author = author;
     }
 
-    public Date getYear() {
+    public String getYear() {
         return year;
     }
 
-    public void setYear(Date year) {
+    public void setYear(String year) {
         this.year = year;
     }
 
