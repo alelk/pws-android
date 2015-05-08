@@ -16,7 +16,7 @@ public class Chapter implements PwsObject {
     private String displayName;
     private String description;
     private String version;
-    private Date releaseDate;
+    private String releaseDate;
     private BookEdition bookEdition;
     private Set<Integer> psalmNumbers = new HashSet<>();
     private String comment;
@@ -66,11 +66,11 @@ public class Chapter implements PwsObject {
         return bookEdition;
     }
 
-    public Date getReleaseDate() {
+    public String getReleaseDate() {
         return releaseDate;
     }
 
-    public void setReleaseDate(Date releaseDate) {
+    public void setReleaseDate(String releaseDate) {
         this.releaseDate = releaseDate;
     }
 
