@@ -20,6 +20,7 @@ public interface Constants {
             public static final String NUMBERS = "numbers";
             public static final String COMPOSER = "composer";
             public static final String YEAR = "year";
+            public static final String ANNOTATION = "annotation";
             public static final String TEXT = "text";
             public static final String TONALITIES = "tonalities";
             public final static class NUMS {

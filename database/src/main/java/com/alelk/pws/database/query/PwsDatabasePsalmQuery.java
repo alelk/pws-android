@@ -44,7 +44,8 @@ public class PwsDatabasePsalmQuery extends PwsDatabaseQueryUtils implements PwsD
             TABLE_PSALMS + "." + COLUMN_TRANSLATOR,
             TABLE_PSALMS + "." + COLUMN_COMPOSER,
             TABLE_PSALMS + "." + COLUMN_TONALITIES,
-            TABLE_PSALMS + "." + COLUMN_YEAR };
+            TABLE_PSALMS + "." + COLUMN_YEAR,
+            TABLE_PSALMS + "." + COLUMN_ANNOTATION};
 
     // psalms INNER JOIN psalmnumbers ON psalms._id=psalmnumbers.psalmid
     // INNER JOIN books ON books._id=psalmnumbers.bookid
@@ -227,6 +228,7 @@ public class PwsDatabasePsalmQuery extends PwsDatabaseQueryUtils implements PwsD
         psalmEntity.setComposer(cursor.getString(5));
         psalmEntity.setTonalities(cursor.getString(6));
         psalmEntity.setYear(cursor.getString(7));
+        psalmEntity.setAnnotation(cursor.getString(8));
         return psalmEntity;
     }
 
@@ -249,8 +251,11 @@ public class PwsDatabasePsalmQuery extends PwsDatabaseQueryUtils implements PwsD
         if (psalm.getTonalities() != null && !psalm.getTonalities().isEmpty()) {
             values.put(COLUMN_TONALITIES, TextUtils.join(MULTIVALUE_DELIMITER, psalm.getTonalities()));
         }
-        if (psalm.getYear() != null) {
+        if (!TextUtils.isEmpty(psalm.getYear())) {
             values.put(COLUMN_YEAR, psalm.getYear().toString());
+        }
+        if (!TextUtils.isEmpty(psalm.getAnnotation())) {
+            values.put(COLUMN_ANNOTATION, psalm.getAnnotation().toString());
         }
     }
 
