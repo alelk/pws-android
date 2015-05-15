@@ -10,7 +10,11 @@ public enum BookEdition {
     CPsalms ("CPsalms"),
     SDP ("SDP"),
     Tympan ("Tympan"),
-    Kimval ("Kimval");
+    Kimval ("Kimval"),
+    FCPSALMS ("FCPsalms"),
+    SLAVIT_BEZ_ZAPINKI ("SlavitBezZapinki");
+
+
     private String signature;
 
     BookEdition(String signature) {

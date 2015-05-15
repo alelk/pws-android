@@ -16,6 +16,7 @@ public class PwsPsalmTable implements PwsTable {
     public static final String COLUMN_COMPOSER = "composer";
     public static final String COLUMN_TONALITIES = "tonalities";
     public static final String COLUMN_YEAR = "year";
+    public static final String COLUMN_ANNOTATION = "annotation";
 
     private static final String TABLE_CREATE_SCRIPT = "create table " + TABLE_PSALMS +
             "(" + COLUMN_ID + " integer primary key autoincrement, " +
@@ -25,7 +26,8 @@ public class PwsPsalmTable implements PwsTable {
             COLUMN_TRANSLATOR + " text, " +
             COLUMN_COMPOSER + " text, " +
             COLUMN_TONALITIES + " text, " +
-            COLUMN_YEAR + " text);";
+            COLUMN_YEAR + " text, " +
+            COLUMN_ANNOTATION + " text);";
 
     private static final String TABLE_DROP_SCRIPT = "drop table if exists " + TABLE_PSALMS;
 

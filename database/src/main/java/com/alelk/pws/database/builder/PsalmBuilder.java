@@ -72,6 +72,7 @@ public class PsalmBuilder implements PwsBuilder<Psalm, PsalmEntity> {
             psalm.setComposer(psalmEntity.getComposer());
             psalm.setTonalities(Arrays.asList(TextUtils.split(psalmEntity.getTonalities(), PwsDatabaseQuery.MULTIVALUE_DELIMITER)));
             psalm.setYear(psalmEntity.getYear());
+            psalm.setAnnotation(psalmEntity.getAnnotation());
 
             SortedMap<Integer, PsalmPart> psalmParts = new TreeMap<>();
             if (verseEntities != null && !verseEntities.isEmpty())
