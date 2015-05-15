@@ -31,6 +31,7 @@ public class PsalmActivity extends Activity {
         text += "\nYear: " + psalmParcelable.getYear();
         text += "\nTonalities: " + psalmParcelable.getTonalities();
         text += "\nNumbers: " + psalmParcelable.getNumbers();
+        text += "\nAnnotation: " + psalmParcelable.getAnnotation();
         text += "\n___________________________\n";
         SortedMap<Integer, PsalmPart> psalmParts = psalmParcelable.getPsalmParts();
         for (int k : psalmParts.keySet()) {

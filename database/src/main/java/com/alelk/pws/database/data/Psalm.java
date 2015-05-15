@@ -1,8 +1,11 @@
 package com.alelk.pws.database.data;
 
+import android.text.TextUtils;
+
 import com.alelk.pws.database.exception.PwsDatabaseIncorrectValueException;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -22,9 +25,26 @@ public class Psalm implements PwsObject {
     private String translator;
     private String composer;
     private String year;
+    private String annotation;
     private List<String> tonalities = new ArrayList<>();
     private Map<BookEdition, Integer> numbers;
     private SortedMap<Integer, PsalmPart> psalmParts;
+
+    private static class NumberComparator implements Comparator<Psalm> {
+        private BookEdition bookEdition;
+        public NumberComparator(BookEdition bookEdition) {
+            this.bookEdition = bookEdition;
+        }
+        @Override
+        public int compare(Psalm psalm1, Psalm psalm2) {
+            Integer psalmNumber1 = psalm1.getNumber(bookEdition);
+            Integer psalmNumber2 = psalm2.getNumber(bookEdition);
+            if (psalmNumber1 == null && psalmNumber2 == null) return 0;
+            else if (psalmNumber1 == null) return -1;
+            else if (psalmNumber2 == null) return 1;
+            return psalmNumber1.compareTo(psalmNumber2);
+        }
+    }
 
     public String getName() {
         return name;
@@ -140,11 +160,37 @@ public class Psalm implements PwsObject {
         return tonalities;
     }
 
+    public String getAnnotation() {
+        return annotation;
+    }
+
+    public void setAnnotation(String annotation) {
+        this.annotation = annotation;
+    }
+
     public void setTonalities(List<String> tonalities) {
         this.tonalities = new ArrayList<>();
         if (tonalities != null && tonalities.size() > 0) {
             this.tonalities.addAll(tonalities);
         }
+    }
+
+    public static Comparator<Psalm> getNumberComparator(BookEdition bookEdition) {
+        return new NumberComparator(bookEdition);
+    }
+
+    public static Comparator<Psalm> getNameComparator() {
+        return new Comparator<Psalm>() {
+            @Override
+            public int compare(Psalm lhs, Psalm rhs) {
+                String name1 = lhs.getName();
+                String name2 = rhs.getName();
+                if (name1 == null && name2 == null) return 0;
+                else if (name1 == null) return -1;
+                else if (name2 == null) return 1;
+                return name1.compareTo(name2);
+            }
+        };
     }
 
     public String toString() {
@@ -154,6 +200,7 @@ public class Psalm implements PwsObject {
                 "' translator='" + this.translator +
                 "' composer='" + this.composer +
                 "' year='" + this.year +
+                "' annotation='" + this.annotation +
                 "' number=[ ";
         if (numbers != null && !numbers.isEmpty()) {
             for (BookEdition bookEdition : this.numbers.keySet()) {

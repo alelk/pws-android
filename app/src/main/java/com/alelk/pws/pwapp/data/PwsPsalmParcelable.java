@@ -26,6 +26,7 @@ public class PwsPsalmParcelable implements PwsParcelableObject {
     private String translator;
     private String composer;
     private String year;
+    private String annotation;
     private List<String> tonalities = new ArrayList<>();
     private HashMap<BookEdition, Integer> numbers = new HashMap<>();
     private HashMap<Integer, PsalmPart> psalmParts = new HashMap<>();
@@ -37,6 +38,7 @@ public class PwsPsalmParcelable implements PwsParcelableObject {
         translator = psalm.getTranslator();
         composer = psalm.getComposer();
         year = psalm.getYear();
+        annotation = psalm.getAnnotation();
         tonalities = psalm.getTonalities();
         numbers.putAll(psalm.getNumbers());
         if (psalm.getPsalmParts() != null) {
@@ -70,6 +72,7 @@ public class PwsPsalmParcelable implements PwsParcelableObject {
         dest.writeString(getTranslator());
         dest.writeString(getComposer());
         dest.writeString(getYear());
+        dest.writeString(getAnnotation());
         dest.writeStringList(getTonalities());
         dest.writeSerializable(getNumbers());
         dest.writeSerializable(psalmParts);
@@ -82,6 +85,7 @@ public class PwsPsalmParcelable implements PwsParcelableObject {
         translator = parcel.readString();
         composer = parcel.readString();
         year = parcel.readString();
+        annotation = parcel.readString();
         parcel.readStringList(tonalities);
         numbers = (HashMap<BookEdition, Integer>) parcel.readSerializable();
         psalmParts = (HashMap<Integer, PsalmPart>) parcel.readSerializable();
@@ -109,6 +113,10 @@ public class PwsPsalmParcelable implements PwsParcelableObject {
 
     public String getYear() {
         return year;
+    }
+
+    public String getAnnotation() {
+        return annotation;
     }
 
     public List<String> getTonalities() {

@@ -26,6 +26,7 @@ import com.alelk.pws.xmlengine.exception.PwsXmlParserIncorrectSourceFormatExcept
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +55,9 @@ public class MainActivity extends ActionBarActivity {
                     "pwsbooks/gusli.pwsbk",
                     "pwsbooks/kimval.pwsbk",
                     "pwsbooks/sdp.pwsbk",
-                    "pwsbooks/tympan.pwsbk");
+                    "pwsbooks/tympan.pwsbk",
+                    "pwsbooks/slavit\'_bez_zapinki.pwsbk",
+                    "pwsbooks/fcpsalms.pwsbk");
 
             Map<BookEdition, Book> books = new HashMap();
 
@@ -63,7 +66,7 @@ public class MainActivity extends ActionBarActivity {
                 books.put(book.getEdition(), book);
             }
 
-            PwsDataSource pwsDataSource = new PwsDataSourceImpl(this, "pws.db", 4);
+            PwsDataSource pwsDataSource = new PwsDataSourceImpl(this, "pws.db", 5);
             pwsDataSource.open();
             for (Book book : books.values()) {
                 pwsDataSource.addBook(book);
@@ -87,6 +90,8 @@ public class MainActivity extends ActionBarActivity {
                 e.printStackTrace();
             }
             pwsDataSource.close();
+
+            Collections.sort(psalms, Psalm.getNumberComparator(BookEdition.PV3055));
 
             psalmListAdapter = new PsalmListAdapter(this, R.layout.layout_psalms_list, psalms);
             listView.setAdapter(psalmListAdapter);
