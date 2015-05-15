@@ -23,11 +23,9 @@ public class PsalmVerseBuilder extends PwsBuilderUtils implements PwsBuilder<Psa
     @Override
     public PsalmVerse toObject() {
         PsalmVerse psalmVerse = null;
-        Log.v("PsalmVerseBuilder", "verse: " + verseEntity);
         if (verseEntity != null) {
             psalmVerse = new PsalmVerse();
             psalmVerse.setNumbers(parseNumbersFromString(verseEntity.getNumbers()));
-            Log.v("PsalmVerseBuilder", "numbers: " + parseNumbersFromString(verseEntity.getNumbers()));
             psalmVerse.setText(verseEntity.getText());
         }
         return psalmVerse;

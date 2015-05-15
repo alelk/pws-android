@@ -38,7 +38,7 @@ import java.util.TreeMap;
 /**
  * Contains the functionality for Pws Book parsing
  *
- * Created by alelkin on 06.04.2015.
+ * Created by Alex Elkin on 06.04.2015.
  */
 public abstract class PwsXmlParserHelper implements Constants {
     private static final String LOG_TAG = "PwsXmlParserHelper";
@@ -749,19 +749,19 @@ public abstract class PwsXmlParserHelper implements Constants {
 
     private Psalm parsePsalm(XmlPullParser parser) throws XmlPullParserException, IOException, PwsXmlParserIncorrectSourceFormatException, PwsDatabaseIncorrectValueException {
         if (parser.getEventType() != XmlPullParser.START_TAG ||
-                !parser.getName().equalsIgnoreCase(Constants.TAG.PSLM.TAG)) return null;
+                !parser.getName().equalsIgnoreCase(TAG.PSLM.TAG)) return null;
         Psalm psalm = new Psalm();
 
         for (int i = 0; i < parser.getAttributeCount(); i++) {
             String attributeName = parser.getAttributeName(i);
             switch (attributeName) {
-                case Constants.TAG.PSLM.VERSION:
+                case TAG.PSLM.VERSION:
                     psalm.setVersion(parser.getAttributeValue(i));
                     break;
-                case Constants.TAG.PSLM.NAME:
+                case TAG.PSLM.NAME:
                     psalm.setName(parser.getAttributeValue(i));
                     break;
-                case Constants.TAG.PSLM.AUTHOR:
+                case TAG.PSLM.AUTHOR:
                     psalm.setAuthor(parser.getAttributeValue(i));
                     break;
                 default:
@@ -772,14 +772,19 @@ public abstract class PwsXmlParserHelper implements Constants {
 
         int eventType;
         final List<String> allowedStartTags = new ArrayList<>(Arrays.asList(
-                Constants.TAG.PSLM.AUTHOR,
-                Constants.TAG.PSLM.NAME,
-                Constants.TAG.PSLM.TRANSLATOR,
-                Constants.TAG.PSLM.NUMBERS,
-                Constants.TAG.PSLM.YEAR,
-                Constants.TAG.PSLM.COMPOSER,
-                Constants.TAG.PSLM.TEXT,
-                Constants.TAG.PSLM.TONALITIES));
+                TAG.PSLM.AUTHOR,
+                TAG.PSLM.NAME,
+                TAG.PSLM.TRANSLATOR,
+                TAG.PSLM.NUMBERS,
+                TAG.PSLM.YEAR,
+                TAG.PSLM.ANNOTATION,
+                TAG.PSLM.COMPOSER,
+                TAG.PSLM.TEXT,
+                TAG.PSLM.TONALITIES));
+        final List<String> tagsWithoutText = new ArrayList<>(Arrays.asList(
+                TAG.PSLM.TONALITIES,
+                TAG.PSLM.NUMBERS,
+                TAG.PSLM.TEXT));
         String tagName;
         String currentTagName = null;
         boolean done = false;
@@ -790,11 +795,11 @@ public abstract class PwsXmlParserHelper implements Constants {
                     tagName = parser.getName();
                     if (allowedStartTags.contains(tagName.toLowerCase())) {
                         currentTagName = tagName;
-                        if (Constants.TAG.PSLM.NUMBERS.equalsIgnoreCase(tagName)) {
+                        if (TAG.PSLM.NUMBERS.equalsIgnoreCase(tagName)) {
                             parsePsalmNumbers(parser, psalm);
-                        } else if (Constants.TAG.PSLM.TONALITIES.equalsIgnoreCase(tagName)) {
+                        } else if (TAG.PSLM.TONALITIES.equalsIgnoreCase(tagName)) {
                             parsePsalmTonalities(parser, psalm);
-                        }else if (Constants.TAG.PSLM.TEXT.equalsIgnoreCase(tagName)) {
+                        }else if (TAG.PSLM.TEXT.equalsIgnoreCase(tagName)) {
                             parsePsalmText(parser, psalm);
                         }
                     } else {
@@ -803,23 +808,35 @@ public abstract class PwsXmlParserHelper implements Constants {
                     }
                     break;
                 case XmlPullParser.TEXT:
-                    if (currentTagName != null && !parser.isWhitespace()) {
-                        if (currentTagName.equals(Constants.TAG.PSLM.AUTHOR)) {
-                            psalm.setAuthor(parser.getText());
-                        } else if (currentTagName.equals(Constants.TAG.PSLM.TRANSLATOR)) {
-                            psalm.setTranslator(parser.getText());
-                        } else if (Constants.TAG.PSLM.COMPOSER.equalsIgnoreCase(currentTagName)) {
-                            psalm.setComposer(parser.getText());
-                        } else if (Constants.TAG.PSLM.YEAR.equalsIgnoreCase(currentTagName)) {
-                            final String date = parser.getText();
-                            validateDateFormat(parser, date);
-                            psalm.setYear(date);
-                        } else if (Constants.TAG.PSLM.NAME.equalsIgnoreCase(currentTagName)) {
-                            psalm.setName(parser.getText());
-                        }else {
+                    if (currentTagName == null) {
+                        if (!parser.isWhitespace()) {
                             Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
                                     ": Unexpected text: " + parser.getText());
                         }
+                        break;
+                    }
+                    if (!parser.isWhitespace()) {
+                        if (currentTagName.equals(TAG.PSLM.AUTHOR)) {
+                            psalm.setAuthor(parser.getText());
+                        } else if (currentTagName.equals(TAG.PSLM.TRANSLATOR)) {
+                            psalm.setTranslator(parser.getText());
+                        } else if (TAG.PSLM.COMPOSER.equalsIgnoreCase(currentTagName)) {
+                            psalm.setComposer(parser.getText());
+                        } else if (TAG.PSLM.YEAR.equalsIgnoreCase(currentTagName)) {
+                            final String date = parser.getText();
+                            validateDateFormat(parser, date);
+                            psalm.setYear(date);
+                        } else if (TAG.PSLM.ANNOTATION.equalsIgnoreCase(currentTagName)) {
+                            psalm.setAnnotation(parser.getText());
+                        } else if (TAG.PSLM.NAME.equalsIgnoreCase(currentTagName)) {
+                            psalm.setName(parser.getText());
+                        } else {
+                            Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
+                                    ": Unexpected text: " + parser.getText());
+                        }
+                    } else if (!tagsWithoutText.contains(currentTagName)) {
+                        Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
+                                ": Text required but not found for tag '" + currentTagName + "'");
                     }
                     break;
                 case XmlPullParser.END_TAG:
