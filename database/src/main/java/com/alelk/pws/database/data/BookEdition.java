@@ -12,7 +12,8 @@ public enum BookEdition {
     Tympan ("Tympan"),
     Kimval ("Kimval"),
     FCPSALMS ("FCPsalms"),
-    SLAVIT_BEZ_ZAPINKI ("SlavitBezZapinki");
+    SLAVIT_BEZ_ZAPINKI ("SlavitBezZapinki"),
+    PVNL ("PVNL");
 
 
     private String signature;
