@@ -1,7 +1,10 @@
 package com.alelk.pws.pwapp;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
+import android.database.MatrixCursor;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -10,6 +13,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.alelk.pws.database.data.Book;
@@ -106,6 +110,27 @@ public class MainActivity extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        final SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(true);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                List<Psalm> psalms = loadData("");
+                psalmListAdapter = new PsalmListAdapter(getApplicationContext(), R.layout.layout_psalms_list, psalms.subList(2,4));
+                listView.setAdapter(psalmListAdapter);
+                listView.setOnItemClickListener(psalmListClickHandler);
+
+                return true;
+            }
+        });
         return true;
     }
 
@@ -122,6 +147,23 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private List<Psalm> loadData(String query) {
+        PwsDataSource pwsDataSource = new PwsDataSourceImpl(this, "pws.db", 5);
+        pwsDataSource.open();
+        List<Psalm> psalms = new ArrayList<>();
+        try {
+            psalms.addAll(pwsDataSource.getPsalms(BookEdition.PV3055).values());
+        } catch (PwsDatabaseIncorrectValueException e) {
+            e.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        pwsDataSource.close();
+
+        Collections.sort(psalms, Psalm.getNumberComparator(BookEdition.PV3055));
+        return psalms;
     }
 
     private AdapterView.OnItemClickListener psalmListClickHandler = new AdapterView.OnItemClickListener() {
