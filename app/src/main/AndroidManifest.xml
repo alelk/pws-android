@@ -15,9 +15,20 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <intent-filter>
+                <action android:name="ANDROID.INTENT.ACTION.SEARCH"/>
+            </intent-filter>
+            <meta-data android:name="android.app.searchable" android:resource="@xml/searchable"/>
+
         </activity>
-        <activity android:name=".PsalmActivity"
-            android:label="Psalm" ></activity>
+        <activity
+            android:name=".PsalmActivity"
+            android:label="Psalm" />
+        <activity
+            android:name=".SearchActivity"
+            android:label="@string/title_activity_search" >
+        </activity>
     </application>
 
 </manifest>
