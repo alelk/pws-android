@@ -20,6 +20,7 @@ import com.alelk.pws.database.exception.PwsDatabaseMessage;
 import com.alelk.pws.database.exception.PwsDatabaseSourceIdExistsException;
 import com.alelk.pws.database.table.PwsBookTable;
 import com.alelk.pws.database.table.PwsPsalmNumbersTable;
+import com.alelk.pws.database.table.PwsPsalmTable;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -58,6 +59,10 @@ public class PwsDatabasePsalmQuery extends PwsDatabaseQueryUtils implements PwsD
             PwsPsalmNumbersTable.TABLE_PSALMNUMBERS + "." + PwsPsalmNumbersTable.COLUMN_BOOKID;
 
     private static final String SELECTION_BY_BOOK_EDITION =
+            PwsBookTable.TABLE_BOOKS + "." + PwsBookTable.COLUMN_EDITION + "=?";
+
+    private static final String SELECTION_BY_NAME_AND_BOOK_EDITION =
+            PwsPsalmTable.TABLE_PSALMS + "." + PwsPsalmTable.COLUMN_NAME + " LIKE ? AND " +
             PwsBookTable.TABLE_BOOKS + "." + PwsBookTable.COLUMN_EDITION + "=?";
 
     private SQLiteDatabase database;
@@ -145,6 +150,25 @@ public class PwsDatabasePsalmQuery extends PwsDatabaseQueryUtils implements PwsD
             Log.v(LOG_TAG, METHOD_NAME + ": Count of psalms selected for bookEdition=" + bookEdition + ": " + psalmEntities.size());
         } else {
             Log.v(LOG_TAG, METHOD_NAME + ": No psalms selected for bookEdition=" + bookEdition);
+        }
+        return psalmEntities;
+    }
+
+    public Set<PsalmEntity> selectByNameAndBookEdition(String name, BookEdition bookEdition) throws PwsDatabaseIncorrectValueException {
+        final String METHOD_NAME = "selectByNameAndBookEdition";
+        validateSQLiteDatabaseNotNull(METHOD_NAME, database);
+        Set<PsalmEntity> psalmEntities = null;
+        final String[] SELECTION_ARGS = new String[2];
+        Arrays.asList(name, bookEdition.getSignature()).toArray(SELECTION_ARGS);
+        Cursor cursor = database.query(TABLE_PSALMS_JOIN_PSALMNUMBERS_JOIN_BOOKS, ALL_COLUMNS, SELECTION_BY_NAME_AND_BOOK_EDITION, SELECTION_ARGS, null, null, null);
+        if (cursor.moveToFirst()) {
+            psalmEntities = new HashSet<>(cursor.getCount());
+            do {
+                psalmEntities.add(cursorToPsalmEntity(cursor));
+            } while (cursor.moveToNext());
+            Log.v(LOG_TAG, METHOD_NAME + ": Count of psalms selected for name='" + name + "' and bookEdition=" + bookEdition + ": " + psalmEntities.size());
+        } else {
+            Log.v(LOG_TAG, METHOD_NAME + ": No psalms selected for name='" + name + "' and bookEdition=" + bookEdition);
         }
         return psalmEntities;
     }

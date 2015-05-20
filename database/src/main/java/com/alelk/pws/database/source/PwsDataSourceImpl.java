@@ -103,4 +103,22 @@ public class PwsDataSourceImpl implements PwsDataSource {
         return psalms;
     }
 
+    public Map<Integer, Psalm> getPsalms(BookEdition bookEdition, String name) throws PwsDatabaseIncorrectValueException {
+        Map<Integer, Psalm> psalms = null;
+        Set<PsalmEntity> psalmEntities = new PwsDatabasePsalmQuery(database).selectByNameAndBookEdition(name, bookEdition);
+        if(psalmEntities != null && !psalmEntities.isEmpty()) {
+            psalms = new HashMap<>();
+            for (PsalmEntity psalmEntity : psalmEntities) {
+                Set<VerseEntity> verseEntities = new PwsDatabaseVerseQuery(database, null).selectByPsalmId(psalmEntity.getId());
+                Set<ChorusEntity> chorusEntities = new PwsDatabaseChorusQuery(database, null).selectByPsalmId(psalmEntity.getId());
+                Map<BookEdition, Integer> numbers = new PwsDatabaseQueryHelper(database).getPsalmNumbersByPsalmId(psalmEntity.getId());
+                Psalm psalm = new PsalmBuilder(psalmEntity, verseEntities, chorusEntities, numbers).toObject();
+                if (psalm != null) {
+                    psalms.put(psalm.getNumber(bookEdition), psalm);
+                }
+            }
+        }
+        return psalms;
+    }
+
 }

@@ -123,8 +123,8 @@ public class MainActivity extends ActionBarActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                List<Psalm> psalms = loadData("");
-                psalmListAdapter = new PsalmListAdapter(getApplicationContext(), R.layout.layout_psalms_list, psalms.subList(2,4));
+                List<Psalm> psalms = loadData(newText);
+                psalmListAdapter = new PsalmListAdapter(getApplicationContext(), R.layout.layout_psalms_list, psalms);
                 listView.setAdapter(psalmListAdapter);
                 listView.setOnItemClickListener(psalmListClickHandler);
 
@@ -150,11 +150,11 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private List<Psalm> loadData(String query) {
-        PwsDataSource pwsDataSource = new PwsDataSourceImpl(this, "pws.db", 5);
+        PwsDataSourceImpl pwsDataSource = new PwsDataSourceImpl(this, "pws.db", 5);
         pwsDataSource.open();
         List<Psalm> psalms = new ArrayList<>();
         try {
-            psalms.addAll(pwsDataSource.getPsalms(BookEdition.PV3055).values());
+            psalms.addAll(pwsDataSource.getPsalms(BookEdition.PV3055, "%" + query + "%").values());
         } catch (PwsDatabaseIncorrectValueException e) {
             e.printStackTrace();
         } catch (Exception ex) {
