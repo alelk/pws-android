@@ -33,8 +33,8 @@ public class PsalmListAdapter extends ArrayAdapter<Psalm> {
 
         Psalm psalm = objects.get(position);
         if (psalm != null) {
-            TextView psalmNumber = (TextView) v.findViewById(R.id.psalm_number);
-            TextView psalmName = (TextView) v.findViewById(R.id.psalm_name);
+            TextView psalmNumber = (TextView) v.findViewById(R.id.txt_psalm_number);
+            TextView psalmName = (TextView) v.findViewById(R.id.txt_psalm_name);
             psalmNumber.setText(Integer.toString(psalm.getNumber(BookEdition.PV3055)));
             psalmName.setText(psalm.getName());
         }
