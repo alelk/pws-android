@@ -1,5 +1,6 @@
 package com.alelk.pws.database.data.entity;
 
+import android.database.Cursor;
 import android.text.TextUtils;
 
 /**
@@ -19,6 +20,12 @@ public class VerseEntity implements PwsDatabaseEntity {
     @Override
     public void setId(long id) {
         this.id = id;
+    }
+
+    @Override
+    public PwsDatabaseEntity applyDataFomCursor(Cursor cursor) {
+        // todo
+        return null;
     }
 
     public long getPsalmId() {

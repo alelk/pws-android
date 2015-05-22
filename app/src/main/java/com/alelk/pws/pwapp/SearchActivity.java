@@ -1,12 +1,20 @@
 package com.alelk.pws.pwapp;
 
+import android.database.Cursor;
+import android.database.MatrixCursor;
+import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.alelk.pws.pwapp.adapter.PsalmSuggestionCursorAdapter;
+import com.alelk.pws.pwapp.loader.PsalmSuggestionsLoaderCallback;
+
 
 public class SearchActivity extends ActionBarActivity {
+
+    Uri uri = Uri.parse("content://com.alelk.pws.database.provider/psalms");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
