@@ -1,5 +1,9 @@
 package com.alelk.pws.database.data.entity;
 
+import android.database.Cursor;
+
+import static com.alelk.pws.database.table.PwsPsalmTable.*;
+
 /**
  * Created by alelkin on 28.04.2015.
  */
@@ -22,6 +26,47 @@ public class PsalmEntity implements PwsDatabaseEntity{
     @Override
     public void setId(long id) {
         this.id = id;
+    }
+
+    @Override
+    public PwsDatabaseEntity applyDataFomCursor(Cursor cursor) {
+        int idCol = cursor.getColumnIndex(COLUMN_ID);
+        if (idCol >= 0) {
+            setId(cursor.getLong(idCol));
+        }
+        int versionCol = cursor.getColumnIndex(COLUMN_VERSION);
+        if (versionCol >= 0) {
+            setVersion(cursor.getString(versionCol));
+        }
+        int nameCol = cursor.getColumnIndex(COLUMN_NAME);
+        if (nameCol >= 0) {
+            setName(cursor.getString(nameCol));
+        }
+        int authorCol = cursor.getColumnIndex(COLUMN_AUTHOR);
+        if (authorCol >= 0) {
+            setAuthor(cursor.getString(authorCol));
+        }
+        int translatorCol = cursor.getColumnIndex(COLUMN_TRANSLATOR);
+        if (translatorCol >= 0) {
+            setTranslator(cursor.getString(translatorCol));
+        }
+        int composerCol = cursor.getColumnIndex(COLUMN_COMPOSER);
+        if (composerCol >= 0) {
+            setComposer(cursor.getString(composerCol));
+        }
+        int tonalitiesCol = cursor.getColumnIndex(COLUMN_TONALITIES);
+        if (tonalitiesCol >= 0) {
+            setTonalities(cursor.getString(tonalitiesCol));
+        }
+        int yearCol = cursor.getColumnIndex(COLUMN_YEAR);
+        if (yearCol >= 0) {
+            setYear(cursor.getString(yearCol));
+        }
+        int annotationCol = cursor.getColumnIndex(COLUMN_ANNOTATION);
+        if (annotationCol >= 0) {
+            setAnnotation(cursor.getString(annotationCol));
+        }
+        return this;
     }
 
     public String getName() {

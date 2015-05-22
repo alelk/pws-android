@@ -1,5 +1,8 @@
 package com.alelk.pws.database.data.entity;
 
+import android.database.Cursor;
+import static com.alelk.pws.database.table.PwsPsalmNumbersTable.*;
+
 /**
  * Created by Alex Elkin on 30.04.2015.
  */
@@ -18,6 +21,27 @@ public class PsalmNumberEntity implements PwsDatabaseEntity {
     @Override
     public void setId(long id) {
         this.id = id;
+    }
+
+    @Override
+    public PwsDatabaseEntity applyDataFomCursor(Cursor cursor) {
+        final int idCol = cursor.getColumnIndex(COLUMN_ID);
+        if (idCol >= 0) {
+            setId(cursor.getLong(idCol));
+        }
+        final int bookidCol = cursor.getColumnIndex(COLUMN_BOOKID);
+        if (bookidCol >= 0) {
+            setBookId(cursor.getLong(bookidCol));
+        }
+        final int psalmidCol = cursor.getColumnIndex(COLUMN_PSALMID);
+        if (psalmidCol >= 0) {
+            setPsalmId(cursor.getLong(psalmidCol));
+        }
+        final int numberCol = cursor.getColumnIndex(COLUMN_NUMBER);
+        if (numberCol >= 0) {
+            setNumber(cursor.getLong(numberCol));
+        }
+        return null;
     }
 
     public long getBookId() {

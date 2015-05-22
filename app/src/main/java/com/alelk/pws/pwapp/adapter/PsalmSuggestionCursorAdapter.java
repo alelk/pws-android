@@ -1,4 +1,4 @@
-package com.alelk.pws.pwapp;
+package com.alelk.pws.pwapp.adapter;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -10,21 +10,19 @@ import android.widget.TextView;
 
 import com.alelk.pws.database.data.BookEdition;
 import com.alelk.pws.database.data.Psalm;
+import com.alelk.pws.pwapp.R;
 
 import org.w3c.dom.Text;
 
 import java.util.List;
 
 /**
- * Created by alelkin on 20.05.2015.
+ * Created by Alex Elkin on 20.05.2015.
  */
-public class SearchPsalmSuggestionAdapter extends CursorAdapter {
+public class PsalmSuggestionCursorAdapter extends CursorAdapter {
 
-    private List<Psalm> psalms;
-
-    public SearchPsalmSuggestionAdapter(Context context, Cursor c, List<Psalm> psalms) {
+    public PsalmSuggestionCursorAdapter(Context context, Cursor c) {
         super(context, c, false);
-        this.psalms = psalms;
     }
 
     @Override
@@ -38,7 +36,6 @@ public class SearchPsalmSuggestionAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
         TextView txtPsalmNumber = (TextView) view.findViewById(R.id.txt_psalm_number);
         TextView txtPsalmName = (TextView) view.findViewById(R.id.txt_psalm_name);
-        txtPsalmNumber.setText(psalms.get(cursor.getPosition()).getNumber(BookEdition.PV3055));
-        txtPsalmName.setText(psalms.get(cursor.getPosition()).getName());
+        txtPsalmName.setText(cursor.getString(cursor.getColumnIndex("name")));
     }
 }
