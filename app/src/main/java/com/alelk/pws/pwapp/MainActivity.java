@@ -27,7 +27,9 @@ import com.alelk.pws.database.exception.PwsDatabaseIncorrectValueException;
 import com.alelk.pws.database.exception.PwsDatabaseSourceIdExistsException;
 import com.alelk.pws.database.source.PwsDataSource;
 import com.alelk.pws.database.source.PwsDataSourceImpl;
+import com.alelk.pws.pwapp.adapter.PsalmSuggestionCursorAdapter;
 import com.alelk.pws.pwapp.data.PwsPsalmParcelable;
+import com.alelk.pws.pwapp.loader.PsalmSuggestionsLoaderCallback;
 import com.alelk.pws.xmlengine.PwsXmlParser;
 import com.alelk.pws.xmlengine.exception.PwsXmlParserIncorrectSourceFormatException;
 
@@ -41,6 +43,7 @@ import java.util.Map;
 
 public class MainActivity extends ActionBarActivity {
 
+    private final static Uri PSALMS_URI = Uri.parse("content://com.alelk.pws.database.provider/psalms/");
     private TextView textView;
     private ListView listView;
     private ArrayAdapter<Psalm> psalmListAdapter;
@@ -104,20 +107,6 @@ public class MainActivity extends ActionBarActivity {
             listView.setAdapter(psalmListAdapter);
             listView.setOnItemClickListener(psalmListClickHandler);
 
-            Uri uri = Uri.parse("content://com.alelk.pws.database.provider/psalms/1/psalmnumbers");
-
-            List<String> paths = uri.getPathSegments();
-            for (String s : paths) {
-                Log.i("path segment:", s);
-            }
-
-            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-
-            if (cursor.moveToFirst()) {
-                do {
-                    Log.i("content resolver", "cursor: id=" + cursor.getLong(cursor.getColumnIndex("_id")) + " name=" + cursor.getString(cursor.getColumnIndex("name")));
-                } while (cursor.moveToNext());
-            }
         } catch (PwsXmlParserIncorrectSourceFormatException e) {
             e.printStackTrace();
         }
@@ -136,16 +125,29 @@ public class MainActivity extends ActionBarActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                return false;
+                PwsDataSource pwsDataSource = new PwsDataSourceImpl(getApplicationContext(), "pws.db", 5);
+                pwsDataSource.open();
+                List<Psalm> psalms = new ArrayList<>();
+                try {
+                    psalms.addAll(pwsDataSource.getPsalms(BookEdition.PV3055, query + "%").values());
+                } catch (PwsDatabaseIncorrectValueException e) {
+                    e.printStackTrace();
+                }
+                pwsDataSource.close();
+                psalmListAdapter = new PsalmListAdapter(getApplicationContext(),R.layout.layout_psalms_list, psalms);
+
+                Collections.sort(psalms, Psalm.getNumberComparator(BookEdition.PV3055));
+                listView.setAdapter(psalmListAdapter);
+                listView.setOnItemClickListener(psalmListClickHandler);
+                return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                List<Psalm> psalms = loadData(newText);
-                psalmListAdapter = new PsalmListAdapter(getApplicationContext(), R.layout.layout_psalms_list, psalms);
-                listView.setAdapter(psalmListAdapter);
-                listView.setOnItemClickListener(psalmListClickHandler);
-
+                String[] args = {""};
+                args[0] = newText + "%";
+                Cursor cursor = getContentResolver().query(PSALMS_URI, new String[]{"_id", "name"}, "name LIKE '" + newText + "%'", null, null);
+                searchView.setSuggestionsAdapter(new PsalmSuggestionCursorAdapter(getApplicationContext(), cursor));
                 return true;
             }
         });

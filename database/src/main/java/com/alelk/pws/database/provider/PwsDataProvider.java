@@ -13,6 +13,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import com.alelk.pws.database.helper.PwsDatabaseHelper;
 import com.alelk.pws.database.table.PwsBookTable;
@@ -47,8 +48,18 @@ public class PwsDataProvider extends ContentProvider {
             "INNER JOIN " + TABLE_BOOKS + " as b " +
             "ON pn." + PwsPsalmNumbersTable.COLUMN_BOOKID + "=b." + PwsBookTable.COLUMN_ID;
 
+    private static final String[] DEFAULT_PSALMNUMBERS_PROJECTION = {
+            PwsPsalmNumbersTable.COLUMN_PSALMID,
+            PwsPsalmNumbersTable.COLUMN_NUMBER,
+            PwsPsalmNumbersTable.COLUMN_BOOKID,
+            PwsBookTable.COLUMN_EDITION,
+            PwsBookTable.COLUMN_DISPLAYNAME,
+            PwsBookTable.COLUMN_NAME
+    };
+
     private SQLiteDatabase mDatabase;
     private PwsDatabaseHelper mDatabaseHelper;
+    private String mSelection;
 
     @Override
     public boolean onCreate() {
@@ -59,21 +70,27 @@ public class PwsDataProvider extends ContentProvider {
     @Override
     public Cursor query(
             Uri uri,
-            String[] projection,
+            @Nullable String[] projection,
             @Nullable String selection,
             String[] selectionArgs,
-            String sortOrder) {
+            @Nullable String sortOrder) {
         mDatabase = mDatabaseHelper.getReadableDatabase();
         Cursor cursor = null;
         switch (sUriMatcher.match(uri)) {
             case PATH_PSALMS:
                 cursor = mDatabase.query(TABLE_PSALMS, projection, selection, selectionArgs, null, null, sortOrder);
                 break;
+            case PATH_PSALMS_ID:
+                mSelection = PwsPsalmTable.COLUMN_ID + "=" + uri.getLastPathSegment();
+                if (!TextUtils.isEmpty(selection)) mSelection += " AND " + selection;
+                break;
             case PATH_PSALM_NUMBERS:
-                selection = "psalmid=?";
-                selectionArgs = new String[1];
-                selectionArgs[0] = uri.getPathSegments().get(1);
-                cursor = mDatabase.query(TABLE_PSALMNUMBERS_JOIN_BOOKS, projection, selection, selectionArgs, null, null, sortOrder);
+                mSelection = PwsPsalmNumbersTable.COLUMN_PSALMID + "=" + uri.getPathSegments().get(1);
+                if (!TextUtils.isEmpty(selection)) mSelection += " AND " + selection;
+                if (projection == null || projection.length < 1) {
+                    projection = DEFAULT_PSALMNUMBERS_PROJECTION;
+                }
+                cursor = mDatabase.query(TABLE_PSALMNUMBERS_JOIN_BOOKS, projection, mSelection, selectionArgs, null, null, sortOrder);
                 break;
             default:
                 // todo: throw exception - incorrect uri
@@ -91,6 +108,10 @@ public class PwsDataProvider extends ContentProvider {
                 return "vnd.android.cursor.dir/" + PwsPsalmTable.class.getName();
             case PATH_PSALMS_ID:
                 return "vnd.android.cursor.item/" + PwsPsalmTable.class.getName();
+            case PATH_PSALM_NUMBERS:
+                return "vnd.android.cursor.dir/" + PwsPsalmNumbersTable.class.getName();
+            case PATH_PSALM_NUMBERS_ID:
+                return "vnd.android.cursor.item/" + PwsPsalmNumbersTable.class.getName();
         }
         return null;
     }
