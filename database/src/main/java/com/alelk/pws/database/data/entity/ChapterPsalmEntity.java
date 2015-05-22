@@ -1,7 +1,9 @@
 package com.alelk.pws.database.data.entity;
 
+import android.database.Cursor;
+
 /**
- * Created by alelkin on 30.04.2015.
+ * Created by Alex Elkin on 30.04.2015.
  */
 public class ChapterPsalmEntity implements PwsDatabaseEntity {
 
@@ -17,6 +19,12 @@ public class ChapterPsalmEntity implements PwsDatabaseEntity {
     @Override
     public void setId(long id) {
         this.id = id;
+    }
+
+    @Override
+    public PwsDatabaseEntity applyDataFomCursor(Cursor cursor) {
+        // todo
+        return null;
     }
 
     @Override
