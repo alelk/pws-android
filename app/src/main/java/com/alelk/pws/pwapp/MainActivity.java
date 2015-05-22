@@ -4,9 +4,12 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
+import android.database.Cursor;
 import android.database.MatrixCursor;
+import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -100,6 +103,21 @@ public class MainActivity extends ActionBarActivity {
             psalmListAdapter = new PsalmListAdapter(this, R.layout.layout_psalms_list, psalms);
             listView.setAdapter(psalmListAdapter);
             listView.setOnItemClickListener(psalmListClickHandler);
+
+            Uri uri = Uri.parse("content://com.alelk.pws.database.provider/psalms/1/psalmnumbers");
+
+            List<String> paths = uri.getPathSegments();
+            for (String s : paths) {
+                Log.i("path segment:", s);
+            }
+
+            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+
+            if (cursor.moveToFirst()) {
+                do {
+                    Log.i("content resolver", "cursor: id=" + cursor.getLong(cursor.getColumnIndex("_id")) + " name=" + cursor.getString(cursor.getColumnIndex("name")));
+                } while (cursor.moveToNext());
+            }
         } catch (PwsXmlParserIncorrectSourceFormatException e) {
             e.printStackTrace();
         }
