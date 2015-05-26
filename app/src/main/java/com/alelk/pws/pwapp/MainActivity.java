@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.MatrixCursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -44,6 +45,7 @@ import java.util.Map;
 public class MainActivity extends ActionBarActivity {
 
     private final static Uri PSALMS_URI = Uri.parse("content://com.alelk.pws.database.provider/psalms/");
+    private final static Uri SUGGEST_PSALMS_URI = Uri.parse("content://com.alelk.pws.database.provider/suggestions/psalms/");
     private TextView textView;
     private ListView listView;
     private ArrayAdapter<Psalm> psalmListAdapter;
@@ -120,8 +122,11 @@ public class MainActivity extends ActionBarActivity {
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         final SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        Log.e("getComponentName", "" + getComponentName());
+        Log.e("searchableInfo", "" + searchManager.getSearchableInfo(getComponentName()));
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setIconifiedByDefault(true);
+        /*
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -150,7 +155,7 @@ public class MainActivity extends ActionBarActivity {
                 searchView.setSuggestionsAdapter(new PsalmSuggestionCursorAdapter(getApplicationContext(), cursor));
                 return true;
             }
-        });
+        }); */
         return true;
     }
 

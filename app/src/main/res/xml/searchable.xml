@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <searchable xmlns:android="http://schemas.android.com/apk/res/android"
-    android:label="Search label"
-    android:hint="Search hints">
+    android:label="@string/search_label"
+    android:hint="@string/search_hint"
+    android:searchSuggestAuthority="com.alelk.pws.database.provider"
+    android:searchSuggestPath="psalms"
+    >
+    <!--android:searchSuggestSelection="SUGGEST_COLUMN_TEXT_1 LIKE ?" -->
 </searchable>
