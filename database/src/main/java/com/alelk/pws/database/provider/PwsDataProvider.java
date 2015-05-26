@@ -3,15 +3,13 @@ package com.alelk.pws.database.provider;
 import static com.alelk.pws.database.table.PwsPsalmTable.TABLE_PSALMS;
 import static com.alelk.pws.database.table.PwsPsalmNumbersTable.TABLE_PSALMNUMBERS;
 import static com.alelk.pws.database.table.PwsBookTable.TABLE_BOOKS;
-import static android.app.SearchManager.SUGGEST_COLUMN_TEXT_1;
+import static android.app.SearchManager.*;
 
-import android.app.SearchManager;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
-import android.database.MatrixCursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.Nullable;
@@ -35,13 +33,13 @@ public class PwsDataProvider extends ContentProvider {
     public static final int DATABASE_VERSION = 5;
 
     public static final String AUTHORITY = "com.alelk.pws.database.provider";
-    private static final String SUGGESTIONS = "search_suggest_query";
 
     private static final int PATH_PSALMS = 1;
     private static final int PATH_PSALMS_ID = 2;
     private static final int PATH_PSALM_NUMBERS = 3;
     private static final int PATH_PSALM_NUMBERS_ID = 4;
-    private static final int PATH_PSALMS_SUGGESTIONS = 5;
+    private static final int PATH_PSALMS_SUGGESTIONS_NUMBER = 5;
+    private static final int PATH_PSALMS_SUGGESTIONS_NAME = 6;
 
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     static {
@@ -49,11 +47,18 @@ public class PwsDataProvider extends ContentProvider {
         sUriMatcher.addURI(AUTHORITY, TABLE_PSALMS + "/#", PATH_PSALMS_ID);
         sUriMatcher.addURI(AUTHORITY, TABLE_PSALMS + "/#/" + TABLE_PSALMNUMBERS, PATH_PSALM_NUMBERS);
         sUriMatcher.addURI(AUTHORITY, TABLE_PSALMS + "/#/" + TABLE_PSALMNUMBERS + "/#", PATH_PSALM_NUMBERS_ID);
-        sUriMatcher.addURI(AUTHORITY, TABLE_PSALMS +  "/" + SUGGESTIONS + "/*", PATH_PSALMS_SUGGESTIONS);
+        sUriMatcher.addURI(AUTHORITY, TABLE_PSALMS +  "/" + SUGGEST_URI_PATH_QUERY + "/#", PATH_PSALMS_SUGGESTIONS_NUMBER);
+        sUriMatcher.addURI(AUTHORITY, TABLE_PSALMS +  "/" + SUGGEST_URI_PATH_QUERY + "/*", PATH_PSALMS_SUGGESTIONS_NAME);
     }
 
     private static final String TABLE_PSALMNUMBERS_JOIN_BOOKS = TABLE_PSALMNUMBERS + " AS pn " +
             "INNER JOIN " + TABLE_BOOKS + " as b " +
+            "ON pn." + PwsPsalmNumbersTable.COLUMN_BOOKID + "=b." + PwsBookTable.COLUMN_ID;
+
+    private static final String TABLE_PSALMS_JOIN_PSALMNUMBERS_JOIN_BOOKS = TABLE_PSALMS + " AS p " +
+            "INNER JOIN " + TABLE_PSALMNUMBERS + " AS pn " +
+            "ON p." + PwsPsalmTable.COLUMN_ID + "=pn." + PwsPsalmNumbersTable.COLUMN_PSALMID +
+            " INNER JOIN " + TABLE_BOOKS + " as b " +
             "ON pn." + PwsPsalmNumbersTable.COLUMN_BOOKID + "=b." + PwsBookTable.COLUMN_ID;
 
     private static final String[] DEFAULT_PSALMNUMBERS_PROJECTION = {
@@ -70,9 +75,17 @@ public class PwsDataProvider extends ContentProvider {
             PwsPsalmTable.COLUMN_NAME + " AS " + SUGGEST_COLUMN_TEXT_1
     };
 
+    private static final String[] SUGGESTIONS_PSALM_NUMBERS_PROJECTION = {
+            "pn." + PwsPsalmNumbersTable.COLUMN_ID + " AS _id ",
+            "pn." + PwsPsalmNumbersTable.COLUMN_NUMBER + " AS " + PwsPsalmNumbersTable.COLUMN_NUMBER,
+            "b." + PwsBookTable.COLUMN_DISPLAYNAME + " AS " + SUGGEST_COLUMN_TEXT_2,
+            "p." + PwsPsalmTable.COLUMN_NAME + " AS " + SUGGEST_COLUMN_TEXT_1
+    };
+
     private SQLiteDatabase mDatabase;
     private PwsDatabaseHelper mDatabaseHelper;
     private String mSelection;
+    private String mLimit;
     private String[] mSelectionArgs;
 
     @Override
@@ -86,7 +99,7 @@ public class PwsDataProvider extends ContentProvider {
             Uri uri,
             @Nullable String[] projection,
             @Nullable String selection,
-            String[] selectionArgs,
+            @Nullable String[] selectionArgs,
             @Nullable String sortOrder) {
         final String METHOD_NAME = "query";
         Log.v(LOG_TAG, METHOD_NAME + ": uri='" + uri.toString() + "'");
@@ -108,12 +121,18 @@ public class PwsDataProvider extends ContentProvider {
                 }
                 cursor = mDatabase.query(TABLE_PSALMNUMBERS_JOIN_BOOKS, projection, mSelection, selectionArgs, null, null, sortOrder);
                 break;
-            case PATH_PSALMS_SUGGESTIONS:
+            case PATH_PSALMS_SUGGESTIONS_NUMBER:
+                mLimit = uri.getQueryParameter(SUGGEST_PARAMETER_LIMIT);
+                mSelection = PwsPsalmNumbersTable.COLUMN_NUMBER + "=" + uri.getLastPathSegment();
+                cursor = mDatabase.query(TABLE_PSALMS_JOIN_PSALMNUMBERS_JOIN_BOOKS, SUGGESTIONS_PSALM_NUMBERS_PROJECTION, mSelection, null, null, null, null, mLimit);
+                break;
+            case PATH_PSALMS_SUGGESTIONS_NAME:
+                mLimit = uri.getQueryParameter(SUGGEST_PARAMETER_LIMIT);
                 mSelection = SUGGEST_COLUMN_TEXT_1 + " LIKE '" + uri.getLastPathSegment() + "%'";
-                cursor = mDatabase.query(TABLE_PSALMS, SUGGESTIONS_PSALMS_PROJECTION, mSelection, mSelectionArgs, null, null, null);
+                cursor = mDatabase.query(TABLE_PSALMS, SUGGESTIONS_PSALMS_PROJECTION, mSelection, null, null, null, null, mLimit);
                 if (cursor.getCount() < 1) {
                     mSelection = SUGGEST_COLUMN_TEXT_1 + " LIKE '% " + uri.getLastPathSegment() + "%'";
-                    cursor = mDatabase.query(TABLE_PSALMS, SUGGESTIONS_PSALMS_PROJECTION, mSelection, mSelectionArgs, null, null, null);
+                    cursor = mDatabase.query(TABLE_PSALMS, SUGGESTIONS_PSALMS_PROJECTION, mSelection, null, null, null, null, mLimit);
                 }
                 break;
             default:
