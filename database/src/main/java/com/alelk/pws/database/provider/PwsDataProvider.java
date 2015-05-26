@@ -3,7 +3,9 @@ package com.alelk.pws.database.provider;
 import static com.alelk.pws.database.table.PwsPsalmTable.TABLE_PSALMS;
 import static com.alelk.pws.database.table.PwsPsalmNumbersTable.TABLE_PSALMNUMBERS;
 import static com.alelk.pws.database.table.PwsBookTable.TABLE_BOOKS;
+import static android.app.SearchManager.SUGGEST_COLUMN_TEXT_1;
 
+import android.app.SearchManager;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -65,7 +67,7 @@ public class PwsDataProvider extends ContentProvider {
 
     private static final String[] SUGGESTIONS_PSALMS_PROJECTION = {
             PwsPsalmTable.COLUMN_ID,
-            PwsPsalmTable.COLUMN_NAME + " AS SUGGEST_COLUMN_TEXT_1"
+            PwsPsalmTable.COLUMN_NAME + " AS " + SUGGEST_COLUMN_TEXT_1
     };
 
     private SQLiteDatabase mDatabase;
@@ -107,16 +109,12 @@ public class PwsDataProvider extends ContentProvider {
                 cursor = mDatabase.query(TABLE_PSALMNUMBERS_JOIN_BOOKS, projection, mSelection, selectionArgs, null, null, sortOrder);
                 break;
             case PATH_PSALMS_SUGGESTIONS:
-                mSelection = "SUGGEST_COLUMN_TEXT_1 LIKE '" + uri.getLastPathSegment() + "%'";
+                mSelection = SUGGEST_COLUMN_TEXT_1 + " LIKE '" + uri.getLastPathSegment() + "%'";
                 cursor = mDatabase.query(TABLE_PSALMS, SUGGESTIONS_PSALMS_PROJECTION, mSelection, mSelectionArgs, null, null, null);
-                MatrixCursor cursor1 = new MatrixCursor(new String[]{"_ID", "SUGGEST_COLUMN_TEXT_1"});
-                if (cursor.moveToFirst()) {
-                    while (cursor.moveToNext()) {
-                        cursor1.newRow().add(cursor.getLong(0)).add(cursor.getString(1));
-                        Log.i(LOG_TAG, METHOD_NAME + " row: id=" + cursor.getLong(0) + " suggest=" + cursor.getString(1));
-                    }
+                if (cursor.getCount() < 1) {
+                    mSelection = SUGGEST_COLUMN_TEXT_1 + " LIKE '% " + uri.getLastPathSegment() + "%'";
+                    cursor = mDatabase.query(TABLE_PSALMS, SUGGESTIONS_PSALMS_PROJECTION, mSelection, mSelectionArgs, null, null, null);
                 }
-                cursor = cursor1;
                 break;
             default:
                 // todo: throw exception - incorrect uri
