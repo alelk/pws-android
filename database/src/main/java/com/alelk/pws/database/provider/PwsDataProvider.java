@@ -7,13 +7,14 @@ import static com.alelk.pws.database.table.PwsBookTable.TABLE_BOOKS;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.alelk.pws.database.helper.PwsDatabaseHelper;
 import com.alelk.pws.database.table.PwsBookTable;
@@ -25,16 +26,20 @@ import com.alelk.pws.database.table.PwsPsalmTable;
  */
 public class PwsDataProvider extends ContentProvider {
 
+    private static final String LOG_TAG = PwsDataProvider.class.getSimpleName();
+
     // todo: move this constants
     public static final String DATABASE_NAME = "pws.db";
     public static final int DATABASE_VERSION = 5;
 
     public static final String AUTHORITY = "com.alelk.pws.database.provider";
+    private static final String SUGGESTIONS = "search_suggest_query";
 
     private static final int PATH_PSALMS = 1;
     private static final int PATH_PSALMS_ID = 2;
     private static final int PATH_PSALM_NUMBERS = 3;
     private static final int PATH_PSALM_NUMBERS_ID = 4;
+    private static final int PATH_PSALMS_SUGGESTIONS = 5;
 
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     static {
@@ -42,6 +47,7 @@ public class PwsDataProvider extends ContentProvider {
         sUriMatcher.addURI(AUTHORITY, TABLE_PSALMS + "/#", PATH_PSALMS_ID);
         sUriMatcher.addURI(AUTHORITY, TABLE_PSALMS + "/#/" + TABLE_PSALMNUMBERS, PATH_PSALM_NUMBERS);
         sUriMatcher.addURI(AUTHORITY, TABLE_PSALMS + "/#/" + TABLE_PSALMNUMBERS + "/#", PATH_PSALM_NUMBERS_ID);
+        sUriMatcher.addURI(AUTHORITY, TABLE_PSALMS +  "/" + SUGGESTIONS + "/*", PATH_PSALMS_SUGGESTIONS);
     }
 
     private static final String TABLE_PSALMNUMBERS_JOIN_BOOKS = TABLE_PSALMNUMBERS + " AS pn " +
@@ -57,9 +63,15 @@ public class PwsDataProvider extends ContentProvider {
             PwsBookTable.COLUMN_NAME
     };
 
+    private static final String[] SUGGESTIONS_PSALMS_PROJECTION = {
+            PwsPsalmTable.COLUMN_ID,
+            PwsPsalmTable.COLUMN_NAME + " AS SUGGEST_COLUMN_TEXT_1"
+    };
+
     private SQLiteDatabase mDatabase;
     private PwsDatabaseHelper mDatabaseHelper;
     private String mSelection;
+    private String[] mSelectionArgs;
 
     @Override
     public boolean onCreate() {
@@ -74,6 +86,8 @@ public class PwsDataProvider extends ContentProvider {
             @Nullable String selection,
             String[] selectionArgs,
             @Nullable String sortOrder) {
+        final String METHOD_NAME = "query";
+        Log.v(LOG_TAG, METHOD_NAME + ": uri='" + uri.toString() + "'");
         mDatabase = mDatabaseHelper.getReadableDatabase();
         Cursor cursor = null;
         switch (sUriMatcher.match(uri)) {
@@ -91,6 +105,18 @@ public class PwsDataProvider extends ContentProvider {
                     projection = DEFAULT_PSALMNUMBERS_PROJECTION;
                 }
                 cursor = mDatabase.query(TABLE_PSALMNUMBERS_JOIN_BOOKS, projection, mSelection, selectionArgs, null, null, sortOrder);
+                break;
+            case PATH_PSALMS_SUGGESTIONS:
+                mSelection = "SUGGEST_COLUMN_TEXT_1 LIKE '" + uri.getLastPathSegment() + "%'";
+                cursor = mDatabase.query(TABLE_PSALMS, SUGGESTIONS_PSALMS_PROJECTION, mSelection, mSelectionArgs, null, null, null);
+                MatrixCursor cursor1 = new MatrixCursor(new String[]{"_ID", "SUGGEST_COLUMN_TEXT_1"});
+                if (cursor.moveToFirst()) {
+                    while (cursor.moveToNext()) {
+                        cursor1.newRow().add(cursor.getLong(0)).add(cursor.getString(1));
+                        Log.i(LOG_TAG, METHOD_NAME + " row: id=" + cursor.getLong(0) + " suggest=" + cursor.getString(1));
+                    }
+                }
+                cursor = cursor1;
                 break;
             default:
                 // todo: throw exception - incorrect uri

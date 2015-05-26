@@ -28,9 +28,19 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textStyle="bold"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Psalm Text 1\nPsalm Text 2"
-        android:id="@+id/txt_psalm_text"
+        android:text="Book edition"
+        android:id="@+id/txt_book_edition"
         android:layout_below="@+id/txt_psalm_name"
+        android:layout_toEndOf="@+id/txt_psalm_number" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Book edition 1, Book edition 2"
+        android:id="@+id/txt_another_book_editions"
+        android:layout_below="@+id/txt_book_edition"
         android:layout_toEndOf="@+id/txt_psalm_number" />
 </RelativeLayout>
