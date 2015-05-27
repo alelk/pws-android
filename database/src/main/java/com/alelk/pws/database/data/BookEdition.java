@@ -13,7 +13,8 @@ public enum BookEdition {
     Kimval ("Kimval"),
     FCPSALMS ("FCPsalms"),
     SLAVIT_BEZ_ZAPINKI ("SlavitBezZapinki"),
-    PVNL ("PVNL");
+    PVNL ("PVNL"),
+    ZARYA ("Zarja");
 
 
     private String signature;
