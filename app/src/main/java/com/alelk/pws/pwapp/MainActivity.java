@@ -122,40 +122,8 @@ public class MainActivity extends ActionBarActivity {
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         final SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
-        Log.e("getComponentName", "" + getComponentName());
-        Log.e("searchableInfo", "" + searchManager.getSearchableInfo(getComponentName()));
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setIconifiedByDefault(true);
-        /*
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                PwsDataSource pwsDataSource = new PwsDataSourceImpl(getApplicationContext(), "pws.db", 5);
-                pwsDataSource.open();
-                List<Psalm> psalms = new ArrayList<>();
-                try {
-                    psalms.addAll(pwsDataSource.getPsalms(BookEdition.PV3055, query + "%").values());
-                } catch (PwsDatabaseIncorrectValueException e) {
-                    e.printStackTrace();
-                }
-                pwsDataSource.close();
-                psalmListAdapter = new PsalmListAdapter(getApplicationContext(),R.layout.layout_psalms_list, psalms);
-
-                Collections.sort(psalms, Psalm.getNumberComparator(BookEdition.PV3055));
-                listView.setAdapter(psalmListAdapter);
-                listView.setOnItemClickListener(psalmListClickHandler);
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                String[] args = {""};
-                args[0] = newText + "%";
-                Cursor cursor = getContentResolver().query(PSALMS_URI, new String[]{"_id", "name"}, "name LIKE '" + newText + "%'", null, null);
-                searchView.setSuggestionsAdapter(new PsalmSuggestionCursorAdapter(getApplicationContext(), cursor));
-                return true;
-            }
-        }); */
         return true;
     }
 
