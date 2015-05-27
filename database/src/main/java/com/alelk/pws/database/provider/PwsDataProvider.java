@@ -130,7 +130,7 @@ public class PwsDataProvider extends ContentProvider {
                 mLimit = uri.getQueryParameter(SUGGEST_PARAMETER_LIMIT);
                 mSelection = SUGGEST_COLUMN_TEXT_1 + " LIKE '" + uri.getLastPathSegment() + "%'";
                 cursor = mDatabase.query(TABLE_PSALMS, SUGGESTIONS_PSALMS_PROJECTION, mSelection, null, null, null, null, mLimit);
-                if (cursor.getCount() < 1) {
+                if (cursor != null && cursor.getCount() < 1) {
                     mSelection = SUGGEST_COLUMN_TEXT_1 + " LIKE '% " + uri.getLastPathSegment() + "%'";
                     cursor = mDatabase.query(TABLE_PSALMS, SUGGESTIONS_PSALMS_PROJECTION, mSelection, null, null, null, null, mLimit);
                 }
