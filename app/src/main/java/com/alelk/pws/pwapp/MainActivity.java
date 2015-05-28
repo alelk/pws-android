@@ -69,8 +69,11 @@ public class MainActivity extends ActionBarActivity {
                     "pwsbooks/sdp.pwsbk",
                     "pwsbooks/tympan.pwsbk",
                     "pwsbooks/slavit\'_bez_zapinki.pwsbk",
-                    "pwsbooks/fcpsalms.pwsbk", "pwsbooks/PVNL.pwsbk",
-                    "pwsbooks/fcpsalms.pwsbk", "pwsbooks/Zarja.pwsbk");
+                    "pwsbooks/fcpsalms.pwsbk",
+                    "pwsbooks/PVNL.pwsbk",
+                    "pwsbooks/fcpsalms.pwsbk",
+                    "pwsbooks/Zarja.pwsbk",
+                    "pwsbooks/Svirel.pwsbk");
 
             Map<BookEdition, Book> books = new HashMap();
 
