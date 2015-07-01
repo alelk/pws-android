@@ -15,7 +15,8 @@ public enum BookEdition {
     SLAVIT_BEZ_ZAPINKI ("SlavitBezZapinki"),
     PVNL ("PVNL"),
     ZARYA ("Zarja"),
-    SVIREL ("Svirel");
+    SVIREL ("Svirel"),
+    NNAPEVY ("NNapevy");
 
 
     private String signature;

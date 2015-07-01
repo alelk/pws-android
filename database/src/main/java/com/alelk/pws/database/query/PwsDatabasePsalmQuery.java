@@ -204,6 +204,7 @@ public class PwsDatabasePsalmQuery extends PwsDatabaseQueryUtils implements PwsD
         Long psalmId = null;
         for (BookEdition bookEdition : psalm.getBookEditions()) {
             long psalmNumber = psalm.getNumber(bookEdition);
+            // todo: check if book edition selected is not null
             long bookId = new PwsDatabaseBookQuery(database).selectByEdition(bookEdition).getId();
             PsalmNumberEntity psalmNumberEntity = new PwsDatabasePsalmNumberQuery(database, null, null).selectByNumberAndBookId(psalmNumber, bookId);
             if (psalmNumberEntity == null) {
