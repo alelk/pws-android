@@ -55,6 +55,15 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         listView = (ListView) findViewById(R.id.listView);
 
+        Intent intent = getIntent();
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            // TODO: 01.07.2015 search
+            return;
+        } else if (Intent.ACTION_VIEW.equals(intent.getAction())) {
+            // TODO: 01.07.2015 view psalm
+            return;
+        }
+
 
         AssetManager am = this.getAssets();
 
