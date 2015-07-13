@@ -4,9 +4,6 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
-import android.database.Cursor;
-import android.database.MatrixCursor;
-import android.graphics.Color;
 import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -23,14 +20,12 @@ import android.widget.TextView;
 import com.alelk.pws.database.data.Book;
 import com.alelk.pws.database.data.BookEdition;
 import com.alelk.pws.database.data.Psalm;
-import com.alelk.pws.database.data.PsalmPart;
 import com.alelk.pws.database.exception.PwsDatabaseIncorrectValueException;
 import com.alelk.pws.database.exception.PwsDatabaseSourceIdExistsException;
 import com.alelk.pws.database.source.PwsDataSource;
 import com.alelk.pws.database.source.PwsDataSourceImpl;
-import com.alelk.pws.pwapp.adapter.PsalmSuggestionCursorAdapter;
+import com.alelk.pws.pwapp.adapter.PsalmListAdapter;
 import com.alelk.pws.pwapp.data.PwsPsalmParcelable;
-import com.alelk.pws.pwapp.loader.PsalmSuggestionsLoaderCallback;
 import com.alelk.pws.xmlengine.PwsXmlParser;
 import com.alelk.pws.xmlengine.exception.PwsXmlParserIncorrectSourceFormatException;
 
@@ -49,18 +44,33 @@ public class MainActivity extends ActionBarActivity {
     private TextView textView;
     private ListView listView;
     private ArrayAdapter<Psalm> psalmListAdapter;
+    PwsDataSource pwsDataSource;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         listView = (ListView) findViewById(R.id.listView);
 
+        pwsDataSource = new PwsDataSourceImpl(this, "pws.db", 5);
+        pwsDataSource.open();
+
         Intent intent = getIntent();
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             // TODO: 01.07.2015 search
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            Log.i("search action", "query " + query);
             return;
         } else if (Intent.ACTION_VIEW.equals(intent.getAction())) {
-            // TODO: 01.07.2015 view psalm
+            Uri data = intent.getData();
+            long id = Long.parseLong(data.getLastPathSegment());
+            try {
+                Psalm psalm = pwsDataSource.getPsalm(id);
+                Intent intentPsalmView = new Intent(getApplicationContext(), PsalmActivity.class);
+                intentPsalmView.putExtra("psalm", new PwsPsalmParcelable(psalm));
+                startActivity(intentPsalmView);
+            } catch (PwsDatabaseIncorrectValueException e) {
+                e.printStackTrace();
+            }
             return;
         }
 
@@ -88,8 +98,7 @@ public class MainActivity extends ActionBarActivity {
                 books.put(book.getEdition(), book);
             }
 
-            PwsDataSource pwsDataSource = new PwsDataSourceImpl(this, "pws.db", 5);
-            pwsDataSource.open();
+
             for (Book book : books.values()) {
                 pwsDataSource.addBook(book);
             }
@@ -174,16 +183,8 @@ public class MainActivity extends ActionBarActivity {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Psalm psalm = (Psalm) parent.getItemAtPosition(position);
 
-            String text = psalm.toString() + "\n";
-            if (psalm.getPsalmParts() != null) {
-                for (PsalmPart part : psalm.getPsalmParts().values()) {
-                    text += part + "\n";
-                }
-            }
-
             Intent intent = new Intent(getApplicationContext(), PsalmActivity.class);
             intent.putExtra("psalm", new PwsPsalmParcelable(psalm));
-            intent.putExtra("text", text);
             startActivity(intent);
         }
     };
