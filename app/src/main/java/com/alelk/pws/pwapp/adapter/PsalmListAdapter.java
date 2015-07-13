@@ -1,4 +1,4 @@
-package com.alelk.pws.pwapp;
+package com.alelk.pws.pwapp.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.alelk.pws.database.data.BookEdition;
 import com.alelk.pws.database.data.Psalm;
+import com.alelk.pws.pwapp.R;
 
 import java.util.List;
 

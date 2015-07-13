@@ -121,4 +121,16 @@ public class PwsDataSourceImpl implements PwsDataSource {
         return psalms;
     }
 
+    public Psalm getPsalm(Long id) throws PwsDatabaseIncorrectValueException {
+        Psalm psalm = null;
+        PsalmEntity psalmEntity = new PwsDatabasePsalmQuery(database).selectById(id);
+        if (psalmEntity != null) {
+            Set<VerseEntity> verseEntities = new PwsDatabaseVerseQuery(database, null).selectByPsalmId(id);
+            Set<ChorusEntity> chorusEntities = new PwsDatabaseChorusQuery(database, null).selectByPsalmId(id);
+            Map<BookEdition, Integer> numbers = new PwsDatabaseQueryHelper(database).getPsalmNumbersByPsalmId(id);
+            psalm = new PsalmBuilder(psalmEntity, verseEntities, chorusEntities, numbers).toObject();
+        }
+        return psalm;
+    }
+
 }

@@ -20,4 +20,5 @@ public interface PwsDataSource {
     PsalmEntity addPsalm(Psalm psalm) throws PwsDatabaseSourceIdExistsException, PwsDatabaseIncorrectValueException;
     Map<Integer, Psalm> getPsalms(BookEdition bookEdition) throws PwsDatabaseIncorrectValueException;
     Map<Integer, Psalm> getPsalms(BookEdition bookEdition, String name) throws PwsDatabaseIncorrectValueException;
+    Psalm getPsalm(Long id) throws PwsDatabaseIncorrectValueException;
 }

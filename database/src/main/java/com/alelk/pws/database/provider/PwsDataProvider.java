@@ -72,14 +72,16 @@ public class PwsDataProvider extends ContentProvider {
 
     private static final String[] SUGGESTIONS_PSALMS_PROJECTION = {
             PwsPsalmTable.COLUMN_ID,
-            PwsPsalmTable.COLUMN_NAME + " AS " + SUGGEST_COLUMN_TEXT_1
+            PwsPsalmTable.COLUMN_NAME + " AS " + SUGGEST_COLUMN_TEXT_1,
+            PwsPsalmTable.COLUMN_ID + " AS " + SUGGEST_COLUMN_INTENT_DATA_ID
     };
 
     private static final String[] SUGGESTIONS_PSALM_NUMBERS_PROJECTION = {
             "pn." + PwsPsalmNumbersTable.COLUMN_ID + " AS _id ",
             "pn." + PwsPsalmNumbersTable.COLUMN_NUMBER + " AS " + PwsPsalmNumbersTable.COLUMN_NUMBER,
             "b." + PwsBookTable.COLUMN_DISPLAYNAME + " AS " + SUGGEST_COLUMN_TEXT_2,
-            "p." + PwsPsalmTable.COLUMN_NAME + " AS " + SUGGEST_COLUMN_TEXT_1
+            "p." + PwsPsalmTable.COLUMN_NAME + " AS " + SUGGEST_COLUMN_TEXT_1,
+            "p." + PwsPsalmTable.COLUMN_ID + " AS " + SUGGEST_COLUMN_INTENT_DATA_ID
     };
 
     private SQLiteDatabase mDatabase;
