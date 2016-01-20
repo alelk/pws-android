@@ -35,16 +35,17 @@ public class PwsDatabaseBookQuery extends PwsDatabaseQueryUtils implements PwsDa
             COLUMN_EDITORS,
             COLUMN_DESCRIPTION };
 
-    private SQLiteDatabase database;
+    private SQLiteDatabase mDatabase;
+    private Cursor mCursor;
 
-    public PwsDatabaseBookQuery(SQLiteDatabase database) {
-        this.database = database;
+    public PwsDatabaseBookQuery(SQLiteDatabase mDatabase) {
+        this.mDatabase = mDatabase;
     }
 
     @Override
     public BookEntity insert(Book book) throws PwsDatabaseSourceIdExistsException, PwsDatabaseIncorrectValueException {
         final String METHOD_NAME = "insert";
-        validateSQLiteDatabaseNotNull(METHOD_NAME, database);
+        validateSQLiteDatabaseNotNull(METHOD_NAME, mDatabase);
         BookEntity bookEntity = null;
         bookEntity = selectByEdition(book.getEdition());
         if (bookEntity != null) {
@@ -55,7 +56,7 @@ public class PwsDatabaseBookQuery extends PwsDatabaseQueryUtils implements PwsDa
         } else {
             final ContentValues contentValues = new ContentValues();
             fillContentValues(contentValues, book);
-            long id = database.insert(TABLE_BOOKS, null, contentValues);
+            long id = mDatabase.insert(TABLE_BOOKS, null, contentValues);
             bookEntity = selectById(id);
             Log.d(LOG_TAG, METHOD_NAME + ": New book added: " + bookEntity);
         }
@@ -66,30 +67,38 @@ public class PwsDatabaseBookQuery extends PwsDatabaseQueryUtils implements PwsDa
     public BookEntity selectById(long id) {
         final String METHOD_NAME = "selectById";
         BookEntity bookEntity = null;
-        Cursor cursor = database.query(TABLE_BOOKS, ALL_COLUMNS, COLUMN_ID + " = " + id, null, null, null, "1");
-        if (cursor.moveToFirst()) {
-            bookEntity = cursorToBookEntity(cursor);
+        try {
+            mCursor = mDatabase.query(TABLE_BOOKS, ALL_COLUMNS, COLUMN_ID + " = " + id, null, null, null, "1");
+            if (mCursor.moveToFirst()) {
+                bookEntity = cursorToBookEntity(mCursor);
+            }
+            Log.d(LOG_TAG, METHOD_NAME + ": Book selected (id = '" + id + "'): " + bookEntity);
+        } finally {
+            if (mCursor != null) mCursor.close();
         }
-        Log.d(LOG_TAG, METHOD_NAME + ": Book selected (id = '" + id + "'): " + bookEntity);
         return bookEntity;
     }
 
     /**
-     * Select BookEntity from Pws database by book edition
-     * @param edition book edition to select from database
+     * Select BookEntity from Pws mDatabase by book edition
+     * @param edition book edition to select from mDatabase
      * @return BookEntity with specified book edition. Returns null if book edition not found.
      * @throws PwsDatabaseIncorrectValueException if any value is incorrect
      */
     public BookEntity selectByEdition(BookEdition edition) throws PwsDatabaseIncorrectValueException {
         final String METHOD_NAME = "selectByEdition";
-        validateSQLiteDatabaseNotNull(METHOD_NAME, database);
+        validateSQLiteDatabaseNotNull(METHOD_NAME, mDatabase);
         BookEntity bookEntity = null;
-        Cursor cursor = database.query(TABLE_BOOKS, ALL_COLUMNS, COLUMN_EDITION + " = '" + edition.getSignature() + "'", null, null, null, "1");
-        if (cursor.moveToFirst()) {
-            bookEntity = cursorToBookEntity(cursor);
+        try {
+            mCursor = mDatabase.query(TABLE_BOOKS, ALL_COLUMNS, COLUMN_EDITION + " = '" + edition.getSignature() + "'", null, null, null, "1");
+            if (mCursor.moveToFirst()) {
+                bookEntity = cursorToBookEntity(mCursor);
+            }
+            Log.d(LOG_TAG, METHOD_NAME + ": Book selected (edition = '" + edition.getSignature()
+                    + "'): " + bookEntity);
+        } finally {
+            if (mCursor != null) mCursor.close();
         }
-        Log.d(LOG_TAG, METHOD_NAME + ": Book selected (edition = '" + edition.getSignature()
-                + "'): " + bookEntity);
         return bookEntity;
     }
 

@@ -88,6 +88,7 @@ public class PwsDataProvider extends ContentProvider {
     private PwsDatabaseHelper mDatabaseHelper;
     private String mSelection;
     private String mLimit;
+    private Cursor mCursor;
     private String[] mSelectionArgs;
 
     @Override
@@ -106,10 +107,10 @@ public class PwsDataProvider extends ContentProvider {
         final String METHOD_NAME = "query";
         Log.v(LOG_TAG, METHOD_NAME + ": uri='" + uri.toString() + "'");
         mDatabase = mDatabaseHelper.getReadableDatabase();
-        Cursor cursor = null;
+        mCursor = null;
         switch (sUriMatcher.match(uri)) {
             case PATH_PSALMS:
-                cursor = mDatabase.query(TABLE_PSALMS, projection, selection, selectionArgs, null, null, sortOrder);
+                mCursor = mDatabase.query(TABLE_PSALMS, projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             case PATH_PSALMS_ID:
                 mSelection = PwsPsalmTable.COLUMN_ID + "=" + uri.getLastPathSegment();
@@ -121,29 +122,29 @@ public class PwsDataProvider extends ContentProvider {
                 if (projection == null || projection.length < 1) {
                     projection = DEFAULT_PSALMNUMBERS_PROJECTION;
                 }
-                cursor = mDatabase.query(TABLE_PSALMNUMBERS_JOIN_BOOKS, projection, mSelection, selectionArgs, null, null, sortOrder);
+                mCursor = mDatabase.query(TABLE_PSALMNUMBERS_JOIN_BOOKS, projection, mSelection, selectionArgs, null, null, sortOrder);
                 break;
             case PATH_PSALMS_SUGGESTIONS_NUMBER:
                 mLimit = uri.getQueryParameter(SUGGEST_PARAMETER_LIMIT);
                 mSelection = PwsPsalmNumbersTable.COLUMN_NUMBER + "=" + uri.getLastPathSegment();
-                cursor = mDatabase.query(TABLE_PSALMS_JOIN_PSALMNUMBERS_JOIN_BOOKS, SUGGESTIONS_PSALM_NUMBERS_PROJECTION, mSelection, null, null, null, null, mLimit);
+                mCursor = mDatabase.query(TABLE_PSALMS_JOIN_PSALMNUMBERS_JOIN_BOOKS, SUGGESTIONS_PSALM_NUMBERS_PROJECTION, mSelection, null, null, null, null, mLimit);
                 break;
             case PATH_PSALMS_SUGGESTIONS_NAME:
                 mLimit = uri.getQueryParameter(SUGGEST_PARAMETER_LIMIT);
                 mSelection = SUGGEST_COLUMN_TEXT_1 + " LIKE '" + uri.getLastPathSegment() + "%'";
-                cursor = mDatabase.query(TABLE_PSALMS, SUGGESTIONS_PSALMS_PROJECTION, mSelection, null, null, null, null, mLimit);
-                if (cursor != null && cursor.getCount() < 1) {
+                mCursor = mDatabase.query(TABLE_PSALMS, SUGGESTIONS_PSALMS_PROJECTION, mSelection, null, null, null, null, mLimit);
+                if (mCursor != null && mCursor.getCount() < 1) {
                     mSelection = SUGGEST_COLUMN_TEXT_1 + " LIKE '% " + uri.getLastPathSegment() + "%'";
-                    cursor = mDatabase.query(TABLE_PSALMS, SUGGESTIONS_PSALMS_PROJECTION, mSelection, null, null, null, null, mLimit);
+                    mCursor = mDatabase.query(TABLE_PSALMS, SUGGESTIONS_PSALMS_PROJECTION, mSelection, null, null, null, null, mLimit);
                 }
                 break;
             default:
                 // todo: throw exception - incorrect uri
         }
-        if (cursor == null) {
+        if (mCursor == null) {
             // todo: throw exception
         }
-        return cursor;
+        return mCursor;
     }
 
     @Override
