@@ -24,8 +24,6 @@ import com.alelk.pws.database.table.PwsPsalmTable;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import static com.alelk.pws.database.table.PwsPsalmTable.*;
@@ -65,33 +63,34 @@ public class PwsDatabasePsalmQuery extends PwsDatabaseQueryUtils implements PwsD
             PwsPsalmTable.TABLE_PSALMS + "." + PwsPsalmTable.COLUMN_NAME + " LIKE ? AND " +
             PwsBookTable.TABLE_BOOKS + "." + PwsBookTable.COLUMN_EDITION + "=?";
 
-    private SQLiteDatabase database;
+    private SQLiteDatabase mDatabase;
+    private Cursor mCursor;
 
-    public PwsDatabasePsalmQuery(SQLiteDatabase database) {
-        this.database = database;
+    public PwsDatabasePsalmQuery(SQLiteDatabase mDatabase) {
+        this.mDatabase = mDatabase;
     }
 
     /**
-     * Insert PWS Psalm object to database
+     * Insert PWS Psalm object to mDatabase
      * @param psalm PWS Psalm object
-     * @return PsalmEntity inserted into database
+     * @return PsalmEntity inserted into mDatabase
      * @throws PwsDatabaseIncorrectValueException if any value incorrect. Contains one of the following PwsDatabaseMessage:
-     * NULL_DATABASE_VALUE if database is null,
+     * NULL_DATABASE_VALUE if mDatabase is null,
      * NULL_PSALM_VALUE if psalm object is null,
      * NO_PSALM_NUMBERS if the psalm does not contains no one number,
      * NO_BOOK_EDITION_FOUND if book edition is specified, but no book found with this book edition,
      * UNEXPECTED_BOOK_EDITION_VALUE if if book edition is specified, but the psalm param has no psalm number for this book edition,
      * NO_PSALM_PART_NUMBERS if psalm chorus or psalm verse does not contain no one number,
      * @throws PwsDatabaseSourceIdExistsException if source already exists, but it's version is different from current. Contains one of the following PwsDatabaseMessage:
-     * PSALM_ID_EXISTS if psalm object already exists in database with another version
+     * PSALM_ID_EXISTS if psalm object already exists in mDatabase with another version
      */
     @Override
     public PsalmEntity insert(Psalm psalm) throws PwsDatabaseIncorrectValueException, PwsDatabaseSourceIdExistsException {
         final String METHOD_NAME = "insert";
-        validateSQLiteDatabaseNotNull(METHOD_NAME, database);
+        validateSQLiteDatabaseNotNull(METHOD_NAME, mDatabase);
         validatePsalmNotNull(METHOD_NAME, psalm);
         PsalmEntity psalmEntity;
-        database.beginTransaction();
+        mDatabase.beginTransaction();
         try {
             psalmEntity = selectByNumbers(psalm);
             if (psalmEntity != null) {
@@ -104,20 +103,20 @@ public class PwsDatabasePsalmQuery extends PwsDatabaseQueryUtils implements PwsD
             } else {
                 final ContentValues contentValues = new ContentValues();
                 fillContentValues(contentValues, psalm);
-                long id = database.insert(TABLE_PSALMS, null, contentValues);
+                long id = mDatabase.insert(TABLE_PSALMS, null, contentValues);
                 insertPsalmNumbers(psalm, id);
                 insertPsalmParts(psalm, id);
 
                 psalmEntity = selectById(id);
 
-                database.setTransactionSuccessful();
+                mDatabase.setTransactionSuccessful();
                 Log.v(LOG_TAG, METHOD_NAME + ": New psalm added: " + psalmEntity);
             }
         } catch (PwsDatabaseException e) {
             Log.v(LOG_TAG, METHOD_NAME + ": No psalm added. The exception was thrown: " + e.getPwsDatabaseMessage());
             throw e;
         } finally {
-            database.endTransaction();
+            mDatabase.endTransaction();
         }
         return psalmEntity;
     }
@@ -125,50 +124,62 @@ public class PwsDatabasePsalmQuery extends PwsDatabaseQueryUtils implements PwsD
     @Override
     public PsalmEntity selectById(long id) throws PwsDatabaseIncorrectValueException {
         final String METHOD_NAME = "selectById";
-        validateSQLiteDatabaseNotNull(METHOD_NAME, database);
+        validateSQLiteDatabaseNotNull(METHOD_NAME, mDatabase);
         PsalmEntity psalmEntity = null;
-        Cursor cursor = database.query(TABLE_PSALMS, ALL_COLUMNS, COLUMN_ID + " = " + id, null, null, null, "1");
-        if (cursor.moveToFirst()) {
-            psalmEntity = cursorToPsalmEntity(cursor);
-            Log.v(LOG_TAG, METHOD_NAME + ": Psalm selected: " + psalmEntity);
+        try {
+            mCursor = mDatabase.query(TABLE_PSALMS, ALL_COLUMNS, COLUMN_ID + " = " + id, null, null, null, "1");
+            if (mCursor.moveToFirst()) {
+                psalmEntity = cursorToPsalmEntity(mCursor);
+                Log.v(LOG_TAG, METHOD_NAME + ": Psalm selected: " + psalmEntity);
+            }
+        } finally {
+            if (mCursor != null) mCursor.close();
         }
         return  psalmEntity;
     }
 
     public Set<PsalmEntity> selectByBookEdition(BookEdition bookEdition) throws PwsDatabaseIncorrectValueException {
         final String METHOD_NAME = "selectByBookEdition";
-        validateSQLiteDatabaseNotNull(METHOD_NAME, database);
+        validateSQLiteDatabaseNotNull(METHOD_NAME, mDatabase);
         Set<PsalmEntity> psalmEntities = null;
         final String[] SELECTION_ARGS = new String[1];
         Arrays.asList(bookEdition.getSignature()).toArray(SELECTION_ARGS);
-        Cursor cursor = database.query(TABLE_PSALMS_JOIN_PSALMNUMBERS_JOIN_BOOKS, ALL_COLUMNS, SELECTION_BY_BOOK_EDITION, SELECTION_ARGS, null, null, null);
-        if (cursor.moveToFirst()) {
-            psalmEntities = new HashSet<>(cursor.getCount());
-            do {
-                psalmEntities.add(cursorToPsalmEntity(cursor));
-            } while (cursor.moveToNext());
-            Log.v(LOG_TAG, METHOD_NAME + ": Count of psalms selected for bookEdition=" + bookEdition + ": " + psalmEntities.size());
-        } else {
-            Log.v(LOG_TAG, METHOD_NAME + ": No psalms selected for bookEdition=" + bookEdition);
+        try {
+            mCursor = mDatabase.query(TABLE_PSALMS_JOIN_PSALMNUMBERS_JOIN_BOOKS, ALL_COLUMNS, SELECTION_BY_BOOK_EDITION, SELECTION_ARGS, null, null, null);
+            if (mCursor.moveToFirst()) {
+                psalmEntities = new HashSet<>(mCursor.getCount());
+                do {
+                    psalmEntities.add(cursorToPsalmEntity(mCursor));
+                } while (mCursor.moveToNext());
+                Log.v(LOG_TAG, METHOD_NAME + ": Count of psalms selected for bookEdition=" + bookEdition + ": " + psalmEntities.size());
+            } else {
+                Log.v(LOG_TAG, METHOD_NAME + ": No psalms selected for bookEdition=" + bookEdition);
+            }
+        } finally {
+            if (mCursor != null) mCursor.close();
         }
         return psalmEntities;
     }
 
     public Set<PsalmEntity> selectByNameAndBookEdition(String name, BookEdition bookEdition) throws PwsDatabaseIncorrectValueException {
         final String METHOD_NAME = "selectByNameAndBookEdition";
-        validateSQLiteDatabaseNotNull(METHOD_NAME, database);
+        validateSQLiteDatabaseNotNull(METHOD_NAME, mDatabase);
         Set<PsalmEntity> psalmEntities = null;
         final String[] SELECTION_ARGS = new String[2];
         Arrays.asList(name, bookEdition.getSignature()).toArray(SELECTION_ARGS);
-        Cursor cursor = database.query(TABLE_PSALMS_JOIN_PSALMNUMBERS_JOIN_BOOKS, ALL_COLUMNS, SELECTION_BY_NAME_AND_BOOK_EDITION, SELECTION_ARGS, null, null, null);
-        if (cursor.moveToFirst()) {
-            psalmEntities = new HashSet<>(cursor.getCount());
-            do {
-                psalmEntities.add(cursorToPsalmEntity(cursor));
-            } while (cursor.moveToNext());
-            Log.v(LOG_TAG, METHOD_NAME + ": Count of psalms selected for name='" + name + "' and bookEdition=" + bookEdition + ": " + psalmEntities.size());
-        } else {
-            Log.v(LOG_TAG, METHOD_NAME + ": No psalms selected for name='" + name + "' and bookEdition=" + bookEdition);
+        try {
+            mCursor = mDatabase.query(TABLE_PSALMS_JOIN_PSALMNUMBERS_JOIN_BOOKS, ALL_COLUMNS, SELECTION_BY_NAME_AND_BOOK_EDITION, SELECTION_ARGS, null, null, null);
+            if (mCursor.moveToFirst()) {
+                psalmEntities = new HashSet<>(mCursor.getCount());
+                do {
+                    psalmEntities.add(cursorToPsalmEntity(mCursor));
+                } while (mCursor.moveToNext());
+                Log.v(LOG_TAG, METHOD_NAME + ": Count of psalms selected for name='" + name + "' and bookEdition=" + bookEdition + ": " + psalmEntities.size());
+            } else {
+                Log.v(LOG_TAG, METHOD_NAME + ": No psalms selected for name='" + name + "' and bookEdition=" + bookEdition);
+            }
+        } finally {
+            if (mCursor != null) mCursor.close();
         }
         return psalmEntities;
     }
@@ -177,9 +188,9 @@ public class PwsDatabasePsalmQuery extends PwsDatabaseQueryUtils implements PwsD
     public Set<PsalmEntity> selectByBookId(long bookId) throws PwsDatabaseIncorrectValueException {
         final String METHOD_NAME = "selectByBookId";
 
-        validateSQLiteDatabaseNotNull(METHOD_NAME, database);
+        validateSQLiteDatabaseNotNull(METHOD_NAME, mDatabase);
         Set<PsalmNumberEntity> psalmNumberEntities =
-                new PwsDatabasePsalmNumberQuery(database, null, null).selectByBookId(bookId);
+                new PwsDatabasePsalmNumberQuery(mDatabase, null, null).selectByBookId(bookId);
         Set<PsalmEntity> psalmEntities = null;
         if (psalmNumberEntities != null && !psalmNumberEntities.isEmpty()) {
             psalmEntities = new HashSet<>(psalmNumberEntities.size());
@@ -197,7 +208,7 @@ public class PwsDatabasePsalmQuery extends PwsDatabaseQueryUtils implements PwsD
 
     public PsalmEntity selectByNumbers(Psalm psalm) throws PwsDatabaseIncorrectValueException {
         final String METHOD_NAME = "selectByNumbers";
-        validateSQLiteDatabaseNotNull(METHOD_NAME, database);
+        validateSQLiteDatabaseNotNull(METHOD_NAME, mDatabase);
         validatePsalmNotNull(METHOD_NAME, psalm);
         PsalmEntity psalmEntity = null;
         validatePsalmNumbersNotEmpty(METHOD_NAME, psalm.getNumbers());
@@ -205,8 +216,8 @@ public class PwsDatabasePsalmQuery extends PwsDatabaseQueryUtils implements PwsD
         for (BookEdition bookEdition : psalm.getBookEditions()) {
             long psalmNumber = psalm.getNumber(bookEdition);
             // todo: check if book edition selected is not null
-            long bookId = new PwsDatabaseBookQuery(database).selectByEdition(bookEdition).getId();
-            PsalmNumberEntity psalmNumberEntity = new PwsDatabasePsalmNumberQuery(database, null, null).selectByNumberAndBookId(psalmNumber, bookId);
+            long bookId = new PwsDatabaseBookQuery(mDatabase).selectByEdition(bookEdition).getId();
+            PsalmNumberEntity psalmNumberEntity = new PwsDatabasePsalmNumberQuery(mDatabase, null, null).selectByNumberAndBookId(psalmNumber, bookId);
             if (psalmNumberEntity == null) {
                 Log.v(LOG_TAG, METHOD_NAME + ": No psalm number entity found with psalmNumber="
                         + psalmNumber + " and bookEdition=" + bookEdition + " (bookId=");
@@ -229,16 +240,16 @@ public class PwsDatabasePsalmQuery extends PwsDatabaseQueryUtils implements PwsD
 
     private void insertPsalmNumbers(Psalm psalm, Long psalmId) throws PwsDatabaseIncorrectValueException, PwsDatabaseSourceIdExistsException {
         for (BookEdition bookEdition : psalm.getNumbers().keySet()) {
-            new PwsDatabasePsalmNumberQuery(database, psalmId, bookEdition).insert(psalm);
+            new PwsDatabasePsalmNumberQuery(mDatabase, psalmId, bookEdition).insert(psalm);
         }
     }
 
     private void insertPsalmParts(Psalm psalm, Long psalmId) throws PwsDatabaseSourceIdExistsException, PwsDatabaseIncorrectValueException {
         for (PsalmPart psalmPart : psalm.getPsalmPartsValues()) {
             if (psalmPart.getPsalmType() == PsalmPartType.CHORUS) {
-                new PwsDatabaseChorusQuery(database, psalmId).insert((PsalmChorus) psalmPart);
+                new PwsDatabaseChorusQuery(mDatabase, psalmId).insert((PsalmChorus) psalmPart);
             } else if (psalmPart.getPsalmType() == PsalmPartType.VERSE) {
-                new PwsDatabaseVerseQuery(database, psalmId).insert((PsalmVerse) psalmPart);
+                new PwsDatabaseVerseQuery(mDatabase, psalmId).insert((PsalmVerse) psalmPart);
             }
         }
     }

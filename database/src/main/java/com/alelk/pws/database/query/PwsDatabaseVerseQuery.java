@@ -24,8 +24,9 @@ public class PwsDatabaseVerseQuery extends PwsDatabaseQueryUtils implements PwsD
 
     private static final String LOG_TAG = PwsDatabaseVerseQuery.class.getSimpleName();
 
-    private SQLiteDatabase database;
-    private Long psalmId;
+    private Cursor mCursor;
+    private SQLiteDatabase mDatabase;
+    private Long mPsalmId;
 
     private final static String[] ALL_COLUMNS = {
             COLUMN_ID,
@@ -33,21 +34,21 @@ public class PwsDatabaseVerseQuery extends PwsDatabaseQueryUtils implements PwsD
             COLUMN_PSALMID,
             COLUMN_TEXT };
 
-    public PwsDatabaseVerseQuery(SQLiteDatabase database, Long psalmId) {
-        this.database = database;
-        this.psalmId = psalmId;
+    public PwsDatabaseVerseQuery(SQLiteDatabase mDatabase, Long mPsalmId) {
+        this.mDatabase = mDatabase;
+        this.mPsalmId = mPsalmId;
     }
 
     @Override
     public VerseEntity insert(PsalmVerse verse) throws PwsDatabaseSourceIdExistsException, PwsDatabaseIncorrectValueException {
         final String METHOD_NAME = "insert";
-        validateSQLiteDatabaseNotNull(METHOD_NAME, database);
-        validatePsalmIdNotNull(METHOD_NAME, psalmId);
+        validateSQLiteDatabaseNotNull(METHOD_NAME, mDatabase);
+        validatePsalmIdNotNull(METHOD_NAME, mPsalmId);
         validatePsalmPartNumbersNotEmpty(METHOD_NAME, verse);
         VerseEntity verseEntity = null;
         Long id = null;
         for (int number : verse.getNumbers()) {
-            verseEntity = selectByNumberAndPsalmId(number, psalmId);
+            verseEntity = selectByNumberAndPsalmId(number, mPsalmId);
             if (verseEntity == null) break;
             if (id == null){ id = verseEntity.getId(); } else {
                 if (!id.equals(verseEntity.getId())) {
@@ -58,12 +59,12 @@ public class PwsDatabaseVerseQuery extends PwsDatabaseQueryUtils implements PwsD
         }
         if (verseEntity == null) {
             final ContentValues contentValues = new ContentValues();
-            fillContentValues(contentValues, verse, psalmId);
-            id = database.insert(TABLE_VERSES, null, contentValues);
+            fillContentValues(contentValues, verse, mPsalmId);
+            id = mDatabase.insert(TABLE_VERSES, null, contentValues);
             verseEntity = selectById(id);
             Log.v(LOG_TAG, METHOD_NAME + ": New psalm verse added: " + verseEntity);
         } else {
-            Log.v(LOG_TAG, METHOD_NAME + ": The psalm verse already exists in database: " + verseEntity);
+            Log.v(LOG_TAG, METHOD_NAME + ": The psalm verse already exists in mDatabase: " + verseEntity);
         }
         return verseEntity;
     }
@@ -71,14 +72,18 @@ public class PwsDatabaseVerseQuery extends PwsDatabaseQueryUtils implements PwsD
     @Override
     public VerseEntity selectById(long id) throws PwsDatabaseIncorrectValueException {
         final String METHOD_NAME = "selectById";
-        validateSQLiteDatabaseNotNull(METHOD_NAME, database);
+        validateSQLiteDatabaseNotNull(METHOD_NAME, mDatabase);
         VerseEntity verseEntity = null;
-        Cursor cursor = database.query(TABLE_VERSES, ALL_COLUMNS, COLUMN_ID + " = " + id, null, null, null, "1");
-        if (cursor.moveToFirst()) {
-            verseEntity = cursorToVerseEntity(cursor);
-            Log.v(LOG_TAG, METHOD_NAME + ": Psalm verse selected (id = '" + id + "'): " + verseEntity);
-        } else {
-            Log.v(LOG_TAG, METHOD_NAME + ": No psalm verse found with id=" + id);
+        try {
+            mCursor = mDatabase.query(TABLE_VERSES, ALL_COLUMNS, COLUMN_ID + " = " + id, null, null, null, "1");
+            if (mCursor.moveToFirst()) {
+                verseEntity = cursorToVerseEntity(mCursor);
+                Log.v(LOG_TAG, METHOD_NAME + ": Psalm verse selected (id = '" + id + "'): " + verseEntity);
+            } else {
+                Log.v(LOG_TAG, METHOD_NAME + ": No psalm verse found with id=" + id);
+            }
+        } finally {
+            if (mCursor != null) mCursor.close();
         }
         return verseEntity;
     }
@@ -86,34 +91,42 @@ public class PwsDatabaseVerseQuery extends PwsDatabaseQueryUtils implements PwsD
     public VerseEntity selectByNumberAndPsalmId(long number, long psalmId) {
         final String METHOD_NAME = "selectByNumberAndPsalmId";
         VerseEntity verseEntity = null;
-        final String[] SELECTION_ARGS = new String[2];
-        Arrays.asList(String.valueOf(number), String.valueOf(psalmId)).toArray(SELECTION_ARGS);
-        Cursor cursor = database.query(TABLE_VERSES, ALL_COLUMNS,
-                COLUMN_NUMBER + "=? AND " + COLUMN_PSALMID + "=?", SELECTION_ARGS, null, null, "1");
-        if (cursor.moveToFirst()) {
-            verseEntity = cursorToVerseEntity(cursor);
-            Log.v(LOG_TAG, METHOD_NAME + ": Psalm verse selected: " + verseEntity);
-        } else {
-            Log.v(LOG_TAG, METHOD_NAME + ": No psalm verse found with number='" + number
-                    + "' and psalmId='" + psalmId + '\'');
+        try {
+            final String[] SELECTION_ARGS = new String[2];
+            Arrays.asList(String.valueOf(number), String.valueOf(psalmId)).toArray(SELECTION_ARGS);
+            mCursor = mDatabase.query(TABLE_VERSES, ALL_COLUMNS,
+                    COLUMN_NUMBER + "=? AND " + COLUMN_PSALMID + "=?", SELECTION_ARGS, null, null, "1");
+            if (mCursor.moveToFirst()) {
+                verseEntity = cursorToVerseEntity(mCursor);
+                Log.v(LOG_TAG, METHOD_NAME + ": Psalm verse selected: " + verseEntity);
+            } else {
+                Log.v(LOG_TAG, METHOD_NAME + ": No psalm verse found with number='" + number
+                        + "' and mPsalmId='" + psalmId + '\'');
+            }
+        } finally {
+            if (mCursor != null) mCursor.close();
         }
         return verseEntity;
     }
 
     public Set<VerseEntity> selectByPsalmId(long psalmId) throws PwsDatabaseIncorrectValueException {
         final String METHOD_NAME = "selectByPsalmId";
-        validateSQLiteDatabaseNotNull(METHOD_NAME, database);
         Set<VerseEntity> verseEntities = null;
-        Cursor cursor = database.query(TABLE_VERSES, ALL_COLUMNS,
-                COLUMN_PSALMID + " = " + psalmId, null, null, null, null);
-        if (cursor.moveToFirst()) {
-            verseEntities = new HashSet<>(cursor.getCount());
-            do {
-                verseEntities.add(cursorToVerseEntity(cursor));
-            } while (cursor.moveToNext());
-            Log.v(LOG_TAG, METHOD_NAME + ": Count of psalm verses selected for psalmId=" + psalmId + ": " + verseEntities.size());
-        } else {
-            Log.v(LOG_TAG, METHOD_NAME + ": No psalm verses selected for psalmId=" + psalmId);
+        try {
+            validateSQLiteDatabaseNotNull(METHOD_NAME, mDatabase);
+            mCursor = mDatabase.query(TABLE_VERSES, ALL_COLUMNS,
+                    COLUMN_PSALMID + " = " + psalmId, null, null, null, null);
+            if (mCursor.moveToFirst()) {
+                verseEntities = new HashSet<>(mCursor.getCount());
+                do {
+                    verseEntities.add(cursorToVerseEntity(mCursor));
+                } while (mCursor.moveToNext());
+                Log.v(LOG_TAG, METHOD_NAME + ": Count of psalm verses selected for mPsalmId=" + psalmId + ": " + verseEntities.size());
+            } else {
+                Log.v(LOG_TAG, METHOD_NAME + ": No psalm verses selected for mPsalmId=" + psalmId);
+            }
+        } finally {
+            if (mCursor != null) mCursor.close();
         }
         return verseEntities;
     }
