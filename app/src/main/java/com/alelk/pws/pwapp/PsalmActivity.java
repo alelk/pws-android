@@ -19,19 +19,8 @@ public class PsalmActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_psalm);
 
-        textView = (TextView) findViewById(R.id.txt_psalm_details);
+        //textView = (TextView) findViewById(R.id.txt_psalm_details);
 
         PwsPsalmParcelable psalmParcelable = getIntent().getParcelableExtra("psalm");
-
-        String text = "Name: " + psalmParcelable.getName();
-        text += "\nAuthor: " + psalmParcelable.getAuthor();
-        text += "\nTranslator: " + psalmParcelable.getTranslator();
-        text += "\nComposer: " + psalmParcelable.getComposer();
-        text += "\nYear: " + psalmParcelable.getYear();
-        text += "\nTonalities: " + psalmParcelable.getTonalities();
-        text += "\nNumbers: " + psalmParcelable.getNumbers();
-        text += "\nAnnotation: " + psalmParcelable.getAnnotation();
-
-        textView.setText(text);
     }
 }

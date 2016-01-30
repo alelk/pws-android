@@ -1,6 +1,5 @@
 package com.alelk.pws.database.data;
 
-import java.util.Date;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;

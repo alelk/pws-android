@@ -26,6 +26,7 @@ import com.alelk.pws.database.source.PwsDataSource;
 import com.alelk.pws.database.source.PwsDataSourceImpl;
 import com.alelk.pws.pwapp.adapter.PsalmListAdapter;
 import com.alelk.pws.pwapp.data.PwsPsalmParcelable;
+import com.alelk.pws.pwapp.util.PwsUtils;
 import com.alelk.pws.xmlengine.PwsXmlParser;
 import com.alelk.pws.xmlengine.exception.PwsXmlParserIncorrectSourceFormatException;
 
@@ -62,15 +63,19 @@ public class MainActivity extends ActionBarActivity {
             return;
         } else if (Intent.ACTION_VIEW.equals(intent.getAction())) {
             Uri data = intent.getData();
+            String bookEdition = intent.getStringExtra(SearchManager.EXTRA_DATA_KEY);
             long id = Long.parseLong(data.getLastPathSegment());
             try {
                 Psalm psalm = pwsDataSource.getPsalm(id);
+                int psalmNumber = psalm.getNumber(BookEdition.getInstanceBySignature(bookEdition));
                 Intent intentPsalmView = new Intent(getApplicationContext(), PsalmActivity.class);
+                intentPsalmView.putExtra("psalmNumbers", PwsUtils.convertPsalmNumbersToString(psalm.getNumbers()));
                 intentPsalmView.putExtra("psalm", new PwsPsalmParcelable(psalm));
+                intentPsalmView.putExtra("bookEdition", bookEdition);
                 startActivity(intentPsalmView);
             } catch (PwsDatabaseIncorrectValueException e) {
                 e.printStackTrace();
-            }
+        }
             return;
         }
 
@@ -92,7 +97,10 @@ public class MainActivity extends ActionBarActivity {
                     "pwsbooks/PVNL.pwsbk",
                     "pwsbooks/fcpsalms.pwsbk",
                     "pwsbooks/Zarja.pwsbk",
-                    "pwsbooks/Svirel.pwsbk", "pwsbooks/NNapevy.pwsbk");
+                    "pwsbooks/Svirel.pwsbk",
+                    "pwsbooks/NNapevy.pwsbk",
+                    "pwsbooks/ChudnyKray.pwsbk",
+                    "pwsbooks/NPE.pwsbk");
 
             Map<BookEdition, Book> books = new HashMap();
 
@@ -188,6 +196,7 @@ public class MainActivity extends ActionBarActivity {
 
             Intent intent = new Intent(getApplicationContext(), PsalmActivity.class);
             intent.putExtra("psalm", new PwsPsalmParcelable(psalm));
+            intent.putExtra("bookEdition", BookEdition.PV3055.getSignature());
             startActivity(intent);
         }
     };

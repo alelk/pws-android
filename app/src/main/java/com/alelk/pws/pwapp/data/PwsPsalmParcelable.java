@@ -28,7 +28,7 @@ public class PwsPsalmParcelable implements PwsParcelableObject {
     private String year;
     private String annotation;
     private List<String> tonalities = new ArrayList<>();
-    private HashMap<BookEdition, Integer> numbers = new HashMap<>();
+    private HashMap<String, Integer> numbers = new HashMap<>();
     private HashMap<Integer, PsalmPart> psalmParts = new HashMap<>();
 
     public PwsPsalmParcelable(Psalm psalm) {
@@ -40,7 +40,9 @@ public class PwsPsalmParcelable implements PwsParcelableObject {
         year = psalm.getYear();
         annotation = psalm.getAnnotation();
         tonalities = psalm.getTonalities();
-        numbers.putAll(psalm.getNumbers());
+        for (BookEdition bookEdition : psalm.getNumbers().keySet()) {
+            numbers.put(bookEdition.getSignature(), psalm.getNumber(bookEdition));
+        }
         if (psalm.getPsalmParts() != null) {
             psalmParts.putAll(psalm.getPsalmParts());
         }
@@ -74,9 +76,10 @@ public class PwsPsalmParcelable implements PwsParcelableObject {
         dest.writeString(getYear());
         dest.writeString(getAnnotation());
         dest.writeStringList(getTonalities());
-        dest.writeSerializable(getNumbers());
-        dest.writeSerializable(psalmParts);
+        dest.writeMap(psalmParts);
+        dest.writeSerializable(numbers);
     }
+
 
     private PwsPsalmParcelable(Parcel parcel) {
         name = parcel.readString();
@@ -87,8 +90,9 @@ public class PwsPsalmParcelable implements PwsParcelableObject {
         year = parcel.readString();
         annotation = parcel.readString();
         parcel.readStringList(tonalities);
-        numbers = (HashMap<BookEdition, Integer>) parcel.readSerializable();
-        psalmParts = (HashMap<Integer, PsalmPart>) parcel.readSerializable();
+        parcel.readMap(psalmParts, PsalmPart.class.getClassLoader());
+        numbers = (HashMap<String, Integer>) parcel.readSerializable();
+
     }
 
     public String getName() {
@@ -123,7 +127,11 @@ public class PwsPsalmParcelable implements PwsParcelableObject {
         return tonalities;
     }
 
-    public HashMap<BookEdition, Integer> getNumbers() {
+    public SortedMap<BookEdition, Integer> getNumbers() {
+        SortedMap<BookEdition, Integer> numbers = new TreeMap<>();
+        for (String key : this.numbers.keySet()) {
+            numbers.put(BookEdition.getInstanceBySignature(key), this.numbers.get(key));
+        }
         return numbers;
     }
 

@@ -58,9 +58,9 @@ public class PsalmPartsAdapter extends BaseAdapter {
         }
         if (psalmPart != null) {
             if (convertView == null) {
-                if (PsalmPartType.VERSE == psalmPart.getPsalmType()) {
+                if (PsalmPartType.VERSE.toString().equals(psalmPart.getPsalmType().toString())) {
                     convertView = mLayoutInflater.inflate(R.layout.layout_psalmverse, null);
-                } else if (PsalmPartType.CHORUS == psalmPart.getPsalmType()) {
+                } else if (PsalmPartType.CHORUS.toString().equals(psalmPart.getPsalmType().toString())) {
                     convertView = mLayoutInflater.inflate(R.layout.layout_psalmchorus, null);
                 }
             }
