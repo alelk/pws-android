@@ -81,7 +81,8 @@ public class PwsDataProvider extends ContentProvider {
             "pn." + PwsPsalmNumbersTable.COLUMN_NUMBER + " AS " + PwsPsalmNumbersTable.COLUMN_NUMBER,
             "b." + PwsBookTable.COLUMN_DISPLAYNAME + " AS " + SUGGEST_COLUMN_TEXT_2,
             "p." + PwsPsalmTable.COLUMN_NAME + " AS " + SUGGEST_COLUMN_TEXT_1,
-            "p." + PwsPsalmTable.COLUMN_ID + " AS " + SUGGEST_COLUMN_INTENT_DATA_ID
+            "p." + PwsPsalmTable.COLUMN_ID + " AS " + SUGGEST_COLUMN_INTENT_DATA_ID,
+            "b." + PwsBookTable.COLUMN_EDITION + " AS " + SUGGEST_COLUMN_INTENT_EXTRA_DATA
     };
 
     private SQLiteDatabase mDatabase;

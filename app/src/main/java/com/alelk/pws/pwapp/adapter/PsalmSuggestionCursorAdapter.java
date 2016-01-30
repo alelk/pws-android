@@ -37,5 +37,6 @@ public class PsalmSuggestionCursorAdapter extends CursorAdapter {
         TextView txtPsalmNumber = (TextView) view.findViewById(R.id.txt_psalm_number);
         TextView txtPsalmName = (TextView) view.findViewById(R.id.txt_psalm_name);
         txtPsalmName.setText(cursor.getString(cursor.getColumnIndex("name")));
+        //txtPsalmNumber.setText(cursor.getString(cursor.getColumnIndex("number")));
     }
 }

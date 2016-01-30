@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.alelk.pws.database.builder.BookBuilder;
 import com.alelk.pws.database.builder.PsalmBuilder;
 import com.alelk.pws.database.data.Book;
 import com.alelk.pws.database.data.BookEdition;
@@ -61,6 +62,26 @@ public class PwsDataSourceImpl implements PwsDataSource {
             e.printStackTrace();
         }
         return bookEntity;
+    }
+
+    @Override
+    public Book getBookInfo(Long id) {
+        Book book = null;
+        BookEntity bookEntity = new PwsDatabaseBookQuery(database).selectById(id);
+        if (bookEntity != null) {
+            book = new BookBuilder(bookEntity).toObject();
+        }
+        return book;
+    }
+
+    @Override
+    public Book getBookInfo(BookEdition bookEdition) throws PwsDatabaseIncorrectValueException {
+        Book book = null;
+        BookEntity bookEntity = new PwsDatabaseBookQuery(database).selectByEdition(bookEdition);
+        if (bookEntity != null) {
+            book = new BookBuilder(bookEntity).toObject();
+        }
+        return book;
     }
 
     @Override
