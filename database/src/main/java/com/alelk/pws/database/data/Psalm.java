@@ -13,7 +13,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * Created by alelkin on 25.03.2015.
@@ -141,11 +143,13 @@ public class Psalm implements PwsObject {
         return numbers.get(bookEdition);
     }
 
-    public Set<BookEdition> getBookEditions() {
+    public SortedSet<BookEdition> getBookEditions() {
         if (getNumbers() == null || getNumbers().isEmpty()) {
             return null;
         }
-        return numbers.keySet();
+        SortedSet<BookEdition> bookEditions = new TreeSet<>();
+        bookEditions.addAll(numbers.keySet());
+        return bookEditions;
     }
 
     public Map<BookEdition, Integer> getNumbers() {

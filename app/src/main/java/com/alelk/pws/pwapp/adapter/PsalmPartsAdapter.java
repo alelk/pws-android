@@ -10,9 +10,11 @@ import android.widget.TextView;
 import com.alelk.pws.database.data.PsalmPart;
 import com.alelk.pws.database.data.PsalmPartType;
 import com.alelk.pws.pwapp.R;
+import com.alelk.pws.pwapp.util.PwsUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Alex Elkin on 13.07.2015.
@@ -20,10 +22,12 @@ import java.util.List;
 public class PsalmPartsAdapter extends BaseAdapter {
 
     private List<PsalmPart> mPsalmParts;
+    private List<Integer> mDisplayPsalmPartNumber;
     private LayoutInflater mLayoutInflater;
 
-    public PsalmPartsAdapter(Context context, List<PsalmPart> psalmParts) {
+    public PsalmPartsAdapter(Context context, List<PsalmPart> psalmParts, List<Integer> displayPsalmPartNumber) {
         mPsalmParts = psalmParts;
+        mDisplayPsalmPartNumber = displayPsalmPartNumber;
         mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -57,15 +61,15 @@ public class PsalmPartsAdapter extends BaseAdapter {
             psalmPart = mPsalmParts.get(position);
         }
         if (psalmPart != null) {
-            if (convertView == null) {
-                if (PsalmPartType.VERSE.toString().equals(psalmPart.getPsalmType().toString())) {
-                    convertView = mLayoutInflater.inflate(R.layout.layout_psalmverse, null);
-                } else if (PsalmPartType.CHORUS.toString().equals(psalmPart.getPsalmType().toString())) {
-                    convertView = mLayoutInflater.inflate(R.layout.layout_psalmchorus, null);
-                }
+            if (PsalmPartType.VERSE == psalmPart.getPsalmType()) {
+                convertView = mLayoutInflater.inflate(R.layout.layout_psalmverse, null);
+                TextView txtPsalmPartNumber = (TextView) convertView.findViewById(R.id.txt_psalmpart_number);
+                txtPsalmPartNumber.setText(Integer.toString(mDisplayPsalmPartNumber.get(position)));
+            } else if (PsalmPartType.CHORUS == psalmPart.getPsalmType()) {
+                convertView = mLayoutInflater.inflate(R.layout.layout_psalmchorus, null);
             }
             TextView txtPsalmPartText = (TextView) convertView.findViewById(R.id.txt_psalmpart);
-            txtPsalmPartText.setText(psalmPart.getText());
+            txtPsalmPartText.setText(PwsUtils.buildIndentedText(psalmPart.getText(), 0, 0));
         }
         return convertView;
     }

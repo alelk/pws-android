@@ -32,6 +32,7 @@ public class BookBuilder implements PwsBuilder<Book, BookEntity> {
     public Book toObject() {
         Book book = null;
         if (mBookEntity != null) {
+            book = new Book();
             book.setName(mBookEntity.getName());
             book.setShortName(mBookEntity.getShortName());
             book.setDisplayName(mBookEntity.getDisplayName());

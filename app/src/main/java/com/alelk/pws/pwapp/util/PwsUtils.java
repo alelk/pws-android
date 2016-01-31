@@ -1,6 +1,8 @@
 package com.alelk.pws.pwapp.util;
 
+import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.style.LeadingMarginSpan;
 
 import com.alelk.pws.database.data.BookEdition;
 
@@ -42,5 +44,11 @@ public class PwsUtils {
         }
         if (numbers.size() == 0) return null;
         return  numbers;
+    }
+
+    public static SpannableString buildIndentedText(String text, int marginFirstLine, int marginNextLine) {
+        SpannableString s = new SpannableString(text);
+        s.setSpan(new LeadingMarginSpan.Standard(marginFirstLine, marginNextLine), 0, text.length(), 0);
+        return s;
     }
 }

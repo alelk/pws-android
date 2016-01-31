@@ -36,6 +36,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -63,19 +66,22 @@ public class MainActivity extends ActionBarActivity {
             return;
         } else if (Intent.ACTION_VIEW.equals(intent.getAction())) {
             Uri data = intent.getData();
-            String bookEdition = intent.getStringExtra(SearchManager.EXTRA_DATA_KEY);
+            BookEdition bookEdition = BookEdition.getInstanceBySignature(intent.getStringExtra(SearchManager.EXTRA_DATA_KEY));
             long id = Long.parseLong(data.getLastPathSegment());
             try {
                 Psalm psalm = pwsDataSource.getPsalm(id);
-                int psalmNumber = psalm.getNumber(BookEdition.getInstanceBySignature(bookEdition));
+                if (bookEdition == null) {
+                    bookEdition = psalm.getBookEditions().first();
+                }
+                Book bookInfo = pwsDataSource.getBookInfo(bookEdition);
                 Intent intentPsalmView = new Intent(getApplicationContext(), PsalmActivity.class);
-                intentPsalmView.putExtra("psalmNumbers", PwsUtils.convertPsalmNumbersToString(psalm.getNumbers()));
                 intentPsalmView.putExtra("psalm", new PwsPsalmParcelable(psalm));
-                intentPsalmView.putExtra("bookEdition", bookEdition);
+                intentPsalmView.putExtra("bookEdition", bookEdition.getSignature());
+                intentPsalmView.putExtra("bookName", bookInfo.getDisplayName());
                 startActivity(intentPsalmView);
             } catch (PwsDatabaseIncorrectValueException e) {
                 e.printStackTrace();
-        }
+            }
             return;
         }
 
