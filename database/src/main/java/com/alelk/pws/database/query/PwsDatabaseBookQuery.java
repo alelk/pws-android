@@ -88,6 +88,7 @@ public class PwsDatabaseBookQuery extends PwsDatabaseQueryUtils implements PwsDa
     public BookEntity selectByEdition(BookEdition edition) throws PwsDatabaseIncorrectValueException {
         final String METHOD_NAME = "selectByEdition";
         validateSQLiteDatabaseNotNull(METHOD_NAME, mDatabase);
+        validateBookEditionNotNull(METHOD_NAME, edition);
         BookEntity bookEntity = null;
         try {
             mCursor = mDatabase.query(TABLE_BOOKS, ALL_COLUMNS, COLUMN_EDITION + " = '" + edition.getSignature() + "'", null, null, null, "1");

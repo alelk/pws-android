@@ -7,29 +7,34 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="right"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="123"
+        android:minWidth="60dp"
+        android:textSize="40sp"
         android:id="@+id/txt_psalmheader_psalmnumber"
         android:layout_alignParentTop="true"
+        android:lines="1"
         android:layout_marginTop="10dp"
         android:layout_alignEnd="@+id/txt_psalmheader_bookedition" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:minWidth="90dp"
+        android:gravity="right"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Песнь Возрождения"
+        android:text="П"
         android:id="@+id/txt_psalmheader_bookedition"
         android:layout_marginLeft="10dp"
         android:layout_below="@+id/txt_psalmheader_psalmnumber"
         android:layout_alignParentStart="true" />
     <View
-        android:layout_width="1dp"
-        android:layout_height="match_parent"
-        android:layout_toEndOf="@+id/txt_psalmheader_psalmnumber"
-        android:layout_alignBottom="@+id/txt_psalmheader_bookedition"
-        android:layout_alignTop="@+id/txt_psalmheader_psalmnumber"
-        android:layout_marginLeft="4dp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="10dp"
+        android:id="@+id/view_psalmheader_line"
+        android:layout_below="@+id/txt_psalmheader_bookedition"
         android:background="#aaa"
         />
 
@@ -43,5 +48,34 @@
         android:layout_alignParentTop="true"
         android:gravity="left|center"
         android:layout_marginLeft="10dp"
+        android:layout_marginRight="20dp"
         android:layout_toEndOf="@+id/txt_psalmheader_psalmnumber" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginRight="30dp"
+        android:layout_marginLeft="30dp"
+        android:textStyle="italic"
+        android:textSize="15sp"
+        android:layout_below="@id/view_psalmheader_line"
+        android:textColor="@android:color/black"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text=""
+        android:id="@+id/txt_psalmheader_psalmannotation" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginRight="30dp"
+        android:layout_marginLeft="30dp"
+        android:textStyle="italic"
+        android:textSize="15sp"
+        android:layout_below="@id/txt_psalmheader_psalmannotation"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text=""
+        android:id="@+id/txt_psalmheader_psalmtonalities" />
+
 </RelativeLayout>

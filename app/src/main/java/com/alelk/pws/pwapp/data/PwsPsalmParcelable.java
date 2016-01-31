@@ -28,7 +28,7 @@ public class PwsPsalmParcelable implements PwsParcelableObject {
     private String year;
     private String annotation;
     private List<String> tonalities = new ArrayList<>();
-    private HashMap<String, Integer> numbers = new HashMap<>();
+    private HashMap<BookEdition, Integer> numbers = new HashMap<>();
     private HashMap<Integer, PsalmPart> psalmParts = new HashMap<>();
 
     public PwsPsalmParcelable(Psalm psalm) {
@@ -40,9 +40,7 @@ public class PwsPsalmParcelable implements PwsParcelableObject {
         year = psalm.getYear();
         annotation = psalm.getAnnotation();
         tonalities = psalm.getTonalities();
-        for (BookEdition bookEdition : psalm.getNumbers().keySet()) {
-            numbers.put(bookEdition.getSignature(), psalm.getNumber(bookEdition));
-        }
+        numbers.putAll(psalm.getNumbers());
         if (psalm.getPsalmParts() != null) {
             psalmParts.putAll(psalm.getPsalmParts());
         }
@@ -91,7 +89,7 @@ public class PwsPsalmParcelable implements PwsParcelableObject {
         annotation = parcel.readString();
         parcel.readStringList(tonalities);
         parcel.readMap(psalmParts, PsalmPart.class.getClassLoader());
-        numbers = (HashMap<String, Integer>) parcel.readSerializable();
+        numbers = (HashMap<BookEdition, Integer>) parcel.readSerializable();
 
     }
 
@@ -129,9 +127,7 @@ public class PwsPsalmParcelable implements PwsParcelableObject {
 
     public SortedMap<BookEdition, Integer> getNumbers() {
         SortedMap<BookEdition, Integer> numbers = new TreeMap<>();
-        for (String key : this.numbers.keySet()) {
-            numbers.put(BookEdition.getInstanceBySignature(key), this.numbers.get(key));
-        }
+        numbers.putAll(this.numbers);
         return numbers;
     }
 
