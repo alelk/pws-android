@@ -52,6 +52,14 @@ public abstract class PwsXmlParserHelper implements Constants {
 
     /**
      * Returns InputStreamReader for file named filename
+     * @param filename The name of PWS Library file. E.q. content.pwslib
+     * @return InputStreamReader for PWS Library file
+     * @throws com.alelk.pws.xmlengine.exception.PwsXmlParserFileNotFoundException if cannot open the file
+     */
+    protected abstract InputStreamReader openPwsLibraryFile(String filename) throws PwsXmlParserFileNotFoundException;
+
+    /**
+     * Returns InputStreamReader for file named filename
      * @param filename The name of PWS Book file. E.q. book.pws
      * @return InputStreamReader for PWS Book file
      * @throws com.alelk.pws.xmlengine.exception.PwsXmlParserFileNotFoundException if cannot open the file
@@ -65,6 +73,136 @@ public abstract class PwsXmlParserHelper implements Constants {
      * @throws com.alelk.pws.xmlengine.exception.PwsXmlParserFileNotFoundException if cannot open the file
      */
     protected abstract InputStreamReader openPwsPsalmFile(String filename) throws PwsXmlParserFileNotFoundException;
+
+    /**
+     * Parse the Pws Library file named filename.
+     * @param filename the name of PWS Library file.
+     * @return list of parsed books
+     * @throws PwsXmlEngineIncorrectValueException if incorrect filename
+     * @throws PwsXmlParserIncorrectSourceFormatException if exception with parser was occurred.
+     * @throws PwsXmlParserFileNotFoundException if cannot open Pws Library file
+     */
+    protected List<Book> parseLibrary(String filename) throws PwsXmlEngineIncorrectValueException, PwsXmlParserFileNotFoundException, PwsXmlParserIncorrectSourceFormatException {
+        Log.i(LOG_TAG, "Start parsing PWS library file: '" + filename + "'");
+        List<Book> books = null;
+        if (filename == null || filename.isEmpty()) {
+            throw new PwsXmlEngineIncorrectValueException();
+        }
+        InputStreamReader inputStreamReader = openPwsLibraryFile(filename);
+        XmlPullParser parser;
+        try {
+            XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+            parser = factory.newPullParser();
+            parser.setInput(inputStreamReader);
+        } catch (XmlPullParserException e) {
+            Log.e(LOG_TAG, "The exception with parser was occurred.");
+            throw new PwsXmlParserIncorrectSourceFormatException();
+        }
+        try {
+            boolean isDone = false;
+            String tagName;
+
+            while (parser.getEventType() != XmlPullParser.END_DOCUMENT) {
+                switch (parser.getEventType()) {
+                    case XmlPullParser.START_TAG:
+                        tagName = parser.getName();
+                        if (TAG.LIB.TAG.equalsIgnoreCase(tagName)) {
+                            if (isDone == true) {
+                                Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
+                                        ": Duplicate pwslibrary tag: '" + parser.getName() + "'" +
+                                        ". Library will be overwritten.");
+                                isDone = false;
+                            }
+                            try {
+                                books = parseLibrary(parser);
+                                continue;
+                            } catch (PwsDatabaseIncorrectValueException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
+                                    ": Unexpected tag: '" + tagName + "'");
+                        }
+                        break;
+                    case XmlPullParser.TEXT:
+                        Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
+                                ": Unexpected text: '" + parser.getText() + "'");
+                        break;
+                    case XmlPullParser.END_TAG:
+                        tagName = parser.getName();
+                        if (TAG.LIB.TAG.equalsIgnoreCase(tagName)) {
+                            isDone = true;
+                        } else {
+                            Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
+                                    ": Unexpected tag: '" + tagName + "'");
+                        }
+                        break;
+                    default:
+                }
+                parser.next();
+            }
+            if (isDone != true) {
+                Log.w(LOG_TAG, "Incorrect file format: " + filename);
+            }
+        } catch (XmlPullParserException e) {
+            Log.e(LOG_TAG, "The exception with parser was occurred.");
+            throw new PwsXmlParserIncorrectSourceFormatException();
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "The exception with parser was occurred.");
+            throw new PwsXmlParserIncorrectSourceFormatException();
+        }
+        Log.i(LOG_TAG, "End parsing library file: '" + filename + "'. " + books.size() + " books have been parsed.");
+        return books;
+    }
+
+    /**
+     * Parse the Version value of Pws Library file named filename.
+     * @param filename the name of PWS Library file.
+     * @return the Version of Pws Library
+     * @throws PwsXmlEngineIncorrectValueException if incorrect filename
+     * @throws PwsXmlParserIncorrectSourceFormatException if exception with parser was occurred.
+     * @throws PwsXmlParserFileNotFoundException if cannot open Pws Library file
+     */
+    protected String parseLibraryVersion(String filename) throws PwsXmlEngineIncorrectValueException, PwsXmlParserFileNotFoundException, PwsXmlParserIncorrectSourceFormatException, IOException {
+        Log.i(LOG_TAG, "Start parsing the version value from PWS library file: '" + filename + "'");
+        if (filename == null || filename.isEmpty()) {
+            throw new PwsXmlEngineIncorrectValueException();
+        }
+        InputStreamReader inputStreamReader = null;
+        XmlPullParserFactory factory = null;
+        XmlPullParser parser = null;
+        String version = null;
+        try {
+            inputStreamReader = openPwsLibraryFile(filename);
+            factory = XmlPullParserFactory.newInstance();
+            parser = factory.newPullParser();
+            parser.setInput(inputStreamReader);
+            while (parser.getEventType() != XmlPullParser.END_DOCUMENT
+                    && !(parser.getEventType() == XmlPullParser.START_TAG && TAG.LIB.TAG.equalsIgnoreCase(parser.getName()))) {
+                parser.next();
+            }
+
+            for (int i = 0; i < parser.getAttributeCount(); i++) {
+                String attributeName = parser.getAttributeName(i);
+                switch (attributeName) {
+                    case TAG.LIB.VERSION:
+                        version = parser.getAttributeValue(i);
+                        break;
+                    default:
+                        Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
+                                ": Unknown Library attribute name: '" + attributeName + "'");
+                }
+            }
+            Log.i(LOG_TAG, "End parsing library file: '" + filename + "'. Version=" + version);
+        } catch (XmlPullParserException e) {
+            Log.e(LOG_TAG, "The exception with parser was occurred.");
+            throw new PwsXmlParserIncorrectSourceFormatException();
+        } finally {
+            if (inputStreamReader != null) inputStreamReader.close();
+        }
+
+        return version;
+    }
 
     /**
      * Parse the Pws Book file named filename.
@@ -226,6 +364,169 @@ public abstract class PwsXmlParserHelper implements Constants {
         }
         Log.i(LOG_TAG, "End parsing psalm file: '" + filename + "'");
         return psalm;
+    }
+
+    private List<Book> parseLibrary(XmlPullParser parser) throws XmlPullParserException, IOException, PwsXmlParserIncorrectSourceFormatException, PwsDatabaseIncorrectValueException {
+        if (parser.getEventType() != XmlPullParser.START_TAG ||
+                !parser.getName().equalsIgnoreCase(TAG.LIB.TAG)) return null;
+        List<Book> books = null;
+
+        for (int i = 0; i < parser.getAttributeCount(); i++) {
+            String attributeName = parser.getAttributeName(i);
+            switch (attributeName) {
+                case TAG.LIB.VERSION:
+                    break;
+                default:
+                    Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
+                            ": Unknown Library attribute name: '" + attributeName + "'");
+            }
+        }
+
+        int eventType;
+        final List<String> allowedStartTags = new ArrayList<>(Arrays.asList(
+                TAG.LIB.VERSION,
+                TAG.LIB.BOOKS
+        ));
+        String tagName;
+        String currentTagName = null;
+        boolean done = false;
+        while (!done) {
+            eventType = parser.next();
+            switch (eventType) {
+                case XmlPullParser.START_TAG:
+                    tagName = parser.getName();
+                    if (allowedStartTags.contains(tagName.toLowerCase())) {
+                        currentTagName = tagName;
+                        if (TAG.LIB.BOOKS.equalsIgnoreCase(tagName)) {
+                            books = parseBooks(parser);
+                        }
+                    } else {
+                        Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
+                                ": Unexpected Library tag: '" + tagName + "'");
+                    }
+                    break;
+                case XmlPullParser.TEXT:
+                    if (currentTagName != null && !parser.isWhitespace()) {
+                        if (TAG.LIB.VERSION.equalsIgnoreCase(currentTagName)) {
+                            parser.getText();
+                        } else {
+                            Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
+                                    ": Unexpected text: '" + parser.getText() + "'");
+                        }
+                    }
+                    break;
+                case XmlPullParser.END_TAG:
+                    tagName = parser.getName();
+                    if (tagName.equalsIgnoreCase(TAG.LIB.TAG)) {
+                        done = true;
+                    } else if (allowedStartTags.contains(tagName.toLowerCase())) {
+                        verifyEndTag(parser, tagName, currentTagName);
+                        currentTagName = null;
+                    } else {
+                        Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
+                                ": Unexpected Library tag: '" + tagName + "'");
+                    }
+                    break;
+                case XmlPullParser.END_DOCUMENT:
+                    Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
+                            "Unexpected document ending.");
+                    throw new PwsXmlParserIncorrectSourceFormatException();
+                default:
+            }
+        }
+        if (done == true) {
+            if (books == null || books.size() == 0)
+            Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
+                    ": No books parsed");
+        }
+        return books;
+    }
+
+    private List<Book> parseBooks(XmlPullParser parser) throws XmlPullParserException, IOException, PwsXmlParserIncorrectSourceFormatException {
+        if (parser.getEventType() != XmlPullParser.START_TAG ||
+                !parser.getName().equalsIgnoreCase(TAG.LIB.BKS.TAG)) {
+            Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
+                    ": The start Books tag is expected, but there is: '" + parser.getName() + "'");
+            return null;
+        }
+
+        Book book = null;
+        final List<Book> books = new ArrayList<>();
+        final List<String> allowedInnerTags = new ArrayList<>(Arrays.asList(
+                TAG.LIB.BKS.REF
+        ));
+        String ref = null;
+        String tagName;
+        String currentTagName = null;
+        boolean done = false;
+        parser.next();
+        while (!done) {
+            switch (parser.getEventType()) {
+                case XmlPullParser.START_TAG:
+                    tagName = parser.getName();
+                    if (allowedInnerTags.contains(tagName.toLowerCase())) {
+                        currentTagName = tagName;
+                    } else {
+                        Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
+                                ": Unexpected Books tag: '" + tagName + "'");
+                    }
+                    break;
+                case XmlPullParser.TEXT:
+                    if (currentTagName != null && !parser.isWhitespace()) {
+                        if (TAG.LIB.BKS.REF.equalsIgnoreCase(currentTagName)) {
+                            ref = parser.getText();
+                        } else {
+                            Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
+                                    ": Unexpected text: " + parser.getText());
+                        }
+                    }
+                    break;
+                case XmlPullParser.END_TAG:
+                    tagName = parser.getName();
+                    if (TAG.LIB.BKS.TAG.equalsIgnoreCase(tagName)) {
+                        done = true;
+                    } else if (allowedInnerTags.contains(tagName.toLowerCase())) {
+                        verifyEndTag(parser, tagName, currentTagName);
+                        currentTagName = null;
+                        if (TAG.LIB.BKS.REF.equalsIgnoreCase(tagName)) {
+                            try {
+                                book = parseBook(ref);
+                            } catch (PwsXmlEngineIncorrectValueException e) {
+                                Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
+                                        ": Incorrect pws book filename: '" + ref + "'");
+                            } catch (PwsXmlParserFileNotFoundException e) {
+                                Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
+                                        ": File not found: '" + ref + "'");
+                            }
+                        }
+                        if (book != null) {
+                            Log.v(LOG_TAG, "Line " + parser.getLineNumber() +
+                                    ": New book parsed: " + book.toString());
+                            books.add(book);
+                            book = null;
+                        } else {
+                            Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
+                                    ": Books section has malformed body.");
+                        }
+                    }  else {
+                        Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
+                                ": Unexpected tag: '" + tagName + "'");
+                    }
+                    break;
+                case XmlPullParser.END_DOCUMENT:
+                    Log.w(LOG_TAG, "Line " + parser.getLineNumber() + ": Unexpected document ending.");
+                    throw new PwsXmlParserIncorrectSourceFormatException();
+                default:
+            }
+            parser.next();
+        }
+        if (books.size() == 0) {
+            Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
+                    ": Cannot parse no one book.");
+        }
+        Log.v(LOG_TAG, "Line " + parser.getLineNumber() +
+                ": " + books.size() + " books have been parsed in the current section.");
+        return books;
     }
 
     private Book parseBook(XmlPullParser parser) throws XmlPullParserException, IOException, PwsXmlParserIncorrectSourceFormatException, PwsDatabaseIncorrectValueException {

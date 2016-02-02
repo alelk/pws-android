@@ -50,4 +50,14 @@ public abstract class PsalmPart implements PwsObject, Serializable{
                 ", text='" + text == null ? "": text.replaceAll("\\W", "") + '\'' +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null) return false;
+        if (!(o instanceof PsalmPart)) return false;
+        if (((PsalmPart) o).getPsalmType() != getPsalmType()) return false;
+        if (!((PsalmPart) o).getText().equals(getText())) return false;
+        if (!((PsalmPart) o).getNumbers().equals(getNumbers())) return false;
+        return true;
+    }
 }
