@@ -4,51 +4,69 @@ import android.content.res.AssetManager;
 import android.util.Log;
 
 import com.alelk.pws.database.data.Book;
-import com.alelk.pws.database.data.BookEdition;
-import com.alelk.pws.database.data.Chapter;
-import com.alelk.pws.database.data.Psalm;
-import com.alelk.pws.database.data.PsalmChorus;
-import com.alelk.pws.database.data.PsalmPart;
-import com.alelk.pws.database.data.PsalmVerse;
-import com.alelk.pws.database.exception.PwsDatabaseIncorrectValueException;
 import com.alelk.pws.xmlengine.exception.PwsXmlEngineIncorrectValueException;
 import com.alelk.pws.xmlengine.exception.PwsXmlParserFileNotFoundException;
 import com.alelk.pws.xmlengine.exception.PwsXmlParserIncorrectSourceFormatException;
 
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
-
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 /**
- * Created by alelkin on 25.03.2015.
+ * Created by Alex Elkin on 25.03.2015.
  */
 public class PwsXmlParser extends PwsXmlParserHelper implements Constants {
     private static final String LOG_TAG = "PwsXmlParser";
 
     private AssetManager assetManager;
 
-    private String path = "";
+    private String mBookPath = "";
+    private String mLibraryPath = "";
 
     public PwsXmlParser(AssetManager assetManager) {
         this.assetManager = assetManager;
+    }
+
+    public List<Book> parseLibrary(String filename) throws PwsXmlParserIncorrectSourceFormatException {
+        if (assetManager == null) {
+            throw new PwsXmlParserIncorrectSourceFormatException();
+        }
+        if (filename == null) {
+            // TODO: 03.02.2016 handle this case 
+            return null;
+        }
+        if (filename.contains("/")) mLibraryPath = filename.substring(0, filename.lastIndexOf("/"));
+        else mLibraryPath = "";
+        List<Book> books = null;
+        try {
+            books = super.parseLibrary(filename);
+        } catch (PwsXmlEngineIncorrectValueException e) {
+            e.printStackTrace();
+        } catch (PwsXmlParserFileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return books;
+    }
+
+    public String parseLibraryVersion(String filename) throws PwsXmlParserIncorrectSourceFormatException {
+        if (assetManager == null) {
+            throw new PwsXmlParserIncorrectSourceFormatException();
+        }
+        if (filename == null) {
+            // TODO: 03.02.2016 handle this case
+            return null;
+        }
+        String version = null;
+        try {
+            version = super.parseLibraryVersion(filename);
+        } catch (PwsXmlEngineIncorrectValueException e) {
+            e.printStackTrace();
+        } catch (PwsXmlParserFileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return version;
     }
 
     public Book parseBook(String filename) throws PwsXmlParserIncorrectSourceFormatException {
@@ -56,16 +74,33 @@ public class PwsXmlParser extends PwsXmlParserHelper implements Constants {
         if (assetManager == null) {
             throw new PwsXmlParserIncorrectSourceFormatException();
         }
-        path = filename.substring(0, filename.lastIndexOf("/"));
+        if (filename == null) {
+            // TODO: 02.02.2016 handle this case 
+            return null;
+        }
+        mBookPath = filename.substring(0, filename.lastIndexOf("/"));
         try {
             book = super.parseBook(filename);
         } catch (PwsXmlEngineIncorrectValueException e) {
+            // TODO: 31.01.2016 throw exception
             e.printStackTrace();
         } catch (PwsXmlParserFileNotFoundException e) {
             e.printStackTrace();
         }
 
         return book;
+    }
+
+    @Override
+    protected InputStreamReader openPwsLibraryFile(String filename) throws PwsXmlParserFileNotFoundException {
+        InputStreamReader inputStreamReader;
+        try {
+            inputStreamReader = new InputStreamReader(assetManager.open(filename));
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Cannot open file '" + filename + "'");
+            throw new PwsXmlParserFileNotFoundException();
+        }
+        return inputStreamReader;
     }
 
     @Override
@@ -84,9 +119,9 @@ public class PwsXmlParser extends PwsXmlParserHelper implements Constants {
     protected InputStreamReader openPwsPsalmFile(String filename) throws PwsXmlParserFileNotFoundException {
         InputStreamReader inputStreamReader;
         try {
-            inputStreamReader = new InputStreamReader(assetManager.open(path + "/" + filename));
+            inputStreamReader = new InputStreamReader(assetManager.open(mBookPath + "/" + filename));
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Cannot open file '" + path + "/" + filename + "'");
+            Log.e(LOG_TAG, "Cannot open file '" + mBookPath + "/" + filename + "'");
             throw new PwsXmlParserFileNotFoundException();
         }
         return inputStreamReader;

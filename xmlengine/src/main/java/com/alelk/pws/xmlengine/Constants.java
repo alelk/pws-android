@@ -96,6 +96,16 @@ public interface Constants {
                 }
             }
         }
+
+        public final static class LIB {
+            public static final String TAG = "pwslibrary";
+            public static final String VERSION = "version";
+            public static final String BOOKS = "books";
+            public final static class BKS {
+                public static final String TAG = LIB.BOOKS;
+                public static final String REF = "ref";
+            }
+        }
     }
 
     /**

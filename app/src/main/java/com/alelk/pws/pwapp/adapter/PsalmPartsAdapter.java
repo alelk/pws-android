@@ -67,6 +67,12 @@ public class PsalmPartsAdapter extends BaseAdapter {
                 txtPsalmPartNumber.setText(Integer.toString(mDisplayPsalmPartNumber.get(position)));
             } else if (PsalmPartType.CHORUS == psalmPart.getPsalmType()) {
                 convertView = mLayoutInflater.inflate(R.layout.layout_psalmchorus, null);
+                TextView txtPsalmChorusLabel = (TextView) convertView.findViewById(R.id.txt_psalmchorus_label);
+                if (mDisplayPsalmPartNumber.get(position) > 1) {
+                    txtPsalmChorusLabel.setText(txtPsalmChorusLabel.getText() + " " + mDisplayPsalmPartNumber.get(position) + ":");
+                } else {
+                    txtPsalmChorusLabel.setText(txtPsalmChorusLabel.getText() + ":");
+                }
             }
             TextView txtPsalmPartText = (TextView) convertView.findViewById(R.id.txt_psalmpart);
             txtPsalmPartText.setText(PwsUtils.buildIndentedText(psalmPart.getText(), 0, 0));

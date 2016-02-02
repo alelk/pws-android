@@ -7,7 +7,6 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="1"
         android:layout_marginLeft="5dp"
         android:id="@+id/txt_psalmpart_number"
         android:layout_alignParentLeft="true"
@@ -19,11 +18,10 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textSize="25sp"
-        android:text="Medium Text\nHi"
         android:layout_marginTop="40dp"
-        android:layout_marginLeft="20dp"
+        android:layout_marginLeft="4dp"
         android:id="@+id/txt_psalmpart"
-        android:layout_alignStart="@+id/txt_psalmpart_number"
+        android:layout_toEndOf="@id/txt_psalmpart_number"
         android:layout_centerVertical="true"
         />
 

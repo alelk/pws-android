@@ -3,6 +3,7 @@ package com.alelk.pws.pwapp;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
@@ -45,6 +46,7 @@ public class MainActivity extends ActionBarActivity {
 
     private final static Uri PSALMS_URI = Uri.parse("content://com.alelk.pws.database.provider/psalms/");
     private final static Uri SUGGEST_PSALMS_URI = Uri.parse("content://com.alelk.pws.database.provider/suggestions/psalms/");
+    private final static String mPwsLibFilePath = "content.pwslib";
     private TextView textView;
     private ListView listView;
     private ArrayAdapter<Psalm> psalmListAdapter;
@@ -87,49 +89,29 @@ public class MainActivity extends ActionBarActivity {
 
 
         AssetManager am = this.getAssets();
-
         PwsXmlParser parser = new PwsXmlParser(am);
-
         try {
-            List<String> bookNames = Arrays.asList("pwsbooks/pv3055.pwsbk",
-                    "pwsbooks/chymns.pwsbk",
-                    "pwsbooks/cpsalms.pwsbk",
-                    "pwsbooks/gusli.pwsbk",
-                    "pwsbooks/kimval.pwsbk",
-                    "pwsbooks/sdp.pwsbk",
-                    "pwsbooks/tympan.pwsbk",
-                    "pwsbooks/slavit\'_bez_zapinki.pwsbk",
-                    "pwsbooks/fcpsalms.pwsbk",
-                    "pwsbooks/PVNL.pwsbk",
-                    "pwsbooks/fcpsalms.pwsbk",
-                    "pwsbooks/Zarja.pwsbk",
-                    "pwsbooks/Svirel.pwsbk",
-                    "pwsbooks/NNapevy.pwsbk",
-                    "pwsbooks/ChudnyKray.pwsbk",
-                    "pwsbooks/NPE.pwsbk");
-
-            Map<BookEdition, Book> books = new HashMap();
-
-            for (String bookName : bookNames) {
-                Book book = parser.parseBook(bookName);
-                books.put(book.getEdition(), book);
-            }
-
-
-            for (Book book : books.values()) {
-                pwsDataSource.addBook(book);
-            }
-
-            Book book = books.get(BookEdition.PV3055);
-            for (Psalm psalm : book.getPsalms().values()) {
-                try {
-                    pwsDataSource.addPsalm(psalm);
-                } catch (PwsDatabaseSourceIdExistsException e) {
-                } catch (PwsDatabaseIncorrectValueException e) {
+            String version = parser.parseLibraryVersion(mPwsLibFilePath);
+            SharedPreferences sharedPreferences = getSharedPreferences("pwspref", Context.MODE_PRIVATE);
+            String currentVersion = sharedPreferences.getString("libraryVersion", "0");
+            Log.e("currentVersion", currentVersion);
+            Log.e("version", version);
+            if (!currentVersion.equals(version)) {
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("libraryVersion", version);
+                editor.commit();
+                List<Book> books = parser.parseLibrary(mPwsLibFilePath);
+                for (Book book : books) {
+                    pwsDataSource.addBook(book);
+                    for (Psalm psalm : book.getPsalms().values()) {
+                        try {
+                            pwsDataSource.addPsalm(psalm);
+                        } catch (PwsDatabaseSourceIdExistsException e) {
+                        } catch (PwsDatabaseIncorrectValueException e) {
+                        }
+                    }
                 }
             }
-
-
 
             List<Psalm> psalms = new ArrayList<>();
             try {
@@ -144,7 +126,6 @@ public class MainActivity extends ActionBarActivity {
             psalmListAdapter = new PsalmListAdapter(this, R.layout.layout_psalms_list, psalms);
             listView.setAdapter(psalmListAdapter);
             listView.setOnItemClickListener(psalmListClickHandler);
-
         } catch (PwsXmlParserIncorrectSourceFormatException e) {
             e.printStackTrace();
         }
