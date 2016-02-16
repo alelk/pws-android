@@ -1,13 +1,16 @@
 package com.alelk.pws.pwapp;
 
+import android.app.ActionBar;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.net.Uri;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -47,17 +50,41 @@ public class MainActivity extends ActionBarActivity {
     private final static Uri PSALMS_URI = Uri.parse("content://com.alelk.pws.database.provider/psalms/");
     private final static Uri SUGGEST_PSALMS_URI = Uri.parse("content://com.alelk.pws.database.provider/suggestions/psalms/");
     private final static String mPwsLibFilePath = "content.pwslib";
+    private DrawerLayout mDrawerLayout;
+    private ActionBarDrawerToggle mDrawerToggle;
+    private ActionBar mActionBar;
     private TextView textView;
-    private ListView listView;
+    private ListView mDrawerMenuList;
+    private ListView mPsalmsList;
     private ArrayAdapter<Psalm> psalmListAdapter;
     PwsDataSource pwsDataSource;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        listView = (ListView) findViewById(R.id.listView);
+        mActionBar = this.getActionBar();
+        mPsalmsList = (ListView) findViewById(R.id.lv_main_psalmslist);
 
-        pwsDataSource = new PwsDataSourceImpl(this, "pws.db", 5);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.layout_main_drawer);
+        mDrawerMenuList = (ListView) findViewById(R.id.lv_main_drawermenu);
+        mDrawerMenuList.setAdapter(new ArrayAdapter<String>(this, R.layout.layout_main_drawer_item, Arrays.asList("Item 1", "Item 2")));
+
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open_drawer, R.string.close_drawer) {
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                mActionBar.setTitle("Title1");
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                mActionBar.setTitle("Open");
+            }
+        };
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+        pwsDataSource = new PwsDataSourceImpl(this, "pws.db", 9);
         pwsDataSource.open();
 
         Intent intent = getIntent();
@@ -103,6 +130,8 @@ public class MainActivity extends ActionBarActivity {
                 List<Book> books = parser.parseLibrary(mPwsLibFilePath);
                 for (Book book : books) {
                     pwsDataSource.addBook(book);
+                }
+                for (Book book : books) {
                     for (Psalm psalm : book.getPsalms().values()) {
                         try {
                             pwsDataSource.addPsalm(psalm);
@@ -115,7 +144,10 @@ public class MainActivity extends ActionBarActivity {
 
             List<Psalm> psalms = new ArrayList<>();
             try {
-                psalms.addAll(pwsDataSource.getPsalms(BookEdition.PV3055).values());
+                Map<Integer, Psalm> psalms1 = pwsDataSource.getPsalms(BookEdition.PV3055);
+                if (psalms1 != null) {
+                    psalms.addAll(psalms1.values());
+                }
             } catch (PwsDatabaseIncorrectValueException e) {
                 e.printStackTrace();
             }
@@ -124,8 +156,8 @@ public class MainActivity extends ActionBarActivity {
             Collections.sort(psalms, Psalm.getNumberComparator(BookEdition.PV3055));
 
             psalmListAdapter = new PsalmListAdapter(this, R.layout.layout_psalms_list, psalms);
-            listView.setAdapter(psalmListAdapter);
-            listView.setOnItemClickListener(psalmListClickHandler);
+            mPsalmsList.setAdapter(psalmListAdapter);
+            mPsalmsList.setOnItemClickListener(psalmListClickHandler);
         } catch (PwsXmlParserIncorrectSourceFormatException e) {
             e.printStackTrace();
         }
@@ -160,7 +192,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private List<Psalm> loadData(String query) {
-        PwsDataSourceImpl pwsDataSource = new PwsDataSourceImpl(this, "pws.db", 5);
+        PwsDataSourceImpl pwsDataSource = new PwsDataSourceImpl(this, "pws.db", 9);
         pwsDataSource.open();
         List<Psalm> psalms = new ArrayList<>();
         try {
