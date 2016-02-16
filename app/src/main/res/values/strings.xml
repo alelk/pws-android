@@ -7,4 +7,7 @@
 
     <string name="search_label">Search psalm</string>
     <string name="search_hint">Type name or number</string>
+
+    <string name="open_drawer">Open driwer</string>
+    <string name="close_drawer">Close driwer</string>
 </resources>

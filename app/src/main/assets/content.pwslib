@@ -1,4 +1,4 @@
-<pwslibrary version='1.01'>
+<pwslibrary version='1.06'>
     <books>
         <ref>pwsbooks/ChudnyKray.pwsbk</ref>
         <ref>pwsbooks/chymns.pwsbk</ref>
@@ -8,6 +8,7 @@
         <ref>pwsbooks/kimval.pwsbk</ref>
         <ref>pwsbooks/NNapevy.pwsbk</ref>
         <ref>pwsbooks/NPE.pwsbk</ref>
+        <ref>pwsbooks/PesniGlubiny.pwsbk</ref>
         <ref>pwsbooks/pv3055.pwsbk</ref>
         <ref>pwsbooks/PVNL.pwsbk</ref>
         <ref>pwsbooks/sdp.pwsbk</ref>
