@@ -4,8 +4,4 @@
     <item android:id="@+id/action_settings" android:title="@string/action_settings"
         android:orderInCategory="100" app:showAsAction="never" />
 
-    <item android:id="@+id/menu_search"
-        android:title="Search psalm"
-        app:showAsAction="always"
-        app:actionViewClass="android.widget.SearchView" />
 </menu>
