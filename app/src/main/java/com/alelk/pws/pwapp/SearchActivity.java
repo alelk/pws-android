@@ -1,31 +1,84 @@
 package com.alelk.pws.pwapp;
 
+import android.app.SearchManager;
+import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
+import com.alelk.pws.database.data.Book;
+import com.alelk.pws.database.data.BookEdition;
+import com.alelk.pws.database.data.Psalm;
+import com.alelk.pws.database.exception.PwsDatabaseIncorrectValueException;
+import com.alelk.pws.database.source.PwsDataSource;
+import com.alelk.pws.database.source.PwsDataSourceImpl;
 import com.alelk.pws.pwapp.adapter.PsalmSuggestionCursorAdapter;
+import com.alelk.pws.pwapp.data.PwsPsalmParcelable;
 import com.alelk.pws.pwapp.loader.PsalmSuggestionsLoaderCallback;
 
 
-public class SearchActivity extends ActionBarActivity {
+public class SearchActivity extends AppCompatActivity {
 
     Uri uri = Uri.parse("content://com.alelk.pws.database.provider/psalms");
+
+    PwsDataSource pwsDataSource;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+
+        Intent intent = getIntent();
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            // TODO: 01.07.2015 search
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            Log.i("search action", "query " + query);
+            return;
+        } else if (Intent.ACTION_VIEW.equals(intent.getAction())) {
+            Uri data = intent.getData();
+            BookEdition bookEdition = BookEdition.getInstanceBySignature(intent.getStringExtra(SearchManager.EXTRA_DATA_KEY));
+            long id = Long.parseLong(data.getLastPathSegment());
+
+            pwsDataSource = new PwsDataSourceImpl(this, "pws.db", 9);
+            pwsDataSource.open();
+            try {
+                Psalm psalm = pwsDataSource.getPsalm(id);
+                if (bookEdition == null) {
+                    bookEdition = psalm.getBookEditions().first();
+                }
+                Book bookInfo = pwsDataSource.getBookInfo(bookEdition);
+                Intent intentPsalmView = new Intent(getApplicationContext(), PsalmActivity.class);
+                intentPsalmView.putExtra("psalm", new PwsPsalmParcelable(psalm));
+                intentPsalmView.putExtra("bookEdition", bookEdition.getSignature());
+                intentPsalmView.putExtra("bookName", bookInfo.getDisplayName());
+                startActivity(intentPsalmView);
+            } catch (PwsDatabaseIncorrectValueException e) {
+                e.printStackTrace();
+            } finally {
+                pwsDataSource.close();
+            }
+            return;
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_search, menu);
+
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        final SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconified(false);
         return true;
     }
 
