@@ -12,9 +12,11 @@ import com.alelk.pws.database.table.PwsChorusTable;
 import com.alelk.pws.database.table.PwsPsalmNumbersTable;
 import com.alelk.pws.database.table.PwsPsalmTable;
 import com.alelk.pws.database.table.PwsVerseTable;
+import com.alelk.pws.database.table.PwsFavoritesTable;
+import com.alelk.pws.database.table.PwsHistoryTable;
 
 /**
- * Created by alelkin on 29.04.2015.
+ * Created by Alex Elkin on 29.04.2015.
  */
 public class PwsDatabaseHelper extends SQLiteOpenHelper {
     private static final String LOG_TAG = PwsDatabaseHelper.class.getSimpleName();
@@ -38,6 +40,8 @@ public class PwsDatabaseHelper extends SQLiteOpenHelper {
         PwsChorusTable.createTable(db);
         PwsChapterTable.createTable(db);
         PwsChapterPsalmsTable.createTable(db);
+        PwsFavoritesTable.createTable(db);
+        PwsHistoryTable.createTable(db);
     }
 
     @Override
@@ -51,6 +55,8 @@ public class PwsDatabaseHelper extends SQLiteOpenHelper {
         PwsChorusTable.dropTable(db);
         PwsChapterTable.dropTable(db);
         PwsChapterPsalmsTable.dropTable(db);
+        PwsFavoritesTable.dropTable(db);
+        PwsHistoryTable.dropTable(db);
         onCreate(db);
     }
 }

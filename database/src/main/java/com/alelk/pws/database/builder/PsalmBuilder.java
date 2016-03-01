@@ -70,7 +70,9 @@ public class PsalmBuilder implements PwsBuilder<Psalm, PsalmEntity> {
             psalm.setAuthor(psalmEntity.getAuthor());
             psalm.setTranslator(psalmEntity.getTranslator());
             psalm.setComposer(psalmEntity.getComposer());
-            psalm.setTonalities(Arrays.asList(TextUtils.split(psalmEntity.getTonalities(), PwsDatabaseQuery.MULTIVALUE_DELIMITER)));
+            if (psalmEntity.getTonalities() != null) {
+                psalm.setTonalities(Arrays.asList(TextUtils.split(psalmEntity.getTonalities(), PwsDatabaseQuery.MULTIVALUE_DELIMITER)));
+            }
             psalm.setYear(psalmEntity.getYear());
             psalm.setAnnotation(psalmEntity.getAnnotation());
 

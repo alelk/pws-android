@@ -1,6 +1,7 @@
 package com.alelk.pws.pwapp.fragment;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Html;
@@ -12,9 +13,14 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.alelk.pws.database.data.Book;
 import com.alelk.pws.database.data.BookEdition;
+import com.alelk.pws.database.data.Psalm;
 import com.alelk.pws.database.data.PsalmPart;
 import com.alelk.pws.database.data.PsalmPartType;
+import com.alelk.pws.database.exception.PwsDatabaseIncorrectValueException;
+import com.alelk.pws.database.provider.PwsDataProviderContract;
+import com.alelk.pws.database.source.PwsDataSourceImpl;
 import com.alelk.pws.pwapp.PsalmActivity;
 import com.alelk.pws.pwapp.R;
 import com.alelk.pws.pwapp.adapter.PsalmPartsAdapter;
@@ -26,6 +32,7 @@ import org.w3c.dom.Text;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedMap;
 
 /**
@@ -48,10 +55,23 @@ public class PsalmPartsFragment extends Fragment{
         final TextView txtPsalmInfo = (TextView) psalmFooterView.findViewById(R.id.txt_psalmfooter_psalminfo);
 
         PsalmActivity psalmActivity = (PsalmActivity) getActivity();
+        PwsDataSourceImpl pwsDataSource = new PwsDataSourceImpl(getActivity().getBaseContext(), "pws.db", PwsDataProviderContract.DATABASE_VERSION);
+        pwsDataSource.open();
+        Psalm psalm = null;
+        try {
+            psalm = pwsDataSource.getPsalmByPsalmNumberId(psalmActivity.getIntent().getLongExtra("psalmNumberId", -1));
+        } catch (PwsDatabaseIncorrectValueException e) {
+            e.printStackTrace();
+        } finally {
+            pwsDataSource.close();
+        }
+
+        /*
         PwsPsalmParcelable psalmParcelable = psalmActivity.getIntent().getParcelableExtra("psalm");
         BookEdition bookEdition = BookEdition.getInstanceBySignature(psalmActivity.getIntent().getStringExtra("bookEdition"));
-        SortedMap<Integer, PsalmPart> psalmParts = psalmParcelable.getPsalmParts();
-        SortedMap<BookEdition, Integer> psalmNumbers = psalmParcelable.getNumbers();
+        */
+        SortedMap<Integer, PsalmPart> psalmParts = psalm.getPsalmParts();
+        Map<BookEdition, Integer> psalmNumbers = psalm.getNumbers();
         List<PsalmPart> lPsalmParts = new ArrayList<>();
         List<Integer> lDisplayPsalmPartNumbers = new ArrayList<>();
         int lastVerseNumber = 0;
@@ -68,23 +88,24 @@ public class PsalmPartsFragment extends Fragment{
         }
         PsalmPartsAdapter psalmPartsArrayAdapter = new PsalmPartsAdapter(psalmActivity.getBaseContext(), lPsalmParts, lDisplayPsalmPartNumbers);
 
-        txtPsalmName.setText(psalmParcelable.getName());
+        txtPsalmName.setText(psalm.getName());
         txtBookEdition.setText(psalmActivity.getIntent().getStringExtra("bookName"));
+        /*
         if (psalmNumbers != null) {
             if (bookEdition == null) bookEdition = psalmNumbers.firstKey();
             txtPsalmNumber.setText("" + psalmNumbers.get(bookEdition));
-        }
-        if (psalmParcelable.getAnnotation() != null) {
-            txtPsalmAnnotation.setText(psalmParcelable.getAnnotation());
+        } */
+        if (psalm.getAnnotation() != null) {
+            txtPsalmAnnotation.setText(psalm.getAnnotation());
         } else txtPsalmAnnotation.setVisibility(View.GONE);
-        if (psalmParcelable.getTonalities() != null) {
-            txtPsalmTonalities.setText(Html.fromHtml("<b>" + TextUtils.join(", ", psalmParcelable.getTonalities().toArray()) + "</b>"));
+        if (psalm.getTonalities() != null) {
+            txtPsalmTonalities.setText(Html.fromHtml("<b>" + TextUtils.join(", ", psalm.getTonalities().toArray()) + "</b>"));
         } else txtPsalmAnnotation.setVisibility(View.GONE);
 
         String psalmInfo = "";
-        if (psalmParcelable.getAuthor() != null) psalmInfo += "  <b>Слова: </b>" + psalmParcelable.getAuthor();
-        if (psalmParcelable.getTranslator() != null) psalmInfo += "  <b>Перевод: </b>" + psalmParcelable.getTranslator();
-        if (psalmParcelable.getComposer() != null) psalmInfo += "  <b>Музыка: </b>" + psalmParcelable.getComposer() + "  ";
+        if (psalm.getAuthor() != null) psalmInfo += "  <b>Слова: </b>" + psalm.getAuthor();
+        if (psalm.getTranslator() != null) psalmInfo += "  <b>Перевод: </b>" + psalm.getTranslator();
+        if (psalm.getComposer() != null) psalmInfo += "  <b>Музыка: </b>" + psalm.getComposer() + "  ";
         if (psalmInfo.length() > 5) txtPsalmInfo.setText(Html.fromHtml(psalmInfo));
         else txtPsalmInfo.setVisibility(View.GONE);
 

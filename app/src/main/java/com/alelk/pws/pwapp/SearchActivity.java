@@ -19,6 +19,7 @@ import com.alelk.pws.database.data.Book;
 import com.alelk.pws.database.data.BookEdition;
 import com.alelk.pws.database.data.Psalm;
 import com.alelk.pws.database.exception.PwsDatabaseIncorrectValueException;
+import com.alelk.pws.database.provider.PwsDataProviderContract;
 import com.alelk.pws.database.source.PwsDataSource;
 import com.alelk.pws.database.source.PwsDataSourceImpl;
 import com.alelk.pws.pwapp.adapter.PsalmSuggestionCursorAdapter;
@@ -45,10 +46,18 @@ public class SearchActivity extends AppCompatActivity {
             return;
         } else if (Intent.ACTION_VIEW.equals(intent.getAction())) {
             Uri data = intent.getData();
+            long psalmNumberId = Long.parseLong(data.getLastPathSegment());
+            if (psalmNumberId != -1) {
+                Intent intentPsalmView = new Intent(getApplicationContext(), PsalmActivity.class);
+                intentPsalmView.putExtra("psalmNumberId", psalmNumberId);
+                startActivity(intentPsalmView);
+            }
+            /*
+            Uri data = intent.getData();
             BookEdition bookEdition = BookEdition.getInstanceBySignature(intent.getStringExtra(SearchManager.EXTRA_DATA_KEY));
             long id = Long.parseLong(data.getLastPathSegment());
 
-            pwsDataSource = new PwsDataSourceImpl(this, "pws.db", 9);
+            pwsDataSource = new PwsDataSourceImpl(this, "pws.db", PwsDataProviderContract.DATABASE_VERSION);
             pwsDataSource.open();
             try {
                 Psalm psalm = pwsDataSource.getPsalm(id);
@@ -66,6 +75,7 @@ public class SearchActivity extends AppCompatActivity {
             } finally {
                 pwsDataSource.close();
             }
+            */
             return;
         }
     }

@@ -1,5 +1,6 @@
-<pwslibrary version='1.06'>
+<pwslibrary version='1.083'>
     <books>
+        <ref>pwsbooks/pv3055.pwsbk</ref>
         <ref>pwsbooks/ChudnyKray.pwsbk</ref>
         <ref>pwsbooks/chymns.pwsbk</ref>
         <ref>pwsbooks/cpsalms.pwsbk</ref>
@@ -9,12 +10,12 @@
         <ref>pwsbooks/NNapevy.pwsbk</ref>
         <ref>pwsbooks/NPE.pwsbk</ref>
         <ref>pwsbooks/PesniGlubiny.pwsbk</ref>
-        <ref>pwsbooks/pv3055.pwsbk</ref>
         <ref>pwsbooks/PVNL.pwsbk</ref>
         <ref>pwsbooks/sdp.pwsbk</ref>
         <ref>pwsbooks/slavit'_bez_zapinki.pwsbk</ref>
         <ref>pwsbooks/Svirel.pwsbk</ref>
         <ref>pwsbooks/tympan.pwsbk</ref>
         <ref>pwsbooks/Zarja.pwsbk</ref>
+        <ref>pwsbooks/YunostIisusu.pwsbk</ref>
     </books>
 </pwslibrary>

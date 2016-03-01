@@ -21,6 +21,7 @@ import java.util.List;
  */
 public class PsalmSuggestionCursorAdapter extends CursorAdapter {
 
+
     public PsalmSuggestionCursorAdapter(Context context, Cursor c) {
         super(context, c, false);
     }

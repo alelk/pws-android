@@ -2,6 +2,7 @@ package com.alelk.pws.database.data;
 
 import android.text.TextUtils;
 
+import com.alelk.pws.database.data.entity.PwsPsalmObject;
 import com.alelk.pws.database.exception.PwsDatabaseIncorrectValueException;
 
 import java.util.ArrayList;
@@ -18,83 +19,11 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 /**
- * Created by alelkin on 25.03.2015.
+ * Created by Alex Elkin on 25.03.2015.
  */
-public class Psalm implements PwsObject {
-    private String name;
-    private String version;
-    private String author;
-    private String translator;
-    private String composer;
-    private String year;
-    private String annotation;
-    private List<String> tonalities = new ArrayList<>();
+public class Psalm extends PwsPsalmObject implements PwsObject {
+
     private Map<BookEdition, Integer> numbers;
-    private SortedMap<Integer, PsalmPart> psalmParts;
-
-    private static class NumberComparator implements Comparator<Psalm> {
-        private BookEdition bookEdition;
-        public NumberComparator(BookEdition bookEdition) {
-            this.bookEdition = bookEdition;
-        }
-        @Override
-        public int compare(Psalm psalm1, Psalm psalm2) {
-            Integer psalmNumber1 = psalm1.getNumber(bookEdition);
-            Integer psalmNumber2 = psalm2.getNumber(bookEdition);
-            if (psalmNumber1 == null && psalmNumber2 == null) return 0;
-            else if (psalmNumber1 == null) return -1;
-            else if (psalmNumber2 == null) return 1;
-            return psalmNumber1.compareTo(psalmNumber2);
-        }
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    public String getYear() {
-        return year;
-    }
-
-    public void setYear(String year) {
-        this.year = year;
-    }
-
-    public String getTranslator() {
-        return translator;
-    }
-
-    public void setTranslator(String translator) {
-        this.translator = translator;
-    }
-
-    public String getComposer() {
-        return composer;
-    }
-
-    public void setComposer(String composer) {
-        this.composer = composer;
-    }
 
     public void addNumber(BookEdition bookEdition, int psalmNumber) throws PwsDatabaseIncorrectValueException {
         if (bookEdition == null || psalmNumber <= 0) {
@@ -104,31 +33,6 @@ public class Psalm implements PwsObject {
             numbers = new HashMap<>();
         }
         numbers.put(bookEdition, psalmNumber);
-    }
-
-    public SortedMap<Integer, PsalmPart> getPsalmParts() {
-        return psalmParts;
-    }
-
-    /**
-     * Get set of unique values of psalmParts
-     * @return set of unique values of psalmParts
-     */
-    public Set<PsalmPart> getPsalmPartsValues() {
-        Set<PsalmPart> psalmPartSet = null;
-        if (psalmParts != null && !psalmParts.isEmpty()) {
-            psalmPartSet = new HashSet<>();
-            for (PsalmPart psalmPart : psalmParts.values()) {
-                if(!psalmPartSet.contains(psalmPart)){
-                    psalmPartSet.add(psalmPart);
-                }
-            }
-        }
-        return psalmPartSet;
-    }
-
-    public void setPsalmParts(SortedMap<Integer, PsalmPart> psalmParts) {
-        this.psalmParts = psalmParts;
     }
 
     /**
@@ -160,22 +64,19 @@ public class Psalm implements PwsObject {
         this.numbers = numbers;
     }
 
-    public List<String> getTonalities() {
-        return tonalities;
-    }
-
-    public String getAnnotation() {
-        return annotation;
-    }
-
-    public void setAnnotation(String annotation) {
-        this.annotation = annotation;
-    }
-
-    public void setTonalities(List<String> tonalities) {
-        this.tonalities = new ArrayList<>();
-        if (tonalities != null && tonalities.size() > 0) {
-            this.tonalities.addAll(tonalities);
+    private static class NumberComparator implements Comparator<Psalm> {
+        private BookEdition bookEdition;
+        public NumberComparator(BookEdition bookEdition) {
+            this.bookEdition = bookEdition;
+        }
+        @Override
+        public int compare(Psalm psalm1, Psalm psalm2) {
+            Integer psalmNumber1 = psalm1.getNumber(bookEdition);
+            Integer psalmNumber2 = psalm2.getNumber(bookEdition);
+            if (psalmNumber1 == null && psalmNumber2 == null) return 0;
+            else if (psalmNumber1 == null) return -1;
+            else if (psalmNumber2 == null) return 1;
+            return psalmNumber1.compareTo(psalmNumber2);
         }
     }
 
@@ -183,28 +84,14 @@ public class Psalm implements PwsObject {
         return new NumberComparator(bookEdition);
     }
 
-    public static Comparator<Psalm> getNameComparator() {
-        return new Comparator<Psalm>() {
-            @Override
-            public int compare(Psalm lhs, Psalm rhs) {
-                String name1 = lhs.getName();
-                String name2 = rhs.getName();
-                if (name1 == null && name2 == null) return 0;
-                else if (name1 == null) return -1;
-                else if (name2 == null) return 1;
-                return name1.compareTo(name2);
-            }
-        };
-    }
-
     public String toString() {
-        String s = "Psalm v" + this.version + " {" +
-                "name='" + this.name +
-                "' author='" + this.author +
-                "' translator='" + this.translator +
-                "' composer='" + this.composer +
-                "' year='" + this.year +
-                "' annotation='" + this.annotation +
+        String s = "Psalm v" + super.getVersion() + " {" +
+                "name='" + super.getName() +
+                "' author='" + super.getAuthor() +
+                "' translator='" + super.getTranslator() +
+                "' composer='" + super.getComposer() +
+                "' year='" + super.getYear() +
+                "' annotation='" + super.getAnnotation() +
                 "' number=[ ";
         if (numbers != null && !numbers.isEmpty()) {
             for (BookEdition bookEdition : this.numbers.keySet()) {
@@ -213,17 +100,21 @@ public class Psalm implements PwsObject {
         }
         s += "] " +
                 "psalmPartsTypes=[ ";
-        if (psalmParts != null && !psalmParts.isEmpty()) {
-            for (int i : psalmParts.keySet()) {
-                s += "#" + i + "-" + psalmParts.get(i).getPsalmType() + " ";
+        if (super.getPsalmParts() != null && !super.getPsalmParts().isEmpty()) {
+            for (int i : super.getPsalmParts().keySet()) {
+                s += "#" + i + "-" + super.getPsalmParts().get(i).getPsalmType() + " ";
             }
         }
         s += "] " +
                 "tonalities=[ ";
-        for (String tonality : tonalities) {
+        for (String tonality : super.getTonalities()) {
             s += tonality + " ";
         }
         s += "]}";
         return s;
+    }
+
+    protected Psalm getInstance() {
+        return this;
     }
 }

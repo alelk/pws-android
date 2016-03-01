@@ -21,7 +21,8 @@
         <activity
             android:name=".PsalmActivity"
             android:label="Psalm"
-            android:theme="@style/AppTheme"/>
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".MainActivity"/>
         <activity
             android:parentActivityName=".MainActivity"
             android:name=".SearchActivity"
