@@ -25,6 +25,7 @@ import com.alelk.pws.database.data.Book;
 import com.alelk.pws.database.data.Psalm;
 import com.alelk.pws.database.exception.PwsDatabaseIncorrectValueException;
 import com.alelk.pws.database.exception.PwsDatabaseSourceIdExistsException;
+import com.alelk.pws.database.provider.PwsDataProviderContract;
 import com.alelk.pws.database.source.PwsDataSource;
 import com.alelk.pws.database.source.PwsDataSourceImpl;
 import com.alelk.pws.pwapp.fragment.FavoritesFragment;
@@ -53,11 +54,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mFragmentTransaction = getSupportFragmentManager().beginTransaction();
-        ReadNowFragment readNowFragment= new ReadNowFragment();
-        mFragmentTransaction.add(R.id.fragment_main_container, readNowFragment);
-        mFragmentTransaction.commit();
-        setTitle(getString(R.string.lbl_drawer_main_readnow));
+        if (savedInstanceState == null) {
+            mFragmentTransaction = getSupportFragmentManager().beginTransaction();
+            ReadNowFragment readNowFragment = new ReadNowFragment();
+            mFragmentTransaction.add(R.id.fragment_main_container, readNowFragment);
+            mFragmentTransaction.commit();
+            setTitle(getString(R.string.lbl_drawer_main_readnow));
+        }
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar_main);
         setSupportActionBar(mToolbar);
@@ -82,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mNavigationView.setNavigationItemSelectedListener(this);
 
 
-        pwsDataSource = new PwsDataSourceImpl(this, "pws.db", 9);
+        pwsDataSource = new PwsDataSourceImpl(this, "pws.db", PwsDataProviderContract.DATABASE_VERSION);
         pwsDataSource.open();
 
         AssetManager am = this.getAssets();

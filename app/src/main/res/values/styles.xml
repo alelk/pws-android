@@ -18,11 +18,9 @@
     </style>
 
     <style name="AppTheme.Psalm.Header">
-        <item name="android:background">@color/colorPrimary</item>
     </style>
 
     <style name="AppTheme.Psalm.Footer">
-        <item name="android:background">@color/colorPrimary</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.ActionBar" />

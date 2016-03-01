@@ -3,10 +3,9 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!--todo: replace this view-->
-    <TextView
-        android:id="@+id/fragment_favorite"
+    <ListView
         android:layout_width="match_parent"
-        android:layout_height="match_parent" android:text="Favorite"/>
+        android:layout_height="match_parent"
+        android:id="@+id/lv_favorites_list" />
 
 </LinearLayout>

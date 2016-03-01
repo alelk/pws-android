@@ -14,6 +14,7 @@ import android.widget.ListView;
 import com.alelk.pws.database.data.BookEdition;
 import com.alelk.pws.database.data.Psalm;
 import com.alelk.pws.database.exception.PwsDatabaseIncorrectValueException;
+import com.alelk.pws.database.provider.PwsDataProviderContract;
 import com.alelk.pws.database.source.PwsDataSource;
 import com.alelk.pws.database.source.PwsDataSourceImpl;
 import com.alelk.pws.pwapp.MainActivity;
@@ -38,7 +39,7 @@ public class ReadNowFragment extends Fragment {
         final View v = inflater.inflate(R.layout.fragment_readnow, null);
         final ListView lvPsalmList = (ListView) v.findViewById(R.id.lview_readnow);
 
-        PwsDataSource pwsDataSource = new PwsDataSourceImpl(getActivity().getBaseContext(), "pws.db", 9);
+        PwsDataSource pwsDataSource = new PwsDataSourceImpl(getActivity().getBaseContext(), "pws.db", PwsDataProviderContract.DATABASE_VERSION);
         pwsDataSource.open();
         List<Psalm> psalms = new ArrayList<>();
         try {

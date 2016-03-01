@@ -117,6 +117,20 @@ public class PwsDatabasePsalmNumberQuery extends PwsDatabaseQueryUtils implement
         return psalmNumberEntity;
     }
 
+    public PsalmNumberEntity selectByNumber(long psalmNumber) throws PwsDatabaseIncorrectValueException {
+        final String METHOD_NAME = "selectByNumber";
+        validateSQLiteDatabaseNotNull(METHOD_NAME, mDatabase);
+        validateBookEditionNotNull(METHOD_NAME, mBookEdition);
+        BookEntity bookEntity = new PwsDatabaseBookQuery(mDatabase).selectByEdition(mBookEdition);
+        if (bookEntity == null) {
+            Log.d(LOG_TAG, METHOD_NAME + ": No book entity selected for book edition '" + mBookEdition + "'");
+            // TODO: 20.02.2016 throw exception
+            return null;
+        }
+        PsalmNumberEntity psalmNumberEntity = selectByNumberAndBookId(psalmNumber, bookEntity.getId());
+        return psalmNumberEntity;
+    }
+
     public PsalmNumberEntity selectByNumberAndBookId(long psalmNumber, long bookId) throws PwsDatabaseIncorrectValueException {
         final String METHOD_NAME = "selectByNumberAndBookId";
         validateSQLiteDatabaseNotNull(METHOD_NAME, mDatabase);

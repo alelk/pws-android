@@ -46,13 +46,13 @@ public class PwsDatabaseBookQuery extends PwsDatabaseQueryUtils implements PwsDa
     public BookEntity insert(Book book) throws PwsDatabaseSourceIdExistsException, PwsDatabaseIncorrectValueException {
         final String METHOD_NAME = "insert";
         validateSQLiteDatabaseNotNull(METHOD_NAME, mDatabase);
-        BookEntity bookEntity = null;
-        bookEntity = selectByEdition(book.getEdition());
+        BookEntity bookEntity = selectByEdition(book.getEdition());
         if (bookEntity != null) {
             Log.d(LOG_TAG, METHOD_NAME + ": Book already exists: " + bookEntity);
             if (!isVersionMatches(bookEntity.getVersion(), book.getVersion())) {
                 throw new PwsDatabaseSourceIdExistsException(PwsDatabaseMessage.BOOK_ID_EXISTS, bookEntity.getId());
             }
+            // TODO: 20.02.2016 update when version is up
         } else {
             final ContentValues contentValues = new ContentValues();
             fillContentValues(contentValues, book);
