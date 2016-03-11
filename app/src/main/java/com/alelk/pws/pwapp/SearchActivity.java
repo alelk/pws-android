@@ -52,30 +52,6 @@ public class SearchActivity extends AppCompatActivity {
                 intentPsalmView.putExtra("psalmNumberId", psalmNumberId);
                 startActivity(intentPsalmView);
             }
-            /*
-            Uri data = intent.getData();
-            BookEdition bookEdition = BookEdition.getInstanceBySignature(intent.getStringExtra(SearchManager.EXTRA_DATA_KEY));
-            long id = Long.parseLong(data.getLastPathSegment());
-
-            pwsDataSource = new PwsDataSourceImpl(this, "pws.db", PwsDataProviderContract.DATABASE_VERSION);
-            pwsDataSource.open();
-            try {
-                Psalm psalm = pwsDataSource.getPsalm(id);
-                if (bookEdition == null) {
-                    bookEdition = psalm.getBookEditions().first();
-                }
-                Book bookInfo = pwsDataSource.getBookInfo(bookEdition);
-                Intent intentPsalmView = new Intent(getApplicationContext(), PsalmActivity.class);
-                intentPsalmView.putExtra("psalm", new PwsPsalmParcelable(psalm));
-                intentPsalmView.putExtra("bookEdition", bookEdition.getSignature());
-                intentPsalmView.putExtra("bookName", bookInfo.getDisplayName());
-                startActivity(intentPsalmView);
-            } catch (PwsDatabaseIncorrectValueException e) {
-                e.printStackTrace();
-            } finally {
-                pwsDataSource.close();
-            }
-            */
             return;
         }
     }
