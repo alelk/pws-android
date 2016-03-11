@@ -1,5 +1,6 @@
 package com.alelk.pws.pwapp.fragment;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,23 +10,28 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.alelk.pws.database.provider.PwsDataProvider;
+import com.alelk.pws.database.table.PwsFavoritesTable;
 import com.alelk.pws.database.table.PwsPsalmTable;
+import com.alelk.pws.pwapp.PsalmActivity;
 import com.alelk.pws.pwapp.R;
 import com.alelk.pws.pwapp.adapter.FavoritesCursorAdapter;
 import com.alelk.pws.pwapp.adapter.PsalmListAdapter;
+import com.alelk.pws.xmlengine.Constants;
 
 /**
  * Created by Alex Elkin on 18.02.2016.
  */
 public class FavoritesFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private final static int PWS_FAVORITES_LOADER = 1;
+    public final static int PWS_FAVORITES_LOADER = 1;
 
     private final static String[] FROM_COLUMNS = {
             PwsPsalmTable.COLUMN_NAME
@@ -48,6 +54,17 @@ public class FavoritesFragment extends Fragment implements LoaderManager.LoaderC
         mCursorAdapter = new FavoritesCursorAdapter(getActivity().getBaseContext(), null, 0);
 
         mListViewFavorites.setAdapter(mCursorAdapter);
+        mListViewFavorites.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // TODO: 03.03.2016 incorrect method
+                Cursor cursor = (Cursor) parent.getItemAtPosition(position);
+                long psalmNumberId = cursor.getLong(cursor.getColumnIndex(PwsFavoritesTable.COLUMN_PSALMNUMBERID));
+                Intent intentPsalmView = new Intent(getActivity().getBaseContext(), PsalmActivity.class);
+                intentPsalmView.putExtra("psalmNumberId", psalmNumberId);
+                startActivity(intentPsalmView);
+            }
+        });
         return v;
     }
 

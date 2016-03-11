@@ -25,7 +25,8 @@ public enum BookEdition implements Parcelable {
     CHUDNY_KRAY ("ChudnyKray"),
     NPE ("NPE"),
     PESNI_GLUBINY ("PesniGlubiny"),
-    YUNOST_IISUSU ("YunostIisusu");
+    YUNOST_IISUSU ("YunostIisusu"),
+    PESNI_ANNY ("PesniAnny");
 
 
     private String signature;

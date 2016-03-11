@@ -6,10 +6,12 @@ import android.support.v7.util.SortedList;
 import android.util.Log;
 
 import com.alelk.pws.database.builder.BookBuilder;
+import com.alelk.pws.database.builder.BookInfoBuilder;
 import com.alelk.pws.database.builder.FavoriteBuilder;
 import com.alelk.pws.database.builder.PsalmBuilder;
 import com.alelk.pws.database.data.Book;
 import com.alelk.pws.database.data.BookEdition;
+import com.alelk.pws.database.data.BookInfo;
 import com.alelk.pws.database.data.FavoritePsalm;
 import com.alelk.pws.database.data.Psalm;
 import com.alelk.pws.database.data.entity.BookEntity;
@@ -74,23 +76,31 @@ public class PwsDataSourceImpl implements PwsDataSource {
     }
 
     @Override
-    public Book getBookInfo(Long id) {
-        Book book = null;
+    public BookInfo getBookInfo(Long id) {
+        BookInfo bookInfo = null;
         BookEntity bookEntity = new PwsDatabaseBookQuery(database).selectById(id);
         if (bookEntity != null) {
-            book = new BookBuilder(bookEntity).toObject();
+            bookInfo = new BookInfoBuilder(bookEntity).toObject();
         }
-        return book;
+        return bookInfo;
     }
 
     @Override
-    public Book getBookInfo(BookEdition bookEdition) throws PwsDatabaseIncorrectValueException {
-        Book book = null;
+    public BookInfo getBookInfo(BookEdition bookEdition) throws PwsDatabaseIncorrectValueException {
+        BookInfo bookInfo = null;
         BookEntity bookEntity = new PwsDatabaseBookQuery(database).selectByEdition(bookEdition);
         if (bookEntity != null) {
-            book = new BookBuilder(bookEntity).toObject();
+            bookInfo = new BookBuilder(bookEntity).toObject();
         }
-        return book;
+        return bookInfo;
+    }
+
+    @Override
+    public BookInfo getBookInfoByPsalmNumberId(Long psalmNumberId) {
+        PsalmNumberEntity psalmNumberEntity = new PwsDatabasePsalmNumberQuery(database, null, null).selectById(psalmNumberId);
+        if (psalmNumberEntity == null) return null;
+        long bookId = psalmNumberEntity.getBookId();
+        return getBookInfo(bookId);
     }
 
     @Override
@@ -164,17 +174,10 @@ public class PwsDataSourceImpl implements PwsDataSource {
     }
 
     public Psalm getPsalmByPsalmNumberId(Long psalmNumberId) throws PwsDatabaseIncorrectValueException {
-        Psalm psalm = null;
         PsalmNumberEntity psalmNumberEntity = new PwsDatabasePsalmNumberQuery(database, null, null).selectById(psalmNumberId);
+        if (psalmNumberEntity == null) return null;
         long id = psalmNumberEntity.getPsalmId();
-        PsalmEntity psalmEntity = new PwsDatabasePsalmQuery(database).selectById(id);
-        if (psalmEntity != null) {
-            Set<VerseEntity> verseEntities = new PwsDatabaseVerseQuery(database, null).selectByPsalmId(id);
-            Set<ChorusEntity> chorusEntities = new PwsDatabaseChorusQuery(database, null).selectByPsalmId(id);
-            Map<BookEdition, Integer> numbers = new PwsDatabaseQueryHelper(database).getPsalmNumbersByPsalmId(id);
-            psalm = new PsalmBuilder(psalmEntity, verseEntities, chorusEntities, numbers).toObject();
-        }
-        return psalm;
+        return getPsalm(id);
     }
 
     public FavoriteEntity addFavorite(FavoritePsalm favoritePsalm) throws PwsDatabaseException {
@@ -190,6 +193,18 @@ public class PwsDataSourceImpl implements PwsDataSource {
         return favoriteEntity;
     }
 
+    public FavoriteEntity addFavoritePsalmNumberId(long psalmNumberId) throws PwsDatabaseIncorrectValueException {
+        final String METHOD_NAME = "addFavorite";
+        FavoriteEntity favoriteEntity;
+        try {
+            favoriteEntity = new PwsDatabaseFavoriteQuery(database).insertPsalmNumberId(psalmNumberId);
+        } catch (PwsDatabaseIncorrectValueException e) {
+            Log.w(LOG_TAG, METHOD_NAME + ": Could not add to favorites psalmNumberId" + psalmNumberId);
+            throw e;
+        }
+        return favoriteEntity;
+    }
+
     public SortedList<FavoritePsalm> getFavorites() throws PwsDatabaseIncorrectValueException {
         SortedList favorites = null;
         Set<FavoriteEntity> favoriteEntitySet = new PwsDatabaseFavoriteQuery(database).selectAll();
@@ -198,6 +213,17 @@ public class PwsDataSourceImpl implements PwsDataSource {
             Psalm psalm = getPsalm(psalmNumberEntity.getPsalmId());
         }
         return favorites;
+    }
+
+    public boolean isFavoritePsalm(Psalm psalm, BookEdition bookEdition) throws PwsDatabaseIncorrectValueException {
+        PsalmNumberEntity psalmNumberEntity = new PwsDatabasePsalmNumberQuery(database, null, bookEdition)
+                .selectByNumber(psalm.getNumber(bookEdition));
+        return isFavoritePsalmNumber(psalmNumberEntity.getId());
+    }
+
+    public boolean isFavoritePsalmNumber(long psalmNumberId) throws PwsDatabaseIncorrectValueException {
+        FavoriteEntity favoriteEntity = new PwsDatabaseFavoriteQuery(database).selectByPsalmNumberId(psalmNumberId);
+        return favoriteEntity != null;
     }
 
 }

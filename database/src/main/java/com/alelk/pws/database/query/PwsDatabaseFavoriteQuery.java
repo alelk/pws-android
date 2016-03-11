@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.alelk.pws.database.data.FavoritePsalm;
+import com.alelk.pws.database.data.Psalm;
 import com.alelk.pws.database.data.entity.FavoriteEntity;
 import com.alelk.pws.database.data.entity.PsalmEntity;
 import com.alelk.pws.database.data.entity.PsalmNumberEntity;
@@ -26,6 +27,8 @@ public class PwsDatabaseFavoriteQuery extends PwsDatabaseQueryUtils  implements 
             COLUMN_ID,
             COLUMN_POSITION,
             COLUMN_PSALMNUMBERID};
+
+    private final static String ORDER_BY_POSITION_DESC = COLUMN_POSITION + " DESC";
 
     private static final String LOG_TAG = PwsDatabaseFavoriteQuery.class.getSimpleName();
     private SQLiteDatabase mDatabase;
@@ -49,12 +52,38 @@ public class PwsDatabaseFavoriteQuery extends PwsDatabaseQueryUtils  implements 
         FavoriteEntity favoriteEntity = null;
         PsalmEntity psalmEntity = new PwsDatabasePsalmQuery(mDatabase).selectByNumbers(pwsObject.getPsalm());
         if (psalmEntity == null) {
-            Log.d(LOG_TAG, METHOD_NAME + ": No psalm entity found for psalm " + pwsObject.getPsalm());
+            Log.d(LOG_TAG, METHOD_NAME + ": No psalm entity found for specified psalm: " + pwsObject.getPsalm());
             // // TODO: 20.02.2016 throw exception
             return null;
         }
         PsalmNumberEntity psalmNumberEntity = new PwsDatabasePsalmNumberQuery(mDatabase, psalmEntity.getId(), pwsObject.getBookEdition()).selectByNumber(pwsObject.getNumber());
+        if (psalmNumberEntity == null) {
+            Log.d(LOG_TAG, METHOD_NAME + ": No PsalmNumberEntity found for bookEdition=" + pwsObject.getBookEdition() + " and number=" + pwsObject.getNumber());
+        }
+        // TODO: 02.03.2016 add favorites list shifting functionality
+        favoriteEntity = insertPsalmNumberId(psalmNumberEntity.getId());
+        Log.v(LOG_TAG, METHOD_NAME + ": New favorite added: " + favoriteEntity);
         return favoriteEntity;
+    }
+
+    public FavoriteEntity insertPsalmNumberId(long psalmNumberId) throws PwsDatabaseIncorrectValueException {
+        final String METHOD_NAME = "insertPsalmNumberId";
+        validateSQLiteDatabaseNotNull(METHOD_NAME, mDatabase);
+        FavoriteEntity lastFavoriteEntity = selectLast();
+        long position = 1;
+        if (lastFavoriteEntity != null) position = lastFavoriteEntity.getPosition() + 1;
+        return insertPsalmNumberId(psalmNumberId, position);
+    }
+
+    public FavoriteEntity insertPsalmNumberId(long psalmNumberId, long position) throws PwsDatabaseIncorrectValueException {
+        final String METHOD_NAME = "insertPsalmNumberId";
+        validateSQLiteDatabaseNotNull(METHOD_NAME, mDatabase);
+        final ContentValues contentValues = new ContentValues();
+        fillContentValues(contentValues, position, psalmNumberId);
+        long id = mDatabase.insert(TABLE_FAVORITES, null, contentValues);
+        FavoriteEntity favoriteEntity = selectById(id);
+        Log.v(LOG_TAG, METHOD_NAME + ": New favorite added: " + favoriteEntity);
+        return  favoriteEntity;
     }
 
     @Override
@@ -95,6 +124,43 @@ public class PwsDatabaseFavoriteQuery extends PwsDatabaseQueryUtils  implements 
         return favoriteEntities;
     }
 
+    public FavoriteEntity selectLast() throws PwsDatabaseIncorrectValueException {
+        final String METHOD_NAME = "selectLast";
+        validateSQLiteDatabaseNotNull(METHOD_NAME, mDatabase);
+        FavoriteEntity favoriteEntity = null;
+        try {
+            mCursor = mDatabase.query(TABLE_FAVORITES, ALL_COLUMNS, null, null, null, null, ORDER_BY_POSITION_DESC, "1");
+            if (mCursor.moveToFirst()) {
+                favoriteEntity = cursorToFavoriteEntity(mCursor);
+                Log.v(LOG_TAG, METHOD_NAME + ": Favorite entity selected : " + favoriteEntity);
+            } else {
+                Log.v(LOG_TAG, METHOD_NAME + ": No one favorite entity found.");
+            }
+        } finally {
+            if (mCursor != null) mCursor.close();
+        }
+        return favoriteEntity;
+    }
+
+    public FavoriteEntity selectByPsalmNumberId(long psalmNumberId) throws PwsDatabaseIncorrectValueException {
+        final String METHOD_NAME = "selectByPsalmNumberId";
+        validateSQLiteDatabaseNotNull(METHOD_NAME, mDatabase);
+        FavoriteEntity favoriteEntity = null;
+        try {
+            final String selection = COLUMN_PSALMNUMBERID + "=" + psalmNumberId;
+            mCursor = mDatabase.query(TABLE_FAVORITES, ALL_COLUMNS, selection, null, null, null, null);
+            if (mCursor.moveToFirst()) {
+                favoriteEntity = cursorToFavoriteEntity(mCursor);
+                Log.v(LOG_TAG, METHOD_NAME + ": Favorite entity selected : " + favoriteEntity);
+            } else {
+                Log.v(LOG_TAG, METHOD_NAME + ": No favorite entity found for psalmNumberId=" + psalmNumberId);
+            }
+        } finally {
+            if (mCursor != null) mCursor.close();
+        }
+        return favoriteEntity;
+    }
+
     private FavoriteEntity cursorToFavoriteEntity(Cursor cursor) {
         FavoriteEntity favoriteEntity = new FavoriteEntity();
         favoriteEntity.setId(cursor.getLong(cursor.getColumnIndex(COLUMN_ID)));
@@ -103,7 +169,7 @@ public class PwsDatabaseFavoriteQuery extends PwsDatabaseQueryUtils  implements 
         return favoriteEntity;
     }
 
-    private void fillContentValues(ContentValues values, int position, long psalmNumberId) {
+    private void fillContentValues(ContentValues values, long position, long psalmNumberId) {
         values.put(COLUMN_POSITION, position);
         values.put(COLUMN_PSALMNUMBERID, psalmNumberId);
     }

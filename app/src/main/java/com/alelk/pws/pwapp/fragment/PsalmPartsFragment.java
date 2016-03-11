@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.alelk.pws.database.data.Book;
 import com.alelk.pws.database.data.BookEdition;
+import com.alelk.pws.database.data.BookInfo;
 import com.alelk.pws.database.data.Psalm;
 import com.alelk.pws.database.data.PsalmPart;
 import com.alelk.pws.database.data.PsalmPartType;
@@ -58,18 +59,16 @@ public class PsalmPartsFragment extends Fragment{
         PwsDataSourceImpl pwsDataSource = new PwsDataSourceImpl(getActivity().getBaseContext(), "pws.db", PwsDataProviderContract.DATABASE_VERSION);
         pwsDataSource.open();
         Psalm psalm = null;
+        BookInfo bookInfo = null;
         try {
             psalm = pwsDataSource.getPsalmByPsalmNumberId(psalmActivity.getIntent().getLongExtra("psalmNumberId", -1));
+            bookInfo = pwsDataSource.getBookInfoByPsalmNumberId(psalmActivity.getIntent().getLongExtra("psalmNumberId", -1));
         } catch (PwsDatabaseIncorrectValueException e) {
             e.printStackTrace();
         } finally {
             pwsDataSource.close();
         }
 
-        /*
-        PwsPsalmParcelable psalmParcelable = psalmActivity.getIntent().getParcelableExtra("psalm");
-        BookEdition bookEdition = BookEdition.getInstanceBySignature(psalmActivity.getIntent().getStringExtra("bookEdition"));
-        */
         SortedMap<Integer, PsalmPart> psalmParts = psalm.getPsalmParts();
         Map<BookEdition, Integer> psalmNumbers = psalm.getNumbers();
         List<PsalmPart> lPsalmParts = new ArrayList<>();
@@ -89,12 +88,11 @@ public class PsalmPartsFragment extends Fragment{
         PsalmPartsAdapter psalmPartsArrayAdapter = new PsalmPartsAdapter(psalmActivity.getBaseContext(), lPsalmParts, lDisplayPsalmPartNumbers);
 
         txtPsalmName.setText(psalm.getName());
-        txtBookEdition.setText(psalmActivity.getIntent().getStringExtra("bookName"));
-        /*
+        txtBookEdition.setText(bookInfo.getDisplayName());
+
         if (psalmNumbers != null) {
-            if (bookEdition == null) bookEdition = psalmNumbers.firstKey();
-            txtPsalmNumber.setText("" + psalmNumbers.get(bookEdition));
-        } */
+            txtPsalmNumber.setText("" + psalmNumbers.get(bookInfo.getEdition()));
+        }
         if (psalm.getAnnotation() != null) {
             txtPsalmAnnotation.setText(psalm.getAnnotation());
         } else txtPsalmAnnotation.setVisibility(View.GONE);

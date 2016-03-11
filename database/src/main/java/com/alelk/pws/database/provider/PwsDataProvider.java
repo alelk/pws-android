@@ -74,7 +74,7 @@ public class PwsDataProvider extends ContentProvider {
 
     private static final String TABLE_FAVORITES_JOIN_PSALMNUMBERS_JOIN_BOOKS_JOIN_PSALMS = TABLE_FAVORITES + " AS fv " +
             "INNER JOIN " + TABLE_PSALMNUMBERS + " AS pn " +
-            "ON fv." + PwsFavoritesTable.COLUMN_ID + "=pn." + PwsPsalmNumbersTable.COLUMN_PSALMID +
+            "ON fv." + PwsFavoritesTable.COLUMN_PSALMNUMBERID + "=pn." + PwsPsalmNumbersTable.COLUMN_ID +
             " INNER JOIN " + TABLE_BOOKS + " as b " +
             "ON pn." + PwsPsalmNumbersTable.COLUMN_BOOKID + "=b." + PwsBookTable.COLUMN_ID +
             " INNER JOIN " + TABLE_PSALMS + " as p " +
@@ -130,12 +130,15 @@ public class PwsDataProvider extends ContentProvider {
      */
     private static final String[] DEFAULT_FAVORITES_PROJECTION = {
             "fv." + PwsFavoritesTable.COLUMN_POSITION + " AS " + PwsFavoritesTable.COLUMN_POSITION,
+            "fv." + PwsFavoritesTable.COLUMN_PSALMNUMBERID + " AS " + PwsFavoritesTable.COLUMN_PSALMNUMBERID,
             "b." + PwsBookTable.COLUMN_EDITION + " AS " + PwsBookTable.COLUMN_EDITION,
             "pn." + PwsPsalmNumbersTable.COLUMN_NUMBER + " AS " + PwsPsalmNumbersTable.COLUMN_NUMBER,
             "p." + PwsPsalmTable.COLUMN_NAME + " AS " + PwsPsalmTable.COLUMN_NAME,
             "b." + PwsBookTable.COLUMN_DISPLAYNAME + " AS " + PwsBookTable.COLUMN_DISPLAYNAME,
             "fv." + PwsFavoritesTable.COLUMN_ID + " AS " + PwsFavoritesTable.COLUMN_ID
     };
+
+    private static final String SELECTION_FAVORITE_ID_MATCH = "fv." + PwsFavoritesTable.COLUMN_ID + " = ?";
 
     private SQLiteDatabase mDatabase;
     private PwsDatabaseHelper mDatabaseHelper;
@@ -174,7 +177,11 @@ public class PwsDataProvider extends ContentProvider {
                 mCursor = queryPsalmNumbers(psalmId, null, null, null);
                 break;
             case PATH_FAVORITES:
-                queryAllFavorites(projection, null);
+                mCursor = queryFavorites(projection, selection, selectionArgs, null, null);
+                break;
+            case PATH_FAVORITES_ID:
+                long id = Long.parseLong(uri.getLastPathSegment());
+                mCursor = queryFavorite(id);
                 break;
             case PATH_PSALMS_SUGGESTIONS_NUMBER:
                 mLimit = uri.getQueryParameter(SUGGEST_PARAMETER_LIMIT);
@@ -196,6 +203,7 @@ public class PwsDataProvider extends ContentProvider {
         if (mCursor == null) {
             // todo: throw exception
         }
+        mCursor.setNotificationUri(getContext().getContentResolver(), uri);
         return mCursor;
     }
 
@@ -250,7 +258,19 @@ public class PwsDataProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        return 0;
+        final String METHOD_NAME = "delete";
+        Log.v(LOG_TAG, METHOD_NAME + ": uri='" + uri.toString() + "'");
+        mDatabase = mDatabaseHelper.getReadableDatabase();
+        int n = 0;
+        switch (sUriMatcher.match(uri)) {
+            case PATH_FAVORITES:
+                n = deleteFavorites(selection, selectionArgs);
+                break;
+            default:
+                // todo: throw exception - incorrect uri
+        }
+        getContext().getContentResolver().notifyChange(uri, null);
+        return n;
     }
 
     @Override
@@ -259,13 +279,15 @@ public class PwsDataProvider extends ContentProvider {
     }
 
     private Cursor queryFavorites(@Nullable String[] projection,
+                                  @Nullable String selection,
+                                  @Nullable String[] selectionArgs,
                                    @Nullable String orderBy,
                                    @Nullable String limit) {
         if (projection == null) projection = DEFAULT_FAVORITES_PROJECTION;
         if (orderBy == null) orderBy = "fv." + PwsFavoritesTable.COLUMN_POSITION + " DESC";
 
         Cursor cursor = mDatabase.query(TABLE_FAVORITES_JOIN_PSALMNUMBERS_JOIN_BOOKS_JOIN_PSALMS,
-                projection, null, null,
+                projection, selection, selectionArgs,
                 "fv." + PwsFavoritesTable.COLUMN_POSITION, null,
                 orderBy, limit);
         return cursor;
@@ -273,11 +295,16 @@ public class PwsDataProvider extends ContentProvider {
 
     private Cursor queryAllFavorites(@Nullable String[] projection,
                                       @Nullable String orderBy) {
-        return queryFavorites(projection, orderBy, null);
+        return queryFavorites(projection, null, null, orderBy, null);
+    }
+
+    private Cursor queryFavorite(long id) {
+        String[] selectionArgs = (String[]) Arrays.asList(String.valueOf(id)).toArray();
+        return queryFavorites(null, SELECTION_FAVORITE_ID_MATCH, selectionArgs, null, null);
     }
 
     private Cursor queryLastFavorite(@Nullable String[] projection) {
-        return queryFavorites(projection, null, "1");
+        return queryFavorites(projection, null, null, null, "1");
     }
 
     private Cursor querySuggestionsPsalmNumber(@Nullable String selection,
@@ -344,7 +371,7 @@ public class PwsDataProvider extends ContentProvider {
         final String METHOD_NAME = "insertFavorite";
         Cursor lastFavorite = queryLastFavorite(null);
         long favoritePosition = 1;
-        if (lastFavorite != null) {
+        if (lastFavorite.moveToFirst()) {
             favoritePosition = 1 + lastFavorite.getLong(lastFavorite.getColumnIndex(PwsFavoritesTable.COLUMN_POSITION));
         }
         if (values.containsKey(PwsFavoritesTable.COLUMN_POSITION)) {
@@ -358,5 +385,9 @@ public class PwsDataProvider extends ContentProvider {
         values.put(PwsFavoritesTable.COLUMN_POSITION, favoritePosition);
         long id = mDatabase.insert(TABLE_FAVORITES, null, values);
         return id;
+    }
+
+    private int deleteFavorites(String whereClause, String[] whereArgs) {
+        return mDatabase.delete(TABLE_FAVORITES, whereClause, whereArgs);
     }
 }
