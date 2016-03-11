@@ -1,9 +1,11 @@
 package com.alelk.pws.database.provider;
 
+import static com.alelk.pws.database.provider.PwsDataProviderContract.HISTORY_DATE_FORMAT;
 import static com.alelk.pws.database.table.PwsPsalmTable.TABLE_PSALMS;
 import static com.alelk.pws.database.table.PwsPsalmNumbersTable.TABLE_PSALMNUMBERS;
 import static com.alelk.pws.database.table.PwsBookTable.TABLE_BOOKS;
 import static com.alelk.pws.database.table.PwsFavoritesTable.TABLE_FAVORITES;
+import static com.alelk.pws.database.table.PwsHistoryTable.TABLE_HISTORY;
 import static android.app.SearchManager.*;
 
 import android.content.ContentProvider;
@@ -21,11 +23,13 @@ import android.util.Log;
 import com.alelk.pws.database.helper.PwsDatabaseHelper;
 import com.alelk.pws.database.table.PwsBookTable;
 import com.alelk.pws.database.table.PwsFavoritesTable;
+import com.alelk.pws.database.table.PwsHistoryTable;
 import com.alelk.pws.database.table.PwsPsalmNumbersTable;
 import com.alelk.pws.database.table.PwsPsalmTable;
 
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 
 import static com.alelk.pws.database.provider.PwsDataProviderContract.AUTHORITY;
 import static com.alelk.pws.database.provider.PwsDataProviderContract.DATABASE_NAME;
@@ -49,6 +53,8 @@ public class PwsDataProvider extends ContentProvider {
     private static final int PATH_PSALMS_SUGGESTIONS_NAME = 6;
     private static final int PATH_FAVORITES = 10;
     private static final int PATH_FAVORITES_ID = 11;
+    private static final int PATH_HISTORY = 12;
+    private static final int PATH_HISTORY_ID = 13;
 
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     static {
@@ -60,6 +66,8 @@ public class PwsDataProvider extends ContentProvider {
         sUriMatcher.addURI(AUTHORITY, TABLE_PSALMS +  "/" + SUGGEST_URI_PATH_QUERY + "/*", PATH_PSALMS_SUGGESTIONS_NAME);
         sUriMatcher.addURI(AUTHORITY, TABLE_FAVORITES, PATH_FAVORITES);
         sUriMatcher.addURI(AUTHORITY, TABLE_FAVORITES + "/#", PATH_FAVORITES_ID);
+        sUriMatcher.addURI(AUTHORITY, TABLE_HISTORY, PATH_HISTORY);
+        sUriMatcher.addURI(AUTHORITY, TABLE_HISTORY + "/#", PATH_HISTORY_ID);
     }
 
     private static final String TABLE_PSALMNUMBERS_JOIN_BOOKS = TABLE_PSALMNUMBERS + " AS pn " +
@@ -75,6 +83,14 @@ public class PwsDataProvider extends ContentProvider {
     private static final String TABLE_FAVORITES_JOIN_PSALMNUMBERS_JOIN_BOOKS_JOIN_PSALMS = TABLE_FAVORITES + " AS fv " +
             "INNER JOIN " + TABLE_PSALMNUMBERS + " AS pn " +
             "ON fv." + PwsFavoritesTable.COLUMN_PSALMNUMBERID + "=pn." + PwsPsalmNumbersTable.COLUMN_ID +
+            " INNER JOIN " + TABLE_BOOKS + " as b " +
+            "ON pn." + PwsPsalmNumbersTable.COLUMN_BOOKID + "=b." + PwsBookTable.COLUMN_ID +
+            " INNER JOIN " + TABLE_PSALMS + " as p " +
+            "ON pn." + PwsPsalmNumbersTable.COLUMN_PSALMID + "=p." + PwsPsalmTable.COLUMN_ID;
+
+    private static final String TABLE_HISTORY_JOIN_PSALMNUMBERS_JOIN_BOOKS_JOIN_PSALMS = TABLE_HISTORY + " AS h " +
+            "INNER JOIN " + TABLE_PSALMNUMBERS + " AS pn " +
+            "ON h." + PwsHistoryTable.COLUMN_PSALMNUMBERID + "=pn." + PwsPsalmNumbersTable.COLUMN_ID +
             " INNER JOIN " + TABLE_BOOKS + " as b " +
             "ON pn." + PwsPsalmNumbersTable.COLUMN_BOOKID + "=b." + PwsBookTable.COLUMN_ID +
             " INNER JOIN " + TABLE_PSALMS + " as p " +
@@ -138,6 +154,16 @@ public class PwsDataProvider extends ContentProvider {
             "fv." + PwsFavoritesTable.COLUMN_ID + " AS " + PwsFavoritesTable.COLUMN_ID
     };
 
+    private static final String[] DEFAULT_HISTORY_PROJECTION = {
+            "h." + PwsHistoryTable.COLUMN_ID + " AS " + PwsFavoritesTable.COLUMN_ID,
+            "h." + PwsHistoryTable.COLUMN_PSALMNUMBERID + " AS " + PwsHistoryTable.COLUMN_PSALMNUMBERID,
+            "h." + PwsHistoryTable.COLUMN_ACCESSTIMESTAMP + " AS " + PwsHistoryTable.COLUMN_ACCESSTIMESTAMP,
+            "b." + PwsBookTable.COLUMN_EDITION + " AS " + PwsBookTable.COLUMN_EDITION,
+            "pn." + PwsPsalmNumbersTable.COLUMN_NUMBER + " AS " + PwsPsalmNumbersTable.COLUMN_NUMBER,
+            "p." + PwsPsalmTable.COLUMN_NAME + " AS " + PwsPsalmTable.COLUMN_NAME,
+            "b." + PwsBookTable.COLUMN_DISPLAYNAME + " AS " + PwsBookTable.COLUMN_DISPLAYNAME
+    };
+
     private static final String SELECTION_FAVORITE_ID_MATCH = "fv." + PwsFavoritesTable.COLUMN_ID + " = ?";
 
     private SQLiteDatabase mDatabase;
@@ -145,7 +171,7 @@ public class PwsDataProvider extends ContentProvider {
     private String mSelection;
     private String mLimit;
     private Cursor mCursor;
-    private String[] mSelectionArgs;
+    SimpleDateFormat mDateFormat = new SimpleDateFormat(HISTORY_DATE_FORMAT);
 
     @Override
     public boolean onCreate() {
@@ -182,6 +208,9 @@ public class PwsDataProvider extends ContentProvider {
             case PATH_FAVORITES_ID:
                 long id = Long.parseLong(uri.getLastPathSegment());
                 mCursor = queryFavorite(id);
+                break;
+            case PATH_HISTORY:
+                mCursor = queryHistory(projection, selection, selectionArgs, null, null);
                 break;
             case PATH_PSALMS_SUGGESTIONS_NUMBER:
                 mLimit = uri.getQueryParameter(SUGGEST_PARAMETER_LIMIT);
@@ -247,6 +276,15 @@ public class PwsDataProvider extends ContentProvider {
                 }
                 itemUri = ContentUris.withAppendedId(uri, id);
                 break;
+            case PATH_HISTORY:
+                id = insertHistory(values);
+                if (id == -1) {
+                    // TODO: 24.02.2016 throw exception
+                    Log.w(LOG_TAG, METHOD_NAME + ": Error inserting into '" + TABLE_HISTORY + "' table. Uri='" + uri + "'");
+                    return null;
+                }
+                itemUri = ContentUris.withAppendedId(uri, id);
+                break;
             default:
                 // TODO: 24.02.2016 throw exception incorrect uri
                 Log.w(LOG_TAG, METHOD_NAME + ": Incorrect uri. Uri='" + uri + "'");
@@ -289,6 +327,21 @@ public class PwsDataProvider extends ContentProvider {
         Cursor cursor = mDatabase.query(TABLE_FAVORITES_JOIN_PSALMNUMBERS_JOIN_BOOKS_JOIN_PSALMS,
                 projection, selection, selectionArgs,
                 "fv." + PwsFavoritesTable.COLUMN_POSITION, null,
+                orderBy, limit);
+        return cursor;
+    }
+
+    private Cursor queryHistory(@Nullable String[] projection,
+                                  @Nullable String selection,
+                                  @Nullable String[] selectionArgs,
+                                  @Nullable String orderBy,
+                                  @Nullable String limit) {
+        if (projection == null) projection = DEFAULT_HISTORY_PROJECTION;
+        if (orderBy == null) orderBy = "h." + PwsHistoryTable.COLUMN_ID + " DESC";
+
+        Cursor cursor = mDatabase.query(TABLE_HISTORY_JOIN_PSALMNUMBERS_JOIN_BOOKS_JOIN_PSALMS,
+                projection, selection, selectionArgs,
+                "h." + PwsHistoryTable.COLUMN_ID, null,
                 orderBy, limit);
         return cursor;
     }
@@ -384,6 +437,16 @@ public class PwsDataProvider extends ContentProvider {
         }
         values.put(PwsFavoritesTable.COLUMN_POSITION, favoritePosition);
         long id = mDatabase.insert(TABLE_FAVORITES, null, values);
+        return id;
+    }
+
+    private long insertHistory(ContentValues values) {
+        final String METHOD_NAME = "insertHistory";
+        if (!values.containsKey(PwsHistoryTable.COLUMN_ACCESSTIMESTAMP)) {
+            String timestamp = mDateFormat.format(new Date());
+            values.put(PwsHistoryTable.COLUMN_ACCESSTIMESTAMP, timestamp);
+        }
+        long id = mDatabase.insert(TABLE_HISTORY, null, values);
         return id;
     }
 

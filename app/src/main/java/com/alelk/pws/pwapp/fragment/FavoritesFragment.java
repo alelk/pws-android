@@ -33,13 +33,6 @@ public class FavoritesFragment extends Fragment implements LoaderManager.LoaderC
 
     public final static int PWS_FAVORITES_LOADER = 1;
 
-    private final static String[] FROM_COLUMNS = {
-            PwsPsalmTable.COLUMN_NAME
-    };
-    private final static int[] TO_FIELD = {
-            android.R.id.text1
-    };
-
     private ListView mListViewFavorites;
     private FavoritesCursorAdapter mCursorAdapter;
 
