@@ -8,18 +8,13 @@ import android.database.sqlite.SQLiteDatabase;
 public class PwsHistoryTable {
     public static final String TABLE_HISTORY = "history";
     public static final String COLUMN_ID = "_id";
-    public static final String COLUMN_PSALMID = "psalmid";
     public static final String COLUMN_PSALMNUMBERID = "psalmnumberid";
-    public static final String COLUMN_ACCESSDATE = "accessdate";
+    public static final String COLUMN_ACCESSTIMESTAMP = "accesstimestamp";
 
     private static final String TABLE_CREATE_SCRIPT = "create table " + TABLE_HISTORY +
             "(" + COLUMN_ID + " integer primary key autoincrement, " +
-            COLUMN_PSALMID + " integer not null, " +
             COLUMN_PSALMNUMBERID + " integer not null, " +
-            COLUMN_ACCESSDATE + " string not null, " +
-            "FOREIGN KEY (" + COLUMN_PSALMID + ") " +
-            "REFERENCES " + PwsPsalmTable.TABLE_PSALMS + " (" +
-            PwsPsalmTable.COLUMN_ID + "), " +
+            COLUMN_ACCESSTIMESTAMP + " string not null, " +
             "FOREIGN KEY (" + COLUMN_PSALMNUMBERID + ") " +
             "REFERENCES " + PwsPsalmNumbersTable.TABLE_PSALMNUMBERS + " (" +
             PwsPsalmNumbersTable.COLUMN_ID + "));";
