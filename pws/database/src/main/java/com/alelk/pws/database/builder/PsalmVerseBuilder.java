@@ -10,6 +10,8 @@ import com.alelk.pws.database.data.entity.VerseEntity;
 /**
  * Created by Alex Elkin on 06.05.2015.
  */
+// TODO: 14.03.2016 remove this class
+@Deprecated
 public class PsalmVerseBuilder extends PwsBuilderUtils implements PwsBuilder<PsalmVerse, VerseEntity> {
 
     private VerseEntity verseEntity;

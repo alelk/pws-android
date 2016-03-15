@@ -131,10 +131,8 @@ public class PwsDataSourceImpl implements PwsDataSource {
         if(psalmEntities != null && !psalmEntities.isEmpty()) {
             psalms = new HashMap<>();
             for (PsalmEntity psalmEntity : psalmEntities) {
-                Set<VerseEntity> verseEntities = new PwsDatabaseVerseQuery(database, null).selectByPsalmId(psalmEntity.getId());
-                Set<ChorusEntity> chorusEntities = new PwsDatabaseChorusQuery(database, null).selectByPsalmId(psalmEntity.getId());
                 Map<BookEdition, Integer> numbers = new PwsDatabaseQueryHelper(database).getPsalmNumbersByPsalmId(psalmEntity.getId());
-                Psalm psalm = new PsalmBuilder(psalmEntity, verseEntities, chorusEntities, numbers).toObject();
+                Psalm psalm = new PsalmBuilder(psalmEntity, numbers).toObject();
                 if (psalm != null) {
                     psalms.put(psalm.getNumber(bookEdition), psalm);
                 }
@@ -149,10 +147,8 @@ public class PwsDataSourceImpl implements PwsDataSource {
         if(psalmEntities != null && !psalmEntities.isEmpty()) {
             psalms = new HashMap<>();
             for (PsalmEntity psalmEntity : psalmEntities) {
-                Set<VerseEntity> verseEntities = new PwsDatabaseVerseQuery(database, null).selectByPsalmId(psalmEntity.getId());
-                Set<ChorusEntity> chorusEntities = new PwsDatabaseChorusQuery(database, null).selectByPsalmId(psalmEntity.getId());
                 Map<BookEdition, Integer> numbers = new PwsDatabaseQueryHelper(database).getPsalmNumbersByPsalmId(psalmEntity.getId());
-                Psalm psalm = new PsalmBuilder(psalmEntity, verseEntities, chorusEntities, numbers).toObject();
+                Psalm psalm = new PsalmBuilder(psalmEntity, numbers).toObject();
                 if (psalm != null) {
                     psalms.put(psalm.getNumber(bookEdition), psalm);
                 }
@@ -165,10 +161,8 @@ public class PwsDataSourceImpl implements PwsDataSource {
         Psalm psalm = null;
         PsalmEntity psalmEntity = new PwsDatabasePsalmQuery(database).selectById(id);
         if (psalmEntity != null) {
-            Set<VerseEntity> verseEntities = new PwsDatabaseVerseQuery(database, null).selectByPsalmId(id);
-            Set<ChorusEntity> chorusEntities = new PwsDatabaseChorusQuery(database, null).selectByPsalmId(id);
             Map<BookEdition, Integer> numbers = new PwsDatabaseQueryHelper(database).getPsalmNumbersByPsalmId(id);
-            psalm = new PsalmBuilder(psalmEntity, verseEntities, chorusEntities, numbers).toObject();
+            psalm = new PsalmBuilder(psalmEntity, numbers).toObject();
         }
         return psalm;
     }

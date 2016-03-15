@@ -22,6 +22,7 @@ import com.alelk.pws.database.data.PsalmPartType;
 import com.alelk.pws.database.exception.PwsDatabaseIncorrectValueException;
 import com.alelk.pws.database.provider.PwsDataProviderContract;
 import com.alelk.pws.database.source.PwsDataSourceImpl;
+import com.alelk.pws.database.util.PwsPsalmUtil;
 import com.alelk.pws.pwapp.PsalmActivity;
 import com.alelk.pws.pwapp.R;
 import com.alelk.pws.pwapp.adapter.PsalmPartsAdapter;
@@ -62,6 +63,12 @@ public class PsalmPartsFragment extends Fragment{
         BookInfo bookInfo = null;
         try {
             psalm = pwsDataSource.getPsalmByPsalmNumberId(psalmActivity.getIntent().getLongExtra("psalmNumberId", -1));
+
+            // TODO: 14.03.2016 this is test functionality
+            Log.w("Psalm:", psalm.toString());
+            String psalmText = PwsPsalmUtil.convertPsalmPartsToPlainText(psalm.getPsalmParts());
+            Log.w("Psalm text:", psalmText);
+            psalm.setPsalmParts(PwsPsalmUtil.parsePsalmParts(psalmText));
             bookInfo = pwsDataSource.getBookInfoByPsalmNumberId(psalmActivity.getIntent().getLongExtra("psalmNumberId", -1));
         } catch (PwsDatabaseIncorrectValueException e) {
             e.printStackTrace();

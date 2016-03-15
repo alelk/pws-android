@@ -6,6 +6,8 @@ import android.text.TextUtils;
 /**
  * Created by Alex Elkin on 30.04.2015.
  */
+// TODO: 14.03.2016 remove this class
+@Deprecated
 public class ChorusEntity implements PwsDatabaseEntity {
 
     private long id;

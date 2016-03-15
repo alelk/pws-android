@@ -1,10 +1,11 @@
 package com.alelk.pws.database.table;
 
 import android.database.sqlite.SQLiteDatabase;
-
+// TODO: 14.03.2016 remove this class
 /**
  * Created by alelkin on 22.04.2015.
  */
+@Deprecated
 public class PwsChorusTable implements PwsTable {
 
     public static final String TABLE_CHORUSES = "choruses";

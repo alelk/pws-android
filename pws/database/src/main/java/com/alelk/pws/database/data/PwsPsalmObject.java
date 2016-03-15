@@ -1,6 +1,4 @@
-package com.alelk.pws.database.data.entity;
-
-import com.alelk.pws.database.data.PsalmPart;
+package com.alelk.pws.database.data;
 
 import java.util.ArrayList;
 import java.util.Comparator;

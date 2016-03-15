@@ -17,6 +17,7 @@ public class PsalmEntity implements PwsDatabaseEntity{
     private String year;
     private String tonalities;
     private String annotation;
+    private String text;
 
     @Override
     public long getId() {
@@ -133,6 +134,14 @@ public class PsalmEntity implements PwsDatabaseEntity{
         this.annotation = annotation;
     }
 
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
     @Override
     public String toString() {
         return "PsalmEntity{" +
@@ -145,6 +154,7 @@ public class PsalmEntity implements PwsDatabaseEntity{
                 ", year='" + year + '\'' +
                 ", tonalities='" + tonalities + '\'' +
                 ", annotation='" + annotation + '\'' +
+                ", text=[" + text.substring(0, 25).replaceAll("\n", " ") + "... (" + text.length() + " symbols)]" +
                 '}';
     }
 }

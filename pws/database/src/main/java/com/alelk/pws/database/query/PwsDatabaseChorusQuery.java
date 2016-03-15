@@ -16,10 +16,11 @@ import com.alelk.pws.database.exception.PwsDatabaseSourceIdExistsException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-
+// TODO: 14.03.2016 remove this class 
 /**
  * Created by Alex Elkin on 30.04.2015.
  */
+@Deprecated
 public class PwsDatabaseChorusQuery extends PwsDatabaseQueryUtils implements PwsDatabaseQuery<PsalmChorus, ChorusEntity> {
 
     private static final String LOG_TAG = PwsDatabaseChorusQuery.class.getSimpleName();
