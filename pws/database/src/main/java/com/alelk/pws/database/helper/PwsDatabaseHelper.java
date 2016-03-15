@@ -9,6 +9,7 @@ import com.alelk.pws.database.table.PwsBookTable;
 import com.alelk.pws.database.table.PwsChapterPsalmsTable;
 import com.alelk.pws.database.table.PwsChapterTable;
 import com.alelk.pws.database.table.PwsChorusTable;
+import com.alelk.pws.database.table.PwsPsalmFtsTable;
 import com.alelk.pws.database.table.PwsPsalmNumbersTable;
 import com.alelk.pws.database.table.PwsPsalmTable;
 import com.alelk.pws.database.table.PwsVerseTable;
@@ -31,13 +32,20 @@ public class PwsDatabaseHelper extends SQLiteOpenHelper {
     }
 
     @Override
+    public void onOpen(SQLiteDatabase db) {
+        Log.v(LOG_TAG, "PWS database opened '" + databaseName + "' version " + version);
+        PwsPsalmFtsTable.dropTable(db);
+        PwsPsalmFtsTable.createTable(db);
+        PwsPsalmFtsTable.dropAllTriggers(db);
+        PwsPsalmFtsTable.setUpAllTriggers(db);
+    }
+
+    @Override
     public void onCreate(SQLiteDatabase db) {
         Log.i(LOG_TAG, "Create PWS database '" + databaseName + "' version " + version);
         PwsBookTable.createTable(db);
         PwsPsalmTable.createTable(db);
         PwsPsalmNumbersTable.createTable(db);
-        PwsVerseTable.createTable(db);
-        PwsChorusTable.createTable(db);
         PwsChapterTable.createTable(db);
         PwsChapterPsalmsTable.createTable(db);
         PwsFavoritesTable.createTable(db);
@@ -51,8 +59,6 @@ public class PwsDatabaseHelper extends SQLiteOpenHelper {
         PwsBookTable.dropTable(db);
         PwsPsalmTable.dropTable(db);
         PwsPsalmNumbersTable.dropTable(db);
-        PwsVerseTable.dropTable(db);
-        PwsChorusTable.dropTable(db);
         PwsChapterTable.dropTable(db);
         PwsChapterPsalmsTable.dropTable(db);
         PwsFavoritesTable.dropTable(db);

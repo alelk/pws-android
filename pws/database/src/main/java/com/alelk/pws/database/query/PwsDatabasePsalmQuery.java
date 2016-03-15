@@ -21,6 +21,7 @@ import com.alelk.pws.database.exception.PwsDatabaseSourceIdExistsException;
 import com.alelk.pws.database.table.PwsBookTable;
 import com.alelk.pws.database.table.PwsPsalmNumbersTable;
 import com.alelk.pws.database.table.PwsPsalmTable;
+import com.alelk.pws.database.util.PwsPsalmUtil;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -30,6 +31,7 @@ import static com.alelk.pws.database.table.PwsPsalmTable.*;
 
 /**
  * Created by Alex Elkin on 29.04.2015.
+ * Edited by Alex Elkin on 14.03.2016: code refactoring - psalm text field has been added.
  */
 public class PwsDatabasePsalmQuery extends PwsDatabaseQueryUtils implements PwsDatabaseQuery<Psalm, PsalmEntity> {
 
@@ -44,7 +46,8 @@ public class PwsDatabasePsalmQuery extends PwsDatabaseQueryUtils implements PwsD
             TABLE_PSALMS + "." + COLUMN_COMPOSER,
             TABLE_PSALMS + "." + COLUMN_TONALITIES,
             TABLE_PSALMS + "." + COLUMN_YEAR,
-            TABLE_PSALMS + "." + COLUMN_ANNOTATION};
+            TABLE_PSALMS + "." + COLUMN_ANNOTATION,
+            TABLE_PSALMS + "." + COLUMN_TEXT};
 
     // psalms INNER JOIN psalmnumbers ON psalms._id=psalmnumbers.psalmid
     // INNER JOIN books ON books._id=psalmnumbers.bookid
@@ -105,7 +108,6 @@ public class PwsDatabasePsalmQuery extends PwsDatabaseQueryUtils implements PwsD
                 fillContentValues(contentValues, psalm);
                 long id = mDatabase.insert(TABLE_PSALMS, null, contentValues);
                 insertPsalmNumbers(psalm, id);
-                insertPsalmParts(psalm, id);
 
                 psalmEntity = selectById(id);
 
@@ -264,6 +266,8 @@ public class PwsDatabasePsalmQuery extends PwsDatabaseQueryUtils implements PwsD
         }
     }
 
+    // TODO: 14.03.2016 remove this method
+    @Deprecated
     private void insertPsalmParts(Psalm psalm, Long psalmId) throws PwsDatabaseSourceIdExistsException, PwsDatabaseIncorrectValueException {
         for (PsalmPart psalmPart : psalm.getPsalmPartsValues()) {
             if (psalmPart.getPsalmType() == PsalmPartType.CHORUS) {
@@ -285,6 +289,7 @@ public class PwsDatabasePsalmQuery extends PwsDatabaseQueryUtils implements PwsD
         psalmEntity.setTonalities(cursor.getString(6));
         psalmEntity.setYear(cursor.getString(7));
         psalmEntity.setAnnotation(cursor.getString(8));
+        psalmEntity.setText(cursor.getString(9));
         return psalmEntity;
     }
 
@@ -312,6 +317,10 @@ public class PwsDatabasePsalmQuery extends PwsDatabaseQueryUtils implements PwsD
         }
         if (!TextUtils.isEmpty(psalm.getAnnotation())) {
             values.put(COLUMN_ANNOTATION, psalm.getAnnotation().toString());
+        }
+        String text = PwsPsalmUtil.convertPsalmPartsToPlainText(psalm.getPsalmParts());
+        if (!TextUtils.isEmpty(text)) {
+            values.put(COLUMN_TEXT, text);
         }
     }
 

@@ -11,6 +11,7 @@ import com.alelk.pws.database.data.entity.ChorusEntity;
 import com.alelk.pws.database.data.entity.PsalmEntity;
 import com.alelk.pws.database.data.entity.VerseEntity;
 import com.alelk.pws.database.query.PwsDatabaseQuery;
+import com.alelk.pws.database.util.PwsPsalmUtil;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -20,38 +21,26 @@ import java.util.TreeMap;
 
 /**
  * Created by Alex Elkin on 06.05.2015.
+ * Edited by Alex Elkin on 14.06.2015: code refactoring - psalm text field has been added.
  */
 public class PsalmBuilder implements PwsBuilder<Psalm, PsalmEntity> {
 
     private PsalmEntity psalmEntity;
-    private Set<VerseEntity> verseEntities;
-    private Set<ChorusEntity> chorusEntities;
+    private String text;
     private Map<BookEdition, Integer> numbers;
 
     public PsalmBuilder(PsalmEntity psalmEntity) {
         this.psalmEntity = psalmEntity;
     }
 
-    public PsalmBuilder(PsalmEntity psalmEntity, Set<VerseEntity> verseEntities, Set<ChorusEntity> chorusEntities, Map<BookEdition, Integer> numbers) {
+    public PsalmBuilder(PsalmEntity psalmEntity, Map<BookEdition, Integer> numbers) {
         this.psalmEntity = psalmEntity;
-        this.verseEntities = verseEntities;
-        this.chorusEntities = chorusEntities;
         this.numbers = numbers;
     }
 
     @Override
     public PwsBuilder<Psalm, PsalmEntity> appendEntity(PsalmEntity entity) {
         psalmEntity = entity;
-        return this;
-    }
-
-    public PwsBuilder<Psalm, PsalmEntity> appendVerses(Set<VerseEntity> verseEntities) {
-        this.verseEntities = verseEntities;
-        return this;
-    }
-
-    public PwsBuilder<Psalm, PsalmEntity> appendChoruses(Set<ChorusEntity> chorusEntities) {
-        this.chorusEntities = chorusEntities;
         return this;
     }
 
@@ -75,28 +64,7 @@ public class PsalmBuilder implements PwsBuilder<Psalm, PsalmEntity> {
             }
             psalm.setYear(psalmEntity.getYear());
             psalm.setAnnotation(psalmEntity.getAnnotation());
-
-            SortedMap<Integer, PsalmPart> psalmParts = new TreeMap<>();
-            if (verseEntities != null && !verseEntities.isEmpty())
-            for (VerseEntity verseEntity : verseEntities) {
-                PsalmVerse psalmVerse = new PsalmVerseBuilder().appendEntity(verseEntity).toObject();
-                if (psalmVerse != null && psalmVerse.getNumbers() != null){
-                    for (int number : psalmVerse.getNumbers()) {
-                        psalmParts.put(number, psalmVerse);
-                    }
-                }
-            }
-            if (chorusEntities != null && !chorusEntities.isEmpty()) {
-                for (ChorusEntity chorusEntity : chorusEntities) {
-                    PsalmChorus psalmChorus = new PsalmChorusBuilder().appendEntity(chorusEntity).toObject();
-                    if (psalmChorus != null && psalmChorus.getNumbers() != null) {
-                        for (int number : psalmChorus.getNumbers()) {
-                            psalmParts.put(number, psalmChorus);
-                        }
-                    }
-                }
-            }
-            psalm.setPsalmParts(psalmParts.isEmpty() ? null : psalmParts);
+            psalm.setPsalmParts(PwsPsalmUtil.parsePsalmParts(psalmEntity.getText()));
             psalm.setNumbers(numbers);
         }
         return psalm;
