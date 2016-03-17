@@ -42,6 +42,7 @@ public class BookInfoBuilder implements PwsBuilder<BookInfo, BookEntity> {
             book.setEdition(BookEdition.getInstanceBySignature(mBookEntity.getEdition()));
             book.setReleaseDate(mBookEntity.getReleaseDate());
             book.setComment(mBookEntity.getComment());
+            book.setPreference(mBookEntity.getPreference());
             if (mBookEntity.getAuthors() != null) {
                 book.setAuthors(Arrays.asList(TextUtils.split(mBookEntity.getAuthors(), PwsDatabaseQuery.MULTIVALUE_DELIMITER)));
             }

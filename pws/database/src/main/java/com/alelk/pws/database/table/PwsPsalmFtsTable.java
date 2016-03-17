@@ -1,6 +1,8 @@
 package com.alelk.pws.database.table;
 
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.annotation.NonNull;
 
 import static com.alelk.pws.database.table.PwsPsalmTable.COLUMN_TEXT;
 import static com.alelk.pws.database.table.PwsPsalmTable.TABLE_PSALMS;
@@ -9,8 +11,9 @@ import static com.alelk.pws.database.table.PwsPsalmTable.COLUMN_ID;
 
 /**
  * Created by Alex Elkin on 15.03.2016.
+ * Implements functionality to providing Full Text Search functionality for psalm.
  */
-public class PwsPsalmFtsTable implements PwsTable {
+public class PwsPsalmFtsTable extends PwsTableHelper implements PwsTable {
 
     public static final String TABLE_PSALMS_FTS = "psalms_fts";
     public static final String TRIGGER_BEFORE_UPDATE = TABLE_PSALMS_FTS + "_bu";
@@ -51,51 +54,88 @@ public class PwsPsalmFtsTable implements PwsTable {
     private static final String TRIGGER_AU_DROP_SCRIPT = "drop trigger if exists " + TRIGGER_AFTER_UPDATE;
     private static final String TRIGGER_AI_DROP_SCRIPT = "drop trigger if exists " + TRIGGER_AFTER_INSERT;
 
-    public static void createTable(SQLiteDatabase db) {
+    public static void createTable(@NonNull SQLiteDatabase db) {
         db.execSQL(TABLE_CREATE_SCRIPT);
+    }
+
+    public static void populateTable(@NonNull SQLiteDatabase db) {
         db.execSQL(TABLE_FILL_VALUES_SCRIPT);
     }
 
-    public static void dropTable(SQLiteDatabase db) {
+    public static void dropTable(@NonNull SQLiteDatabase db) {
         db.execSQL(TABLE_DROP_SCRIPT);
     }
 
-    public static void setUpAllTriggers(SQLiteDatabase db) {
+    public static void setUpAllTriggers(@NonNull SQLiteDatabase db) {
         setBeforeUpdateTrigger(db);
         setBeforeDeleteTrigger(db);
         setAfterUpdateTrigger(db);
         setAfterInsertTrigger(db);
     }
 
-    public static void dropAllTriggers(SQLiteDatabase db) {
+    public static void dropAllTriggers(@NonNull SQLiteDatabase db) {
         dropBeforeUpdateTrigger(db);
         dropBeforeDeleteTrigger(db);
         dropAfterUpdateTrigger(db);
         dropAfterInsertTrigger(db);
     }
 
-    public static void setBeforeUpdateTrigger(SQLiteDatabase db) {
+    public static boolean isAllTriggersExists(@NonNull SQLiteDatabase db) {
+        if (isAiTriggerExists(db) && isAuTriggerExists(db) && isBuTriggerExists(db) && isBdTriggerExists(db)) {
+            return true;
+        }
+        return false;
+    }
+
+    public static void setBeforeUpdateTrigger(@NonNull SQLiteDatabase db) {
         db.execSQL(TRIGGER_BU_SCRIPT);
     }
-    public static void setBeforeDeleteTrigger(SQLiteDatabase db) {
+
+    public static void setBeforeDeleteTrigger(@NonNull SQLiteDatabase db) {
         db.execSQL(TRIGGER_BD_SCRIPT);
     }
-    public static void setAfterUpdateTrigger(SQLiteDatabase db) {
+
+    public static void setAfterUpdateTrigger(@NonNull SQLiteDatabase db) {
         db.execSQL(TRIGGER_AU_SCRIPT);
     }
-    public static void setAfterInsertTrigger(SQLiteDatabase db) {
+
+    public static void setAfterInsertTrigger(@NonNull SQLiteDatabase db) {
         db.execSQL(TRIGGER_AI_SCRIPT);
     }
-    public static void dropBeforeUpdateTrigger(SQLiteDatabase db) {
+
+    public static void dropBeforeUpdateTrigger(@NonNull SQLiteDatabase db) {
         db.execSQL(TRIGGER_BU_DROP_SCRIPT);
     }
-    public static void dropBeforeDeleteTrigger(SQLiteDatabase db) {
+
+    public static void dropBeforeDeleteTrigger(@NonNull SQLiteDatabase db) {
         db.execSQL(TRIGGER_BD_DROP_SCRIPT);
     }
-    public static void dropAfterUpdateTrigger(SQLiteDatabase db) {
+
+    public static void dropAfterUpdateTrigger(@NonNull SQLiteDatabase db) {
         db.execSQL(TRIGGER_AU_DROP_SCRIPT);
     }
-    public static void dropAfterInsertTrigger(SQLiteDatabase db) {
+
+    public static void dropAfterInsertTrigger(@NonNull SQLiteDatabase db) {
         db.execSQL(TRIGGER_AI_DROP_SCRIPT);
+    }
+
+    public static boolean isBuTriggerExists(@NonNull SQLiteDatabase db) {
+        return isTriggerExists(db, TRIGGER_BEFORE_UPDATE);
+    }
+
+    public static boolean isBdTriggerExists(@NonNull SQLiteDatabase db) {
+        return isTriggerExists(db, TRIGGER_BEFORE_DELETE);
+    }
+
+    public static boolean isAuTriggerExists(@NonNull SQLiteDatabase db) {
+        return isTriggerExists(db, TRIGGER_AFTER_UPDATE);
+    }
+
+    public static boolean isAiTriggerExists(@NonNull SQLiteDatabase db) {
+        return isTriggerExists(db, TRIGGER_AFTER_INSERT);
+    }
+
+    public static boolean isTableExists(@NonNull SQLiteDatabase db) {
+        return isTableExists(db, TABLE_PSALMS_FTS);
     }
 }

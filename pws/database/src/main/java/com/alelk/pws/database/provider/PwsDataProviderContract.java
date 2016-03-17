@@ -17,7 +17,7 @@ public final class PwsDataProviderContract {
     public static final String SCHEME = "content";
     public static final String AUTHORITY = "com.alelk.pws.database.provider";
     public static final String DATABASE_NAME = "pws.db";
-    public static final int DATABASE_VERSION = 17;
+    public static final int DATABASE_VERSION = 19;
 
     public static final String HISTORY_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 

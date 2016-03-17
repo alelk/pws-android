@@ -141,7 +141,7 @@ public abstract class PwsXmlParserHelper implements Constants {
                 }
                 parser.next();
             }
-            if (isDone != true) {
+            if (!isDone) {
                 Log.w(LOG_TAG, "Incorrect file format: " + filename);
             }
         } catch (XmlPullParserException e) {
@@ -151,7 +151,7 @@ public abstract class PwsXmlParserHelper implements Constants {
             Log.e(LOG_TAG, "The exception with parser was occurred.");
             throw new PwsXmlParserIncorrectSourceFormatException();
         }
-        Log.i(LOG_TAG, "End parsing library file: '" + filename + "'. " + books.size() + " books have been parsed.");
+        Log.i(LOG_TAG, "End parsing library file: '" + filename + "'. " + (books != null ? books.size() : "0") + " books have been parsed.");
         return books;
     }
 
@@ -271,7 +271,7 @@ public abstract class PwsXmlParserHelper implements Constants {
                 }
                 parser.next();
             }
-            if (isDone != true) {
+            if (!isDone) {
                 Log.w(LOG_TAG, "Incorrect file format: " + filename);
             }
         } catch (XmlPullParserException e) {
@@ -456,6 +456,7 @@ public abstract class PwsXmlParserHelper implements Constants {
                 TAG.LIB.BKS.REF
         ));
         String ref = null;
+        Integer preference = null;
         String tagName;
         String currentTagName = null;
         boolean done = false;
@@ -466,6 +467,27 @@ public abstract class PwsXmlParserHelper implements Constants {
                     tagName = parser.getName();
                     if (allowedInnerTags.contains(tagName.toLowerCase())) {
                         currentTagName = tagName;
+                        if (TAG.LIB.BKS.REF.equalsIgnoreCase(tagName)) {
+                            preference = null;
+                            ref = null;
+                            for (int i = 0; i < parser.getAttributeCount(); i++) {
+                                String attributeName = parser.getAttributeName(i);
+                                switch (attributeName) {
+                                    case TAG.BK.PREFERENCE:
+                                        try {
+                                            preference = Integer.parseInt(parser.getAttributeValue(i));
+                                        } catch (NumberFormatException ex) {
+                                            Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
+                                                    ": Cannot parse book preference value: '" +
+                                                    parser.getAttributeValue(i) + "'. Preference should be decimal.");
+                                        }
+                                        break;
+                                    default:
+                                        Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
+                                                ": Unknown Book attribute name: '" + attributeName + "'");
+                                }
+                            }
+                        }
                     } else {
                         Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
                                 ": Unexpected Books tag: '" + tagName + "'");
@@ -500,6 +522,9 @@ public abstract class PwsXmlParserHelper implements Constants {
                             }
                         }
                         if (book != null) {
+                            if (preference!=null) {
+                                book.setPreference(preference);
+                            }
                             Log.v(LOG_TAG, "Line " + parser.getLineNumber() +
                                     ": New book parsed: " + book.toString());
                             books.add(book);
@@ -508,7 +533,7 @@ public abstract class PwsXmlParserHelper implements Constants {
                             Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
                                     ": Books section has malformed body.");
                         }
-                    }  else {
+                    } else {
                         Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
                                 ": Unexpected tag: '" + tagName + "'");
                     }
@@ -539,14 +564,23 @@ public abstract class PwsXmlParserHelper implements Constants {
         for (int i = 0; i < parser.getAttributeCount(); i++) {
             String attributeName = parser.getAttributeName(i);
             switch (attributeName) {
-                case Constants.TAG.BK.VERSION:
+                case TAG.BK.VERSION:
                     book.setVersion(parser.getAttributeValue(i));
                     break;
-                case Constants.TAG.BK.NAME:
+                case TAG.BK.NAME:
                     book.setName(parser.getAttributeValue(i));
                     break;
-                case Constants.TAG.BK.EDITION:
+                case TAG.BK.EDITION:
                     book.setEdition(parseBookEdition(parser, parser.getAttributeValue(i)));
+                    break;
+                case TAG.BK.PREFERENCE:
+                    try {
+                        book.setPreference(Integer.parseInt(parser.getAttributeValue(i)));
+                    } catch (NumberFormatException ex) {
+                        Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
+                                ": Cannot parse book preference value: '" +
+                                parser.getAttributeValue(i) + "'. Preference should be decimal.");
+                    }
                     break;
                 default:
                     Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
@@ -564,6 +598,7 @@ public abstract class PwsXmlParserHelper implements Constants {
                 Constants.TAG.BK.EDITION,
                 Constants.TAG.BK.RELEASE_DATE,
                 Constants.TAG.BK.COMMENT,
+                TAG.BK.PREFERENCE,
                 Constants.TAG.BK.AUTHORS,
                 Constants.TAG.BK.CREATORS,
                 Constants.TAG.BK.REVIEWERS,
@@ -625,6 +660,14 @@ public abstract class PwsXmlParserHelper implements Constants {
                             book.setReleaseDate(date);
                         } else if (Constants.TAG.BK.COMMENT.equalsIgnoreCase(currentTagName)) {
                             book.setComment(parser.getText());
+                        } else if (TAG.BK.PREFERENCE.equalsIgnoreCase(currentTagName)) {
+                            try {
+                                book.setPreference(Integer.parseInt(parser.getText()));
+                            } catch (NumberFormatException ex) {
+                                Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
+                                        ": Cannot parse book preference value: '" +
+                                        parser.getText() + "'. Preference should be decimal.");
+                            }
                         } else {
                             Log.w(LOG_TAG, "Line " + parser.getLineNumber() +
                                     ": Unexpected text: '" + parser.getText() + "'");

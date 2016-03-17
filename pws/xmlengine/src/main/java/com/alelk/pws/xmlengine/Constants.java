@@ -53,6 +53,7 @@ public interface Constants {
             public static final String DESCRIPTION = "description";
             public static final String RELEASE_DATE = "releasedate";
             public static final String COMMENT = "comment";
+            public static final String PREFERENCE = "preference";
             public static final String AUTHORS = "authors";
             public static final String CREATORS = "creators";
             public static final String REVIEWERS = "reviewers";
@@ -105,21 +106,6 @@ public interface Constants {
                 public static final String TAG = LIB.BOOKS;
                 public static final String REF = "ref";
             }
-        }
-    }
-
-    /**
-     * Supported tag attribute values
-     */
-    public final static class ATTR_VAL {
-        public final static class BK {
-            public static final String EDITION_PV3055 = "pv3055";
-            public static final String EDITION_GUSLI = "gusli";
-            public static final String EDITION_CHYMNS = "chymns";
-            public static final String EDITION_CPSALMS = "cpsalms";
-            public static final String EDITION_KIMVAL = "kimval";
-            public static final String EDITION_SDP = "sdp";
-            public static final String EDITION_TYMPAN = "tympan";
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.alelk.pws.database.query;
 
+import com.alelk.pws.database.data.Book;
 import com.alelk.pws.database.data.PwsObject;
 import com.alelk.pws.database.data.entity.PwsDatabaseEntity;
 import com.alelk.pws.database.exception.PwsDatabaseException;
@@ -27,4 +28,5 @@ public interface PwsDatabaseQuery <T extends PwsObject, E extends PwsDatabaseEnt
      * @return PwsDatabaseEntity with specified id, null if no PwsDatabaseEntity found
      */
     E selectById(long id) throws PwsDatabaseIncorrectValueException;
+
 }
