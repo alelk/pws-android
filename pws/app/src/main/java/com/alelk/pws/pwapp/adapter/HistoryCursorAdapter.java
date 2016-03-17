@@ -1,5 +1,7 @@
 package com.alelk.pws.pwapp.adapter;
 
+import static com.alelk.pws.database.provider.PwsDataProviderContract.History.*;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.text.format.DateUtils;
@@ -9,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
+import com.alelk.pws.database.provider.PwsDataProvider;
 import com.alelk.pws.database.provider.PwsDataProviderContract;
 import com.alelk.pws.database.table.PwsBookTable;
 import com.alelk.pws.database.table.PwsHistoryTable;
@@ -42,11 +45,11 @@ public class HistoryCursorAdapter extends CursorAdapter {
         TextView txtPsalmName = (TextView) view.findViewById(R.id.txt_history_psalm_name);
         TextView txtPsalmNumber = (TextView) view.findViewById(R.id.txt_history_psalm_number);
         TextView txtTimestamp = (TextView) view.findViewById(R.id.txt_history_timestamp);
-        txtPsalmName.setText(cursor.getString(cursor.getColumnIndex(PwsPsalmTable.COLUMN_NAME)));
-        txtPsalmNumber.setText(cursor.getLong(cursor.getColumnIndex(PwsPsalmNumbersTable.COLUMN_NUMBER)) + " " +
-                cursor.getString(cursor.getColumnIndex(PwsBookTable.COLUMN_DISPLAYNAME)));
+        txtPsalmName.setText(cursor.getString(cursor.getColumnIndex(COLUMN_PSALMNAME)));
+        txtPsalmNumber.setText(cursor.getLong(cursor.getColumnIndex(COLUMN_PSALMNUMBER)) + " " +
+                cursor.getString(cursor.getColumnIndex(COLUMN_BOOKDISPLAYNAME)));
 
-        String timestamp = cursor.getString(cursor.getColumnIndex(PwsHistoryTable.COLUMN_ACCESSTIMESTAMP));
+        String timestamp = cursor.getString(cursor.getColumnIndex(COLUMN_HISTORYTIMESTAMP));
         SimpleDateFormat df = new SimpleDateFormat(PwsDataProviderContract.HISTORY_DATE_FORMAT);
         try {
             timestamp = (String) DateUtils.getRelativeTimeSpanString(df.parse(timestamp).getTime(), System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS);

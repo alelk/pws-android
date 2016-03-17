@@ -13,16 +13,11 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
+                <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>/>
 
         </activity>
-        <activity
-            android:name=".PsalmActivity"
-            android:label="Psalm"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:parentActivityName=".MainActivity"/>
         <activity
             android:parentActivityName=".MainActivity"
             android:name=".SearchActivity"
