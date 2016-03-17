@@ -15,7 +15,7 @@ public class PwsBookStatisticTable implements PwsTable {
 
     private static final String TABLE_CREATE_SCRIPT = "create table " + TABLE_BOOKSTATISTIC +
             "(" + COLUMN_ID + " integer primary key autoincrement, " +
-            COLUMN_BOOKID + " text not null, " +
+            COLUMN_BOOKID + " integer not null, " +
             COLUMN_USERPREFERENCE + " integer, " +
             COLUMN_READINGS + " integer, " +
             COLUMN_RATING + " integer, " +

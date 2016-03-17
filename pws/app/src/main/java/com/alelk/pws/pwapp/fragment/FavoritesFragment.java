@@ -9,22 +9,15 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.SimpleCursorAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.alelk.pws.database.provider.PwsDataProvider;
 import com.alelk.pws.database.table.PwsFavoritesTable;
-import com.alelk.pws.database.table.PwsPsalmTable;
-import com.alelk.pws.pwapp.PsalmActivity;
 import com.alelk.pws.pwapp.R;
 import com.alelk.pws.pwapp.adapter.FavoritesCursorAdapter;
-import com.alelk.pws.pwapp.adapter.PsalmListAdapter;
-import com.alelk.pws.xmlengine.Constants;
 
 /**
  * Created by Alex Elkin on 18.02.2016.
@@ -53,7 +46,7 @@ public class FavoritesFragment extends Fragment implements LoaderManager.LoaderC
                 // TODO: 03.03.2016 incorrect method
                 Cursor cursor = (Cursor) parent.getItemAtPosition(position);
                 long psalmNumberId = cursor.getLong(cursor.getColumnIndex(PwsFavoritesTable.COLUMN_PSALMNUMBERID));
-                Intent intentPsalmView = new Intent(getActivity().getBaseContext(), PsalmActivity.class);
+                Intent intentPsalmView = new Intent(getActivity().getBaseContext(), PsalmFragment.class);
                 intentPsalmView.putExtra("psalmNumberId", psalmNumberId);
                 startActivity(intentPsalmView);
             }

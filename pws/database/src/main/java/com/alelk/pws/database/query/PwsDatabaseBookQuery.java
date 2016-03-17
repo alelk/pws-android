@@ -3,6 +3,7 @@ package com.alelk.pws.database.query;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -70,8 +71,9 @@ public class PwsDatabaseBookQuery extends PwsDatabaseQueryUtils implements PwsDa
         mDatabase.beginTransaction();
         try {
             long id = mDatabase.insert(TABLE_BOOKS, null, contentValues);
-            if (insertBookStatistic(book) < 0) {
+            if (insertBookStatistic(book, id) < 0) {
                 // TODO: 17.03.2016 throw exception
+                Log.w(LOG_TAG, METHOD_NAME + ": Unable to insert book statistic for bookId=" + id);
                 return null;
             }
             bookEntity = selectById(id);
@@ -126,19 +128,21 @@ public class PwsDatabaseBookQuery extends PwsDatabaseQueryUtils implements PwsDa
         return bookEntity;
     }
 
-    private long insertBookStatistic(Book book) {
+    private long insertBookStatistic(@NonNull Book book, long bookId) {
         final ContentValues contentValues = new ContentValues();
+        contentValues.put(COLUMN_BOOKID, bookId);
         if (book.getPreference() != null) {
-            contentValues.put(COLUMN_PREFERENCE, book.getPreference());
+            contentValues.put(COLUMN_USERPREFERENCE, book.getPreference());
         }
         return mDatabase.insert(TABLE_BOOKSTATISTIC, null, contentValues);
     }
 
     private void selectBookStatistic(BookEntity bookEntity) {
+        if (bookEntity == null) return;
         try {
-            Cursor cursor = mDatabase.query(TABLE_BOOKSTATISTIC, COLUMNS_BOOKSTATISTIC, COLUMN_BOOKID + " = " + bookEntity.getId(), null, null, null, "1");
+            mCursor = mDatabase.query(TABLE_BOOKSTATISTIC, COLUMNS_BOOKSTATISTIC, COLUMN_BOOKID + " = " + bookEntity.getId(), null, null, null, "1");
             if (mCursor.moveToFirst()) {
-                bookEntity.setPreference(cursor.getInt(cursor.getColumnIndex(COLUMN_PREFERENCE)));
+                bookEntity.setPreference(mCursor.getInt(mCursor.getColumnIndex(COLUMN_USERPREFERENCE)));
             }
         } finally {
             if (mCursor != null) mCursor.close();

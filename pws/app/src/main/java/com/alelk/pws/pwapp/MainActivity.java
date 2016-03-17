@@ -30,6 +30,7 @@ import com.alelk.pws.database.source.PwsDataSource;
 import com.alelk.pws.database.source.PwsDataSourceImpl;
 import com.alelk.pws.pwapp.fragment.FavoritesFragment;
 import com.alelk.pws.pwapp.fragment.HistoryFragment;
+import com.alelk.pws.pwapp.fragment.PsalmFragment;
 import com.alelk.pws.pwapp.fragment.ReadNowFragment;
 import com.alelk.pws.xmlengine.PwsXmlParser;
 import com.alelk.pws.xmlengine.exception.PwsXmlParserIncorrectSourceFormatException;
@@ -54,13 +55,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (savedInstanceState == null) {
-            mFragmentTransaction = getSupportFragmentManager().beginTransaction();
-            ReadNowFragment readNowFragment = new ReadNowFragment();
-            mFragmentTransaction.add(R.id.fragment_main_container, readNowFragment);
-            mFragmentTransaction.commit();
-            setTitle(getString(R.string.lbl_drawer_main_readnow));
+        Intent intent = getIntent();
+        if (!Intent.ACTION_VIEW.equals(intent.getAction()) && savedInstanceState == null) {
+            intent.putExtra("psalmNumberId", -10L);
         }
+        mFragmentTransaction = getSupportFragmentManager().beginTransaction();
+        PsalmFragment psalmFragment = new PsalmFragment();
+        mFragmentTransaction.add(R.id.fragment_main_container, psalmFragment);
+        mFragmentTransaction.commit();
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar_main);
         setSupportActionBar(mToolbar);

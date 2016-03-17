@@ -1,37 +1,24 @@
 package com.alelk.pws.pwapp;
 
 import android.app.SearchManager;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.MatrixCursor;
 import android.net.Uri;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 
-import com.alelk.pws.database.data.Book;
-import com.alelk.pws.database.data.BookEdition;
-import com.alelk.pws.database.data.Psalm;
-import com.alelk.pws.database.exception.PwsDatabaseIncorrectValueException;
-import com.alelk.pws.database.provider.PwsDataProviderContract;
+import com.alelk.pws.database.provider.PwsDataProvider;
 import com.alelk.pws.database.source.PwsDataSource;
-import com.alelk.pws.database.source.PwsDataSourceImpl;
 import com.alelk.pws.database.table.PwsPsalmFtsTable;
-import com.alelk.pws.pwapp.adapter.PsalmSuggestionCursorAdapter;
 import com.alelk.pws.pwapp.adapter.SearchPsalmCursorAdapter;
-import com.alelk.pws.pwapp.data.PwsPsalmParcelable;
-import com.alelk.pws.pwapp.loader.PsalmSuggestionsLoaderCallback;
-
-import java.util.List;
+import com.alelk.pws.pwapp.fragment.PsalmFragment;
 
 
 public class SearchActivity extends AppCompatActivity {
@@ -60,14 +47,15 @@ public class SearchActivity extends AppCompatActivity {
             String query = intent.getStringExtra(SearchManager.QUERY);
             query = PwsPsalmFtsTable.TABLE_PSALMS_FTS + " MATCH '" + query + "'";
             Log.i("search action", "query " + query);
-            Cursor cursor = getContentResolver().query(PwsDataProviderContract.CONTENT_URI_SEARCH, null, query, null, null);
+            Cursor cursor = getContentResolver().query(PwsDataProvider.Psalms.Search.CONTENT_URI, null, query, null, null);
             mCursorAdapter.swapCursor(cursor);
             return;
         } else if (Intent.ACTION_VIEW.equals(intent.getAction())) {
             Uri data = intent.getData();
             long psalmNumberId = Long.parseLong(data.getLastPathSegment());
             if (psalmNumberId != -1) {
-                Intent intentPsalmView = new Intent(getApplicationContext(), PsalmActivity.class);
+                Intent intentPsalmView = new Intent(getApplicationContext(), MainActivity.class);
+                intentPsalmView.setAction(Intent.ACTION_VIEW);
                 intentPsalmView.putExtra("psalmNumberId", psalmNumberId);
                 startActivity(intentPsalmView);
             }

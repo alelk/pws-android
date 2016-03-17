@@ -15,12 +15,10 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.alelk.pws.database.provider.PwsDataProvider;
+import com.alelk.pws.database.provider.PwsDataProviderContract;
 import com.alelk.pws.database.table.PwsFavoritesTable;
-import com.alelk.pws.database.table.PwsHistoryTable;
-import com.alelk.pws.database.table.PwsPsalmTable;
-import com.alelk.pws.pwapp.PsalmActivity;
 import com.alelk.pws.pwapp.R;
-import com.alelk.pws.pwapp.adapter.FavoritesCursorAdapter;
 import com.alelk.pws.pwapp.adapter.HistoryCursorAdapter;
 
 /**
@@ -49,8 +47,8 @@ public class HistoryFragment extends Fragment implements LoaderManager.LoaderCal
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // TODO: 03.03.2016 incorrect method
                 Cursor cursor = (Cursor) parent.getItemAtPosition(position);
-                long psalmNumberId = cursor.getLong(cursor.getColumnIndex(PwsFavoritesTable.COLUMN_PSALMNUMBERID));
-                Intent intentPsalmView = new Intent(getActivity().getBaseContext(), PsalmActivity.class);
+                long psalmNumberId = cursor.getLong(cursor.getColumnIndex(PwsDataProvider.History.COLUMN_PSALMNUMBER_ID));
+                Intent intentPsalmView = new Intent(getActivity().getBaseContext(), PsalmFragment.class);
                 intentPsalmView.putExtra("psalmNumberId", psalmNumberId);
                 startActivity(intentPsalmView);
             }
@@ -62,7 +60,7 @@ public class HistoryFragment extends Fragment implements LoaderManager.LoaderCal
     public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
         switch (loaderId) {
             case PWS_HISTORY_LOADER:
-                CursorLoader cursorLoader = new CursorLoader(getActivity().getBaseContext(), Uri.parse("content://com.alelk.pws.database.provider/history"), null, null, null, null);
+                CursorLoader cursorLoader = new CursorLoader(getActivity().getBaseContext(), PwsDataProvider.History.CONTENT_URI, null, null, null, null);
                 return cursorLoader;
             default:
         }

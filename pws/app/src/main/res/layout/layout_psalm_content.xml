@@ -6,8 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.alelk.pws.pwapp.PsalmActivity"
-    tools:showIn="@layout/activity_psalm">
+    tools:context=".fragment.PsalmFragment"
+    tools:showIn="@layout/fragment_psalm">
 
     <fragment android:name="com.alelk.pws.pwapp.fragment.PsalmPartsFragment"
         android:id="@+id/fragment_psalm_parts"

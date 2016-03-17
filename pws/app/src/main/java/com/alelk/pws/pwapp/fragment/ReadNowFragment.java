@@ -17,8 +17,6 @@ import com.alelk.pws.database.exception.PwsDatabaseIncorrectValueException;
 import com.alelk.pws.database.provider.PwsDataProviderContract;
 import com.alelk.pws.database.source.PwsDataSource;
 import com.alelk.pws.database.source.PwsDataSourceImpl;
-import com.alelk.pws.pwapp.MainActivity;
-import com.alelk.pws.pwapp.PsalmActivity;
 import com.alelk.pws.pwapp.R;
 import com.alelk.pws.pwapp.adapter.PsalmListAdapter;
 import com.alelk.pws.pwapp.data.PwsPsalmParcelable;
@@ -66,7 +64,7 @@ public class ReadNowFragment extends Fragment {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Psalm psalm = (Psalm) parent.getItemAtPosition(position);
 
-            Intent intent = new Intent(getActivity().getBaseContext(), PsalmActivity.class);
+            Intent intent = new Intent(getActivity().getBaseContext(), PsalmFragment.class);
             intent.putExtra("psalm", new PwsPsalmParcelable(psalm));
             intent.putExtra("bookEdition", BookEdition.PV3055.getSignature());
             startActivity(intent);
