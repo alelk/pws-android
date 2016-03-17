@@ -3,8 +3,10 @@ package com.alelk.pws.database.helper;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.alelk.pws.database.table.PwsBookStatisticTable;
 import com.alelk.pws.database.table.PwsBookTable;
 import com.alelk.pws.database.table.PwsChapterPsalmsTable;
 import com.alelk.pws.database.table.PwsChapterTable;
@@ -34,15 +36,13 @@ public class PwsDatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onOpen(SQLiteDatabase db) {
         Log.v(LOG_TAG, "PWS database opened '" + databaseName + "' version " + version);
-        PwsPsalmFtsTable.dropTable(db);
-        PwsPsalmFtsTable.createTable(db);
-        PwsPsalmFtsTable.dropAllTriggers(db);
-        PwsPsalmFtsTable.setUpAllTriggers(db);
+        setUpPsalmFts(db);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        Log.i(LOG_TAG, "Create PWS database '" + databaseName + "' version " + version);
+        final String METHOD_NAME = "onCreate";
+        Log.i(LOG_TAG, METHOD_NAME + ": Create PWS database '" + databaseName + "' version " + version);
         PwsBookTable.createTable(db);
         PwsPsalmTable.createTable(db);
         PwsPsalmNumbersTable.createTable(db);
@@ -50,11 +50,13 @@ public class PwsDatabaseHelper extends SQLiteOpenHelper {
         PwsChapterPsalmsTable.createTable(db);
         PwsFavoritesTable.createTable(db);
         PwsHistoryTable.createTable(db);
+        PwsBookStatisticTable.createTable(db);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.i(LOG_TAG, "Upgrade PWS database '" + databaseName + "' from version " + oldVersion
+        final String METHOD_NAME = "onUpgrade";
+        Log.i(LOG_TAG, METHOD_NAME + ": Upgrade PWS database '" + databaseName + "' from version " + oldVersion
                 + " to version " + newVersion);
         PwsBookTable.dropTable(db);
         PwsPsalmTable.dropTable(db);
@@ -63,6 +65,21 @@ public class PwsDatabaseHelper extends SQLiteOpenHelper {
         PwsChapterPsalmsTable.dropTable(db);
         PwsFavoritesTable.dropTable(db);
         PwsHistoryTable.dropTable(db);
+        PwsBookStatisticTable.dropTable(db);
         onCreate(db);
+    }
+
+    private void setUpPsalmFts(@NonNull SQLiteDatabase db) {
+        final String METHOD_NAME = "setUpPsalmFts";
+        if (PwsPsalmFtsTable.isTableExists(db) && PwsPsalmFtsTable.isAllTriggersExists(db)) {
+            Log.d(LOG_TAG, METHOD_NAME + ": The PWS Psalm FTS table and it's triggers are exist. No need to recreate.");
+            return;
+        }
+        PwsPsalmFtsTable.dropAllTriggers(db);
+        PwsPsalmFtsTable.dropTable(db);
+        PwsPsalmFtsTable.createTable(db);
+        PwsPsalmFtsTable.populateTable(db);
+        PwsPsalmFtsTable.setUpAllTriggers(db);
+        Log.i(LOG_TAG, METHOD_NAME + ": The PWS Psalm FTS table has been created and populated. All needed triggers are setting up.");
     }
 }

@@ -1,11 +1,11 @@
-<pwslibrary version='1.089'>
+<pwslibrary version='1.091'>
     <books>
-        <ref>pwsbooks/pv3055.pwsbk</ref>
+        <ref preference='10'>pwsbooks/pv3055.pwsbk</ref>
         <ref>pwsbooks/ChudnyKray.pwsbk</ref>
         <ref>pwsbooks/chymns.pwsbk</ref>
         <ref>pwsbooks/cpsalms.pwsbk</ref>
         <ref>pwsbooks/fcpsalms.pwsbk</ref>
-        <ref>pwsbooks/gusli.pwsbk</ref>
+        <ref preference='6'>pwsbooks/gusli.pwsbk</ref>
         <ref>pwsbooks/kimval.pwsbk</ref>
         <ref>pwsbooks/NNapevy.pwsbk</ref>
         <ref>pwsbooks/NPE.pwsbk</ref>

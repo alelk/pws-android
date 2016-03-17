@@ -7,12 +7,15 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import static com.alelk.pws.database.table.PwsBookTable.*;
+import static com.alelk.pws.database.table.PwsBookStatisticTable.*;
 import com.alelk.pws.database.data.Book;
 import com.alelk.pws.database.data.BookEdition;
 import com.alelk.pws.database.data.entity.BookEntity;
 import com.alelk.pws.database.exception.PwsDatabaseIncorrectValueException;
 import com.alelk.pws.database.exception.PwsDatabaseMessage;
 import com.alelk.pws.database.exception.PwsDatabaseSourceIdExistsException;
+import com.alelk.pws.database.table.PwsBookStatisticTable;
+import com.alelk.pws.database.table.PwsBookTable;
 
 /**
  * Created by Alex Elkin on 29.04.2015.
@@ -22,7 +25,7 @@ public class PwsDatabaseBookQuery extends PwsDatabaseQueryUtils implements PwsDa
     private static final String LOG_TAG = PwsDatabaseBookQuery.class.getSimpleName();
 
     private final static String[] ALL_COLUMNS = {
-            COLUMN_ID,
+            PwsBookTable.COLUMN_ID,
             COLUMN_VERSION,
             COLUMN_NAME,
             COLUMN_SHORTNAME,
@@ -33,7 +36,14 @@ public class PwsDatabaseBookQuery extends PwsDatabaseQueryUtils implements PwsDa
             COLUMN_CREATORS,
             COLUMN_REVIEWERS,
             COLUMN_EDITORS,
-            COLUMN_DESCRIPTION };
+            COLUMN_DESCRIPTION
+    };
+
+    private final static String[] COLUMNS_BOOKSTATISTIC = {
+            PwsBookStatisticTable.COLUMN_ID,
+            COLUMN_BOOKID,
+            COLUMN_USERPREFERENCE
+    };
 
     private SQLiteDatabase mDatabase;
     private Cursor mCursor;
@@ -53,13 +63,24 @@ public class PwsDatabaseBookQuery extends PwsDatabaseQueryUtils implements PwsDa
                 throw new PwsDatabaseSourceIdExistsException(PwsDatabaseMessage.BOOK_ID_EXISTS, bookEntity.getId());
             }
             // TODO: 20.02.2016 update when version is up
-        } else {
-            final ContentValues contentValues = new ContentValues();
-            fillContentValues(contentValues, book);
-            long id = mDatabase.insert(TABLE_BOOKS, null, contentValues);
-            bookEntity = selectById(id);
-            Log.d(LOG_TAG, METHOD_NAME + ": New book added: " + bookEntity);
+            return bookEntity;
         }
+        final ContentValues contentValues = new ContentValues();
+        fillContentValues(contentValues, book);
+        mDatabase.beginTransaction();
+        try {
+            long id = mDatabase.insert(TABLE_BOOKS, null, contentValues);
+            if (insertBookStatistic(book) < 0) {
+                // TODO: 17.03.2016 throw exception
+                return null;
+            }
+            bookEntity = selectById(id);
+            bookEntity.setPreference(book.getPreference());
+            mDatabase.setTransactionSuccessful();
+        } finally {
+            mDatabase.endTransaction();
+        }
+        Log.d(LOG_TAG, METHOD_NAME + ": New book added: " + bookEntity);
         return bookEntity;
     }
 
@@ -68,10 +89,11 @@ public class PwsDatabaseBookQuery extends PwsDatabaseQueryUtils implements PwsDa
         final String METHOD_NAME = "selectById";
         BookEntity bookEntity = null;
         try {
-            mCursor = mDatabase.query(TABLE_BOOKS, ALL_COLUMNS, COLUMN_ID + " = " + id, null, null, null, "1");
+            mCursor = mDatabase.query(TABLE_BOOKS, ALL_COLUMNS, PwsBookTable.COLUMN_ID + " = " + id, null, null, null, "1");
             if (mCursor.moveToFirst()) {
                 bookEntity = cursorToBookEntity(mCursor);
             }
+            selectBookStatistic(bookEntity);
             Log.d(LOG_TAG, METHOD_NAME + ": Book selected (id = '" + id + "'): " + bookEntity);
         } finally {
             if (mCursor != null) mCursor.close();
@@ -95,12 +117,32 @@ public class PwsDatabaseBookQuery extends PwsDatabaseQueryUtils implements PwsDa
             if (mCursor.moveToFirst()) {
                 bookEntity = cursorToBookEntity(mCursor);
             }
+            selectBookStatistic(bookEntity);
             Log.d(LOG_TAG, METHOD_NAME + ": Book selected (edition = '" + edition.getSignature()
                     + "'): " + bookEntity);
         } finally {
             if (mCursor != null) mCursor.close();
         }
         return bookEntity;
+    }
+
+    private long insertBookStatistic(Book book) {
+        final ContentValues contentValues = new ContentValues();
+        if (book.getPreference() != null) {
+            contentValues.put(COLUMN_PREFERENCE, book.getPreference());
+        }
+        return mDatabase.insert(TABLE_BOOKSTATISTIC, null, contentValues);
+    }
+
+    private void selectBookStatistic(BookEntity bookEntity) {
+        try {
+            Cursor cursor = mDatabase.query(TABLE_BOOKSTATISTIC, COLUMNS_BOOKSTATISTIC, COLUMN_BOOKID + " = " + bookEntity.getId(), null, null, null, "1");
+            if (mCursor.moveToFirst()) {
+                bookEntity.setPreference(cursor.getInt(cursor.getColumnIndex(COLUMN_PREFERENCE)));
+            }
+        } finally {
+            if (mCursor != null) mCursor.close();
+        }
     }
 
     private BookEntity cursorToBookEntity(Cursor cursor) {

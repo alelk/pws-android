@@ -20,6 +20,7 @@ public class BookInfo implements PwsObject {
     private List<String> reviewers;
     private List<String> editors;
     private String comment;
+    private Integer preference;
 
     public String getName() {
         return name;
@@ -117,6 +118,14 @@ public class BookInfo implements PwsObject {
         this.comment = comment;
     }
 
+    public Integer getPreference() {
+        return preference;
+    }
+
+    public void setPreference(Integer preference) {
+        this.preference = preference;
+    }
+
     public String toString() {
         String s = "BookInfo v" + this.version + " {" +
                 "name='" + this.name +
@@ -126,6 +135,7 @@ public class BookInfo implements PwsObject {
                 "' edition='" + this.edition +
                 "' releaseDate='" + this.releaseDate +
                 "' comment='" + this.comment +
+                "' preference='" + this.preference +
                 "' authors=[ ";
         if (this.authors != null) {
             for (String author : this.authors) {

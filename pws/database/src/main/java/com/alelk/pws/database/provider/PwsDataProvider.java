@@ -124,6 +124,7 @@ public class PwsDataProvider extends ContentProvider {
             "pn." + PwsPsalmNumbersTable.COLUMN_NUMBER + " AS " + PwsPsalmNumbersTable.COLUMN_NUMBER,
             "pn." + PwsPsalmNumbersTable.COLUMN_BOOKID + " AS " + PwsPsalmNumbersTable.COLUMN_BOOKID,
             "b." + PwsBookTable.COLUMN_EDITION + " AS " + PwsBookTable.COLUMN_EDITION,
+            "b." + PwsBookTable.COLUMN_PREFERENCE + " AS " + PwsBookTable.COLUMN_PREFERENCE,
             "b." + PwsBookTable.COLUMN_DISPLAYNAME + " AS " + PwsBookTable.COLUMN_DISPLAYNAME,
             "p." + PwsPsalmTable.COLUMN_NAME + " AS " + PwsPsalmTable.COLUMN_NAME
     };
@@ -135,6 +136,7 @@ public class PwsDataProvider extends ContentProvider {
             "pn." + PwsPsalmNumbersTable.COLUMN_BOOKID + " AS " + PwsPsalmNumbersTable.COLUMN_BOOKID,
             "b." + PwsBookTable.COLUMN_EDITION + " AS " + PwsBookTable.COLUMN_EDITION,
             "b." + PwsBookTable.COLUMN_DISPLAYNAME + " AS " + PwsBookTable.COLUMN_DISPLAYNAME,
+            "b." + PwsBookTable.COLUMN_PREFERENCE + " AS " + PwsBookTable.COLUMN_PREFERENCE,
             "p." + PwsPsalmTable.COLUMN_NAME + " AS " + PwsPsalmTable.COLUMN_NAME,
             "snippet(" + TABLE_PSALMS_FTS + ") as snippet"
     };
@@ -166,6 +168,7 @@ public class PwsDataProvider extends ContentProvider {
             "pn." + PwsPsalmNumbersTable.COLUMN_ID + " AS " + PwsPsalmNumbersTable.COLUMN_ID,
             "pn." + PwsPsalmNumbersTable.COLUMN_NUMBER + " AS " + PwsPsalmNumbersTable.COLUMN_NUMBER,
             "b." + PwsBookTable.COLUMN_DISPLAYNAME + " AS " + SUGGEST_COLUMN_TEXT_2,
+            "b." + PwsBookTable.COLUMN_PREFERENCE + " AS " + PwsBookTable.COLUMN_PREFERENCE,
             "p." + PwsPsalmTable.COLUMN_NAME + " AS " + SUGGEST_COLUMN_TEXT_1,
             "pn." + PwsPsalmNumbersTable.COLUMN_ID + " AS " + SUGGEST_COLUMN_INTENT_DATA_ID
     };
@@ -199,6 +202,8 @@ public class PwsDataProvider extends ContentProvider {
     };
 
     private static final String SELECTION_FAVORITE_ID_MATCH = "fv." + PwsFavoritesTable.COLUMN_ID + " = ?";
+
+    private static final String SELECTION_PREFFERED_BOOKS_ONLY = "b." + PwsBookTable.COLUMN_PREFERENCE + ">0";
 
     private SQLiteDatabase mDatabase;
     private PwsDatabaseHelper mDatabaseHelper;
@@ -406,31 +411,18 @@ public class PwsDataProvider extends ContentProvider {
                                                @Nullable String limit) {
         Cursor cursor = mDatabase.query(TABLE_PSALMS_JOIN_PSALMNUMBERS_JOIN_BOOKS,
                 SUGGESTIONS_PSALM_NUMBERS_PROJECTION,
-                selection, null, null, null, null,
+                selection + " and " + SELECTION_PREFFERED_BOOKS_ONLY, null, null, null, null,
                 limit);
         return cursor;
     }
 
     private Cursor querySuggestionsPsalmName(@Nullable String selection, @Nullable String limit) {
         final String METHOD_NAME = "querySuggestionsPsalmName";
-        // TODO: 01.03.2016 group by preferred books table
         final String orderBy = "b." + PwsBookTable.COLUMN_ID + " DESC";
-
-        /**
-        select * from (
-            select pn._id, pn.number, pn.psalmid as psalmid, b.edition, b.displayname, p.name
-            from psalmnumbers as pn
-            join psalms as p on pn.psalmid=p._id
-            join books as b on pn.bookid=b._id
-            where p.name LIKE "Name%"
-            order by pn.bookid DESC)
-        as psugg
-        group by psugg.psalmid;
-         */
         String rawQuery = SQLiteQueryBuilder.buildQueryString(false,
                 TABLE_PSALMS_JOIN_PSALMNUMBERS_JOIN_BOOKS,
                 DEFAULT_PSALMNUMBERS_PROJECTION,
-                selection, null, null,
+                selection + " and " + SELECTION_PREFFERED_BOOKS_ONLY, null, null,
                 orderBy, null);
         final String groupBy = "psugg." + PwsPsalmNumbersTable.COLUMN_PSALMID;
         rawQuery = SQLiteQueryBuilder.buildQueryString(false,
@@ -444,12 +436,12 @@ public class PwsDataProvider extends ContentProvider {
     private Cursor querySearchPsalmText(@Nullable String selection, @Nullable String limit) {
         final String METHOD_NAME = "querySearchPsalmText";
         // TODO: 01.03.2016 group by preferred books table
-        final String orderBy = "b." + PwsBookTable.COLUMN_ID + " DESC";
+        final String orderBy = "b." + PwsBookTable.COLUMN_PREFERENCE;
 
         String rawQuery = SQLiteQueryBuilder.buildQueryString(false,
                 TABLE_PSALMS_JOIN_PSALMS_FTS_JOIN_PSALMNUMBERS_JOIN_BOOKS,
                 DEFAULT_PSALMNUMBERS_FTS_PROJECTION,
-                selection, null, null,
+                selection + " and " + SELECTION_PREFFERED_BOOKS_ONLY, null, null,
                 orderBy, null);
         final String groupBy = "s." + PwsPsalmNumbersTable.COLUMN_PSALMID;
         rawQuery = SQLiteQueryBuilder.buildQueryString(false,

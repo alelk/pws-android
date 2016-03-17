@@ -19,6 +19,7 @@ public class BookEntity implements PwsDatabaseEntity {
     private String reviewers;
     private String editors;
     private String comment;
+    private Integer preference;
 
     public BookEntity() {}
 
@@ -134,6 +135,14 @@ public class BookEntity implements PwsDatabaseEntity {
         this.comment = comment;
     }
 
+    public Integer getPreference() {
+        return preference;
+    }
+
+    public void setPreference(Integer preference) {
+        this.preference = preference;
+    }
+
     @Override
     public String toString() {
         return "BookEntity{" +
@@ -150,6 +159,7 @@ public class BookEntity implements PwsDatabaseEntity {
                 ", reviewers='" + reviewers + '\'' +
                 ", editors='" + editors + '\'' +
                 ", comment='" + comment + '\'' +
+                ", preference='" + preference + '\'' +
                 '}';
     }
 }
