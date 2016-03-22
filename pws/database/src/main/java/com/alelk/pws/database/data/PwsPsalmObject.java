@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.SortedMap;
 
@@ -18,6 +19,7 @@ public abstract class PwsPsalmObject {
     private String composer;
     private String year;
     private String annotation;
+    private Locale locale;
     private List<String> tonalities = new ArrayList<>();
     private SortedMap<Integer, PsalmPart> psalmParts;
 
@@ -111,6 +113,14 @@ public abstract class PwsPsalmObject {
         if (tonalities != null && tonalities.size() > 0) {
             this.tonalities.addAll(tonalities);
         }
+    }
+
+    public Locale getLocale() {
+        return locale;
+    }
+
+    public void setLocale(Locale locale) {
+        this.locale = locale;
     }
 
     public static Comparator<PwsPsalmObject> getNameComparator() {

@@ -16,7 +16,8 @@ public enum PwsDatabaseMessage {
     PSALM_NUMBER_EXISTS_FOR_BOOK_ID(8, R.string.psalm_number_exists_for_book_id),
     NO_PSALM_NUMBERS(9, R.string.no_psalm_numbers),
     PSALM_ID_EXISTS(10, R.string.psalm_id_exists),
-    NO_PSALM_PART_NUMBERS(11, R.string.no_psalm_part_numbers);
+    NO_PSALM_PART_NUMBERS(11, R.string.no_psalm_part_numbers),
+    NULL_CONTEXT_VALUE(12, R.string.null_context_value);
 
     int errorCode;
     int errorMessageId;

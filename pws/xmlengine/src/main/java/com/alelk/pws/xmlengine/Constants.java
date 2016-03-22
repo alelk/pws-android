@@ -46,6 +46,7 @@ public interface Constants {
         public final static class BK {
             public static final String TAG = "book";
             public static final String VERSION = "version";
+            public static final String LANGUAGE = "language";
             public static final String NAME = "name";
             public static final String SHORT_NAME = "shortname";
             public static final String DISPLAY_NAME = "displayname";

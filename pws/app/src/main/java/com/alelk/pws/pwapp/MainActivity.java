@@ -28,6 +28,7 @@ import com.alelk.pws.database.exception.PwsDatabaseSourceIdExistsException;
 import com.alelk.pws.database.provider.PwsDataProviderContract;
 import com.alelk.pws.database.source.PwsDataSource;
 import com.alelk.pws.database.source.PwsDataSourceImpl;
+import com.alelk.pws.database.util.PwsPsalmUtil;
 import com.alelk.pws.pwapp.fragment.FavoritesFragment;
 import com.alelk.pws.pwapp.fragment.HistoryFragment;
 import com.alelk.pws.pwapp.fragment.PsalmFragment;
@@ -114,6 +115,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         } catch (PwsDatabaseIncorrectValueException e) {
                         }
                     }
+                }
+            } else  {
+                // TODO: 21.03.2016 remove
+                try {
+                    Psalm psalm = pwsDataSource.getPsalm(10L);
+                    Log.e("psalm", psalm.toString());
+                    Log.w("psalm text", PwsPsalmUtil.convertPsalmPartsToPlainText(getBaseContext(), psalm.getLocale(), psalm.getPsalmParts()));
+                } catch (PwsDatabaseIncorrectValueException e) {
+                    e.printStackTrace();
                 }
             }
         } catch (PwsXmlParserIncorrectSourceFormatException e) {

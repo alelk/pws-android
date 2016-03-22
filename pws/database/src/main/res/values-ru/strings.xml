@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="chorus">Припев</string>
+    <string name="verse">Куплет</string>
+</resources>

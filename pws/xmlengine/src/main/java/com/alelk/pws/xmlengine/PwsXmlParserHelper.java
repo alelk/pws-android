@@ -573,6 +573,10 @@ public abstract class PwsXmlParserHelper implements Constants {
                 case TAG.BK.EDITION:
                     book.setEdition(parseBookEdition(parser, parser.getAttributeValue(i)));
                     break;
+                case TAG.BK.LANGUAGE:
+                    String locale = parser.getAttributeValue(i);
+                    book.setLocale(new Locale(locale));
+                    break;
                 case TAG.BK.PREFERENCE:
                     try {
                         book.setPreference(Integer.parseInt(parser.getAttributeValue(i)));
@@ -599,6 +603,7 @@ public abstract class PwsXmlParserHelper implements Constants {
                 Constants.TAG.BK.RELEASE_DATE,
                 Constants.TAG.BK.COMMENT,
                 TAG.BK.PREFERENCE,
+                TAG.BK.LANGUAGE,
                 Constants.TAG.BK.AUTHORS,
                 Constants.TAG.BK.CREATORS,
                 Constants.TAG.BK.REVIEWERS,
@@ -660,6 +665,8 @@ public abstract class PwsXmlParserHelper implements Constants {
                             book.setReleaseDate(date);
                         } else if (Constants.TAG.BK.COMMENT.equalsIgnoreCase(currentTagName)) {
                             book.setComment(parser.getText());
+                        } else if (TAG.BK.LANGUAGE.equalsIgnoreCase(currentTagName)) {
+                            book.setLocale(new Locale(parser.getText()));
                         } else if (TAG.BK.PREFERENCE.equalsIgnoreCase(currentTagName)) {
                             try {
                                 book.setPreference(Integer.parseInt(parser.getText()));
@@ -708,6 +715,9 @@ public abstract class PwsXmlParserHelper implements Constants {
                                 ": The book already contains the psalm with number '" + psalmNumber
                                 + "'. The psalm will be overwritten.");
                     } else {
+                        if (psalm.getLocale() == null) {
+                            psalm.setLocale(book.getLocale());
+                        }
                         bookPsalms.put(psalm.getNumber(bookEdition), psalm);
                     }
                 }

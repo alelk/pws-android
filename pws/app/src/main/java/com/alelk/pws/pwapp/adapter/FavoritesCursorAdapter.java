@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.alelk.pws.database.provider.PwsDataProvider;
+import com.alelk.pws.database.provider.PwsDataProviderContract;
 import com.alelk.pws.database.table.PwsBookTable;
 import com.alelk.pws.database.table.PwsPsalmNumbersTable;
 import com.alelk.pws.database.table.PwsPsalmTable;
@@ -35,9 +37,9 @@ public class FavoritesCursorAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
         TextView txtPsalmName = (TextView) view.findViewById(R.id.txt_favorites_name);
         TextView txtPsalmNumber = (TextView) view.findViewById(R.id.txt_favorites_number);
-        txtPsalmName.setText(cursor.getString(cursor.getColumnIndex(PwsPsalmTable.COLUMN_NAME)));
-        txtPsalmNumber.setText(cursor.getLong(cursor.getColumnIndex(PwsPsalmNumbersTable.COLUMN_NUMBER)) + " " +
-                cursor.getString(cursor.getColumnIndex(PwsBookTable.COLUMN_DISPLAYNAME)));
+        txtPsalmName.setText(cursor.getString(cursor.getColumnIndex(PwsDataProvider.Favorites.COLUMN_PSALMNAME)));
+        txtPsalmNumber.setText(cursor.getLong(cursor.getColumnIndex(PwsDataProvider.Favorites.COLUMN_PSALMNUMBER)) + " " +
+                cursor.getString(cursor.getColumnIndex(PwsDataProvider.Favorites.COLUMN_BOOKDISPLAYNAME)));
 
     }
 }

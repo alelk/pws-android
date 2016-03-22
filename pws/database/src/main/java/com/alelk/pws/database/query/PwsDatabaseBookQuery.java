@@ -37,7 +37,8 @@ public class PwsDatabaseBookQuery extends PwsDatabaseQueryUtils implements PwsDa
             COLUMN_CREATORS,
             COLUMN_REVIEWERS,
             COLUMN_EDITORS,
-            COLUMN_DESCRIPTION
+            COLUMN_DESCRIPTION,
+            COLUMN_LOCALE
     };
 
     private final static String[] COLUMNS_BOOKSTATISTIC = {
@@ -163,6 +164,7 @@ public class PwsDatabaseBookQuery extends PwsDatabaseQueryUtils implements PwsDa
         bookEntity.setReviewers(cursor.getString(9));
         bookEntity.setEditors(cursor.getString(10));
         bookEntity.setDescription(cursor.getString(11));
+        bookEntity.setLocale(cursor.getString(cursor.getColumnIndex(COLUMN_LOCALE)));
         return bookEntity;
     }
 
@@ -199,6 +201,9 @@ public class PwsDatabaseBookQuery extends PwsDatabaseQueryUtils implements PwsDa
         }
         if (!TextUtils.isEmpty(book.getDescription())) {
             values.put(COLUMN_DESCRIPTION, book.getDescription());
+        }
+        if (book.getLocale() != null) {
+            values.put(COLUMN_LOCALE, book.getLocale().toString());
         }
     }
 

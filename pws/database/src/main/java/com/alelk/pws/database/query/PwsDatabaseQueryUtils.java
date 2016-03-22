@@ -1,5 +1,6 @@
 package com.alelk.pws.database.query;
 
+import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 import android.util.Log;
@@ -111,6 +112,19 @@ public abstract class PwsDatabaseQueryUtils {
         if (psalmPart.getNumbers() == null || psalmPart.getNumbers().isEmpty()) {
             Log.d(getLogTag(), methodName + ": Incorrect value: psalm part numbers is null or empty");
             throw new PwsDatabaseIncorrectValueException(PwsDatabaseMessage.NO_PSALM_PART_NUMBERS);
+        }
+    }
+
+    /**
+     * Validate if context non null
+     * @param methodName method name
+     * @param context context
+     * @throws PwsDatabaseIncorrectValueException if context is null or empty. Contains the following PwsDatabaseMessage: NULL_CONTEXT_VALUE
+     */
+    protected void validateContextNotNull(String methodName, Context context) throws PwsDatabaseIncorrectValueException {
+        if (context == null) {
+            Log.d(getLogTag(), methodName + ": Incorrect value: context is null");
+            throw new PwsDatabaseIncorrectValueException(PwsDatabaseMessage.NULL_CONTEXT_VALUE);
         }
     }
 }

@@ -83,14 +83,6 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
             " INNER JOIN " + TABLE_BOOKSTATISTIC + " as bs " +
             "ON bs." + PwsBookStatisticTable.COLUMN_BOOKID + "=b." + PwsBookTable.COLUMN_ID;
 
-    private static final String TABLE_FAVORITES_JOIN_PSALMNUMBERS_JOIN_BOOKS_JOIN_PSALMS = TABLE_FAVORITES + " AS fv " +
-            "INNER JOIN " + TABLE_PSALMNUMBERS + " AS pn " +
-            "ON fv." + PwsFavoritesTable.COLUMN_PSALMNUMBERID + "=pn." + PwsPsalmNumbersTable.COLUMN_ID +
-            " INNER JOIN " + TABLE_BOOKS + " as b " +
-            "ON pn." + PwsPsalmNumbersTable.COLUMN_BOOKID + "=b." + PwsBookTable.COLUMN_ID +
-            " INNER JOIN " + TABLE_PSALMS + " as p " +
-            "ON pn." + PwsPsalmNumbersTable.COLUMN_PSALMID + "=p." + PwsPsalmTable.COLUMN_ID;
-
     private static final String[] DEFAULT_PSALMNUMBERS_PROJECTION = {
             "pn." + PwsPsalmNumbersTable.COLUMN_ID + " AS " + PwsPsalmNumbersTable.COLUMN_ID,
             "pn." + PwsPsalmNumbersTable.COLUMN_PSALMID + " AS " + PwsPsalmNumbersTable.COLUMN_PSALMID,
@@ -145,18 +137,6 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
             "p." + PwsPsalmTable.COLUMN_NAME + " AS " + SUGGEST_COLUMN_TEXT_1,
             "pn." + PwsPsalmNumbersTable.COLUMN_ID + " AS " + SUGGEST_COLUMN_INTENT_DATA_ID
     };
-
-    private static final String[] DEFAULT_FAVORITES_PROJECTION = {
-            "fv." + PwsFavoritesTable.COLUMN_POSITION + " AS " + PwsFavoritesTable.COLUMN_POSITION,
-            "fv." + PwsFavoritesTable.COLUMN_PSALMNUMBERID + " AS " + PwsFavoritesTable.COLUMN_PSALMNUMBERID,
-            "b." + PwsBookTable.COLUMN_EDITION + " AS " + PwsBookTable.COLUMN_EDITION,
-            "pn." + PwsPsalmNumbersTable.COLUMN_NUMBER + " AS " + PwsPsalmNumbersTable.COLUMN_NUMBER,
-            "p." + PwsPsalmTable.COLUMN_NAME + " AS " + PwsPsalmTable.COLUMN_NAME,
-            "b." + PwsBookTable.COLUMN_DISPLAYNAME + " AS " + PwsBookTable.COLUMN_DISPLAYNAME,
-            "fv." + PwsFavoritesTable.COLUMN_ID + " AS " + PwsFavoritesTable.COLUMN_ID
-    };
-
-    private static final String SELECTION_FAVORITE_ID_MATCH = "fv." + PwsFavoritesTable.COLUMN_ID + " = ?";
 
     private static final String SELECTION_PREFFERED_BOOKS_ONLY = "bs." + PwsBookStatisticTable.COLUMN_USERPREFERENCE + ">0";
 
@@ -329,12 +309,12 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
                                   @Nullable String[] selectionArgs,
                                    @Nullable String orderBy,
                                    @Nullable String limit) {
-        if (projection == null) projection = DEFAULT_FAVORITES_PROJECTION;
-        if (orderBy == null) orderBy = "fv." + PwsFavoritesTable.COLUMN_POSITION + " DESC";
+        if (projection == null) projection = Favorites.PROJECTION;
+        if (orderBy == null) orderBy = Favorites.SORT_ORDER;
 
-        Cursor cursor = mDatabase.query(TABLE_FAVORITES_JOIN_PSALMNUMBERS_JOIN_BOOKS_JOIN_PSALMS,
+        Cursor cursor = mDatabase.query(Favorites.TABLES,
                 projection, selection, selectionArgs,
-                "fv." + PwsFavoritesTable.COLUMN_POSITION, null,
+                Favorites.GROUP_BY, null,
                 orderBy, limit);
         return cursor;
     }
@@ -361,7 +341,7 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
 
     private Cursor queryFavorite(long id) {
         String[] selectionArgs = (String[]) Arrays.asList(String.valueOf(id)).toArray();
-        return queryFavorites(null, SELECTION_FAVORITE_ID_MATCH, selectionArgs, null, null);
+        return queryFavorites(null, Favorites.SELECTION_ID_MATCH, selectionArgs, null, null);
     }
 
     private Cursor queryLastFavorite(@Nullable String[] projection) {
@@ -456,8 +436,8 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
         if (lastFavorite.moveToFirst()) {
             favoritePosition = 1 + lastFavorite.getLong(lastFavorite.getColumnIndex(PwsFavoritesTable.COLUMN_POSITION));
         }
-        if (values.containsKey(PwsFavoritesTable.COLUMN_POSITION)) {
-            long valuePosition = values.getAsLong(PwsFavoritesTable.COLUMN_POSITION);
+        if (values.containsKey(Favorites.COLUMN_FAVORITEPOSITION)) {
+            long valuePosition = values.getAsLong(Favorites.COLUMN_FAVORITEPOSITION);
             if (valuePosition < favoritePosition) {
                 // TODO: 29.02.2016 shift favorites list
                 Log.w(LOG_TAG, METHOD_NAME + ": Try to insert favorite with position='" +

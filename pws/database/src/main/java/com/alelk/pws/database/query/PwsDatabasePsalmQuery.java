@@ -1,6 +1,7 @@
 package com.alelk.pws.database.query;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
@@ -25,6 +26,7 @@ import com.alelk.pws.database.util.PwsPsalmUtil;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 import static com.alelk.pws.database.table.PwsPsalmTable.*;
@@ -47,7 +49,9 @@ public class PwsDatabasePsalmQuery extends PwsDatabaseQueryUtils implements PwsD
             TABLE_PSALMS + "." + COLUMN_TONALITIES,
             TABLE_PSALMS + "." + COLUMN_YEAR,
             TABLE_PSALMS + "." + COLUMN_ANNOTATION,
-            TABLE_PSALMS + "." + COLUMN_TEXT};
+            TABLE_PSALMS + "." + COLUMN_TEXT,
+            TABLE_PSALMS + "." + COLUMN_LOCALE
+    };
 
     // psalms INNER JOIN psalmnumbers ON psalms._id=psalmnumbers.psalmid
     // INNER JOIN books ON books._id=psalmnumbers.bookid
@@ -68,9 +72,15 @@ public class PwsDatabasePsalmQuery extends PwsDatabaseQueryUtils implements PwsD
 
     private SQLiteDatabase mDatabase;
     private Cursor mCursor;
+    private Context mContext;
 
-    public PwsDatabasePsalmQuery(SQLiteDatabase mDatabase) {
-        this.mDatabase = mDatabase;
+    public PwsDatabasePsalmQuery(Context context, SQLiteDatabase database) {
+        mDatabase = database;
+        mContext = context;
+    }
+
+    public PwsDatabasePsalmQuery(SQLiteDatabase database) {
+        mDatabase = database;
     }
 
     /**
@@ -92,6 +102,7 @@ public class PwsDatabasePsalmQuery extends PwsDatabaseQueryUtils implements PwsD
         final String METHOD_NAME = "insert";
         validateSQLiteDatabaseNotNull(METHOD_NAME, mDatabase);
         validatePsalmNotNull(METHOD_NAME, psalm);
+        validateContextNotNull(METHOD_NAME, mContext);
         PsalmEntity psalmEntity;
         mDatabase.beginTransaction();
         try {
@@ -266,18 +277,6 @@ public class PwsDatabasePsalmQuery extends PwsDatabaseQueryUtils implements PwsD
         }
     }
 
-    // TODO: 14.03.2016 remove this method
-    @Deprecated
-    private void insertPsalmParts(Psalm psalm, Long psalmId) throws PwsDatabaseSourceIdExistsException, PwsDatabaseIncorrectValueException {
-        for (PsalmPart psalmPart : psalm.getPsalmPartsValues()) {
-            if (psalmPart.getPsalmType() == PsalmPartType.CHORUS) {
-                new PwsDatabaseChorusQuery(mDatabase, psalmId).insert((PsalmChorus) psalmPart);
-            } else if (psalmPart.getPsalmType() == PsalmPartType.VERSE) {
-                new PwsDatabaseVerseQuery(mDatabase, psalmId).insert((PsalmVerse) psalmPart);
-            }
-        }
-    }
-
     private PsalmEntity cursorToPsalmEntity(Cursor cursor) {
         PsalmEntity psalmEntity = new PsalmEntity();
         psalmEntity.setId(cursor.getLong(0));
@@ -290,6 +289,7 @@ public class PwsDatabasePsalmQuery extends PwsDatabaseQueryUtils implements PwsD
         psalmEntity.setYear(cursor.getString(7));
         psalmEntity.setAnnotation(cursor.getString(8));
         psalmEntity.setText(cursor.getString(9));
+        psalmEntity.setLocale(cursor.getString(10));
         return psalmEntity;
     }
 
@@ -318,9 +318,13 @@ public class PwsDatabasePsalmQuery extends PwsDatabaseQueryUtils implements PwsD
         if (!TextUtils.isEmpty(psalm.getAnnotation())) {
             values.put(COLUMN_ANNOTATION, psalm.getAnnotation().toString());
         }
-        String text = PwsPsalmUtil.convertPsalmPartsToPlainText(psalm.getPsalmParts());
+        Locale locale = psalm.getLocale();
+        String text = PwsPsalmUtil.convertPsalmPartsToPlainText(mContext, locale == null ? Locale.ENGLISH : locale, psalm.getPsalmParts());
         if (!TextUtils.isEmpty(text)) {
             values.put(COLUMN_TEXT, text);
+        }
+        if (locale != null) {
+            values.put(COLUMN_LOCALE, locale.toString());
         }
     }
 

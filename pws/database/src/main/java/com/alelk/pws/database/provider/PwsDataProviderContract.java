@@ -3,6 +3,7 @@ package com.alelk.pws.database.provider;
 import android.net.Uri;
 
 import com.alelk.pws.database.table.PwsBookTable;
+import com.alelk.pws.database.table.PwsFavoritesTable;
 import com.alelk.pws.database.table.PwsHistoryTable;
 import com.alelk.pws.database.table.PwsPsalmNumbersTable;
 import com.alelk.pws.database.table.PwsPsalmTable;
@@ -10,8 +11,6 @@ import com.alelk.pws.database.table.PwsPsalmTable;
 import java.util.Arrays;
 
 import static android.app.SearchManager.SUGGEST_URI_PATH_QUERY;
-import static com.alelk.pws.database.table.PwsFavoritesTable.COLUMN_PSALMNUMBERID;
-import static com.alelk.pws.database.table.PwsPsalmNumbersTable.COLUMN_PSALMID;
 import static com.alelk.pws.database.table.PwsPsalmNumbersTable.TABLE_PSALMNUMBERS;
 import static com.alelk.pws.database.table.PwsPsalmTable.TABLE_PSALMS;
 import static com.alelk.pws.database.table.PwsFavoritesTable.TABLE_FAVORITES;
@@ -25,7 +24,7 @@ public interface PwsDataProviderContract {
     String SCHEME = "content";
     String AUTHORITY = "com.alelk.pws.database.provider";
     String DATABASE_NAME = "pws.db";
-    int DATABASE_VERSION = 25;
+    int DATABASE_VERSION = 29;
 
     String HISTORY_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
@@ -96,7 +95,7 @@ public interface PwsDataProviderContract {
             protected static final String PATH = TABLE_PSALMNUMBERS + "/#/" + PATH_SEGMENT;
             protected static final int URI_MATCH = 32;
 
-            public static final String DEFAULT_SELECTION = COLUMN_PSALMNUMBERID + "=?";
+            public static final String DEFAULT_SELECTION = COLUMN_PSALMNUMBER_ID + "=?";
             protected static final String TABLES = TABLE_PSALMS_JOIN_PSALMNUMBERS_JOIN_BOOKS;
             protected static final String[] PROJECTION = {
                     "p." + PwsPsalmTable.COLUMN_ID + " AS " + COLUMN_ID,
@@ -121,11 +120,50 @@ public interface PwsDataProviderContract {
     }
 
     class Favorites {
+        public static final String COLUMN_ID = PwsFavoritesTable.COLUMN_ID;
+        protected static final String COLUMN_FAVORITEID = "favoriteid";
+        public static final String COLUMN_FAVORITEPOSITION = "favorite" + PwsFavoritesTable.COLUMN_POSITION;
+        public static final String COLUMN_PSALMID = Psalms.COLUMN_PSALMID;
+        public static final String COLUMN_PSALMNAME = Psalms.COLUMN_PSALMNAME;
+        public static final String COLUMN_PSALMTEXT = Psalms.COLUMN_PSALMTEXT;
+        public static final String COLUMN_PSALMANNOTATION = Psalms.COLUMN_PSALMANNOTATION;
+        public static final String COLUMN_PSALMAUTHOR = Psalms.COLUMN_PSALMAUTHOR;
+        public static final String COLUMN_PSALMCOMPOSER = Psalms.COLUMN_PSALMCOMPOSER;
+        public static final String COLUMN_PSALMTRANSLATOR = Psalms.COLUMN_PSALMTRANSLATOR;
+        public static final String COLUMN_PSALMTONALITIES = Psalms.COLUMN_PSALMTONALITIES;
+        public static final String COLUMN_PSALMNUMBER_ID = PsalmNumbers.COLUMN_PSALMNUMBER_ID;
+        public static final String COLUMN_PSALMNUMBER = PsalmNumbers.COLUMN_PSALMNUMBER;
+        public static final String COLUMN_BOOKID = PsalmNumbers.COLUMN_BOOKID;
+        public static final String COLUMN_BOOKEDITION = Books.COLUMN_BOOKEDITION;
+        public static final String COLUMN_BOOKDISPLAYNAME = Books.COLUMN_BOOKDISPLAYNAME;
+
         public static final String PATH = TABLE_FAVORITES;
         protected static final String PATH_ID = TABLE_FAVORITES + "/#";
         protected static final int URI_MATCH = 40;
         protected static final int URI_MATCH_ID = 41;
         public static final Uri CONTENT_URI = new Uri.Builder().scheme(SCHEME).authority(AUTHORITY).path(PATH).build();
+        protected static final String TABLES = TABLE_FAVORITES_JOIN_PSALMNUMBERS_JOIN_BOOKS_JOIN_PSALMS;
+        protected static final String SORT_ORDER = COLUMN_FAVORITEPOSITION + " DESC";
+        protected static final String GROUP_BY = COLUMN_FAVORITEPOSITION;
+        protected static final String SELECTION_ID_MATCH = COLUMN_ID + " match ?";
+        protected static final String[] PROJECTION = {
+                "f." + PwsFavoritesTable.COLUMN_ID + " AS " + COLUMN_ID,
+                "f." + PwsFavoritesTable.COLUMN_POSITION + " AS " + COLUMN_FAVORITEPOSITION,
+                "p." + PwsPsalmTable.COLUMN_ID + " AS " + COLUMN_PSALMID,
+                "p." + PwsPsalmTable.COLUMN_NAME + " AS " + COLUMN_PSALMNAME,
+                "p." + PwsPsalmTable.COLUMN_TEXT + " AS " + COLUMN_PSALMTEXT,
+                "p." + PwsPsalmTable.COLUMN_AUTHOR + " AS " + COLUMN_PSALMAUTHOR,
+                "p." + PwsPsalmTable.COLUMN_COMPOSER + " AS " + COLUMN_PSALMCOMPOSER,
+                "p." + PwsPsalmTable.COLUMN_TRANSLATOR + " AS " + COLUMN_PSALMTRANSLATOR,
+                "p." + PwsPsalmTable.COLUMN_TONALITIES + " AS " + COLUMN_PSALMTONALITIES,
+                "p." + PwsPsalmTable.COLUMN_ANNOTATION + " AS " + COLUMN_PSALMANNOTATION,
+                "pn." + PwsPsalmNumbersTable.COLUMN_NUMBER + " AS " + COLUMN_PSALMNUMBER,
+                "pn." + PwsPsalmNumbersTable.COLUMN_ID + " AS " + COLUMN_PSALMNUMBER_ID,
+                "pn." + PwsPsalmNumbersTable.COLUMN_BOOKID + " AS " + COLUMN_BOOKID,
+                "b." + PwsBookTable.COLUMN_EDITION + " AS " + COLUMN_BOOKEDITION,
+                "b." + PwsBookTable.COLUMN_DISPLAYNAME + " AS " + COLUMN_BOOKDISPLAYNAME
+        };
+
     }
 
     class History {
@@ -231,6 +269,14 @@ public interface PwsDataProviderContract {
     String TABLE_HISTORY_JOIN_PSALMNUMBERS_JOIN_BOOKS_JOIN_PSALMS = TABLE_HISTORY + " AS h " +
             "INNER JOIN " + TABLE_PSALMNUMBERS + " AS pn " +
             "ON h." + PwsHistoryTable.COLUMN_PSALMNUMBERID + "=pn." + PwsPsalmNumbersTable.COLUMN_ID +
+            " INNER JOIN " + TABLE_BOOKS + " as b " +
+            "ON pn." + PwsPsalmNumbersTable.COLUMN_BOOKID + "=b." + PwsBookTable.COLUMN_ID +
+            " INNER JOIN " + TABLE_PSALMS + " as p " +
+            "ON pn." + PwsPsalmNumbersTable.COLUMN_PSALMID + "=p." + PwsPsalmTable.COLUMN_ID;
+
+    String TABLE_FAVORITES_JOIN_PSALMNUMBERS_JOIN_BOOKS_JOIN_PSALMS = TABLE_FAVORITES + " AS f " +
+            "INNER JOIN " + TABLE_PSALMNUMBERS + " AS pn " +
+            "ON f." + PwsFavoritesTable.COLUMN_PSALMNUMBERID + "=pn." + PwsPsalmNumbersTable.COLUMN_ID +
             " INNER JOIN " + TABLE_BOOKS + " as b " +
             "ON pn." + PwsPsalmNumbersTable.COLUMN_BOOKID + "=b." + PwsBookTable.COLUMN_ID +
             " INNER JOIN " + TABLE_PSALMS + " as p " +

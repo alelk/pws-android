@@ -82,6 +82,7 @@ public class Psalm extends PwsPsalmObject implements PwsObject {
                 "' composer='" + super.getComposer() +
                 "' year='" + super.getYear() +
                 "' annotation='" + super.getAnnotation() +
+                "' locale='" + super.getLocale() +
                 "' number=[ ";
         if (numbers != null && !numbers.isEmpty()) {
             for (BookEdition bookEdition : this.numbers.keySet()) {

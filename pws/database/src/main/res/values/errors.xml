@@ -20,4 +20,5 @@
 
     <!-- common -->
     <string name="null_database_value">Incorrect value: SQLiteDatabase required but is not set</string>
+    <string name="null_context_value">Incorrect value: Context required but is not set</string>
 </resources>

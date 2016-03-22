@@ -46,6 +46,8 @@ public class Book extends BookInfo implements PwsObject {
                 "' edition='" + super.getEdition() +
                 "' releaseDate='" + super.getReleaseDate() +
                 "' comment='" + super.getComment() +
+                "' preference='" + super.getPreference() +
+                "' locale='" + super.getLocale() +
                 "' authors=[ ";
         if (super.getAuthors() != null) {
             for (String author : super.getAuthors()) {

@@ -17,10 +17,11 @@
 
     </style>
 
-    <style name="AppTheme.Psalm.Header">
+    <style name="AppTheme.Psalm.TextLabels">
+        <item name="android:textColor">@color/colorAccent</item>
     </style>
 
-    <style name="AppTheme.Psalm.Footer">
+    <style name="AppTheme.Psalm.Text">
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.ActionBar" />

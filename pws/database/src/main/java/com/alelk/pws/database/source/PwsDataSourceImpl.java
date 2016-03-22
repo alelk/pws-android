@@ -7,7 +7,6 @@ import android.util.Log;
 
 import com.alelk.pws.database.builder.BookBuilder;
 import com.alelk.pws.database.builder.BookInfoBuilder;
-import com.alelk.pws.database.builder.FavoriteBuilder;
 import com.alelk.pws.database.builder.PsalmBuilder;
 import com.alelk.pws.database.data.Book;
 import com.alelk.pws.database.data.BookEdition;
@@ -15,27 +14,22 @@ import com.alelk.pws.database.data.BookInfo;
 import com.alelk.pws.database.data.FavoritePsalm;
 import com.alelk.pws.database.data.Psalm;
 import com.alelk.pws.database.data.entity.BookEntity;
-import com.alelk.pws.database.data.entity.ChorusEntity;
 import com.alelk.pws.database.data.entity.FavoriteEntity;
 import com.alelk.pws.database.data.entity.PsalmEntity;
 import com.alelk.pws.database.data.entity.PsalmNumberEntity;
-import com.alelk.pws.database.data.entity.VerseEntity;
 import com.alelk.pws.database.exception.PwsDatabaseException;
 import com.alelk.pws.database.exception.PwsDatabaseIncorrectValueException;
 import com.alelk.pws.database.exception.PwsDatabaseSourceIdExistsException;
 import com.alelk.pws.database.helper.PwsDatabaseHelper;
 import com.alelk.pws.database.query.PwsDatabaseBookQuery;
-import com.alelk.pws.database.query.PwsDatabaseChorusQuery;
 import com.alelk.pws.database.query.PwsDatabaseFavoriteQuery;
 import com.alelk.pws.database.query.PwsDatabasePsalmNumberQuery;
 import com.alelk.pws.database.query.PwsDatabasePsalmQuery;
 import com.alelk.pws.database.query.PwsDatabaseQueryHelper;
-import com.alelk.pws.database.query.PwsDatabaseVerseQuery;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
 
 /**
  * Created by Alex Elkin on 23.04.2015.
@@ -44,10 +38,10 @@ public class PwsDataSourceImpl implements PwsDataSource {
     private static final String LOG_TAG = PwsDataSourceImpl.class.getSimpleName();
     private SQLiteDatabase database;
     private PwsDatabaseHelper databaseHelper;
-    private Context context;
+    private Context mContext;
 
     public PwsDataSourceImpl(Context context, String databaseName, int version) {
-        this.context = context;
+        mContext = context;
         databaseHelper = new PwsDatabaseHelper(context, databaseName, version);
     }
 
@@ -108,14 +102,14 @@ public class PwsDataSourceImpl implements PwsDataSource {
         final String METHOD_NAME = "addPsalm";
         PsalmEntity psalmEntity;
         try {
-            psalmEntity = new PwsDatabasePsalmQuery(database).insert(psalm);
+            psalmEntity = new PwsDatabasePsalmQuery(mContext, database).insert(psalm);
         } catch (PwsDatabaseSourceIdExistsException e) {
             Log.w(LOG_TAG, METHOD_NAME + ": Could not add psalm '" + psalm.getName() +
-                    "'. Duplicate found: " + context.getString(e.getPwsDatabaseMessage().getErrorMessageId()));
+                    "'. Duplicate found: " + mContext.getString(e.getPwsDatabaseMessage().getErrorMessageId()));
             throw e;
         } catch (PwsDatabaseIncorrectValueException e) {
             Log.w(LOG_TAG, METHOD_NAME + ": Could not add psalm '" + psalm.getName() +
-                    "'. Incorrect psalm body: " + context.getString(e.getPwsDatabaseMessage().getErrorMessageId()));
+                    "'. Incorrect psalm body: " + mContext.getString(e.getPwsDatabaseMessage().getErrorMessageId()));
             throw e;
         }
         return psalmEntity;
@@ -132,7 +126,7 @@ public class PwsDataSourceImpl implements PwsDataSource {
             psalms = new HashMap<>();
             for (PsalmEntity psalmEntity : psalmEntities) {
                 Map<BookEdition, Integer> numbers = new PwsDatabaseQueryHelper(database).getPsalmNumbersByPsalmId(psalmEntity.getId());
-                Psalm psalm = new PsalmBuilder(psalmEntity, numbers).toObject();
+                Psalm psalm = new PsalmBuilder(mContext, psalmEntity, numbers).toObject();
                 if (psalm != null) {
                     psalms.put(psalm.getNumber(bookEdition), psalm);
                 }
@@ -148,7 +142,7 @@ public class PwsDataSourceImpl implements PwsDataSource {
             psalms = new HashMap<>();
             for (PsalmEntity psalmEntity : psalmEntities) {
                 Map<BookEdition, Integer> numbers = new PwsDatabaseQueryHelper(database).getPsalmNumbersByPsalmId(psalmEntity.getId());
-                Psalm psalm = new PsalmBuilder(psalmEntity, numbers).toObject();
+                Psalm psalm = new PsalmBuilder(mContext, psalmEntity, numbers).toObject();
                 if (psalm != null) {
                     psalms.put(psalm.getNumber(bookEdition), psalm);
                 }
@@ -162,7 +156,7 @@ public class PwsDataSourceImpl implements PwsDataSource {
         PsalmEntity psalmEntity = new PwsDatabasePsalmQuery(database).selectById(id);
         if (psalmEntity != null) {
             Map<BookEdition, Integer> numbers = new PwsDatabaseQueryHelper(database).getPsalmNumbersByPsalmId(id);
-            psalm = new PsalmBuilder(psalmEntity, numbers).toObject();
+            psalm = new PsalmBuilder(mContext, psalmEntity, numbers).toObject();
         }
         return psalm;
     }
@@ -181,7 +175,7 @@ public class PwsDataSourceImpl implements PwsDataSource {
             favoriteEntity = new PwsDatabaseFavoriteQuery(database).insert(favoritePsalm);
         } catch (PwsDatabaseIncorrectValueException e) {
             Log.w(LOG_TAG, METHOD_NAME + ": Could not add favorite '" + favoritePsalm.getName() +
-                    "'. Incorrect favorite body: " + context.getString(e.getPwsDatabaseMessage().getErrorMessageId()));
+                    "'. Incorrect favorite body: " + mContext.getString(e.getPwsDatabaseMessage().getErrorMessageId()));
             throw e;
         }
         return favoriteEntity;
