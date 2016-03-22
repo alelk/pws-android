@@ -3,6 +3,7 @@ package com.alelk.pws.database.data;
 import com.alelk.pws.database.data.BookEdition;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Alex Elkin on 02.03.2016.
@@ -21,6 +22,7 @@ public class BookInfo implements PwsObject {
     private List<String> editors;
     private String comment;
     private Integer preference;
+    private Locale locale;
 
     public String getName() {
         return name;
@@ -126,6 +128,14 @@ public class BookInfo implements PwsObject {
         this.preference = preference;
     }
 
+    public Locale getLocale() {
+        return locale;
+    }
+
+    public void setLocale(Locale locale) {
+        this.locale = locale;
+    }
+
     public String toString() {
         String s = "BookInfo v" + this.version + " {" +
                 "name='" + this.name +
@@ -136,6 +146,7 @@ public class BookInfo implements PwsObject {
                 "' releaseDate='" + this.releaseDate +
                 "' comment='" + this.comment +
                 "' preference='" + this.preference +
+                "' locale='" + this.locale +
                 "' authors=[ ";
         if (this.authors != null) {
             for (String author : this.authors) {

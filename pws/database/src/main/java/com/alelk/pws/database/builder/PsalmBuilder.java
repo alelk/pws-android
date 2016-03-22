@@ -1,5 +1,6 @@
 package com.alelk.pws.database.builder;
 
+import android.content.Context;
 import android.text.TextUtils;
 
 import com.alelk.pws.database.data.BookEdition;
@@ -14,6 +15,7 @@ import com.alelk.pws.database.query.PwsDatabaseQuery;
 import com.alelk.pws.database.util.PwsPsalmUtil;
 
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
@@ -28,14 +30,17 @@ public class PsalmBuilder implements PwsBuilder<Psalm, PsalmEntity> {
     private PsalmEntity psalmEntity;
     private String text;
     private Map<BookEdition, Integer> numbers;
+    private Context mContext;
 
-    public PsalmBuilder(PsalmEntity psalmEntity) {
+    public PsalmBuilder(Context context, PsalmEntity psalmEntity) {
         this.psalmEntity = psalmEntity;
+        mContext = context;
     }
 
-    public PsalmBuilder(PsalmEntity psalmEntity, Map<BookEdition, Integer> numbers) {
+    public PsalmBuilder(Context context, PsalmEntity psalmEntity, Map<BookEdition, Integer> numbers) {
         this.psalmEntity = psalmEntity;
         this.numbers = numbers;
+        mContext = context;
     }
 
     @Override
@@ -56,6 +61,8 @@ public class PsalmBuilder implements PwsBuilder<Psalm, PsalmEntity> {
             psalm = new Psalm();
             psalm.setName(psalmEntity.getName());
             psalm.setVersion(psalmEntity.getVersion());
+            Locale locale = new Locale(psalmEntity.getLocale());
+            psalm.setLocale(locale);
             psalm.setAuthor(psalmEntity.getAuthor());
             psalm.setTranslator(psalmEntity.getTranslator());
             psalm.setComposer(psalmEntity.getComposer());
@@ -64,7 +71,7 @@ public class PsalmBuilder implements PwsBuilder<Psalm, PsalmEntity> {
             }
             psalm.setYear(psalmEntity.getYear());
             psalm.setAnnotation(psalmEntity.getAnnotation());
-            psalm.setPsalmParts(PwsPsalmUtil.parsePsalmParts(psalmEntity.getText()));
+            psalm.setPsalmParts(PwsPsalmUtil.parsePsalmParts(mContext, locale, psalmEntity.getText()));
             psalm.setNumbers(numbers);
         }
         return psalm;

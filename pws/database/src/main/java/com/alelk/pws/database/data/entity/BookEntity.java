@@ -8,6 +8,7 @@ import android.database.Cursor;
 public class BookEntity implements PwsDatabaseEntity {
     private long id;
     private String name;
+    private String locale;
     private String shortName;
     private String displayName;
     private String description;
@@ -143,11 +144,20 @@ public class BookEntity implements PwsDatabaseEntity {
         this.preference = preference;
     }
 
+    public String getLocale() {
+        return locale;
+    }
+
+    public void setLocale(String locale) {
+        this.locale = locale;
+    }
+
     @Override
     public String toString() {
         return "BookEntity{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", locale='" + locale + '\'' +
                 ", shortName='" + shortName + '\'' +
                 ", displayName='" + displayName + '\'' +
                 ", description='" + description + '\'' +

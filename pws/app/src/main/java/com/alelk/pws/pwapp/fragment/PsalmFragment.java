@@ -2,6 +2,7 @@ package com.alelk.pws.pwapp.fragment;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -9,10 +10,14 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Spannable;
+import android.text.style.StyleSpan;
+import android.text.style.TextAppearanceSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.alelk.pws.database.data.Psalm;
@@ -22,7 +27,10 @@ import com.alelk.pws.database.provider.PwsDataProviderContract;
 import com.alelk.pws.database.source.PwsDataSourceImpl;
 import com.alelk.pws.database.table.PwsFavoritesTable;
 import com.alelk.pws.database.table.PwsHistoryTable;
+import com.alelk.pws.database.util.PwsPsalmUtil;
 import com.alelk.pws.pwapp.R;
+
+import java.util.Locale;
 
 /**
  * Created by Alex Elkin on 18.04.2015.
@@ -38,6 +46,7 @@ public class PsalmFragment extends Fragment {
 
     private FloatingActionButton fabFavorite;
     private TextView vPsalmText;
+    private ScrollView mScrollView;
     private long mPsalmNumberId;
     private Cursor mCursor;
 
@@ -47,6 +56,7 @@ public class PsalmFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         final View v = inflater.inflate(R.layout.fragment_psalm, null);
         vPsalmText = (TextView) v.findViewById(R.id.txt_psalmtext);
+        mScrollView = (ScrollView) v.findViewById(R.id.scrlv_psalmtext);
         mPsalmNumberId = getActivity().getIntent().getLongExtra("psalmNumberId", -1);
         if (mPsalmNumberId == -10) {
             mCursor = getActivity().getContentResolver()
@@ -56,8 +66,12 @@ public class PsalmFragment extends Fragment {
             mCursor = getActivity().getContentResolver()
                     .query(PwsDataProvider.PsalmNumbers.Psalm.getContentUri(mPsalmNumberId), null, null, null, null);
         }
+
+
         if (mCursor != null && mCursor.moveToFirst()) {
-            vPsalmText.setText(mCursor.getString(mCursor.getColumnIndex(PwsDataProvider.PsalmNumbers.Psalm.COLUMN_PSALMTEXT)));
+            String stringText = mCursor.getString(mCursor.getColumnIndex(PwsDataProvider.PsalmNumbers.Psalm.COLUMN_PSALMTEXT));
+            vPsalmText.setText(stringText);
+
         }
 
         SELECTION_ARGS[0] = String.valueOf(mPsalmNumberId);

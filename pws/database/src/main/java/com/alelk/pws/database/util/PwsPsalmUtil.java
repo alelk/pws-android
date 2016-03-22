@@ -1,7 +1,27 @@
 package com.alelk.pws.database.util;
 
+import android.content.Context;
+import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.support.annotation.NonNull;
+import android.text.DynamicLayout;
+import android.text.Layout;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.CharacterStyle;
+import android.text.style.StyleSpan;
+import android.text.style.TextAppearanceSpan;
+import android.util.AttributeSet;
+import android.view.ViewGroup;
+import android.widget.GridLayout;
+import android.widget.ListView;
+import android.widget.ScrollView;
+import android.widget.TextView;
 
+import com.alelk.pws.database.R;
 import com.alelk.pws.database.data.Psalm;
 import com.alelk.pws.database.data.PsalmChorus;
 import com.alelk.pws.database.data.PsalmPart;
@@ -10,9 +30,12 @@ import com.alelk.pws.database.data.PsalmVerse;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Formatter;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Scanner;
 import java.util.SortedMap;
 import java.util.StringTokenizer;
@@ -25,15 +48,37 @@ import java.util.regex.Pattern;
  */
 public class PwsPsalmUtil {
 
-    private static final String VERSE_LBL = "Verse";
-    private static final String CHORUS_LBL = "Chorus";
-
     public final static String PSALM_VERSE_NUMBER_REGEX = "^\\s*+(\\d{1,2})\\.\\s*+$";
-    public final static String PSALM_VERSE_LABEL_REGEX = "^\\s*+(" + VERSE_LBL + ")\\s*+(\\d{1,2})\\.\\s*+$";
-    public final static String PSALM_CHORUS_NUMBER_REGEX = "^\\s*+(" + CHORUS_LBL + ")\\s*+(\\d{1,2})??:\\s*+$";
-    public final static String PSALM_CHORUS_LABEL_REGEX = "^\\s*+(" + CHORUS_LBL + ")\\s*+(\\d{1,2})??\\.\\s*+$";
+    public final static String PSALM_VERSE_LABEL_FORMAT = "^\\s*+\\[(%s)\\s*+(\\d{1,2})\\]\\s*+$";
+    public final static String PSALM_CHORUS_NUMBER_FORMAT = "^\\s*+(%s)\\s*+(\\d{1,2})??:\\s*+$";
+    public final static String PSALM_CHORUS_LABEL_FORMAT = "^\\s*+\\[(%s)\\s*+(\\d{1,2})??\\]\\s*+$";
 
-    public static String convertPsalmPartsToPlainText(final SortedMap<Integer, PsalmPart> psalmParts) {
+    private static String getPsalmVerseNumberRegex(Context context, Locale locale) {
+        return PSALM_VERSE_NUMBER_REGEX;
+    }
+
+    private static String getPsalmVerseLabelRegex(Context context, Locale locale) {
+        return String.format(PSALM_VERSE_LABEL_FORMAT, getLocalizedVerseLabel(context, locale));
+    }
+
+    private static String getPsalmChorusNumberRegex(Context context, Locale locale) {
+        return String.format(PSALM_CHORUS_NUMBER_FORMAT, getLocalizedChorusLabel(context, locale));
+    }
+
+    private static String getPsalmChorusLabelRegex(Context context, Locale locale) {
+        return String.format(PSALM_CHORUS_LABEL_FORMAT, getLocalizedChorusLabel(context, locale));
+    }
+
+    /**
+     * Converts psalm part map to plain text
+     * @param context app context to access localized  label resources
+     * @param locale psalm locale
+     * @param psalmParts psalm part map
+     * @return text of psalm
+     */
+    public static String convertPsalmPartsToPlainText(@NonNull Context context,
+                                                      @NonNull Locale locale,
+                                                      @NonNull final SortedMap<Integer, PsalmPart> psalmParts) {
         List<PsalmVerse> psalmVerses = new ArrayList<>();
         List<PsalmChorus> psalmChoruses = new ArrayList<>();
         int countOfChoruses = countOfChoruses(psalmParts);
@@ -45,30 +90,34 @@ public class PwsPsalmUtil {
                     builder.append(psalmVerses.indexOf((PsalmVerse) psalmPart) + 1).append(".\n");
                     builder.append(psalmPart.getText().trim()).append("\n \n");
                 } else {
-                    builder.append(VERSE_LBL + " ").append(psalmVerses.indexOf((PsalmVerse) psalmPart) + 1).append(".\n \n");
+                    builder.append("[").append(getLocalizedVerseLabel(context, locale)).append(" ").append(psalmVerses.indexOf((PsalmVerse) psalmPart) + 1).append("]\n \n");
                 }
             } else if (psalmPart.getPsalmType() == PsalmPartType.CHORUS) {
                 if (!psalmChoruses.contains((PsalmChorus) psalmPart)) {
                     psalmChoruses.add((PsalmChorus) psalmPart);
-                    builder.append(CHORUS_LBL);
+                    builder.append(getLocalizedChorusLabel(context, locale));
                     if (countOfChoruses > 1) {
                         builder.append(" " + (psalmChoruses.indexOf((PsalmChorus) psalmPart) + 1));
                     }
                     builder.append(":\n");
                     builder.append(psalmPart.getText().trim()).append("\n \n");
                 } else {
-                    builder.append(CHORUS_LBL);
+                    builder.append("[").append(getLocalizedChorusLabel(context, locale));
                     if (countOfChoruses > 1) {
                         builder.append(" " + (psalmChoruses.indexOf((PsalmChorus) psalmPart) + 1));
                     }
-                    builder.append(".\n \n");
+                    builder.append("]\n \n");
                 }
             }
         }
         return builder.toString().trim();
     }
 
-    public static SortedMap<Integer, PsalmPart> parsePsalmParts(final String text) {
+    public static SortedMap<Integer, PsalmPart> parsePsalmParts(Context context, Locale locale, final String text) {
+        final String pVerseNumberRgx = getPsalmVerseNumberRegex(context, locale);
+        final String pVerseLabelRgx = getPsalmVerseLabelRegex(context, locale);
+        final String pChorusNumberRgx = getPsalmChorusNumberRegex(context, locale);
+        final String pChorusLabelRgx = getPsalmChorusLabelRegex(context, locale);
         SortedMap<Integer, PsalmPart> psalmParts = new TreeMap<>();
         Map<Integer, Integer> chorusesMap = new TreeMap<>();
         Map<Integer, Integer> versesMap = new TreeMap<>();
@@ -78,16 +127,16 @@ public class PwsPsalmUtil {
         List<Integer> psalmPartNumbers;
         while (tokenizer.hasMoreTokens()) {
             String line = tokenizer.nextToken();
-            if(line.matches(PSALM_VERSE_NUMBER_REGEX)) {
+            if(line.matches(pVerseNumberRgx)) {
                 if (psalmPart != null) {
                     psalmPart.setText(psalmPartText);
                     psalmParts.put(psalmPart.getNumbers().get(0), psalmPart);
                 }
                 psalmPart = new PsalmVerse();
                 psalmPart.setNumbers(Arrays.asList(psalmParts.size() + 1));
-                versesMap.put(Integer.parseInt(parseValue(PSALM_VERSE_NUMBER_REGEX, line, 1)), psalmParts.size() + 1);
+                versesMap.put(Integer.parseInt(parseValue(pVerseNumberRgx, line, 1)), psalmParts.size() + 1);
                 psalmPartText = "";
-            } else if (line.matches(PSALM_CHORUS_NUMBER_REGEX)) {
+            } else if (line.matches(pChorusNumberRgx)) {
                 if (psalmPart != null) {
                     psalmPart.setText(psalmPartText);
                     psalmParts.put(psalmPart.getNumbers().get(0), psalmPart);
@@ -95,17 +144,17 @@ public class PwsPsalmUtil {
                 psalmPart = new PsalmChorus();
                 psalmPart.setNumbers(Arrays.asList(psalmParts.size() + 1));
                 try {
-                    chorusesMap.put(Integer.parseInt(parseValue(PSALM_CHORUS_NUMBER_REGEX, line, 2)), psalmParts.size() + 1);
+                    chorusesMap.put(Integer.parseInt(parseValue(pChorusNumberRgx, line, 2)), psalmParts.size() + 1);
                 } catch (NumberFormatException ex) {
                     chorusesMap.put(1, psalmParts.size() + 1);
                 }
                 psalmPartText = "";
-            } else if (line.matches(PSALM_VERSE_LABEL_REGEX)) {
+            } else if (line.matches(pVerseLabelRgx)) {
                 if (psalmPart != null) {
                     psalmPart.setText(psalmPartText);
                     psalmParts.put(psalmPart.getNumbers().get(0), psalmPart);
                 }
-                int verseNum = Integer.parseInt(parseValue(PSALM_VERSE_LABEL_REGEX, line, 2));
+                int verseNum = Integer.parseInt(parseValue(pVerseLabelRgx, line, 2));
                 psalmPart = psalmParts.get(versesMap.get(verseNum));
                 psalmPartNumbers = new ArrayList<>();
                 psalmPartNumbers.addAll(psalmPart.getNumbers());
@@ -116,14 +165,14 @@ public class PwsPsalmUtil {
                 }
                 psalmPart = null;
 
-            } else if (line.matches(PSALM_CHORUS_LABEL_REGEX)) {
+            } else if (line.matches(pChorusLabelRgx)) {
                 if (psalmPart != null) {
                     psalmPart.setText(psalmPartText);
                     psalmParts.put(psalmPart.getNumbers().get(0), psalmPart);
                 }
                 int chorusNum;
                 try {
-                    chorusNum = Integer.parseInt(parseValue(PSALM_CHORUS_LABEL_REGEX, line, 2));
+                    chorusNum = Integer.parseInt(parseValue(pChorusLabelRgx, line, 2));
                 } catch (NumberFormatException ex) {
                     chorusNum = 1;
                 }
@@ -149,6 +198,48 @@ public class PwsPsalmUtil {
             }
         }
         return psalmParts.size() == 0 ? null : psalmParts;
+    }
+
+    public static void setPsalmTextStyle(ViewGroup view, Locale locale, String psalmText) {
+        SpannableStringBuilder ssb = new SpannableStringBuilder(psalmText);
+        StringTokenizer tokenizer = new StringTokenizer(psalmText, "\n");
+        final String pVerseNumberRgx = getPsalmVerseNumberRegex(view.getContext(), locale);
+        final String pVerseLabelRgx = getPsalmVerseLabelRegex(view.getContext(), locale);
+        final String pChorusNumberRgx = getPsalmChorusNumberRegex(view.getContext(), locale);
+        final String pChorusLabelRgx = getPsalmChorusLabelRegex(view.getContext(), locale);
+
+        String text;
+
+        while (tokenizer.hasMoreTokens()) {
+            String line = tokenizer.nextToken();
+            TextView tv;
+            if (line.matches(pVerseLabelRgx)) {
+                tv = new TextView(view.getContext(), null, R.layout.layout_psalm_text_label);
+            } else if (line.matches(pChorusLabelRgx)) {
+                tv = new TextView(view.getContext(), null, R.layout.layout_psalm_text_label);
+            } else {
+                tv = new TextView(view.getContext(), null, R.style.PsalmText_Text);
+
+            }
+            tv.setText(line);
+            view.addView(tv);
+        }
+    }
+
+    public static String getLocalizedChorusLabel(Context context, Locale locale) {
+        return getLocalizedString(context, locale, R.string.chorus);
+    }
+
+    public static String getLocalizedVerseLabel(Context context, Locale locale) {
+        return getLocalizedString(context, locale, R.string.verse);
+    }
+
+    private static String getLocalizedString(Context context, Locale locale, int resource) {
+        final Resources baseRes = context.getResources();
+        final Configuration configuration = new Configuration(baseRes.getConfiguration());
+        configuration.locale = locale;
+        final Resources localRes = new Resources(baseRes.getAssets(), baseRes.getDisplayMetrics(), configuration);
+        return localRes.getString(resource);
     }
 
     private static int countOfChoruses(final SortedMap<Integer, PsalmPart> psalmParts) {

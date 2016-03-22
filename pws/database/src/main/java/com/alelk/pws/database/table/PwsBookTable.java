@@ -20,10 +20,12 @@ public class PwsBookTable implements PwsTable {
     public static final String COLUMN_REVIEWERS = "reviewers";
     public static final String COLUMN_EDITORS = "editors";
     public static final String COLUMN_DESCRIPTION = "description";
+    public static final String COLUMN_LOCALE = "locale";
 
     private static final String TABLE_CREATE_SCRIPT = "create table " + TABLE_BOOKS +
             "(" + COLUMN_ID + " integer primary key autoincrement, " +
             COLUMN_VERSION + " text not null, " +
+            COLUMN_LOCALE + " text, " +
             COLUMN_NAME + " text, " +
             COLUMN_SHORTNAME + " text, " +
             COLUMN_DISPLAYNAME + " text, " +

@@ -9,6 +9,7 @@ import com.alelk.pws.database.data.entity.BookEntity;
 import com.alelk.pws.database.query.PwsDatabaseQuery;
 
 import java.util.Arrays;
+import java.util.Locale;
 
 /**
  * Created by Alex Elkin on 02.03.2016.
@@ -43,6 +44,7 @@ public class BookInfoBuilder implements PwsBuilder<BookInfo, BookEntity> {
             book.setReleaseDate(mBookEntity.getReleaseDate());
             book.setComment(mBookEntity.getComment());
             book.setPreference(mBookEntity.getPreference());
+            book.setLocale(new Locale(mBookEntity.getLocale()));
             if (mBookEntity.getAuthors() != null) {
                 book.setAuthors(Arrays.asList(TextUtils.split(mBookEntity.getAuthors(), PwsDatabaseQuery.MULTIVALUE_DELIMITER)));
             }

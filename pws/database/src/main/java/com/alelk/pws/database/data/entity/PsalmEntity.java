@@ -5,11 +5,12 @@ import android.database.Cursor;
 import static com.alelk.pws.database.table.PwsPsalmTable.*;
 
 /**
- * Created by alelkin on 28.04.2015.
+ * Created by Alex Elkin on 28.04.2015.
  */
 public class PsalmEntity implements PwsDatabaseEntity{
     private long id;
     private String name;
+    private String locale;
     private String version;
     private String author;
     private String translator;
@@ -142,11 +143,20 @@ public class PsalmEntity implements PwsDatabaseEntity{
         this.text = text;
     }
 
+    public String getLocale() {
+        return locale;
+    }
+
+    public void setLocale(String locale) {
+        this.locale = locale;
+    }
+
     @Override
     public String toString() {
         return "PsalmEntity{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", locale='" + locale + '\'' +
                 ", version='" + version + '\'' +
                 ", author='" + author + '\'' +
                 ", translator='" + translator + '\'' +
