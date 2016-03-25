@@ -1,4 +1,4 @@
-<pwslibrary version='1.0101'>
+<pwslibrary version='1.0102'>
     <books>
         <ref preference='10'>pwsbooks/pv3055.pwsbk</ref>
         <ref>pwsbooks/ChudnyKray.pwsbk</ref>

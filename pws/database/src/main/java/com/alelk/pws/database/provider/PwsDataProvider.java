@@ -1,12 +1,8 @@
 package com.alelk.pws.database.provider;
 
 import static com.alelk.pws.database.table.PwsPsalmTable.TABLE_PSALMS;
-import static com.alelk.pws.database.table.PwsPsalmFtsTable.TABLE_PSALMS_FTS;
-import static com.alelk.pws.database.table.PwsPsalmNumbersTable.TABLE_PSALMNUMBERS;
-import static com.alelk.pws.database.table.PwsBookTable.TABLE_BOOKS;
 import static com.alelk.pws.database.table.PwsFavoritesTable.TABLE_FAVORITES;
 import static com.alelk.pws.database.table.PwsHistoryTable.TABLE_HISTORY;
-import static com.alelk.pws.database.table.PwsBookStatisticTable.TABLE_BOOKSTATISTIC;
 import static android.app.SearchManager.*;
 
 import android.content.ContentProvider;
@@ -22,11 +18,8 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.alelk.pws.database.helper.PwsDatabaseHelper;
-import com.alelk.pws.database.table.PwsBookStatisticTable;
-import com.alelk.pws.database.table.PwsBookTable;
 import com.alelk.pws.database.table.PwsFavoritesTable;
 import com.alelk.pws.database.table.PwsHistoryTable;
-import com.alelk.pws.database.table.PwsPsalmNumbersTable;
 import com.alelk.pws.database.table.PwsPsalmTable;
 
 import java.text.SimpleDateFormat;
@@ -58,87 +51,6 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
         URI_MATCHER.addURI(AUTHORITY, PsalmNumbers.PATH_ID, PsalmNumbers.URI_MATCH_ID);
         URI_MATCHER.addURI(AUTHORITY, PsalmNumbers.Psalm.PATH, PsalmNumbers.Psalm.URI_MATCH);
     }
-
-    private static final String TABLE_PSALMNUMBERS_JOIN_BOOKS = TABLE_PSALMNUMBERS + " AS pn " +
-            "INNER JOIN " + TABLE_BOOKS + " as b " +
-            "ON pn." + PwsPsalmNumbersTable.COLUMN_BOOKID + "=b." + PwsBookTable.COLUMN_ID;
-
-    private static final String TABLE_PSALMS_JOIN_PSALMNUMBERS_JOIN_BOOKS_JOIN_BOOKSTATISTIC =
-            TABLE_PSALMS + " AS p " +
-            "INNER JOIN " + TABLE_PSALMNUMBERS + " AS pn " +
-            "ON p." + PwsPsalmTable.COLUMN_ID + "=pn." + PwsPsalmNumbersTable.COLUMN_PSALMID +
-            " INNER JOIN " + TABLE_BOOKS + " as b " +
-            "ON pn." + PwsPsalmNumbersTable.COLUMN_BOOKID + "=b." + PwsBookTable.COLUMN_ID +
-            " INNER JOIN " + TABLE_BOOKSTATISTIC + " as bs " +
-            "ON bs." + PwsBookStatisticTable.COLUMN_BOOKID + "=b." + PwsBookTable.COLUMN_ID;
-
-    private static final String TABLE_PSALMS_JOIN_PSALMS_FTS_JOIN_PSALMNUMBERS_JOIN_BOOKS_JOIN_BOOKSTATISTIC =
-            TABLE_PSALMS + " AS p " +
-            "INNER JOIN " + TABLE_PSALMNUMBERS + " AS pn " +
-            "ON p." + PwsPsalmTable.COLUMN_ID + "=pn." + PwsPsalmNumbersTable.COLUMN_PSALMID +
-            " INNER JOIN " + TABLE_PSALMS_FTS +
-            " ON docid=p." + PwsPsalmTable.COLUMN_ID +
-            " INNER JOIN " + TABLE_BOOKS + " as b " +
-            "ON pn." + PwsPsalmNumbersTable.COLUMN_BOOKID + "=b." + PwsBookTable.COLUMN_ID +
-            " INNER JOIN " + TABLE_BOOKSTATISTIC + " as bs " +
-            "ON bs." + PwsBookStatisticTable.COLUMN_BOOKID + "=b." + PwsBookTable.COLUMN_ID;
-
-    private static final String[] DEFAULT_PSALMNUMBERS_PROJECTION = {
-            "pn." + PwsPsalmNumbersTable.COLUMN_ID + " AS " + PwsPsalmNumbersTable.COLUMN_ID,
-            "pn." + PwsPsalmNumbersTable.COLUMN_PSALMID + " AS " + PwsPsalmNumbersTable.COLUMN_PSALMID,
-            "pn." + PwsPsalmNumbersTable.COLUMN_NUMBER + " AS " + PwsPsalmNumbersTable.COLUMN_NUMBER,
-            "pn." + PwsPsalmNumbersTable.COLUMN_BOOKID + " AS " + PwsPsalmNumbersTable.COLUMN_BOOKID,
-            "b." + PwsBookTable.COLUMN_EDITION + " AS " + PwsBookTable.COLUMN_EDITION,
-            "bs." + PwsBookStatisticTable.COLUMN_USERPREFERENCE + " AS " + PwsBookStatisticTable.COLUMN_USERPREFERENCE ,
-            "b." + PwsBookTable.COLUMN_DISPLAYNAME + " AS " + PwsBookTable.COLUMN_DISPLAYNAME,
-            "p." + PwsPsalmTable.COLUMN_NAME + " AS " + PwsPsalmTable.COLUMN_NAME
-    };
-
-    private static final String[] DEFAULT_PSALMNUMBERS_FTS_PROJECTION = {
-            "pn." + PwsPsalmNumbersTable.COLUMN_ID + " AS " + PwsPsalmNumbersTable.COLUMN_ID,
-            "pn." + PwsPsalmNumbersTable.COLUMN_PSALMID + " AS " + PwsPsalmNumbersTable.COLUMN_PSALMID,
-            "pn." + PwsPsalmNumbersTable.COLUMN_NUMBER + " AS " + PwsPsalmNumbersTable.COLUMN_NUMBER,
-            "pn." + PwsPsalmNumbersTable.COLUMN_BOOKID + " AS " + PwsPsalmNumbersTable.COLUMN_BOOKID,
-            "b." + PwsBookTable.COLUMN_EDITION + " AS " + PwsBookTable.COLUMN_EDITION,
-            "b." + PwsBookTable.COLUMN_DISPLAYNAME + " AS " + PwsBookTable.COLUMN_DISPLAYNAME,
-            "bs." + PwsBookStatisticTable.COLUMN_USERPREFERENCE + " AS " + PwsBookStatisticTable.COLUMN_USERPREFERENCE ,
-            "p." + PwsPsalmTable.COLUMN_NAME + " AS " + PwsPsalmTable.COLUMN_NAME,
-            "snippet(" + TABLE_PSALMS_FTS + ") as snippet"
-    };
-
-    private static final String[] SUGGESTIONS_PSALMS_PROJECTION = {
-            "psugg." + PwsPsalmNumbersTable.COLUMN_ID + " AS " + PwsPsalmNumbersTable.COLUMN_ID,
-            "psugg." + PwsPsalmNumbersTable.COLUMN_PSALMID + " AS " + PwsPsalmNumbersTable.COLUMN_PSALMID,
-            "psugg." + PwsPsalmNumbersTable.COLUMN_NUMBER + " AS " + PwsPsalmNumbersTable.COLUMN_NUMBER,
-            "psugg." + PwsPsalmNumbersTable.COLUMN_BOOKID + " AS " + PwsPsalmNumbersTable.COLUMN_BOOKID,
-            "psugg." + PwsBookTable.COLUMN_EDITION + " AS " + PwsBookTable.COLUMN_EDITION,
-            "psugg." + PwsBookTable.COLUMN_DISPLAYNAME + " AS " + PwsBookTable.COLUMN_DISPLAYNAME,
-            "psugg." + PwsPsalmTable.COLUMN_NAME + " AS " + PwsPsalmTable.COLUMN_NAME,
-            "psugg." + PwsPsalmTable.COLUMN_NAME + " AS " + SUGGEST_COLUMN_TEXT_1,
-            "psugg." + PwsPsalmNumbersTable.COLUMN_ID + " AS " + SUGGEST_COLUMN_INTENT_DATA_ID
-    };
-
-    private static final String[] SEARCH_PSALMS_PROJECTION = {
-            "s." + PwsPsalmNumbersTable.COLUMN_ID + " AS " + PwsPsalmNumbersTable.COLUMN_ID,
-            "s." + PwsPsalmNumbersTable.COLUMN_PSALMID + " AS " + PwsPsalmNumbersTable.COLUMN_PSALMID,
-            "s." + PwsPsalmNumbersTable.COLUMN_NUMBER + " AS " + PwsPsalmNumbersTable.COLUMN_NUMBER,
-            "s." + PwsPsalmNumbersTable.COLUMN_BOOKID + " AS " + PwsPsalmNumbersTable.COLUMN_BOOKID,
-            "s." + PwsBookTable.COLUMN_EDITION + " AS " + PwsBookTable.COLUMN_EDITION,
-            "s." + PwsBookTable.COLUMN_DISPLAYNAME + " AS " + PwsBookTable.COLUMN_DISPLAYNAME,
-            "s." + PwsPsalmTable.COLUMN_NAME + " AS " + PwsPsalmTable.COLUMN_NAME,
-            "s.snippet AS snippet"
-    };
-
-    private static final String[] SUGGESTIONS_PSALM_NUMBERS_PROJECTION = {
-            "pn." + PwsPsalmNumbersTable.COLUMN_ID + " AS " + PwsPsalmNumbersTable.COLUMN_ID,
-            "pn." + PwsPsalmNumbersTable.COLUMN_NUMBER + " AS " + PwsPsalmNumbersTable.COLUMN_NUMBER,
-            "b." + PwsBookTable.COLUMN_DISPLAYNAME + " AS " + SUGGEST_COLUMN_TEXT_2,
-            "bs." + PwsBookStatisticTable.COLUMN_USERPREFERENCE + " AS " + PwsBookStatisticTable.COLUMN_USERPREFERENCE ,
-            "p." + PwsPsalmTable.COLUMN_NAME + " AS " + SUGGEST_COLUMN_TEXT_1,
-            "pn." + PwsPsalmNumbersTable.COLUMN_ID + " AS " + SUGGEST_COLUMN_INTENT_DATA_ID
-    };
-
-    private static final String SELECTION_PREFFERED_BOOKS_ONLY = "bs." + PwsBookStatisticTable.COLUMN_USERPREFERENCE + ">0";
 
     private SQLiteDatabase mDatabase;
     private PwsDatabaseHelper mDatabaseHelper;
@@ -174,7 +86,7 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
                 break;
             case Psalms.PsalmNumbers.URI_MATCH:
                 long psalmId = Long.parseLong(uri.getPathSegments().get(1));
-                mCursor = queryPsalmNumbers(psalmId, null, null, null);
+                //mCursor = queryPsalmNumbers(psalmId, null, null, null);
                 break;
             case Favorites.URI_MATCH:
                 mCursor = queryFavorites(projection, selection, selectionArgs, null, null);
@@ -191,23 +103,19 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
                 break;
             case Psalms.Suggestions.URI_MATCH_NUMBER:
                 mLimit = uri.getQueryParameter(SUGGEST_PARAMETER_LIMIT);
-                mSelection = PwsPsalmNumbersTable.COLUMN_NUMBER + "=" + uri.getLastPathSegment();
-                mCursor = querySuggestionsPsalmNumber(mSelection, mLimit);
+                mCursor = querySuggestionsPsalmNumber(uri.getLastPathSegment(), mLimit);
                 break;
             case Psalms.Suggestions.URI_MATCH_NAME:
                 mLimit = uri.getQueryParameter(SUGGEST_PARAMETER_LIMIT);
-                mSelection = "p." + PwsPsalmTable.COLUMN_NAME + " LIKE '" + uri.getLastPathSegment() + "%'";
-                mCursor = querySuggestionsPsalmName(mSelection, mLimit);
+                String searchText = uri.getLastPathSegment() + "*";
+                mCursor = querySuggestionsPsalmName(searchText, mLimit);
                 if (mCursor != null && mCursor.getCount() < 1) {
-                    mSelection = "p." + PwsPsalmTable.COLUMN_NAME + " LIKE '% " + uri.getLastPathSegment() + "%'";
-                    mCursor = querySuggestionsPsalmName(mSelection, mLimit);
+                    searchText ="*" + uri.getLastPathSegment() + "*";
+                    mCursor = querySuggestionsPsalmName(searchText, mLimit);
                 }
                 break;
             case Psalms.Search.URI_MATCH:
-                if (selection != null) {
-                    mSelection = selection;
-                }
-                mCursor = querySearchPsalmText(mSelection, "50");
+                mCursor = querySearchPsalmText(selection, selectionArgs, "50");
                 break;
             case PsalmNumbers.Psalm.URI_MATCH:
                 long psalmNumberId = Long.parseLong(uri.getPathSegments().get(1));
@@ -348,51 +256,52 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
         return queryFavorites(projection, null, null, null, "1");
     }
 
-    private Cursor querySuggestionsPsalmNumber(@Nullable String selection,
+    private Cursor querySuggestionsPsalmNumber(String psalmNumber,
                                                @Nullable String limit) {
-        Cursor cursor = mDatabase.query(TABLE_PSALMS_JOIN_PSALMNUMBERS_JOIN_BOOKS_JOIN_BOOKSTATISTIC,
-                SUGGESTIONS_PSALM_NUMBERS_PROJECTION,
-                selection + " and " + SELECTION_PREFFERED_BOOKS_ONLY, null, null, null, null,
+        Cursor cursor = mDatabase.query(Psalms.Suggestions.SGNUM_TABLES,
+                Psalms.Suggestions.SGNUM_PROJECTION,
+                Psalms.Suggestions.getSgNumberSelection(psalmNumber) + " and " +
+                        BookStatistic.SELECTION_PREFERRED_BOOKS_ONLY, null, null, null, null,
                 limit);
         return cursor;
     }
 
-    private Cursor querySuggestionsPsalmName(@Nullable String selection, @Nullable String limit) {
+    private Cursor querySuggestionsPsalmName(@Nullable String searchName, @Nullable String limit) {
         final String METHOD_NAME = "querySuggestionsPsalmName";
-        final String orderBy = "b." + PwsBookTable.COLUMN_ID + " DESC";
         String rawQuery = SQLiteQueryBuilder.buildQueryString(false,
-                TABLE_PSALMS_JOIN_PSALMNUMBERS_JOIN_BOOKS_JOIN_BOOKSTATISTIC,
-                DEFAULT_PSALMNUMBERS_PROJECTION,
-                selection + " and " + SELECTION_PREFFERED_BOOKS_ONLY, null, null,
-                orderBy, null);
-        final String groupBy = "psugg." + PwsPsalmNumbersTable.COLUMN_PSALMID;
+                Psalms.Suggestions.SGNAME_TABLES,
+                Psalms.Suggestions.SGNAME_RAW1_PROJECTION,
+                Psalms.Suggestions.getSgNameSelection(searchName) + " and " +
+                        Psalms.Suggestions.SELECTION_PREFERRED_BOOKS_ONLY, null, null,
+                Psalms.Suggestions.SGNAME_RAW1_ORDERBY, null);
         rawQuery = SQLiteQueryBuilder.buildQueryString(false,
-                "(" + rawQuery + ") AS psugg",
-                SUGGESTIONS_PSALMS_PROJECTION, null, groupBy, null, null, limit);
+                "(" + rawQuery + ") AS " + Psalms.Suggestions.SGNAME_TABLE,
+                Psalms.Suggestions.SGNAME_PROJECTION, null,
+                Psalms.Suggestions.SGNAME_RAW2_GROUPBY, null, null, limit);
         Log.v(LOG_TAG, METHOD_NAME + ": SQLite raw query: " + rawQuery);
         Cursor cursor = mDatabase.rawQuery(rawQuery, null);
         return cursor;
     }
 
-    private Cursor querySearchPsalmText(@Nullable String selection, @Nullable String limit) {
+    private Cursor querySearchPsalmText(@Nullable String selection,
+                                        @Nullable String[] selectionArgs,
+                                        @Nullable String limit) {
         final String METHOD_NAME = "querySearchPsalmText";
-        // TODO: 01.03.2016 group by preferred books table
-        final String orderBy = "bs." + PwsBookStatisticTable.COLUMN_USERPREFERENCE;
-
         String rawQuery = SQLiteQueryBuilder.buildQueryString(false,
-                TABLE_PSALMS_JOIN_PSALMS_FTS_JOIN_PSALMNUMBERS_JOIN_BOOKS_JOIN_BOOKSTATISTIC,
-                DEFAULT_PSALMNUMBERS_FTS_PROJECTION,
-                selection + " and " + SELECTION_PREFFERED_BOOKS_ONLY, null, null,
-                orderBy, null);
-        final String groupBy = "s." + PwsPsalmNumbersTable.COLUMN_PSALMID;
+                Psalms.Search.RAW1_TABLES,
+                Psalms.Search.RAW1_PROJECTION,
+                selection + " and " + Psalms.Search.RAW1_SELECTION_PREFERRED_BOOKS_ONLY,
+                null, null,
+                Psalms.Search.RAW1_ORDER_BY,
+                limit);
         rawQuery = SQLiteQueryBuilder.buildQueryString(false,
-                "(" + rawQuery + ") AS s",
-                SEARCH_PSALMS_PROJECTION, null, groupBy, null, null, limit);
-        Log.v(LOG_TAG, METHOD_NAME + ": SQLite raw query: " + rawQuery);
-        Cursor cursor = mDatabase.rawQuery(rawQuery, null);
+                "(" + rawQuery + ") AS " + Psalms.Search.RAW2_TABLE_SEARCH,
+                Psalms.Search.PROJECTION, null, Psalms.Search.RAW2_GROUP_BY, null, Psalms.Search.RAW2_ORDER_BY, limit);
+        Cursor cursor = mDatabase.rawQuery(rawQuery, selectionArgs);
         return cursor;
     }
 
+    /*
     private Cursor queryPsalmNumbers(long psalmId,
                                      @Nullable String[] projection,
                                      @Nullable String sortOrder,
@@ -406,7 +315,8 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
                 sortOrder,
                 limit);
         return cursor;
-    }
+    } */
+
     private Cursor queryPsalmNumberPsalm(long psalmNumberId,
                                          @Nullable String[] projection,
                                          @Nullable String selection,
@@ -423,11 +333,12 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
         return cursor;
     }
 
+    /*
     private Cursor queryPsalmNumberMorePreferred(long psalmId) {
         final String orderBy = "pn." + PwsPsalmNumbersTable.COLUMN_BOOKID;
         // TODO: 01.03.2016 add preferred book selection logic
         return queryPsalmNumbers(psalmId, null, orderBy, "1");
-    }
+    } */
 
     private long insertFavorite(ContentValues values) {
         final String METHOD_NAME = "insertFavorite";

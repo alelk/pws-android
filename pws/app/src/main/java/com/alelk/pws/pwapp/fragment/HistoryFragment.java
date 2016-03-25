@@ -18,6 +18,7 @@ import android.widget.ListView;
 import com.alelk.pws.database.provider.PwsDataProvider;
 import com.alelk.pws.database.provider.PwsDataProviderContract;
 import com.alelk.pws.database.table.PwsFavoritesTable;
+import com.alelk.pws.pwapp.MainActivity;
 import com.alelk.pws.pwapp.R;
 import com.alelk.pws.pwapp.adapter.HistoryCursorAdapter;
 
@@ -48,7 +49,8 @@ public class HistoryFragment extends Fragment implements LoaderManager.LoaderCal
                 // TODO: 03.03.2016 incorrect method
                 Cursor cursor = (Cursor) parent.getItemAtPosition(position);
                 long psalmNumberId = cursor.getLong(cursor.getColumnIndex(PwsDataProvider.History.COLUMN_PSALMNUMBER_ID));
-                Intent intentPsalmView = new Intent(getActivity().getBaseContext(), PsalmFragment.class);
+                Intent intentPsalmView = new Intent(getActivity().getBaseContext(), MainActivity.class);
+                intentPsalmView.setAction(Intent.ACTION_VIEW);
                 intentPsalmView.putExtra("psalmNumberId", psalmNumberId);
                 startActivity(intentPsalmView);
             }
