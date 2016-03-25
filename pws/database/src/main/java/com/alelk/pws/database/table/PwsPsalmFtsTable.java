@@ -5,6 +5,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 
 import static com.alelk.pws.database.table.PwsPsalmTable.COLUMN_TEXT;
+import static com.alelk.pws.database.table.PwsPsalmTable.COLUMN_NAME;
+import static com.alelk.pws.database.table.PwsPsalmTable.COLUMN_AUTHOR;
+import static com.alelk.pws.database.table.PwsPsalmTable.COLUMN_TRANSLATOR;
+import static com.alelk.pws.database.table.PwsPsalmTable.COLUMN_COMPOSER;
+import static com.alelk.pws.database.table.PwsPsalmTable.COLUMN_ANNOTATION;
 import static com.alelk.pws.database.table.PwsPsalmTable.TABLE_PSALMS;
 import static com.alelk.pws.database.table.PwsPsalmTable.COLUMN_ID;
 
@@ -24,11 +29,30 @@ public class PwsPsalmFtsTable extends PwsTableHelper implements PwsTable {
     private static final String TABLE_CREATE_SCRIPT = "create virtual table " + TABLE_PSALMS_FTS +
             " using fts4 " +
             "(content=" + TABLE_PSALMS + ", " +
+            COLUMN_NAME + ", " +
+            COLUMN_AUTHOR + ", " +
+            COLUMN_TRANSLATOR + ", " +
+            COLUMN_COMPOSER + ", " +
+            COLUMN_ANNOTATION + ", " +
             COLUMN_TEXT + ", tokenize=icu ru_RU);";
     private static final String TABLE_DROP_SCRIPT = "drop table if exists " + TABLE_PSALMS_FTS;
 
     private static final String TABLE_FILL_VALUES_SCRIPT = "insert into " + TABLE_PSALMS_FTS +
-            "(docid, " + COLUMN_TEXT + ") select " + COLUMN_ID + ", " + COLUMN_TEXT +
+            "(docid, " +
+            COLUMN_NAME + ", " +
+            COLUMN_AUTHOR + ", " +
+            COLUMN_TRANSLATOR + ", " +
+            COLUMN_COMPOSER + ", " +
+            COLUMN_ANNOTATION + ", " +
+            COLUMN_TEXT + ") " +
+            "select " +
+            COLUMN_ID + ", " +
+            COLUMN_NAME + ", " +
+            COLUMN_AUTHOR + ", " +
+            COLUMN_TRANSLATOR + ", " +
+            COLUMN_COMPOSER + ", " +
+            COLUMN_ANNOTATION + ", " +
+            COLUMN_TEXT +
             " from " + TABLE_PSALMS + ";";
 
     private static final String TRIGGER_BU_SCRIPT = "create trigger " + TRIGGER_BEFORE_UPDATE +
@@ -41,13 +65,37 @@ public class PwsPsalmFtsTable extends PwsTableHelper implements PwsTable {
 
     private static final String TRIGGER_AU_SCRIPT = "create trigger " + TRIGGER_AFTER_UPDATE +
             " after update on " + TABLE_PSALMS +
-            " begin insert into " + TABLE_PSALMS_FTS + "(docid, " + COLUMN_TEXT + ") " +
-            "values(new.rowid, new." + COLUMN_TEXT + "); end;";
+            " begin insert into " + TABLE_PSALMS_FTS + "(docid, " +
+            COLUMN_NAME + ", " +
+            COLUMN_AUTHOR + ", " +
+            COLUMN_TRANSLATOR + ", " +
+            COLUMN_COMPOSER + ", " +
+            COLUMN_ANNOTATION + ", " +
+            COLUMN_TEXT + ") " +
+            "values(new.rowid, " +
+            "new." + COLUMN_NAME + ", " +
+            "new." + COLUMN_AUTHOR + ", " +
+            "new." + COLUMN_TRANSLATOR + ", " +
+            "new." + COLUMN_COMPOSER + ", " +
+            "new." + COLUMN_ANNOTATION + ", " +
+            "new." + COLUMN_TEXT + "); end;";
 
     private static final String TRIGGER_AI_SCRIPT = "create trigger " + TRIGGER_AFTER_INSERT +
             " after insert on " + TABLE_PSALMS +
-            " begin insert into " + TABLE_PSALMS_FTS + "(docid, " + COLUMN_TEXT + ") " +
-            "values(new.rowid, new." + COLUMN_TEXT + "); end;";
+            " begin insert into " + TABLE_PSALMS_FTS + "(docid, " +
+            COLUMN_NAME + ", " +
+            COLUMN_AUTHOR + ", " +
+            COLUMN_TRANSLATOR + ", " +
+            COLUMN_COMPOSER + ", " +
+            COLUMN_ANNOTATION + ", " +
+            COLUMN_TEXT + ") " +
+            "values(new.rowid, " +
+            "new." + COLUMN_NAME + ", " +
+            "new." + COLUMN_AUTHOR + ", " +
+            "new." + COLUMN_TRANSLATOR + ", " +
+            "new." + COLUMN_COMPOSER + ", " +
+            "new." + COLUMN_ANNOTATION + ", " +
+            "new." + COLUMN_TEXT + "); end;";
 
     private static final String TRIGGER_BU_DROP_SCRIPT = "drop trigger if exists " + TRIGGER_BEFORE_UPDATE;
     private static final String TRIGGER_BD_DROP_SCRIPT = "drop trigger if exists " + TRIGGER_BEFORE_DELETE;

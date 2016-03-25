@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.text.DynamicLayout;
+import android.text.Html;
 import android.text.Layout;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -85,26 +86,26 @@ public class PwsPsalmUtil {
         StringBuilder builder = new StringBuilder();
         for (PsalmPart psalmPart : psalmParts.values()) {
             if (psalmPart.getPsalmType() == PsalmPartType.VERSE) {
-                if (!psalmVerses.contains((PsalmVerse) psalmPart)) {
+                if (!psalmVerses.contains(psalmPart)) {
                     psalmVerses.add((PsalmVerse) psalmPart);
-                    builder.append(psalmVerses.indexOf((PsalmVerse) psalmPart) + 1).append(".\n");
+                    builder.append(psalmVerses.indexOf(psalmPart) + 1).append(".\n");
                     builder.append(psalmPart.getText().trim()).append("\n \n");
                 } else {
                     builder.append("[").append(getLocalizedVerseLabel(context, locale)).append(" ").append(psalmVerses.indexOf((PsalmVerse) psalmPart) + 1).append("]\n \n");
                 }
             } else if (psalmPart.getPsalmType() == PsalmPartType.CHORUS) {
-                if (!psalmChoruses.contains((PsalmChorus) psalmPart)) {
+                if (!psalmChoruses.contains(psalmPart)) {
                     psalmChoruses.add((PsalmChorus) psalmPart);
                     builder.append(getLocalizedChorusLabel(context, locale));
                     if (countOfChoruses > 1) {
-                        builder.append(" " + (psalmChoruses.indexOf((PsalmChorus) psalmPart) + 1));
+                        builder.append(" " + (psalmChoruses.indexOf(psalmPart) + 1));
                     }
                     builder.append(":\n");
                     builder.append(psalmPart.getText().trim()).append("\n \n");
                 } else {
                     builder.append("[").append(getLocalizedChorusLabel(context, locale));
                     if (countOfChoruses > 1) {
-                        builder.append(" " + (psalmChoruses.indexOf((PsalmChorus) psalmPart) + 1));
+                        builder.append(" " + (psalmChoruses.indexOf(psalmPart) + 1));
                     }
                     builder.append("]\n \n");
                 }
@@ -200,30 +201,28 @@ public class PwsPsalmUtil {
         return psalmParts.size() == 0 ? null : psalmParts;
     }
 
-    public static void setPsalmTextStyle(ViewGroup view, Locale locale, String psalmText) {
-        SpannableStringBuilder ssb = new SpannableStringBuilder(psalmText);
+    public static String psalmTextToHtml(Context context, Locale locale, String psalmText) {
         StringTokenizer tokenizer = new StringTokenizer(psalmText, "\n");
-        final String pVerseNumberRgx = getPsalmVerseNumberRegex(view.getContext(), locale);
-        final String pVerseLabelRgx = getPsalmVerseLabelRegex(view.getContext(), locale);
-        final String pChorusNumberRgx = getPsalmChorusNumberRegex(view.getContext(), locale);
-        final String pChorusLabelRgx = getPsalmChorusLabelRegex(view.getContext(), locale);
+        final String pVerseNumberRgx = getPsalmVerseNumberRegex(context, locale);
+        final String pVerseLabelRgx = getPsalmVerseLabelRegex(context, locale);
+        final String pChorusNumberRgx = getPsalmChorusNumberRegex(context, locale);
+        final String pChorusLabelRgx = getPsalmChorusLabelRegex(context, locale);
+
+        String html = "";
 
         String text;
 
         while (tokenizer.hasMoreTokens()) {
             String line = tokenizer.nextToken();
-            TextView tv;
-            if (line.matches(pVerseLabelRgx)) {
-                tv = new TextView(view.getContext(), null, R.layout.layout_psalm_text_label);
-            } else if (line.matches(pChorusLabelRgx)) {
-                tv = new TextView(view.getContext(), null, R.layout.layout_psalm_text_label);
+            if (line.matches(pVerseLabelRgx) || line.matches(pChorusLabelRgx)) {
+                html += "<font color='#888888'><i>" + line + "</i></font>";
+            } else if (line.matches(pVerseNumberRgx) || line.matches(pChorusNumberRgx)) {
+                html += "<h1><font color='#7aaf83'>" + line + "</font></h1>";
             } else {
-                tv = new TextView(view.getContext(), null, R.style.PsalmText_Text);
-
+                html += line + "<br>";
             }
-            tv.setText(line);
-            view.addView(tv);
         }
+        return html;
     }
 
     public static String getLocalizedChorusLabel(Context context, Locale locale) {

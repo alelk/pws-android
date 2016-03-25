@@ -12,14 +12,18 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/scrlv_psalmtext">
+        android:id="@+id/scrlv_psalmtext"
+        android:theme="@style/AppTheme.Psalm.Text">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/txt_psalmtext"
             android:textAppearance="@android:style/TextAppearance.Medium"
-            android:text="Psalm"/>
+            android:text="Psalm"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="6dp"/>
+
 
     </ScrollView>
 

@@ -11,12 +11,17 @@ import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 
 import com.alelk.pws.database.provider.PwsDataProvider;
+import com.alelk.pws.database.provider.PwsDataProviderContract;
 import com.alelk.pws.database.source.PwsDataSource;
+import com.alelk.pws.database.table.PwsFavoritesTable;
 import com.alelk.pws.database.table.PwsPsalmFtsTable;
+import com.alelk.pws.database.table.PwsPsalmTable;
 import com.alelk.pws.pwapp.adapter.SearchPsalmCursorAdapter;
 import com.alelk.pws.pwapp.fragment.PsalmFragment;
 
@@ -25,30 +30,40 @@ public class SearchActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = SearchActivity.class.getSimpleName();
 
-    Uri uri = Uri.parse("content://com.alelk.pws.database.provider/psalms");
-
     private ListView mListViewPsalms;
     private CursorAdapter mCursorAdapter;
 
-    PwsDataSource pwsDataSource;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        final String METHOD_NAME = "onCreate";
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
         mListViewPsalms = (ListView) findViewById(R.id.lv_search_psalm);
-
         mCursorAdapter = new SearchPsalmCursorAdapter(this, null, 0);
         mListViewPsalms.setAdapter(mCursorAdapter);
 
         Intent intent = getIntent();
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            // TODO: 01.07.2015 search
             String query = intent.getStringExtra(SearchManager.QUERY);
-            query = PwsPsalmFtsTable.TABLE_PSALMS_FTS + " MATCH '" + query + "'";
-            Log.i("search action", "query " + query);
-            Cursor cursor = getContentResolver().query(PwsDataProvider.Psalms.Search.CONTENT_URI, null, query, null, null);
+            Cursor cursor = getContentResolver().query(
+                    PwsDataProvider.Psalms.Search.CONTENT_URI, null,
+                    PwsDataProvider.Psalms.Search.SELECTION,
+                    PwsDataProvider.Psalms.Search.getSelectionArgs(query), null);
             mCursorAdapter.swapCursor(cursor);
+            Log.d(LOG_TAG, METHOD_NAME + ": Action=" + Intent.ACTION_SEARCH + " query='" + query +
+                    "' results: " + (cursor == null ? 0 : cursor.getCount()));
+            mListViewPsalms.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Cursor cursor = (Cursor) parent.getItemAtPosition(position);
+                    long psalmNumberId = cursor.getLong(cursor.getColumnIndex(PwsFavoritesTable.COLUMN_PSALMNUMBERID));
+                    Intent intentPsalmView = new Intent(getBaseContext(), MainActivity.class);
+                    intentPsalmView.setAction(Intent.ACTION_VIEW);
+                    intentPsalmView.putExtra("psalmNumberId", psalmNumberId);
+                    startActivity(intentPsalmView);
+                }
+            });
             return;
         } else if (Intent.ACTION_VIEW.equals(intent.getAction())) {
             Uri data = intent.getData();

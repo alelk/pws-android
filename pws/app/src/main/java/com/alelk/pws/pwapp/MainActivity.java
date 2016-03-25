@@ -7,11 +7,9 @@ import android.content.res.AssetManager;
 import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -28,7 +26,6 @@ import com.alelk.pws.database.exception.PwsDatabaseSourceIdExistsException;
 import com.alelk.pws.database.provider.PwsDataProviderContract;
 import com.alelk.pws.database.source.PwsDataSource;
 import com.alelk.pws.database.source.PwsDataSourceImpl;
-import com.alelk.pws.database.util.PwsPsalmUtil;
 import com.alelk.pws.pwapp.fragment.FavoritesFragment;
 import com.alelk.pws.pwapp.fragment.HistoryFragment;
 import com.alelk.pws.pwapp.fragment.PsalmFragment;
@@ -41,10 +38,10 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    private final static Uri PSALMS_URI = Uri.parse("content://com.alelk.pws.database.provider/psalms/");
-    private final static Uri SUGGEST_PSALMS_URI = Uri.parse("content://com.alelk.pws.database.provider/suggestions/psalms/");
     private final static String mPwsLibFilePath = "content.pwslib";
     private DrawerLayout mDrawerLayout;
+    private Bundle mArgs = new Bundle();
+    private Intent mIntent;
     private Toolbar mToolbar;
     private FloatingActionButton mFActionButton;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -55,13 +52,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mIntent = getIntent();
 
-        Intent intent = getIntent();
-        if (!Intent.ACTION_VIEW.equals(intent.getAction()) && savedInstanceState == null) {
-            intent.putExtra("psalmNumberId", -10L);
+        if (!Intent.ACTION_VIEW.equals(mIntent.getAction()) && savedInstanceState == null) {
+            mArgs.putLong(PsalmFragment.ARGUMENT_PSALM_NUMBER_ID, -10L);
+        } else if (Intent.ACTION_VIEW.equals(mIntent.getAction())) {
+            mArgs.putLong(PsalmFragment.ARGUMENT_PSALM_NUMBER_ID, mIntent.getLongExtra("psalmNumberId", -10L));
         }
         mFragmentTransaction = getSupportFragmentManager().beginTransaction();
         PsalmFragment psalmFragment = new PsalmFragment();
+        psalmFragment.setArguments(mArgs);
         mFragmentTransaction.add(R.id.fragment_main_container, psalmFragment);
         mFragmentTransaction.commit();
 
@@ -74,8 +74,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
                 startActivity(intent);
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                //        .setAction("Action", null).show();
             }
         });
 
@@ -115,15 +115,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         } catch (PwsDatabaseIncorrectValueException e) {
                         }
                     }
-                }
-            } else  {
-                // TODO: 21.03.2016 remove
-                try {
-                    Psalm psalm = pwsDataSource.getPsalm(10L);
-                    Log.e("psalm", psalm.toString());
-                    Log.w("psalm text", PwsPsalmUtil.convertPsalmPartsToPlainText(getBaseContext(), psalm.getLocale(), psalm.getPsalmParts()));
-                } catch (PwsDatabaseIncorrectValueException e) {
-                    e.printStackTrace();
                 }
             }
         } catch (PwsXmlParserIncorrectSourceFormatException e) {
@@ -166,16 +157,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.drawer_main_readnow) {
-            Log.e("item selected", "readnow");
+        if (id == R.id.drawer_main_psalm) {
             mFragmentTransaction = getSupportFragmentManager().beginTransaction();
-            ReadNowFragment readNowFragment= new ReadNowFragment();
-            mFragmentTransaction.replace(R.id.fragment_main_container, readNowFragment);
+            PsalmFragment psalmFragment = new PsalmFragment();
+            Bundle args = new Bundle();
+            args.putLong(PsalmFragment.ARGUMENT_PSALM_NUMBER_ID, -10L);
+            psalmFragment.setArguments(args);
+            mFragmentTransaction.replace(R.id.fragment_main_container, psalmFragment);
             mFragmentTransaction.addToBackStack(null);
             mFragmentTransaction.commit();
-            setTitle(getString(R.string.lbl_drawer_main_readnow));
+            setTitle(getString(R.string.lbl_drawer_main_psalm));
         } else if (id == R.id.drawer_main_history) {
-            Log.e("item selected", "history");
             mFragmentTransaction = getSupportFragmentManager().beginTransaction();
             HistoryFragment historyFragment = new HistoryFragment();
             mFragmentTransaction.replace(R.id.fragment_main_container, historyFragment);

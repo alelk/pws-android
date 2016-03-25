@@ -9,7 +9,9 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.text.Spannable;
 import android.text.style.StyleSpan;
 import android.text.style.TextAppearanceSpan;
@@ -37,6 +39,8 @@ import java.util.Locale;
  */
 public class PsalmFragment extends Fragment {
 
+    public static String ARGUMENT_PSALM_NUMBER_ID = "psalmNumberId";
+
     // TODO: 03.03.2016 check why 'fv.' is needed
     private static final String SELECTION_FAVORITES_PSALM_NUMBER_MATCH = "fv." + PwsFavoritesTable.COLUMN_PSALMNUMBERID + " = ?";
     private static final String SELECTION_FAVORITES_PSALM_NUMBER_MATCH_2 = PwsFavoritesTable.COLUMN_PSALMNUMBERID + " = ?";
@@ -46,9 +50,10 @@ public class PsalmFragment extends Fragment {
 
     private FloatingActionButton fabFavorite;
     private TextView vPsalmText;
-    private ScrollView mScrollView;
     private long mPsalmNumberId;
     private Cursor mCursor;
+
+    public PsalmFragment() {}
 
     @Nullable
     @Override
@@ -56,13 +61,12 @@ public class PsalmFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         final View v = inflater.inflate(R.layout.fragment_psalm, null);
         vPsalmText = (TextView) v.findViewById(R.id.txt_psalmtext);
-        mScrollView = (ScrollView) v.findViewById(R.id.scrlv_psalmtext);
-        mPsalmNumberId = getActivity().getIntent().getLongExtra("psalmNumberId", -1);
-        if (mPsalmNumberId == -10) {
+        mPsalmNumberId = getArguments().getLong(ARGUMENT_PSALM_NUMBER_ID, -10L);
+
+        if (mPsalmNumberId < 0) {
             mCursor = getActivity().getContentResolver()
                     .query(PwsDataProvider.History.Last.CONTENT_URI, null, null, null, null);
         } else {
-
             mCursor = getActivity().getContentResolver()
                     .query(PwsDataProvider.PsalmNumbers.Psalm.getContentUri(mPsalmNumberId), null, null, null, null);
         }
@@ -70,8 +74,7 @@ public class PsalmFragment extends Fragment {
 
         if (mCursor != null && mCursor.moveToFirst()) {
             String stringText = mCursor.getString(mCursor.getColumnIndex(PwsDataProvider.PsalmNumbers.Psalm.COLUMN_PSALMTEXT));
-            vPsalmText.setText(stringText);
-
+            vPsalmText.setText(Html.fromHtml(PwsPsalmUtil.psalmTextToHtml(getContext(), new Locale("ru"), stringText)));
         }
 
         SELECTION_ARGS[0] = String.valueOf(mPsalmNumberId);
