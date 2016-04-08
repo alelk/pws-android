@@ -275,10 +275,10 @@ public abstract class PwsXmlParserHelper implements Constants {
                 Log.w(LOG_TAG, "Incorrect file format: " + filename);
             }
         } catch (XmlPullParserException e) {
-            Log.e(LOG_TAG, "The exception with parser was occurred.");
+            Log.e(LOG_TAG, "The exception with parser was occurred. File: '" + filename + "' Message: " + e.getMessage());
             throw new PwsXmlParserIncorrectSourceFormatException();
         } catch (IOException e) {
-            Log.e(LOG_TAG, "The exception with parser was occurred.");
+            Log.e(LOG_TAG, "The exception with parser was occurred. File: '" + filename + "' Message: " + e.getMessage());
             throw new PwsXmlParserIncorrectSourceFormatException();
         }
         Log.i(LOG_TAG, "End parsing book file: '" + filename + "'");
@@ -596,7 +596,7 @@ public abstract class PwsXmlParserHelper implements Constants {
         final List<String> allowedStartTags = new ArrayList<>(Arrays.asList(
                 Constants.TAG.BK.NAME,
                 Constants.TAG.BK.VERSION,
-                Constants.TAG.BK.SHORT_NAME,
+                Constants.TAG.BK.DISPLAY_SHORT_NAME,
                 Constants.TAG.BK.DISPLAY_NAME,
                 Constants.TAG.BK.DESCRIPTION,
                 Constants.TAG.BK.EDITION,
@@ -651,7 +651,7 @@ public abstract class PwsXmlParserHelper implements Constants {
                             book.setName(parser.getText());
                         } else if (Constants.TAG.BK.VERSION.equalsIgnoreCase(currentTagName)) {
                             book.setVersion(parser.getText());
-                        } else if (Constants.TAG.BK.SHORT_NAME.equalsIgnoreCase(currentTagName)) {
+                        } else if (Constants.TAG.BK.DISPLAY_SHORT_NAME.equalsIgnoreCase(currentTagName)) {
                             book.setShortName(parser.getText());
                         } else if (Constants.TAG.BK.DISPLAY_NAME.equalsIgnoreCase(currentTagName)) {
                             book.setDisplayName(parser.getText());

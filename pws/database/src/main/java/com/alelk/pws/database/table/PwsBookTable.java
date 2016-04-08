@@ -11,7 +11,7 @@ public class PwsBookTable implements PwsTable {
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_VERSION = "version";
     public static final String COLUMN_NAME = "name";
-    public static final String COLUMN_SHORTNAME = "shortname";
+    public static final String COLUMN_DISPLAYSHORTNAME = "displayshortname";
     public static final String COLUMN_DISPLAYNAME = "displayname";
     public static final String COLUMN_EDITION = "edition";
     public static final String COLUMN_RELEASEDATE = "releasedate";
@@ -27,7 +27,7 @@ public class PwsBookTable implements PwsTable {
             COLUMN_VERSION + " text not null, " +
             COLUMN_LOCALE + " text, " +
             COLUMN_NAME + " text, " +
-            COLUMN_SHORTNAME + " text, " +
+            COLUMN_DISPLAYSHORTNAME + " text, " +
             COLUMN_DISPLAYNAME + " text, " +
             COLUMN_EDITION + " text not null, " +
             COLUMN_RELEASEDATE + " text, " +

@@ -48,7 +48,7 @@ public interface Constants {
             public static final String VERSION = "version";
             public static final String LANGUAGE = "language";
             public static final String NAME = "name";
-            public static final String SHORT_NAME = "shortname";
+            public static final String DISPLAY_SHORT_NAME = "displayshortname";
             public static final String DISPLAY_NAME = "displayname";
             public static final String EDITION = "edition";
             public static final String DESCRIPTION = "description";

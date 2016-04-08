@@ -17,13 +17,8 @@ import android.widget.CursorAdapter;
 import android.widget.ListView;
 
 import com.alelk.pws.database.provider.PwsDataProvider;
-import com.alelk.pws.database.provider.PwsDataProviderContract;
-import com.alelk.pws.database.source.PwsDataSource;
 import com.alelk.pws.database.table.PwsFavoritesTable;
-import com.alelk.pws.database.table.PwsPsalmFtsTable;
-import com.alelk.pws.database.table.PwsPsalmTable;
 import com.alelk.pws.pwapp.adapter.SearchPsalmCursorAdapter;
-import com.alelk.pws.pwapp.fragment.PsalmFragment;
 
 
 public class SearchActivity extends AppCompatActivity {
@@ -48,7 +43,7 @@ public class SearchActivity extends AppCompatActivity {
             String query = intent.getStringExtra(SearchManager.QUERY);
             Cursor cursor = getContentResolver().query(
                     PwsDataProvider.Psalms.Search.CONTENT_URI, null,
-                    PwsDataProvider.Psalms.Search.SELECTION,
+                    PwsDataProvider.Psalms.Search.STXT_SELECTION,
                     PwsDataProvider.Psalms.Search.getSelectionArgs(query), null);
             mCursorAdapter.swapCursor(cursor);
             Log.d(LOG_TAG, METHOD_NAME + ": Action=" + Intent.ACTION_SEARCH + " query='" + query +
@@ -58,7 +53,7 @@ public class SearchActivity extends AppCompatActivity {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Cursor cursor = (Cursor) parent.getItemAtPosition(position);
                     long psalmNumberId = cursor.getLong(cursor.getColumnIndex(PwsFavoritesTable.COLUMN_PSALMNUMBERID));
-                    Intent intentPsalmView = new Intent(getBaseContext(), MainActivity.class);
+                    Intent intentPsalmView = new Intent(getBaseContext(), PsalmActivity.class);
                     intentPsalmView.setAction(Intent.ACTION_VIEW);
                     intentPsalmView.putExtra("psalmNumberId", psalmNumberId);
                     startActivity(intentPsalmView);
