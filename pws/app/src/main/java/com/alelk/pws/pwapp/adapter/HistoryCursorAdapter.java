@@ -11,12 +11,7 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
-import com.alelk.pws.database.provider.PwsDataProvider;
 import com.alelk.pws.database.provider.PwsDataProviderContract;
-import com.alelk.pws.database.table.PwsBookTable;
-import com.alelk.pws.database.table.PwsHistoryTable;
-import com.alelk.pws.database.table.PwsPsalmNumbersTable;
-import com.alelk.pws.database.table.PwsPsalmTable;
 import com.alelk.pws.pwapp.R;
 
 import java.text.ParseException;
@@ -50,7 +45,7 @@ public class HistoryCursorAdapter extends CursorAdapter {
                 cursor.getString(cursor.getColumnIndex(COLUMN_BOOKDISPLAYNAME)));
 
         String timestamp = cursor.getString(cursor.getColumnIndex(COLUMN_HISTORYTIMESTAMP));
-        SimpleDateFormat df = new SimpleDateFormat(PwsDataProviderContract.HISTORY_DATE_FORMAT);
+        SimpleDateFormat df = new SimpleDateFormat(PwsDataProviderContract.HISTORY_TIMESTAMP_FORMAT);
         try {
             timestamp = (String) DateUtils.getRelativeTimeSpanString(df.parse(timestamp).getTime(), System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS);
             txtTimestamp.setText(timestamp);

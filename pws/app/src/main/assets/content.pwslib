@@ -1,21 +1,21 @@
-<pwslibrary version='1.0102'>
+<pwslibrary version='1.0111'>
     <books>
-        <ref preference='10'>pwsbooks/pv3055.pwsbk</ref>
-        <ref>pwsbooks/ChudnyKray.pwsbk</ref>
-        <ref>pwsbooks/chymns.pwsbk</ref>
-        <ref>pwsbooks/cpsalms.pwsbk</ref>
-        <ref>pwsbooks/fcpsalms.pwsbk</ref>
+        <ref preference='20'>pwsbooks/pv3055.pwsbk</ref>
+        <ref preference='1'>pwsbooks/ChudnyKray.pwsbk</ref>
+        <ref preference='1'>pwsbooks/chymns.pwsbk</ref>
+        <ref preference='1'>pwsbooks/cpsalms.pwsbk</ref>
+        <ref preference='1'>pwsbooks/fcpsalms.pwsbk</ref>
         <ref preference='6'>pwsbooks/gusli.pwsbk</ref>
-        <ref>pwsbooks/kimval.pwsbk</ref>
-        <ref>pwsbooks/NNapevy.pwsbk</ref>
-        <ref>pwsbooks/NPE.pwsbk</ref>
-        <ref>pwsbooks/PesniGlubiny.pwsbk</ref>
-        <ref>pwsbooks/PVNL.pwsbk</ref>
-        <ref>pwsbooks/sdp.pwsbk</ref>
-        <ref>pwsbooks/slavit'_bez_zapinki.pwsbk</ref>
-        <ref>pwsbooks/Svirel.pwsbk</ref>
-        <ref>pwsbooks/tympan.pwsbk</ref>
-        <ref>pwsbooks/Zarja.pwsbk</ref>
-        <ref>pwsbooks/YunostIisusu.pwsbk</ref>
+        <ref preference='1'>pwsbooks/kimval.pwsbk</ref>
+        <ref preference='1'>pwsbooks/NNapevy.pwsbk</ref>
+        <ref preference='1'>pwsbooks/NPE.pwsbk</ref>
+        <ref preference='1'>pwsbooks/PesniGlubiny.pwsbk</ref>
+        <ref preference='1'>pwsbooks/PVNL.pwsbk</ref>
+        <ref preference='1'>pwsbooks/sdp.pwsbk</ref>
+        <ref preference='1'>pwsbooks/slavit'_bez_zapinki.pwsbk</ref>
+        <ref preference='1'>pwsbooks/Svirel.pwsbk</ref>
+        <ref preference='1'>pwsbooks/tympan.pwsbk</ref>
+        <ref preference='1'>pwsbooks/Zarja.pwsbk</ref>
+        <ref preference='1'>pwsbooks/YunostIisusu.pwsbk</ref>
     </books>
 </pwslibrary>

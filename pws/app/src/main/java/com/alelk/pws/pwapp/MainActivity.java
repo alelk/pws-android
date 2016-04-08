@@ -54,16 +54,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
         mIntent = getIntent();
 
+
         if (!Intent.ACTION_VIEW.equals(mIntent.getAction()) && savedInstanceState == null) {
             mArgs.putLong(PsalmFragment.ARGUMENT_PSALM_NUMBER_ID, -10L);
+            mFragmentTransaction = getSupportFragmentManager().beginTransaction();
+            PsalmFragment psalmFragment = new PsalmFragment();
+            psalmFragment.setArguments(mArgs);
+            mFragmentTransaction.add(R.id.fragment_main_container, psalmFragment);
+            mFragmentTransaction.commit();
         } else if (Intent.ACTION_VIEW.equals(mIntent.getAction())) {
-            mArgs.putLong(PsalmFragment.ARGUMENT_PSALM_NUMBER_ID, mIntent.getLongExtra("psalmNumberId", -10L));
+            Intent intent = new Intent(this, PsalmActivity.class);
+            intent.putExtra("psalmNumberId", mIntent.getLongExtra("psalmNumberId", -10L));
+            startActivity(intent);
         }
-        mFragmentTransaction = getSupportFragmentManager().beginTransaction();
-        PsalmFragment psalmFragment = new PsalmFragment();
-        psalmFragment.setArguments(mArgs);
-        mFragmentTransaction.add(R.id.fragment_main_container, psalmFragment);
-        mFragmentTransaction.commit();
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar_main);
         setSupportActionBar(mToolbar);
@@ -74,8 +77,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
                 startActivity(intent);
-                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                //        .setAction("Action", null).show();
             }
         });
 
@@ -167,6 +168,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             mFragmentTransaction.addToBackStack(null);
             mFragmentTransaction.commit();
             setTitle(getString(R.string.lbl_drawer_main_psalm));
+
+            //
+            Intent intent = new Intent(this, PsalmActivity.class);
+            startActivity(intent);
         } else if (id == R.id.drawer_main_history) {
             mFragmentTransaction = getSupportFragmentManager().beginTransaction();
             HistoryFragment historyFragment = new HistoryFragment();

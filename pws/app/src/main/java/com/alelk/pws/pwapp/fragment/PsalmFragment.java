@@ -30,6 +30,7 @@ import com.alelk.pws.database.source.PwsDataSourceImpl;
 import com.alelk.pws.database.table.PwsFavoritesTable;
 import com.alelk.pws.database.table.PwsHistoryTable;
 import com.alelk.pws.database.util.PwsPsalmUtil;
+import com.alelk.pws.pwapp.MainActivity;
 import com.alelk.pws.pwapp.R;
 
 import java.util.Locale;
@@ -50,8 +51,12 @@ public class PsalmFragment extends Fragment {
 
     private FloatingActionButton fabFavorite;
     private TextView vPsalmText;
-    private long mPsalmNumberId;
+    private TextView vPsalmNumber;
+    private TextView vPsalmName;
+    private TextView vPsalmBookName;
+    private long mPsalmNumberId = -1;
     private Cursor mCursor;
+    private Bundle mArguments;
 
     public PsalmFragment() {}
 
@@ -61,7 +66,12 @@ public class PsalmFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         final View v = inflater.inflate(R.layout.fragment_psalm, null);
         vPsalmText = (TextView) v.findViewById(R.id.txt_psalmtext);
-        mPsalmNumberId = getArguments().getLong(ARGUMENT_PSALM_NUMBER_ID, -10L);
+        mArguments = getArguments();
+        if (mArguments != null) {
+            mPsalmNumberId = mArguments.getLong(ARGUMENT_PSALM_NUMBER_ID, -10L);
+        }
+
+        //
 
         if (mPsalmNumberId < 0) {
             mCursor = getActivity().getContentResolver()

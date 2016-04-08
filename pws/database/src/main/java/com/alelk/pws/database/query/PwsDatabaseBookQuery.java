@@ -29,7 +29,7 @@ public class PwsDatabaseBookQuery extends PwsDatabaseQueryUtils implements PwsDa
             PwsBookTable.COLUMN_ID,
             COLUMN_VERSION,
             COLUMN_NAME,
-            COLUMN_SHORTNAME,
+            COLUMN_DISPLAYSHORTNAME,
             COLUMN_DISPLAYNAME,
             COLUMN_EDITION,
             COLUMN_RELEASEDATE,
@@ -176,7 +176,7 @@ public class PwsDatabaseBookQuery extends PwsDatabaseQueryUtils implements PwsDa
             values.put(COLUMN_NAME, book.getName());
         }
         if (!TextUtils.isEmpty(book.getShortName())) {
-            values.put(COLUMN_SHORTNAME, book.getShortName());
+            values.put(COLUMN_DISPLAYSHORTNAME, book.getShortName());
         }
         if (!TextUtils.isEmpty(book.getDisplayName())) {
             values.put(COLUMN_DISPLAYNAME, book.getDisplayName());

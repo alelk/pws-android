@@ -57,7 +57,7 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
     private String mSelection;
     private String mLimit;
     private Cursor mCursor;
-    SimpleDateFormat mDateFormat = new SimpleDateFormat(HISTORY_DATE_FORMAT);
+    SimpleDateFormat mDateFormat = new SimpleDateFormat(HISTORY_TIMESTAMP_FORMAT);
 
     @Override
     public boolean onCreate() {
@@ -107,15 +107,21 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
                 break;
             case Psalms.Suggestions.URI_MATCH_NAME:
                 mLimit = uri.getQueryParameter(SUGGEST_PARAMETER_LIMIT);
-                String searchText = uri.getLastPathSegment() + "*";
+                String searchText = uri.getLastPathSegment().trim() + '*';
                 mCursor = querySuggestionsPsalmName(searchText, mLimit);
-                if (mCursor != null && mCursor.getCount() < 1) {
-                    searchText ="*" + uri.getLastPathSegment() + "*";
-                    mCursor = querySuggestionsPsalmName(searchText, mLimit);
-                }
                 break;
             case Psalms.Search.URI_MATCH:
-                mCursor = querySearchPsalmText(selection, selectionArgs, "50");
+                if (selectionArgs == null || selectionArgs.length < 1) {
+                    break;
+                }
+                try {
+                    Integer.parseInt(selectionArgs[0]);
+                    mCursor = querySearchPsalmNumber(selectionArgs, "50");
+                } catch (NumberFormatException ex) {
+                    String text = selectionArgs[0];
+                    selectionArgs[0] = text.trim().replaceAll("\\s++", "* NEAR/6 ") + "*";
+                    mCursor = querySearchPsalmText(selection, selectionArgs, "50");
+                }
                 break;
             case PsalmNumbers.Psalm.URI_MATCH:
                 long psalmNumberId = Long.parseLong(uri.getPathSegments().get(1));
@@ -217,6 +223,7 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
                                   @Nullable String[] selectionArgs,
                                    @Nullable String orderBy,
                                    @Nullable String limit) {
+        final String METHOD_NAME = "queryFavorites";
         if (projection == null) projection = Favorites.PROJECTION;
         if (orderBy == null) orderBy = Favorites.SORT_ORDER;
 
@@ -224,6 +231,10 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
                 projection, selection, selectionArgs,
                 Favorites.GROUP_BY, null,
                 orderBy, limit);
+        Log.v(LOG_TAG, METHOD_NAME + ": projection=" + Arrays.toString(projection) +
+                " selection='" + selection + "' selectionArgs=" + Arrays.toString(selectionArgs) +
+                " orderBy='" + orderBy + "' limit=" + limit +
+                " results: " + (cursor == null ? "cursor=null" : cursor.getCount()));
         return cursor;
     }
 
@@ -253,7 +264,10 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
     }
 
     private Cursor queryLastFavorite(@Nullable String[] projection) {
-        return queryFavorites(projection, null, null, null, "1");
+        final String METHOD_NAME = "queryLastFavorite";
+        final Cursor cursor = queryFavorites(projection, null, null, null, "1");
+        Log.v(LOG_TAG, METHOD_NAME + ": projection=" + Arrays.toString(projection) + " results: " + (cursor == null ? "cursor=null" : cursor.getCount()));
+        return cursor;
     }
 
     private Cursor querySuggestionsPsalmNumber(String psalmNumber,
@@ -261,7 +275,8 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
         Cursor cursor = mDatabase.query(Psalms.Suggestions.SGNUM_TABLES,
                 Psalms.Suggestions.SGNUM_PROJECTION,
                 Psalms.Suggestions.getSgNumberSelection(psalmNumber) + " and " +
-                        BookStatistic.SELECTION_PREFERRED_BOOKS_ONLY, null, null, null, null,
+                        BookStatistic.SELECTION_PREFERRED_BOOKS_ONLY, null, null, null,
+                Psalms.Suggestions.SGNUM_SORT_ORDER,
                 limit);
         return cursor;
     }
@@ -283,21 +298,35 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
         return cursor;
     }
 
+    private Cursor querySearchPsalmNumber(@Nullable String[] selectionArgs,
+                                          @Nullable String limit) {
+        Cursor cursor = mDatabase.query(Psalms.Search.SNUM_TABLES,
+                Psalms.Search.SNUM_PROJECTION,
+                Psalms.Search.SNUM_SELECTION + " and " +
+                        BookStatistic.SELECTION_PREFERRED_BOOKS_ONLY,
+                selectionArgs, null, null,
+                Psalms.Search.SNUM_ORDER_BY,
+                limit);
+        return cursor;
+    }
+
     private Cursor querySearchPsalmText(@Nullable String selection,
                                         @Nullable String[] selectionArgs,
                                         @Nullable String limit) {
         final String METHOD_NAME = "querySearchPsalmText";
         String rawQuery = SQLiteQueryBuilder.buildQueryString(false,
-                Psalms.Search.RAW1_TABLES,
-                Psalms.Search.RAW1_PROJECTION,
-                selection + " and " + Psalms.Search.RAW1_SELECTION_PREFERRED_BOOKS_ONLY,
+                Psalms.Search.STXT_RAW1_TABLES,
+                Psalms.Search.STXT_RAW1_PROJECTION,
+                selection + " and " + Psalms.Search.STXT_RAW1_SELECTION_PREFERRED_BOOKS_ONLY,
                 null, null,
-                Psalms.Search.RAW1_ORDER_BY,
+                Psalms.Search.STXT_RAW1_ORDER_BY,
                 limit);
         rawQuery = SQLiteQueryBuilder.buildQueryString(false,
-                "(" + rawQuery + ") AS " + Psalms.Search.RAW2_TABLE_SEARCH,
-                Psalms.Search.PROJECTION, null, Psalms.Search.RAW2_GROUP_BY, null, Psalms.Search.RAW2_ORDER_BY, limit);
+                "(" + rawQuery + ") AS search",
+                Psalms.Search.STXT_PROJECTION, null, Psalms.Search.STXT_RAW2_GROUP_BY, null, Psalms.Search.STXT_RAW2_ORDER_BY, limit);
         Cursor cursor = mDatabase.rawQuery(rawQuery, selectionArgs);
+        Log.d(LOG_TAG, METHOD_NAME + ": rawQuery='" + rawQuery + "' selectionArgs=" +
+                Arrays.toString(selectionArgs) + " results:" + (cursor == null ? 0 : cursor.getCount()));
         return cursor;
     }
 
@@ -343,9 +372,9 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
     private long insertFavorite(ContentValues values) {
         final String METHOD_NAME = "insertFavorite";
         Cursor lastFavorite = queryLastFavorite(null);
-        long favoritePosition = 1;
-        if (lastFavorite.moveToFirst()) {
-            favoritePosition = 1 + lastFavorite.getLong(lastFavorite.getColumnIndex(PwsFavoritesTable.COLUMN_POSITION));
+        long favoritePosition = 2;
+        if (lastFavorite != null && lastFavorite.moveToFirst()) {
+            favoritePosition = 1 + lastFavorite.getLong(lastFavorite.getColumnIndex(Favorites.COLUMN_FAVORITEPOSITION));
         }
         if (values.containsKey(Favorites.COLUMN_FAVORITEPOSITION)) {
             long valuePosition = values.getAsLong(Favorites.COLUMN_FAVORITEPOSITION);
@@ -356,7 +385,14 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
             }
         }
         values.put(PwsFavoritesTable.COLUMN_POSITION, favoritePosition);
-        long id = mDatabase.insert(TABLE_FAVORITES, null, values);
+        long id=0;
+        try {
+            id = mDatabase.insert(TABLE_FAVORITES, null, values);
+        } finally {
+            Log.v(LOG_TAG, METHOD_NAME + ": resultId=" + id + " " +
+                    "values=[keySet=" + Arrays.toString(values.keySet().toArray()) +
+                    " valueSet=" + Arrays.toString(values.valueSet().toArray()) + "]");
+        }
         return id;
     }
 
