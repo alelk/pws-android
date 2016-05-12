@@ -64,7 +64,7 @@ public class ReadNowFragment extends Fragment {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Psalm psalm = (Psalm) parent.getItemAtPosition(position);
 
-            Intent intent = new Intent(getActivity().getBaseContext(), PsalmFragment.class);
+            Intent intent = new Intent(getActivity().getBaseContext(), PsalmTextFragment.class);
             intent.putExtra("psalm", new PwsPsalmParcelable(psalm));
             intent.putExtra("bookEdition", BookEdition.PV3055.getSignature());
             startActivity(intent);

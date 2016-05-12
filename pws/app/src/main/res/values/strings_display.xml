@@ -17,7 +17,10 @@
     <string name="hint_search_widget">Type psalm name or number...</string>
 
     <!-- Psalm activity display strings. -->
-    <string name="lbl_psalm_chorus">Chorus</string>
+    <string name="lbl_chorus">Chorus</string>
+    <string name="lbl_author">Author</string>
+    <string name="lbl_translator">Translator</string>
+    <string name="lbl_music">Music</string>
 
 
 </resources>

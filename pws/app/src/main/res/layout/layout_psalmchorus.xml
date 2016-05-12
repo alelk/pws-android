@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/lbl_psalm_chorus"
+        android:text="@string/lbl_chorus"
         android:layout_marginLeft="20dp"
         android:textColor="@color/primary_text_default_material_light"
         android:textStyle="italic"

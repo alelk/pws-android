@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
-import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
@@ -28,8 +27,7 @@ import com.alelk.pws.database.source.PwsDataSource;
 import com.alelk.pws.database.source.PwsDataSourceImpl;
 import com.alelk.pws.pwapp.fragment.FavoritesFragment;
 import com.alelk.pws.pwapp.fragment.HistoryFragment;
-import com.alelk.pws.pwapp.fragment.PsalmFragment;
-import com.alelk.pws.pwapp.fragment.ReadNowFragment;
+import com.alelk.pws.pwapp.fragment.PsalmTextFragment;
 import com.alelk.pws.xmlengine.PwsXmlParser;
 import com.alelk.pws.xmlengine.exception.PwsXmlParserIncorrectSourceFormatException;
 
@@ -56,12 +54,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
         if (!Intent.ACTION_VIEW.equals(mIntent.getAction()) && savedInstanceState == null) {
-            mArgs.putLong(PsalmFragment.ARGUMENT_PSALM_NUMBER_ID, -10L);
+            /*
+            mArgs.putLong(PsalmTextFragment.KEY_PSALM_NUMBER_ID, -10L);
             mFragmentTransaction = getSupportFragmentManager().beginTransaction();
-            PsalmFragment psalmFragment = new PsalmFragment();
-            psalmFragment.setArguments(mArgs);
-            mFragmentTransaction.add(R.id.fragment_main_container, psalmFragment);
+            PsalmTextFragment psalmTextFragment = new PsalmTextFragment();
+            psalmTextFragment.setArguments(mArgs);
+            mFragmentTransaction.add(R.id.fragment_main_container, psalmTextFragment);
             mFragmentTransaction.commit();
+            */
         } else if (Intent.ACTION_VIEW.equals(mIntent.getAction())) {
             Intent intent = new Intent(this, PsalmActivity.class);
             intent.putExtra("psalmNumberId", mIntent.getLongExtra("psalmNumberId", -10L));
@@ -159,15 +159,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         if (id == R.id.drawer_main_psalm) {
+            /*
             mFragmentTransaction = getSupportFragmentManager().beginTransaction();
-            PsalmFragment psalmFragment = new PsalmFragment();
+            PsalmTextFragment psalmTextFragment = new PsalmTextFragment();
             Bundle args = new Bundle();
-            args.putLong(PsalmFragment.ARGUMENT_PSALM_NUMBER_ID, -10L);
-            psalmFragment.setArguments(args);
-            mFragmentTransaction.replace(R.id.fragment_main_container, psalmFragment);
+            args.putLong(PsalmTextFragment.KEY_PSALM_NUMBER_ID, -10L);
+            psalmTextFragment.setArguments(args);
+            mFragmentTransaction.replace(R.id.fragment_main_container, psalmTextFragment);
             mFragmentTransaction.addToBackStack(null);
             mFragmentTransaction.commit();
             setTitle(getString(R.string.lbl_drawer_main_psalm));
+            */
 
             //
             Intent intent = new Intent(this, PsalmActivity.class);

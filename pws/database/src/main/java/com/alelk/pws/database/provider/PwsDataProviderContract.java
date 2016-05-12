@@ -28,7 +28,7 @@ public interface PwsDataProviderContract {
     String SCHEME = "content";
     String AUTHORITY = "com.alelk.pws.database.provider";
     String DATABASE_NAME = "pws.db";
-    int DATABASE_VERSION = 34;
+    int DATABASE_VERSION = 36;
 
     String HISTORY_TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
@@ -221,6 +221,12 @@ public interface PwsDataProviderContract {
                     "b." + PwsBookTable.COLUMN_EDITION + " AS " + COLUMN_BOOKEDITION,
                     "b." + PwsBookTable.COLUMN_DISPLAYNAME + " AS " + COLUMN_BOOKDISPLAYNAME,
                     "b." + PwsBookTable.COLUMN_DISPLAYSHORTNAME + " AS " + COLUMN_BOOKDISPLAYSHORTNAME,
+            };
+
+            public static final String[] PROJECTION_PSALM_TEXT = {
+                    "p." + PwsPsalmTable.COLUMN_ID + " AS " + COLUMN_ID,
+                    "p." + PwsPsalmTable.COLUMN_TEXT + " AS " + COLUMN_PSALMTEXT,
+                    "pn." + PwsPsalmNumbersTable.COLUMN_ID + " AS " + COLUMN_PSALMNUMBER_ID
             };
 
             public static Uri getContentUri(long psalmNumberId) {

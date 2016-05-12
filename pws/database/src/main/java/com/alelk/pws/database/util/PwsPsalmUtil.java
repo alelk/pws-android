@@ -210,14 +210,12 @@ public class PwsPsalmUtil {
 
         String html = "";
 
-        String text;
-
         while (tokenizer.hasMoreTokens()) {
             String line = tokenizer.nextToken();
             if (line.matches(pVerseLabelRgx) || line.matches(pChorusLabelRgx)) {
                 html += "<font color='#888888'><i>" + line + "</i></font>";
             } else if (line.matches(pVerseNumberRgx) || line.matches(pChorusNumberRgx)) {
-                html += "<h1><font color='#7aaf83'>" + line + "</font></h1>";
+                html += "<h1><font color='#7aaf83'>" + line.replace('.', ' ') + "</font></h1>";
             } else {
                 html += line + "<br>";
             }
@@ -234,10 +232,10 @@ public class PwsPsalmUtil {
     }
 
     private static String getLocalizedString(Context context, Locale locale, int resource) {
-        final Resources baseRes = context.getResources();
-        final Configuration configuration = new Configuration(baseRes.getConfiguration());
+        Resources baseRes = context.getResources();
+        Configuration configuration = new Configuration(baseRes.getConfiguration());
         configuration.locale = locale;
-        final Resources localRes = new Resources(baseRes.getAssets(), baseRes.getDisplayMetrics(), configuration);
+        Resources localRes = new Resources(baseRes.getAssets(), baseRes.getDisplayMetrics(), configuration);
         return localRes.getString(resource);
     }
 
