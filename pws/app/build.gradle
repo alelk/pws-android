@@ -26,5 +26,5 @@ dependencies {
     compile 'com.android.support:cardview-v7:23.+'
     compile 'com.android.support:recyclerview-v7:23.+'
     compile 'com.android.support:design:23.1.1'
-    compile project(':xmlengine')
+    compile project(path: ':database')
 }
