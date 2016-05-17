@@ -28,7 +28,7 @@ public interface PwsDataProviderContract {
     String SCHEME = "content";
     String AUTHORITY = "com.alelk.pws.database.provider";
     String DATABASE_NAME = "pws.db";
-    int DATABASE_VERSION = 36;
+    int DATABASE_VERSION = 1;
 
     String HISTORY_TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss";
 

@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">Pws Database</string>
+    <string name="chorus">Chorus</string>
+    <string name="verse">Verse</string>
+
+    <!-- Tonalities -->
+    <string name="c_flat_major">C-flat major</string>
+    <string name="a_flat_minor">A-flat minor</string>
+    <string name="g_flat_major">G-flat major</string>
+    <string name="e_flat_minor">E-flat minor</string>
+    <string name="d_flat_major">D-flat major</string>
+    <string name="b_flat_minor">B-flat minor</string>
+    <string name="a_flat_major">A-flat major</string>
+    <string name="f_minor">F minor</string>
+    <string name="e_flat_major">E-flat major</string>
+    <string name="c_minor">C minor</string>
+    <string name="b_flat_major">B-flat major</string>
+    <string name="g_minor">G minor</string>
+    <string name="f_major">F major</string>
+    <string name="d_minor">D minor</string>
+    <string name="c_major">C major</string>
+    <string name="a_minor">A minor</string>
+    <string name="g_major">G major</string>
+    <string name="e_minor">E minor</string>
+    <string name="d_major">D major</string>
+    <string name="b_minor">B minor</string>
+    <string name="a_major">A major</string>
+    <string name="f_sharp_minor">F-sharp minor</string>
+    <string name="e_major">E major</string>
+    <string name="c_sharp_minor">C-sharp minor</string>
+    <string name="b_major">B major</string>
+    <string name="g_sharp_minor">G-sharp minor</string>
+    <string name="f_sharp_major">F-sharp major</string>
+    <string name="d_sharp_minor">D-sharp minor</string>
+    <string name="c_sharp_major">C-sharp major</string>
+    <string name="a_sharp_minor">A-sharp minor</string>
+</resources>

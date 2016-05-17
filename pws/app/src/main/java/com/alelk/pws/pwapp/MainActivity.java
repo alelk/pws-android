@@ -18,20 +18,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.support.v7.widget.Toolbar;
 
-import com.alelk.pws.database.data.Book;
-import com.alelk.pws.database.data.Psalm;
-import com.alelk.pws.database.exception.PwsDatabaseIncorrectValueException;
-import com.alelk.pws.database.exception.PwsDatabaseSourceIdExistsException;
+
 import com.alelk.pws.database.provider.PwsDataProviderContract;
 import com.alelk.pws.database.source.PwsDataSource;
 import com.alelk.pws.database.source.PwsDataSourceImpl;
 import com.alelk.pws.pwapp.fragment.FavoritesFragment;
 import com.alelk.pws.pwapp.fragment.HistoryFragment;
-import com.alelk.pws.pwapp.fragment.PsalmTextFragment;
-import com.alelk.pws.xmlengine.PwsXmlParser;
-import com.alelk.pws.xmlengine.exception.PwsXmlParserIncorrectSourceFormatException;
 
-import java.util.List;
+import java.io.File;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -93,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         pwsDataSource.open();
 
         AssetManager am = this.getAssets();
+        /*
         PwsXmlParser parser = new PwsXmlParser(am);
         try {
             String version = parser.parseLibraryVersion(mPwsLibFilePath);
@@ -121,6 +116,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } catch (PwsXmlParserIncorrectSourceFormatException e) {
             e.printStackTrace();
         }
+        //*/
     }
 
 

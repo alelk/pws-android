@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Pws Book -->
+    <string name="book_id_exists">The book ID already exists</string>
+    <string name="null_book_edition_value">Incorrect value: book edition required but is not set</string>
+    <string name="unexpected_book_edition_value">Unexpected book edition value</string>
+    <string name="no_book_edition_found">No book found with specified book edition</string>
+
+    <!-- Pws Psalm -->
+    <string name="psalm_id_exists">The psalm already exists in the database</string>
+    <string name="null_psalm_id_value">Incorrect value: psalm id required but is not set</string>
+    <string name="null_psalm_value">Incorrect value: psalm required but it is null</string>
+
+    <!-- Pws Psalm Numbers -->
+    <string name="psalm_number_exists_for_book_id">Psalm number already exists for specified book id</string>
+    <string name="no_psalm_numbers">Psalm has no psalm numbers</string>
+
+    <!-- Pws Psalm part -->
+    <string name="no_psalm_part_numbers">Psalm part has no one number</string>
+
+    <!-- common -->
+    <string name="null_database_value">Incorrect value: SQLiteDatabase required but is not set</string>
+    <string name="null_context_value">Incorrect value: Context required but is not set</string>
+</resources>
