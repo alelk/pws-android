@@ -52,7 +52,6 @@ public class PsalmActivity extends AppCompatActivity implements PsalmTextFragmen
         if (mPsalmTextFragment == null) {
             mPsalmTextFragment = PsalmTextFragment.newInstance(mPsalmNumberId);
             getSupportFragmentManager().beginTransaction().add(R.id.fragment_psalm_text, mPsalmTextFragment).commit();
-            mPsalmTextFragment.addPsalmToHistory();
         }
         if (mPsalmHeaderFragment == null) {
             mPsalmHeaderFragment = new PsalmHeaderFragment();

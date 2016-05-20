@@ -9,16 +9,24 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
+import com.alelk.pws.database.provider.PwsDataProvider;
+import com.alelk.pws.database.provider.PwsDataProviderContract;
 import com.alelk.pws.database.table.PwsFavoritesTable;
 import com.alelk.pws.pwapp.MainActivity;
+import com.alelk.pws.pwapp.PsalmActivity;
 import com.alelk.pws.pwapp.R;
 import com.alelk.pws.pwapp.adapter.FavoritesCursorAdapter;
+import com.alelk.pws.pwapp.adapter.FavoritesRecyclerViewAdapter;
 
 /**
  * Created by Alex Elkin on 18.02.2016.
@@ -27,32 +35,19 @@ public class FavoritesFragment extends Fragment implements LoaderManager.LoaderC
 
     public final static int PWS_FAVORITES_LOADER = 1;
 
-    private ListView mListViewFavorites;
-    private FavoritesCursorAdapter mCursorAdapter;
+    private RecyclerView mRecyclerView;
+    private Cursor cursor;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.fragment_favorite, null);
-        mListViewFavorites = (ListView) v.findViewById(R.id.lv_favorites_list);
+        mRecyclerView = (RecyclerView) v.findViewById(R.id.rv_favorites);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+        mRecyclerView.setLayoutManager(layoutManager);
 
         getLoaderManager().initLoader(PWS_FAVORITES_LOADER, null, this);
 
-        mCursorAdapter = new FavoritesCursorAdapter(getActivity().getBaseContext(), null, 0);
-
-        mListViewFavorites.setAdapter(mCursorAdapter);
-        mListViewFavorites.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // TODO: 03.03.2016 incorrect method
-                Cursor cursor = (Cursor) parent.getItemAtPosition(position);
-                long psalmNumberId = cursor.getLong(cursor.getColumnIndex(PwsFavoritesTable.COLUMN_PSALMNUMBERID));
-                Intent intentPsalmView = new Intent(getActivity().getBaseContext(), MainActivity.class);
-                intentPsalmView.setAction(Intent.ACTION_VIEW);
-                intentPsalmView.putExtra("psalmNumberId", psalmNumberId);
-                startActivity(intentPsalmView);
-            }
-        });
         return v;
     }
 
@@ -69,12 +64,21 @@ public class FavoritesFragment extends Fragment implements LoaderManager.LoaderC
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        mCursorAdapter.swapCursor(data);
+        cursor = data;
+        mRecyclerView.setAdapter(
+                new FavoritesRecyclerViewAdapter(cursor,
+                        new FavoritesRecyclerViewAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(long psalmNumberId) {
+                Intent intentPsalmView = new Intent(getActivity().getBaseContext(), PsalmActivity.class);
+                intentPsalmView.putExtra("psalmNumberId", psalmNumberId);
+                startActivity(intentPsalmView);
+            }
+        }));
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        mCursorAdapter.swapCursor(null);
-
+        cursor = null;
     }
 }

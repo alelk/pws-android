@@ -20,8 +20,6 @@ import android.support.v7.widget.Toolbar;
 
 
 import com.alelk.pws.database.provider.PwsDataProviderContract;
-import com.alelk.pws.database.source.PwsDataSource;
-import com.alelk.pws.database.source.PwsDataSourceImpl;
 import com.alelk.pws.pwapp.fragment.FavoritesFragment;
 import com.alelk.pws.pwapp.fragment.HistoryFragment;
 
@@ -39,7 +37,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ActionBarDrawerToggle mDrawerToggle;
     private NavigationView mNavigationView;
     private FragmentTransaction mFragmentTransaction;
-    PwsDataSource pwsDataSource;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,9 +79,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
         mNavigationView.setNavigationItemSelectedListener(this);
 
-
-        pwsDataSource = new PwsDataSourceImpl(this, "pws.db", PwsDataProviderContract.DATABASE_VERSION);
-        pwsDataSource.open();
 
         AssetManager am = this.getAssets();
         /*

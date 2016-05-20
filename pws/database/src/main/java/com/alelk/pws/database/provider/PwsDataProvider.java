@@ -61,7 +61,7 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
 
     @Override
     public boolean onCreate() {
-        mDatabaseHelper = new PwsDatabaseHelper(getContext(), DATABASE_NAME, DATABASE_VERSION);
+        mDatabaseHelper = new PwsDatabaseHelper(getContext());
         return true;
     }
 
@@ -402,7 +402,14 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
             String timestamp = mDateFormat.format(new Date());
             values.put(PwsHistoryTable.COLUMN_ACCESSTIMESTAMP, timestamp);
         }
-        long id = mDatabase.insert(TABLE_HISTORY, null, values);
+        long id = 0;
+        try {
+            id = mDatabase.insert(TABLE_HISTORY, null, values);
+        } finally {
+            Log.v(LOG_TAG, METHOD_NAME + ": resultId=" + id + " " +
+                    "values=[keySet=" + Arrays.toString(values.keySet().toArray()) +
+                    " valueSet=" + Arrays.toString(values.valueSet().toArray()) + "]");
+        }
         return id;
     }
 

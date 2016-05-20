@@ -50,8 +50,10 @@
     <style name="AppTheme.Psalm.Text">
         <item name="android:textSize">30sp</item>
         <item name="android:textColor">@color/color_text_primary</item>
-        <item name="android:layout_marginStart">16dp</item>
+        <item name="android:layout_marginStart">6dp</item>
         <item name="android:layout_marginEnd">6dp</item>
+        <item name="android:layout_marginTop">6dp</item>
+        <item name="android:layout_marginBottom">10dp</item>
     </style>
 
     <style name="AppTheme.Psalm.Tonalities">
@@ -59,7 +61,12 @@
         <item name="android:textColor">@color/colorPrimary</item>
         <item name="android:gravity">center</item>
         <item name="android:layout_marginTop">25dp</item>
-        <item name="android:layout_marginBottom">10dp</item>
+        <item name="android:layout_marginBottom">25dp</item>
+    </style>
+
+    <style name="AppTheme.CardView">
+        <item name="android:layout_marginLeft">6dp</item>
+        <item name="android:layout_marginRight">6dp</item>
     </style>
 
 </resources>

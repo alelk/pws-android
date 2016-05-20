@@ -35,8 +35,8 @@ public class FavoritesCursorAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        TextView txtPsalmName = (TextView) view.findViewById(R.id.txt_favorites_name);
-        TextView txtPsalmNumber = (TextView) view.findViewById(R.id.txt_favorites_number);
+        TextView txtPsalmName = (TextView) view.findViewById(R.id.txt_psalm_name);
+        TextView txtPsalmNumber = (TextView) view.findViewById(R.id.txt_psalm_number);
         txtPsalmName.setText(cursor.getString(cursor.getColumnIndex(PwsDataProvider.Favorites.COLUMN_PSALMNAME)));
         txtPsalmNumber.setText(cursor.getLong(cursor.getColumnIndex(PwsDataProvider.Favorites.COLUMN_PSALMNUMBER)) + " " +
                 cursor.getString(cursor.getColumnIndex(PwsDataProvider.Favorites.COLUMN_BOOKDISPLAYNAME)));

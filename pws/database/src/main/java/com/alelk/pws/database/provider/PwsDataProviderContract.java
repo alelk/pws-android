@@ -2,6 +2,7 @@ package com.alelk.pws.database.provider;
 
 import android.net.Uri;
 
+import com.alelk.pws.database.helper.PwsDatabaseHelper;
 import com.alelk.pws.database.table.PwsBookStatisticTable;
 import com.alelk.pws.database.table.PwsBookTable;
 import com.alelk.pws.database.table.PwsFavoritesTable;
@@ -27,8 +28,8 @@ import static com.alelk.pws.database.table.PwsBookTable.TABLE_BOOKS;
 public interface PwsDataProviderContract {
     String SCHEME = "content";
     String AUTHORITY = "com.alelk.pws.database.provider";
-    String DATABASE_NAME = "pws.db";
-    int DATABASE_VERSION = 1;
+    String DATABASE_NAME = PwsDatabaseHelper.DATABASE_NAME;
+    int DATABASE_VERSION = PwsDatabaseHelper.DATABASE_VERSION;
 
     String HISTORY_TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
