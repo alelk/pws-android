@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="chorus">Припев</string>
-    <string name="verse">Куплет</string>
+    <string name="lbl_chorus">Припев</string>
+    <string name="lbl_verse">Куплет</string>
+    <string name="lbl_author">Автор</string>
+    <string name="lbl_translator">Перевод</string>
+    <string name="lbl_music">Музыка</string>
 
     <!-- Tonalities -->
     <string name="c_flat_major">до-бемоль мажор</string>

@@ -3,9 +3,13 @@ package com.alelk.pws.database.util;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import com.alelk.pws.database.R;
 
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.StringTokenizer;
 
@@ -57,12 +61,40 @@ public class PwsPsalmUtil {
         return html;
     }
 
+    public static String buildPsalmInfoHtml(@NonNull Context context,
+                                            @NonNull Locale locale,
+                                            @Nullable String psalmAuthor,
+                                            @Nullable String psalmTranslator,
+                                            @Nullable String music) {
+        final ArrayList<String> psalmInfo = new ArrayList<>();
+        if (psalmAuthor != null)
+            psalmInfo.add("<b>" + getLocalizedAuthorLabel(context, locale) + ":</b> " + psalmAuthor);
+        if (psalmTranslator != null)
+            psalmInfo.add("<b>" + getLocalizedTranslatorLabel(context, locale) + ":</b> " + psalmTranslator);
+        if (music != null)
+            psalmInfo.add ("<b>" + getLocalizedMusicLabel(context, locale) + ":</b> " + music);
+        if (psalmInfo.size() == 0) return null;
+        return TextUtils.join("<br>", psalmInfo);
+    }
+
+    public static String getLocalizedAuthorLabel(Context context, Locale locale) {
+        return getLocalizedString(context, locale, R.string.lbl_author);
+    }
+
+    public static String getLocalizedTranslatorLabel(Context context, Locale locale) {
+        return getLocalizedString(context, locale, R.string.lbl_translator);
+    }
+
+    public static String getLocalizedMusicLabel(Context context, Locale locale) {
+        return getLocalizedString(context, locale, R.string.lbl_music);
+    }
+
     public static String getLocalizedChorusLabel(Context context, Locale locale) {
-        return getLocalizedString(context, locale, R.string.chorus);
+        return getLocalizedString(context, locale, R.string.lbl_chorus);
     }
 
     public static String getLocalizedVerseLabel(Context context, Locale locale) {
-        return getLocalizedString(context, locale, R.string.verse);
+        return getLocalizedString(context, locale, R.string.lbl_verse);
     }
 
     private static String getLocalizedString(Context context, Locale locale, int resource) {

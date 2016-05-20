@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.alelk.pws.database.data.Tonality;
 import com.alelk.pws.database.provider.PwsDataProvider;
+import com.alelk.pws.database.provider.PwsDataProviderContract;
 import com.alelk.pws.database.table.PwsFavoritesTable;
 import com.alelk.pws.database.table.PwsHistoryTable;
 import com.alelk.pws.database.util.PwsPsalmUtil;
@@ -51,6 +52,7 @@ public class PsalmTextFragment extends Fragment {
     private String mPsalmAuthor;
     private String mPsalmTranslator;
     private String mPsalmComposer;
+    private String mPsalmLocale;
     private String[] mPsalmTonalities;
     private String mBibleRef;
     private String mBookName;
@@ -96,6 +98,7 @@ public class PsalmTextFragment extends Fragment {
             mPsalmTranslator = cursor.getString(cursor.getColumnIndex(PwsDataProvider.PsalmNumbers.Psalm.COLUMN_PSALMTRANSLATOR));
             mPsalmNumber = cursor.getInt(cursor.getColumnIndex(PwsDataProvider.PsalmNumbers.Psalm.COLUMN_PSALMNUMBER));
             mPsalmName = cursor.getString(cursor.getColumnIndex(PwsDataProvider.PsalmNumbers.Psalm.COLUMN_PSALMNAME));
+            mPsalmLocale = cursor.getString(cursor.getColumnIndex(PwsDataProvider.PsalmNumbers.Psalm.COLUMN_PSALMLOCALE));
             String tons = cursor.getString(cursor.getColumnIndex(PwsDataProvider.PsalmNumbers.Psalm.COLUMN_PSALMTONALITIES));
             if (tons != null) mPsalmTonalities = tons.split("\\|");
             mBookName = cursor.getString(cursor.getColumnIndex(PwsDataProvider.PsalmNumbers.Psalm.COLUMN_BOOKDISPLAYNAME));
@@ -111,19 +114,13 @@ public class PsalmTextFragment extends Fragment {
             return;
         }
         loadData();
-        vPsalmText.setText(Html.fromHtml(PwsPsalmUtil.psalmTextToHtml(getActivity(), new Locale("ru"), mPsalmText)));
-        ArrayList<String> psalmInfo = new ArrayList<>();
-        if (mPsalmAuthor != null)
-            psalmInfo.add("<b>" + getActivity().getString(R.string.lbl_author) + ":</b> " + mPsalmAuthor);
-        if (mPsalmTranslator != null)
-            psalmInfo.add("<b>" + getActivity().getString(R.string.lbl_translator) + ":</b> " + mPsalmTranslator);
-        if (mPsalmComposer != null)
-            psalmInfo.add ("<b>" + getActivity().getString(R.string.lbl_music) + ":</b> " + mPsalmComposer);
-        if (psalmInfo.size() == 0) {
+        vPsalmText.setText(Html.fromHtml(PwsPsalmUtil.psalmTextToHtml(getActivity(), new Locale(mPsalmLocale), mPsalmText)));
+        final String psalmInfo = PwsPsalmUtil.buildPsalmInfoHtml(getActivity(), new Locale(mPsalmLocale), mPsalmAuthor, mPsalmTranslator, mPsalmComposer);
+        if (psalmInfo == null) {
             ((ViewManager) cvPsalmInfo.getParent()).removeView(cvPsalmInfo);
         }
         else {
-            vPsalmInfo.setText(Html.fromHtml(TextUtils.join("<br>", psalmInfo)));
+            vPsalmInfo.setText(Html.fromHtml(psalmInfo));
         }
         String tonalities = null;
         for (int i = 0; mPsalmTonalities != null && i < mPsalmTonalities.length; i++) {
@@ -169,6 +166,9 @@ public class PsalmTextFragment extends Fragment {
         getActivity().getContentResolver().insert(PwsDataProvider.History.CONTENT_URI, CONTENT_VALUES_HISTORY);
     }
 
+    /**
+     * Add psalm to favorites table
+     */
     public void addPsalmToFavorites() {
         if (mPsalmNumberId < 0) return;
         getActivity().getContentResolver().insert(PwsDataProvider.Favorites.CONTENT_URI, CONTENT_VALUES_FAVORITES);
@@ -176,6 +176,9 @@ public class PsalmTextFragment extends Fragment {
         callbacks.onUpdatePsalmInfo(mPsalmNumber, mPsalmName, mBookName, mBibleRef, isFavoritePsalm);
     }
 
+    /**
+     * Remove psalm from favorites table
+     */
     public void removePsalmFromFavorites() {
         if (mPsalmNumberId < 0) return;
         getActivity().getContentResolver().delete(PwsDataProvider.Favorites.CONTENT_URI, SELECTION_FAVORITES_PSALM_NUMBER_MATCH, SELECTION_ARGS);
@@ -183,6 +186,10 @@ public class PsalmTextFragment extends Fragment {
         callbacks.onUpdatePsalmInfo(mPsalmNumber, mPsalmName, mBookName, mBibleRef, isFavoritePsalm);
     }
 
+    /**
+     * Check if it is favorite psalm
+     * @return true if favorites table contains psalm, false otherwise
+     */
     public boolean isFavoritePsalm() {
         if (mPsalmNumberId < 0) return false;
         Cursor cursor = null;
@@ -194,7 +201,19 @@ public class PsalmTextFragment extends Fragment {
         }
     }
 
+    /**
+     * Interface which should be implemented by activity who are the host of this fragment.
+     */
     public interface Callbacks {
+
+        /**
+         * This method is called when any psalm information is changed.
+         * @param psalmNumber psalm number
+         * @param psalmName psalm name
+         * @param bookName name of book which contains the psalm
+         * @param bibleRef bible reference
+         * @param isFavorite if the psalm exists in the favorites table
+         */
         void onUpdatePsalmInfo(int psalmNumber, String psalmName, String bookName, String bibleRef, boolean isFavorite);
     }
 }
