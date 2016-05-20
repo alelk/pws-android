@@ -1,7 +1,10 @@
 <resources>
     <string name="app_name">Pws Database</string>
-    <string name="chorus">Chorus</string>
-    <string name="verse">Verse</string>
+    <string name="lbl_chorus">Chorus</string>
+    <string name="lbl_verse">Verse</string>
+    <string name="lbl_author">Author</string>
+    <string name="lbl_translator">Translator</string>
+    <string name="lbl_music">Music</string>
 
     <!-- Tonalities -->
     <string name="c_flat_major">C-flat major</string>

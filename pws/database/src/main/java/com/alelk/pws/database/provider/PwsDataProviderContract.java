@@ -44,6 +44,7 @@ public interface PwsDataProviderContract {
         public static final String COLUMN_PSALMTRANSLATOR = "psalm_translator";
         public static final String COLUMN_PSALMTONALITIES = "psalm_tonalities";
         public static final String COLUMN_PSALMNUMBER = "psalm_number";
+        public static final String COLUMN_PSALMLOCALE = "psalm_locale";
 
         public static final String PATH = TABLE_PSALMS;
         protected static final String PATH_ID = TABLE_PSALMS + "/#";
@@ -195,6 +196,7 @@ public interface PwsDataProviderContract {
             public static final String COLUMN_PSALMCOMPOSER = Psalms.COLUMN_PSALMCOMPOSER;
             public static final String COLUMN_PSALMTRANSLATOR = Psalms.COLUMN_PSALMTRANSLATOR;
             public static final String COLUMN_PSALMTONALITIES = Psalms.COLUMN_PSALMTONALITIES;
+            public static final String COLUMN_PSALMLOCALE = Psalms.COLUMN_PSALMLOCALE;
             public static final String COLUMN_PSALMNUMBER_ID = PsalmNumbers.COLUMN_PSALMNUMBER_ID;
             public static final String COLUMN_PSALMNUMBER = PsalmNumbers.COLUMN_PSALMNUMBER;
             public static final String COLUMN_BOOKID = PsalmNumbers.COLUMN_BOOKID;
@@ -216,6 +218,7 @@ public interface PwsDataProviderContract {
                     "p." + PwsPsalmTable.COLUMN_TRANSLATOR + " AS " + COLUMN_PSALMTRANSLATOR,
                     "p." + PwsPsalmTable.COLUMN_TONALITIES + " AS " + COLUMN_PSALMTONALITIES,
                     "p." + PwsPsalmTable.COLUMN_ANNOTATION + " AS " + COLUMN_PSALMANNOTATION,
+                    "p." + PwsPsalmTable.COLUMN_LOCALE + " AS " + COLUMN_PSALMLOCALE,
                     "pn." + PwsPsalmNumbersTable.COLUMN_NUMBER + " AS " + COLUMN_PSALMNUMBER,
                     "pn." + PwsPsalmNumbersTable.COLUMN_ID + " AS " + COLUMN_PSALMNUMBER_ID,
                     "pn." + PwsPsalmNumbersTable.COLUMN_BOOKID + " AS " + COLUMN_BOOKID,
@@ -244,6 +247,7 @@ public interface PwsDataProviderContract {
         public static final String COLUMN_PSALMNAME = Psalms.COLUMN_PSALMNAME;
         public static final String COLUMN_PSALMTEXT = Psalms.COLUMN_PSALMTEXT;
         public static final String COLUMN_PSALMANNOTATION = Psalms.COLUMN_PSALMANNOTATION;
+        public static final String COLUMN_PSALMLOCALE = Psalms.COLUMN_PSALMLOCALE;
         public static final String COLUMN_PSALMAUTHOR = Psalms.COLUMN_PSALMAUTHOR;
         public static final String COLUMN_PSALMCOMPOSER = Psalms.COLUMN_PSALMCOMPOSER;
         public static final String COLUMN_PSALMTRANSLATOR = Psalms.COLUMN_PSALMTRANSLATOR;
@@ -274,6 +278,7 @@ public interface PwsDataProviderContract {
                 "p." + PwsPsalmTable.COLUMN_TRANSLATOR + " AS " + COLUMN_PSALMTRANSLATOR,
                 "p." + PwsPsalmTable.COLUMN_TONALITIES + " AS " + COLUMN_PSALMTONALITIES,
                 "p." + PwsPsalmTable.COLUMN_ANNOTATION + " AS " + COLUMN_PSALMANNOTATION,
+                "p." + PwsPsalmTable.COLUMN_LOCALE + " AS " + COLUMN_PSALMLOCALE,
                 "pn." + PwsPsalmNumbersTable.COLUMN_NUMBER + " AS " + COLUMN_PSALMNUMBER,
                 "pn." + PwsPsalmNumbersTable.COLUMN_ID + " AS " + COLUMN_PSALMNUMBER_ID,
                 "pn." + PwsPsalmNumbersTable.COLUMN_BOOKID + " AS " + COLUMN_BOOKID,
@@ -293,6 +298,7 @@ public interface PwsDataProviderContract {
         public static final String COLUMN_PSALMCOMPOSER = Psalms.COLUMN_PSALMCOMPOSER;
         public static final String COLUMN_PSALMTRANSLATOR = Psalms.COLUMN_PSALMTRANSLATOR;
         public static final String COLUMN_PSALMTONALITIES = Psalms.COLUMN_PSALMTONALITIES;
+        public static final String COLUMN_PSALMLOCALE = Psalms.COLUMN_PSALMLOCALE;
         public static final String COLUMN_PSALMNUMBER_ID = PsalmNumbers.COLUMN_PSALMNUMBER_ID;
         public static final String COLUMN_PSALMNUMBER = PsalmNumbers.COLUMN_PSALMNUMBER;
         public static final String COLUMN_BOOKID = PsalmNumbers.COLUMN_BOOKID;
@@ -320,6 +326,7 @@ public interface PwsDataProviderContract {
                 "p." + PwsPsalmTable.COLUMN_TRANSLATOR + " AS " + COLUMN_PSALMTRANSLATOR,
                 "p." + PwsPsalmTable.COLUMN_TONALITIES + " AS " + COLUMN_PSALMTONALITIES,
                 "p." + PwsPsalmTable.COLUMN_ANNOTATION + " AS " + COLUMN_PSALMANNOTATION,
+                "p." + PwsPsalmTable.COLUMN_LOCALE + " AS " + COLUMN_PSALMLOCALE,
                 "pn." + PwsPsalmNumbersTable.COLUMN_NUMBER + " AS " + COLUMN_PSALMNUMBER,
                 "pn." + PwsPsalmNumbersTable.COLUMN_ID + " AS " + COLUMN_PSALMNUMBER_ID,
                 "pn." + PwsPsalmNumbersTable.COLUMN_BOOKID + " AS " + COLUMN_BOOKID,
@@ -338,6 +345,7 @@ public interface PwsDataProviderContract {
             public static final String COLUMN_PSALMCOMPOSER = Psalms.COLUMN_PSALMCOMPOSER;
             public static final String COLUMN_PSALMTRANSLATOR = Psalms.COLUMN_PSALMTRANSLATOR;
             public static final String COLUMN_PSALMTONALITIES = Psalms.COLUMN_PSALMTONALITIES;
+            public static final String COLUMN_PSALMLOCALE = Psalms.COLUMN_PSALMLOCALE;
             public static final String COLUMN_PSALMNUMBER_ID = PsalmNumbers.COLUMN_PSALMNUMBER_ID;
             public static final String COLUMN_PSALMNUMBER = PsalmNumbers.COLUMN_PSALMNUMBER;
             public static final String COLUMN_BOOKID = PsalmNumbers.COLUMN_BOOKID;
@@ -362,6 +370,7 @@ public interface PwsDataProviderContract {
                     "p." + PwsPsalmTable.COLUMN_TRANSLATOR + " AS " + COLUMN_PSALMTRANSLATOR,
                     "p." + PwsPsalmTable.COLUMN_TONALITIES + " AS " + COLUMN_PSALMTONALITIES,
                     "p." + PwsPsalmTable.COLUMN_ANNOTATION + " AS " + COLUMN_PSALMANNOTATION,
+                    "p." + PwsPsalmTable.COLUMN_LOCALE + " AS " + COLUMN_PSALMLOCALE,
                     "pn." + PwsPsalmNumbersTable.COLUMN_NUMBER + " AS " + COLUMN_PSALMNUMBER,
                     "pn." + PwsPsalmNumbersTable.COLUMN_ID + " AS " + COLUMN_PSALMNUMBER_ID,
                     "pn." + PwsPsalmNumbersTable.COLUMN_BOOKID + " AS " + COLUMN_BOOKID,
