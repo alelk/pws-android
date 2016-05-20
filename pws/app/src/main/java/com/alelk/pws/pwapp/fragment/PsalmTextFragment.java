@@ -5,27 +5,30 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.text.Html;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewManager;
 import android.widget.TextView;
 
 import com.alelk.pws.database.data.Tonality;
 import com.alelk.pws.database.provider.PwsDataProvider;
-import com.alelk.pws.database.provider.PwsDataProviderContract;
 import com.alelk.pws.database.table.PwsFavoritesTable;
 import com.alelk.pws.database.table.PwsHistoryTable;
 import com.alelk.pws.database.util.PwsPsalmUtil;
 import com.alelk.pws.pwapp.R;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 /**
  * Created by Alex Elkin on 18.04.2015.
+ *
+ * The Activity who are the host of this fragment should implement Callbacks interface.
  */
 public class PsalmTextFragment extends Fragment {
 
@@ -36,6 +39,8 @@ public class PsalmTextFragment extends Fragment {
     private final ContentValues CONTENT_VALUES_FAVORITES = new ContentValues(1);
     private final ContentValues CONTENT_VALUES_HISTORY = new ContentValues(1);
     private Callbacks callbacks;
+    private CardView cvTonalities;
+    private CardView cvPsalmInfo;
     private TextView vPsalmText;
     private TextView vPsalmInfo;
     private TextView vPsalmTonalities;
@@ -58,13 +63,11 @@ public class PsalmTextFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         final View v = inflater.inflate(R.layout.fragment_psalm_text, null);
+        cvTonalities = (CardView) v.findViewById(R.id.cv_tonalities);
+        cvPsalmInfo = (CardView) v.findViewById(R.id.cv_psalm_info);
         vPsalmText = (TextView) v.findViewById(R.id.txt_psalm_text);
         vPsalmInfo = (TextView) v.findViewById(R.id.txt_psalm_info);
         vPsalmTonalities = (TextView) v.findViewById(R.id.txt_psalm_tonalities);
-        if (getArguments() != null) {
-            mPsalmNumberId = getArguments().getLong(KEY_PSALM_NUMBER_ID, -10L);
-        }
-        init();
         updateUi();
         return v;
     }
@@ -109,21 +112,30 @@ public class PsalmTextFragment extends Fragment {
         }
         loadData();
         vPsalmText.setText(Html.fromHtml(PwsPsalmUtil.psalmTextToHtml(getActivity(), new Locale("ru"), mPsalmText)));
-        String psalmInfo = "";
+        ArrayList<String> psalmInfo = new ArrayList<>();
         if (mPsalmAuthor != null)
-            psalmInfo = "<b>" + getActivity().getString(R.string.lbl_author) + ":</b> " + mPsalmAuthor;
+            psalmInfo.add("<b>" + getActivity().getString(R.string.lbl_author) + ":</b> " + mPsalmAuthor);
         if (mPsalmTranslator != null)
-            psalmInfo += ("<br><b>" + getActivity().getString(R.string.lbl_translator) + ":</b> " + mPsalmTranslator);
+            psalmInfo.add("<b>" + getActivity().getString(R.string.lbl_translator) + ":</b> " + mPsalmTranslator);
         if (mPsalmComposer != null)
-            psalmInfo += ("<br><b>" + getActivity().getString(R.string.lbl_music) + ":</b> " + mPsalmComposer);
-        vPsalmInfo.setText(Html.fromHtml(psalmInfo));
+            psalmInfo.add ("<b>" + getActivity().getString(R.string.lbl_music) + ":</b> " + mPsalmComposer);
+        if (psalmInfo.size() == 0) {
+            ((ViewManager) cvPsalmInfo.getParent()).removeView(cvPsalmInfo);
+        }
+        else {
+            vPsalmInfo.setText(Html.fromHtml(TextUtils.join("<br>", psalmInfo)));
+        }
         String tonalities = null;
         for (int i = 0; mPsalmTonalities != null && i < mPsalmTonalities.length; i++) {
             Tonality tonality = Tonality.getInstanceBySignature(mPsalmTonalities[i]);
             if (tonality == null) continue;
             tonalities = (tonalities == null ? "" : ", ") + tonality.getLabel(getActivity());
         }
-        vPsalmTonalities.setText(tonalities);
+        if (tonalities == null) {
+            ((ViewManager) cvTonalities.getParent()).removeView(cvTonalities);
+        } else {
+            vPsalmTonalities.setText(tonalities);
+        }
         callbacks.onUpdatePsalmInfo(mPsalmNumber, mPsalmName, mBookName, mBibleRef, isFavoritePsalm);
     }
 
@@ -132,6 +144,11 @@ public class PsalmTextFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         callbacks = (Callbacks) context;
+        if (getArguments() != null) {
+            mPsalmNumberId = getArguments().getLong(KEY_PSALM_NUMBER_ID, -10L);
+        }
+        init();
+        addPsalmToHistory();
     }
 
     /**
@@ -147,7 +164,7 @@ public class PsalmTextFragment extends Fragment {
         return fragment;
     }
 
-    public void addPsalmToHistory() {
+    private void addPsalmToHistory() {
         if (mPsalmNumberId < 0) return;
         getActivity().getContentResolver().insert(PwsDataProvider.History.CONTENT_URI, CONTENT_VALUES_HISTORY);
     }

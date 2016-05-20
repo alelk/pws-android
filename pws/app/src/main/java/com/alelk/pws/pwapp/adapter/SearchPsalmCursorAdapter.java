@@ -9,11 +9,7 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
-import com.alelk.pws.database.provider.PwsDataProvider;
-import com.alelk.pws.database.provider.PwsDataProviderContract;
-import com.alelk.pws.database.table.PwsBookTable;
-import com.alelk.pws.database.table.PwsPsalmNumbersTable;
-import com.alelk.pws.database.table.PwsPsalmTable;
+import static com.alelk.pws.database.provider.PwsDataProviderContract.Psalms.Search.*;
 import com.alelk.pws.pwapp.R;
 
 /**
@@ -40,9 +36,9 @@ public class SearchPsalmCursorAdapter extends CursorAdapter {
         TextView txtPsalmNumber = (TextView) view.findViewById(R.id.txt_psalm_number);
         TextView txtBookEdition = (TextView) view.findViewById(R.id.txt_book_edition);
         TextView txtText = (TextView) view.findViewById(R.id.txt_text);
-        txtPsalmName.setText(cursor.getString(cursor.getColumnIndex(PwsDataProvider.Psalms.Search.COLUMN_PSALMNAME)));
-        txtPsalmNumber.setText(cursor.getLong(cursor.getColumnIndex(PwsDataProvider.Psalms.Search.COLUMN_PSALMNUMBER)) + "");
-        txtBookEdition.setText(cursor.getString(cursor.getColumnIndex(PwsDataProvider.Psalms.Search.COLUMN_BOOKDISPLAYNAME)));
-        txtText.setText(Html.fromHtml(cursor.getString(cursor.getColumnIndex(PwsDataProvider.Psalms.Search.COLUMN_SNIPPET))));
+        txtPsalmName.setText(cursor.getString(cursor.getColumnIndex(COLUMN_PSALMNAME)));
+        txtPsalmNumber.setText(String.valueOf(cursor.getInt(cursor.getColumnIndex(COLUMN_PSALMNUMBER))));
+        txtBookEdition.setText(cursor.getString(cursor.getColumnIndex(COLUMN_BOOKDISPLAYNAME)));
+        txtText.setText(Html.fromHtml(cursor.getString(cursor.getColumnIndex(COLUMN_SNIPPET))));
     }
 }
