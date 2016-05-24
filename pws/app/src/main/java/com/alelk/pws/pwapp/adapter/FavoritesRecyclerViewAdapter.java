@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.alelk.pws.database.provider.PwsDataProvider;
-import com.alelk.pws.database.provider.PwsDataProviderContract;
 import com.alelk.pws.pwapp.R;
 
 /**

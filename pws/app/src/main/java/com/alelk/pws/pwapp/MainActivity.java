@@ -22,15 +22,14 @@ import android.support.v7.widget.Toolbar;
 import com.alelk.pws.database.provider.PwsDataProviderContract;
 import com.alelk.pws.pwapp.fragment.FavoritesFragment;
 import com.alelk.pws.pwapp.fragment.HistoryFragment;
+import com.alelk.pws.pwapp.fragment.ReadNowFragment;
 
 import java.io.File;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    private final static String mPwsLibFilePath = "content.pwslib";
     private DrawerLayout mDrawerLayout;
-    private Bundle mArgs = new Bundle();
     private Intent mIntent;
     private Toolbar mToolbar;
     private FloatingActionButton mFActionButton;
@@ -45,14 +44,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
         if (!Intent.ACTION_VIEW.equals(mIntent.getAction()) && savedInstanceState == null) {
-            /*
-            mArgs.putLong(PsalmTextFragment.KEY_PSALM_NUMBER_ID, -10L);
             mFragmentTransaction = getSupportFragmentManager().beginTransaction();
-            PsalmTextFragment psalmTextFragment = new PsalmTextFragment();
-            psalmTextFragment.setArguments(mArgs);
-            mFragmentTransaction.add(R.id.fragment_main_container, psalmTextFragment);
+            ReadNowFragment readNowFragment = new ReadNowFragment();
+            mFragmentTransaction.add(R.id.fragment_main_container, readNowFragment);
             mFragmentTransaction.commit();
-            */
         } else if (Intent.ACTION_VIEW.equals(mIntent.getAction())) {
             Intent intent = new Intent(this, PsalmActivity.class);
             intent.putExtra("psalmNumberId", mIntent.getLongExtra("psalmNumberId", -10L));
@@ -73,44 +68,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.layout_main_drawer);
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.open_drawer, R.string.close_drawer);
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        mDrawerLayout.addDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
 
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
         mNavigationView.setNavigationItemSelectedListener(this);
-
-
-        AssetManager am = this.getAssets();
-        /*
-        PwsXmlParser parser = new PwsXmlParser(am);
-        try {
-            String version = parser.parseLibraryVersion(mPwsLibFilePath);
-            SharedPreferences sharedPreferences = getSharedPreferences("pwspref", Context.MODE_PRIVATE);
-            String currentVersion = sharedPreferences.getString("libraryVersion", "0");
-            Log.e("currentVersion", currentVersion);
-            Log.e("version", version);
-            if (!currentVersion.equals(version)) {
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("libraryVersion", version);
-                editor.commit();
-                List<Book> books = parser.parseLibrary(mPwsLibFilePath);
-                for (Book book : books) {
-                    pwsDataSource.addBook(book);
-                }
-                for (Book book : books) {
-                    for (Psalm psalm : book.getPsalms().values()) {
-                        try {
-                            pwsDataSource.addPsalm(psalm);
-                        } catch (PwsDatabaseSourceIdExistsException e) {
-                        } catch (PwsDatabaseIncorrectValueException e) {
-                        }
-                    }
-                }
-            }
-        } catch (PwsXmlParserIncorrectSourceFormatException e) {
-            e.printStackTrace();
-        }
-        //*/
     }
 
 
@@ -149,21 +111,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         if (id == R.id.drawer_main_psalm) {
-            /*
             mFragmentTransaction = getSupportFragmentManager().beginTransaction();
-            PsalmTextFragment psalmTextFragment = new PsalmTextFragment();
-            Bundle args = new Bundle();
-            args.putLong(PsalmTextFragment.KEY_PSALM_NUMBER_ID, -10L);
-            psalmTextFragment.setArguments(args);
-            mFragmentTransaction.replace(R.id.fragment_main_container, psalmTextFragment);
+            ReadNowFragment readNowFragment = new ReadNowFragment();
+            mFragmentTransaction.replace(R.id.fragment_main_container, readNowFragment);
             mFragmentTransaction.addToBackStack(null);
             mFragmentTransaction.commit();
             setTitle(getString(R.string.lbl_drawer_main_psalm));
-            */
-
-            //
-            Intent intent = new Intent(this, PsalmActivity.class);
-            startActivity(intent);
         } else if (id == R.id.drawer_main_history) {
             mFragmentTransaction = getSupportFragmentManager().beginTransaction();
             HistoryFragment historyFragment = new HistoryFragment();

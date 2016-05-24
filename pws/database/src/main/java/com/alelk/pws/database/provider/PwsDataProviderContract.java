@@ -30,6 +30,7 @@ public interface PwsDataProviderContract {
     String AUTHORITY = "com.alelk.pws.database.provider";
     String DATABASE_NAME = PwsDatabaseHelper.DATABASE_NAME;
     int DATABASE_VERSION = PwsDatabaseHelper.DATABASE_VERSION;
+    String QUERY_PARAMETER_LIMIT = "limit";
 
     String HISTORY_TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
@@ -204,7 +205,7 @@ public interface PwsDataProviderContract {
             public static final String COLUMN_BOOKDISPLAYNAME = Books.COLUMN_BOOKDISPLAYNAME;
             public static final String COLUMN_BOOKDISPLAYSHORTNAME = Books.COLUMN_BOOKDISPLAYSHORTNAME;
 
-            protected static final String PATH = TABLE_PSALMNUMBERS + "/#/" + PATH_SEGMENT;
+            protected static final String PATH = PsalmNumbers.PATH + "/#/" + PATH_SEGMENT;
             protected static final int URI_MATCH = 32;
 
             public static final String DEFAULT_SELECTION = COLUMN_PSALMNUMBER_ID + "=?";
@@ -234,8 +235,34 @@ public interface PwsDataProviderContract {
             };
 
             public static Uri getContentUri(long psalmNumberId) {
-                return new Uri.Builder().scheme(SCHEME).authority(AUTHORITY).path(PsalmNumbers.PATH + "/" + psalmNumberId + "/" + PATH_SEGMENT).build();
+                return new Uri.Builder().scheme(SCHEME).authority(AUTHORITY).path(
+                        PsalmNumbers.PATH + "/" + psalmNumberId + "/" + PATH_SEGMENT).build();
             }
+        }
+
+        public static class Book {
+            protected static final String PATH_SEGMENT = "book";
+            public static final String PATH = PsalmNumbers.PATH + "/#/" + PATH_SEGMENT;
+
+            public static class Psalms {
+                protected static final String PATH_SEGMENT = TABLE_PSALMS;
+                public static final String PATH = PsalmNumbers.Book.PATH + "/" + PATH_SEGMENT;
+
+                public static class Info {
+                    protected static final String PATH_SEGMENT = "info";
+                    public static final String PATH = PsalmNumbers.Book.Psalms.PATH + "/" + PATH_SEGMENT;
+                    public static final String COLUMN_COUNTOFPSALMS = "count_of_book_psalms";
+                    public static final String COLUMN_MAXPSALMNUMBER = "max_psalm_number";
+                    public static Uri getContentUri(long psalmNumberId) {
+                        return new Uri.Builder().scheme(SCHEME).authority(AUTHORITY).path(
+                                PsalmNumbers.PATH + "/" + psalmNumberId + "/" +
+                                        PsalmNumbers.Book.PATH_SEGMENT + "/" +
+                                        Psalms.PATH_SEGMENT + "/" + PATH_SEGMENT).build();
+                    }
+                    protected static final String RAW1_TABLES = TABLE_PSALMNUMBERS_JOIN_BOOKS;
+                }
+            }
+
         }
     }
 
@@ -335,6 +362,10 @@ public interface PwsDataProviderContract {
                 "b." + PwsBookTable.COLUMN_DISPLAYSHORTNAME + " AS " + COLUMN_BOOKDISPLAYSHORTNAME,
                 "h." + PwsHistoryTable.COLUMN_ACCESSTIMESTAMP + " AS " + COLUMN_HISTORYTIMESTAMP
         };
+
+        public static Uri getContentUri(int limit) {
+            return new Uri.Builder().scheme(SCHEME).authority(AUTHORITY).path(PATH).appendQueryParameter(QUERY_PARAMETER_LIMIT, String.valueOf(limit)).build();
+        }
 
         public static class Last {
             public static final String COLUMN_ID = Psalms.COLUMN_ID;

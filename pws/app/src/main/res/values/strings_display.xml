@@ -11,6 +11,8 @@
     <string name="lbl_drawer_main_settings">Settings</string>
     <string name="lbl_drawer_main_system_menu">System</string>
 
+    <string name="lbl_recent">Recent</string>
+
     <!-- Search activity display strings. -->
     <string name="title_activity_search">Search</string>
     <string name="lbl_search_widget">Search...</string>

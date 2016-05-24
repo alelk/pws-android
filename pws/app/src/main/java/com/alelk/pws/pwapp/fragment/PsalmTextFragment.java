@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +36,7 @@ public class PsalmTextFragment extends Fragment {
 
     public static final String KEY_PSALM_NUMBER_ID = "com.alelk.pws.pwapp.psalmNumberId";
 
+    private static final String LOG_TAG = PsalmTextFragment.class.getSimpleName();
     private static final String SELECTION_FAVORITES_PSALM_NUMBER_MATCH = PwsDataProvider.Favorites.COLUMN_PSALMNUMBER_ID + " = ?";
     private final String[] SELECTION_ARGS = new String[1];
     private final ContentValues CONTENT_VALUES_FAVORITES = new ContentValues(1);
@@ -57,6 +59,7 @@ public class PsalmTextFragment extends Fragment {
     private String mBibleRef;
     private String mBookName;
     private boolean isFavoritePsalm;
+    private boolean isAddedToHistory;
 
     public PsalmTextFragment() {}
 
@@ -70,6 +73,7 @@ public class PsalmTextFragment extends Fragment {
         vPsalmText = (TextView) v.findViewById(R.id.txt_psalm_text);
         vPsalmInfo = (TextView) v.findViewById(R.id.txt_psalm_info);
         vPsalmTonalities = (TextView) v.findViewById(R.id.txt_psalm_tonalities);
+        setRetainInstance(true);
         updateUi();
         return v;
     }
@@ -154,7 +158,7 @@ public class PsalmTextFragment extends Fragment {
      * @return instance of PsalmTextFragment
      */
     public static PsalmTextFragment newInstance(long psalmNumberId) {
-        Bundle args = new Bundle();
+        final Bundle args = new Bundle();
         args.putLong(KEY_PSALM_NUMBER_ID, psalmNumberId);
         PsalmTextFragment fragment = new PsalmTextFragment();
         fragment.setArguments(args);
@@ -162,8 +166,18 @@ public class PsalmTextFragment extends Fragment {
     }
 
     private void addPsalmToHistory() {
-        if (mPsalmNumberId < 0) return;
+        final String METHOD_NAME = "addPsalmToHistory";
+        if (mPsalmNumberId < 0 || isAddedToHistory) return;
+        final Cursor cursor = getActivity().getContentResolver().query(PwsDataProvider.History.Last.CONTENT_URI, null, null, null, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            if (cursor.getLong(cursor.getColumnIndex(PwsDataProvider.History.Last.COLUMN_PSALMNUMBER_ID)) == mPsalmNumberId) {
+                Log.d(LOG_TAG, METHOD_NAME + ": The psalm already present in history table as a recent item");
+                isAddedToHistory = true;
+                return;
+            }
+        }
         getActivity().getContentResolver().insert(PwsDataProvider.History.CONTENT_URI, CONTENT_VALUES_HISTORY);
+        isAddedToHistory = true;
     }
 
     /**

@@ -96,7 +96,8 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
                 mCursor = queryFavorite(id);
                 break;
             case History.URI_MATCH:
-                mCursor = queryHistory(projection, selection, selectionArgs, null, null);
+                mLimit = uri.getQueryParameter(QUERY_PARAMETER_LIMIT);
+                mCursor = queryHistory(projection, selection, selectionArgs, null, mLimit);
                 break;
             case History.Last.URI_MATCH:
                 mCursor = queryHistory(projection, null, null, History.Last.SORT_ORDER, History.Last.LIMIT);
