@@ -4,19 +4,20 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="6dp"
     android:theme="@style/AppTheme.CardView"
-    android:id="@+id/cv_favorite">
+    android:id="@+id/cv_search">
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
             android:layout_width="wrap_content"
-            android:minWidth="36dp"
-            android:layout_gravity="center|right"
             android:layout_height="wrap_content"
-            android:textSize="15sp"
-            android:paddingStart="4dp"
-            android:paddingEnd="4dp"
+            android:gravity="end"
+            android:layout_gravity="center"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="6dip"
+            android:minWidth="50dip"
+            android:textAppearance="?android:attr/textAppearanceLarge"
             android:id="@+id/txt_psalm_number"/>
         <LinearLayout
             android:layout_width="0dp"
@@ -26,15 +27,23 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp">
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/txt_psalm_name"
-                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
-                android:layout_marginBottom="6dp"/>
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:id="@+id/txt_psalm_name" />
+
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/txt_book_name"/>
+                android:textStyle="bold"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:id="@+id/txt_book_name" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:id="@+id/txt_text" />
         </LinearLayout>
 
     </LinearLayout>

@@ -9,8 +9,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,68 +20,69 @@ import android.view.ViewGroup;
 import com.alelk.pws.database.provider.PwsDataProvider;
 import com.alelk.pws.pwapp.PsalmActivity;
 import com.alelk.pws.pwapp.R;
-import com.alelk.pws.pwapp.adapter.HistoryRecyclerViewAdapter;
+import com.alelk.pws.pwapp.adapter.SearchRecyclerViewAdapter;
 
 /**
- * Created by Alex Elkin on 18.02.2016.
+ * Created by Alex Elkin on 23.05.2016.
  */
-public class HistoryFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class SearchResultsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    public static final String KEY_ITEMS_LIMIT = "com.alelk.pws.pwapp.historyItemsLimit";
-    public final static int PWS_HISTORY_LOADER = 2;
+    public static final String KEY_QUERY = "com.alelk.pws.pwapp.query";
+    public static final int PWS_SEARCH_RESULTS_LOADER = 4;
 
-    private final static int DEFAULT_ITEMS_LIMIT = 100;
-
+    private String mQuery;
     private RecyclerView mRecyclerView;
-    private Cursor cursor;
-    private int mItemsLimit;
 
-    public static HistoryFragment newInstance(int itemsLimit) {
+    public static SearchResultsFragment newInstance(String query) {
         final Bundle args = new Bundle();
-        args.putInt(KEY_ITEMS_LIMIT, itemsLimit);
-        HistoryFragment fragment = new HistoryFragment();
+        args.putString(KEY_QUERY, query);
+        final SearchResultsFragment fragment = new SearchResultsFragment();
         fragment.setArguments(args);
         return fragment;
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final View v = inflater.inflate(R.layout.fragment_history, null);
-        mRecyclerView = (RecyclerView) v.findViewById(R.id.rv_history);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
-        mRecyclerView.setLayoutManager(layoutManager);
-
-        getLoaderManager().initLoader(PWS_HISTORY_LOADER, null, this);
-
-        return v;
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mItemsLimit = DEFAULT_ITEMS_LIMIT;
         if (getArguments() != null) {
-            mItemsLimit = getArguments().getInt(KEY_ITEMS_LIMIT, DEFAULT_ITEMS_LIMIT);
+            mQuery = getArguments().getString(KEY_QUERY);
         }
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        final View v = inflater.inflate(R.layout.fragment_search_results, null);
+        mRecyclerView = (RecyclerView) v.findViewById(R.id.rv_search_results);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+        mRecyclerView.setLayoutManager(layoutManager);
+
+        getLoaderManager().initLoader(PWS_SEARCH_RESULTS_LOADER, null, this);
+
+        return v;
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
+        if (TextUtils.isEmpty(mQuery)) return null;
         switch (loaderId) {
-            case PWS_HISTORY_LOADER:
-                return new CursorLoader(getActivity().getBaseContext(), PwsDataProvider.History.getContentUri(mItemsLimit), null, null, null, null);
-            default:
+            case PWS_SEARCH_RESULTS_LOADER:
+                return new CursorLoader(
+                        getActivity().getBaseContext(),
+                        PwsDataProvider.Psalms.Search.CONTENT_URI,
+                        null,
+                        PwsDataProvider.Psalms.Search.STXT_SELECTION,
+                        PwsDataProvider.Psalms.Search.getSelectionArgs(mQuery),
+                        null);
         }
         return null;
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        cursor = data;
         mRecyclerView.setAdapter(
-                new HistoryRecyclerViewAdapter(cursor,
-                        new HistoryRecyclerViewAdapter.OnItemClickListener() {
+                new SearchRecyclerViewAdapter(data,
+                        new SearchRecyclerViewAdapter.OnItemClickListener() {
                             @Override
                             public void onItemClick(long psalmNumberId) {
                                 Intent intentPsalmView = new Intent(getActivity().getBaseContext(), PsalmActivity.class);
@@ -91,6 +94,10 @@ public class HistoryFragment extends Fragment implements LoaderManager.LoaderCal
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        cursor = null;
+    }
+
+    public void updateQuery(String query) {
+        mQuery = query;
+        getLoaderManager().restartLoader(PWS_SEARCH_RESULTS_LOADER, null, this);
     }
 }

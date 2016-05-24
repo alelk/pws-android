@@ -9,23 +9,16 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import com.alelk.pws.database.provider.PwsDataProvider;
 import com.alelk.pws.database.provider.PwsDataProviderContract;
-import com.alelk.pws.database.table.PwsFavoritesTable;
-import com.alelk.pws.pwapp.MainActivity;
 import com.alelk.pws.pwapp.PsalmActivity;
 import com.alelk.pws.pwapp.R;
-import com.alelk.pws.pwapp.adapter.FavoritesCursorAdapter;
 import com.alelk.pws.pwapp.adapter.FavoritesRecyclerViewAdapter;
 
 /**
@@ -55,7 +48,7 @@ public class FavoritesFragment extends Fragment implements LoaderManager.LoaderC
     public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
         switch (loaderId) {
             case PWS_FAVORITES_LOADER:
-                CursorLoader cursorLoader = new CursorLoader(getActivity().getBaseContext(), Uri.parse("content://com.alelk.pws.database.provider/favorites"), null, null, null, null);
+                CursorLoader cursorLoader = new CursorLoader(getActivity().getBaseContext(), PwsDataProvider.Favorites.CONTENT_URI, null, null, null, null);
                 return cursorLoader;
             default:
         }
