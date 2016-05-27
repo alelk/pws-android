@@ -50,6 +50,8 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
         URI_MATCHER.addURI(AUTHORITY, PsalmNumbers.PATH, PsalmNumbers.URI_MATCH);
         URI_MATCHER.addURI(AUTHORITY, PsalmNumbers.PATH_ID, PsalmNumbers.URI_MATCH_ID);
         URI_MATCHER.addURI(AUTHORITY, PsalmNumbers.Psalm.PATH, PsalmNumbers.Psalm.URI_MATCH);
+        URI_MATCHER.addURI(AUTHORITY, PsalmNumbers.Book.BookPsalmNumbers.PATH, PsalmNumbers.Book.BookPsalmNumbers.URI_MATCH);
+        URI_MATCHER.addURI(AUTHORITY, PsalmNumbers.Book.BookPsalmNumbers.Info.PATH, PsalmNumbers.Book.BookPsalmNumbers.Info.URI_MATCH);
     }
 
     private SQLiteDatabase mDatabase;
@@ -76,6 +78,7 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
         Log.v(LOG_TAG, METHOD_NAME + ": uri='" + uri.toString() + "'");
         mDatabase = mDatabaseHelper.getReadableDatabase();
         mCursor = null;
+        long psalmNumberId;
         switch (URI_MATCHER.match(uri)) {
             case Psalms.URI_MATCH:
                 mCursor = mDatabase.query(TABLE_PSALMS, projection, selection, selectionArgs, null, null, sortOrder);
@@ -125,8 +128,16 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
                 }
                 break;
             case PsalmNumbers.Psalm.URI_MATCH:
-                long psalmNumberId = Long.parseLong(uri.getPathSegments().get(1));
+                psalmNumberId = Long.parseLong(uri.getPathSegments().get(1));
                 mCursor = queryPsalmNumberPsalm(psalmNumberId, projection, selection, selectionArgs);
+                break;
+            case PsalmNumbers.Book.BookPsalmNumbers.URI_MATCH:
+                psalmNumberId = Long.parseLong(uri.getPathSegments().get(1));
+                mCursor = queryPsalmNumberBookPsalmNumbers(psalmNumberId, projection);
+                break;
+            case PsalmNumbers.Book.BookPsalmNumbers.Info.URI_MATCH:
+                psalmNumberId = Long.parseLong(uri.getPathSegments().get(1));
+                mCursor = queryPsalmNumberBookPsalmNumbers(psalmNumberId, PsalmNumbers.Book.BookPsalmNumbers.Info.PROJECTION);
                 break;
             default:
                 // todo: throw exception - incorrect uri
@@ -360,6 +371,29 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
                 projection,
                 selection, selectionArgs, null, null,
                 null);
+        return cursor;
+    }
+
+    private Cursor queryPsalmNumberBookPsalmNumbers(long psalmNumberId, @Nullable String[] projection){
+        return queryPsalmNumberBookPsalmNumber(psalmNumberId, projection, null, null);
+    }
+
+    private Cursor queryPsalmNumberBookPsalmNumber(long psalmNumberId,
+                                         @Nullable String[] projection,
+                                         @Nullable String selection,
+                                         @Nullable String[] selectionArgs) {
+        final String METHOD_NAME = "queryPsalmNumberBookPsalmNumber";
+
+        if (projection == null) projection = PsalmNumbers.Book.BookPsalmNumbers.PROJECTION;
+        if (selection == null) selectionArgs = null;
+
+        final String rawQuery = SQLiteQueryBuilder.buildQueryString(false,
+                PsalmNumbers.Book.BookPsalmNumbers.buildRawTables(psalmNumberId),
+                projection, null, null, null,
+                PsalmNumbers.Book.BookPsalmNumbers.ORDER_BY, null);
+        Cursor cursor = mDatabase.rawQuery(rawQuery, selectionArgs);
+        Log.d(LOG_TAG, METHOD_NAME + ": rawQuery='" + rawQuery + "' selectionArgs=" +
+                Arrays.toString(selectionArgs) + " results:" + (cursor == null ? 0 : cursor.getCount()));
         return cursor;
     }
 

@@ -23,9 +23,12 @@ public class SearchActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
         mResultsFragment = (SearchResultsFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_search_results);
 
-        Intent intent = getIntent();
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             mQuery = intent.getStringExtra(SearchManager.QUERY);
             if (mResultsFragment != null) {
