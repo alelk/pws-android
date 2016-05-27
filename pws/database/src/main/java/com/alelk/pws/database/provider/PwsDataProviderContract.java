@@ -1,5 +1,6 @@
 package com.alelk.pws.database.provider;
 
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 
 import com.alelk.pws.database.helper.PwsDatabaseHelper;
@@ -16,6 +17,7 @@ import static android.app.SearchManager.SUGGEST_COLUMN_TEXT_2;
 import static android.app.SearchManager.SUGGEST_URI_PATH_QUERY;
 import static com.alelk.pws.database.table.PwsBookStatisticTable.TABLE_BOOKSTATISTIC;
 import static com.alelk.pws.database.table.PwsPsalmFtsTable.TABLE_PSALMS_FTS;
+import static com.alelk.pws.database.table.PwsPsalmFtsTable.populateTable;
 import static com.alelk.pws.database.table.PwsPsalmNumbersTable.TABLE_PSALMNUMBERS;
 import static com.alelk.pws.database.table.PwsPsalmTable.TABLE_PSALMS;
 import static com.alelk.pws.database.table.PwsFavoritesTable.TABLE_FAVORITES;
@@ -244,22 +246,58 @@ public interface PwsDataProviderContract {
             protected static final String PATH_SEGMENT = "book";
             public static final String PATH = PsalmNumbers.PATH + "/#/" + PATH_SEGMENT;
 
-            public static class Psalms {
-                protected static final String PATH_SEGMENT = TABLE_PSALMS;
-                public static final String PATH = PsalmNumbers.Book.PATH + "/" + PATH_SEGMENT;
+            /**
+             * Provider contract for URI: psalmnumbers/#/book/bookpsalmnumbers
+             */
+            public static class BookPsalmNumbers {
+                protected static final String PATH_SEGMENT = "bookpsalmnumbers";
+                protected static final String PATH = PsalmNumbers.Book.PATH + "/" + PATH_SEGMENT;
+                protected static final int URI_MATCH = 331;
 
+                public static final String COLUMN_ID = "_id";
+                public static final String COLUMN_PSALMNUMBER = PsalmNumbers.COLUMN_PSALMNUMBER;
+                public static Uri getContentUri(long psalmNumberId) {
+                    return new Uri.Builder().scheme(SCHEME).authority(AUTHORITY).path(
+                            PsalmNumbers.PATH + "/" + psalmNumberId + "/" +
+                                    PsalmNumbers.Book.PATH_SEGMENT + "/" +
+                                    PATH_SEGMENT).build();
+                }
+                protected static final String[] PROJECTION = {
+                        "pn." + PwsPsalmNumbersTable.COLUMN_NUMBER + " as " + COLUMN_PSALMNUMBER,
+                        "pn." + PwsPsalmNumbersTable.COLUMN_ID + " as " + COLUMN_ID
+                };
+                protected static final String ORDER_BY = "pn." + PwsPsalmNumbersTable.COLUMN_NUMBER;
+                protected static String buildRawTables(long psalmNumberId) {
+                    return "(" + SQLiteQueryBuilder.buildQueryString(false,
+                            TABLE_PSALMNUMBERS_JOIN_BOOKS,
+                            new String[] {"b." + PwsBookTable.COLUMN_ID},
+                            "pn." + PwsPsalmNumbersTable.COLUMN_ID + "=" + psalmNumberId,
+                            null, null,
+                            null,
+                            "1") + ") as b inner join " +
+                            PwsPsalmNumbersTable.TABLE_PSALMNUMBERS + " as pn on " +
+                            "pn." + PwsPsalmNumbersTable.COLUMN_BOOKID + " = b._id";
+                }
                 public static class Info {
                     protected static final String PATH_SEGMENT = "info";
-                    public static final String PATH = PsalmNumbers.Book.Psalms.PATH + "/" + PATH_SEGMENT;
-                    public static final String COLUMN_COUNTOFPSALMS = "count_of_book_psalms";
-                    public static final String COLUMN_MAXPSALMNUMBER = "max_psalm_number";
+                    protected static final String PATH = PsalmNumbers.Book.BookPsalmNumbers.PATH + "/" + PATH_SEGMENT;
+                    protected static final int URI_MATCH = 3311;
+
+                    public static final String COLUMN_COUNT_OF_ITEMS = "count_of_items";
+                    public static final String COLUMN_MAX_PSALMNUMBER = "max_psalm_number";
+                    public static final String COLUMN_PSALMNUMBERID_LIST = "psalmnumberids_list";
                     public static Uri getContentUri(long psalmNumberId) {
                         return new Uri.Builder().scheme(SCHEME).authority(AUTHORITY).path(
                                 PsalmNumbers.PATH + "/" + psalmNumberId + "/" +
                                         PsalmNumbers.Book.PATH_SEGMENT + "/" +
-                                        Psalms.PATH_SEGMENT + "/" + PATH_SEGMENT).build();
+                                        PsalmNumbers.Book.BookPsalmNumbers.PATH_SEGMENT + "/" +
+                                        PATH_SEGMENT).build();
                     }
-                    protected static final String RAW1_TABLES = TABLE_PSALMNUMBERS_JOIN_BOOKS;
+                    protected static final String[] PROJECTION = {
+                            "max (pn." + PwsPsalmNumbersTable.COLUMN_NUMBER + ") as " + COLUMN_MAX_PSALMNUMBER,
+                            "group_concat (pn." + PwsPsalmNumbersTable.COLUMN_ID + ") as " + COLUMN_PSALMNUMBERID_LIST,
+                            "count (pn." + PwsPsalmNumbersTable.COLUMN_ID + ") as " + COLUMN_COUNT_OF_ITEMS
+                    };
                 }
             }
 

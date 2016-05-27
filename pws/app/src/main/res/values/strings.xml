@@ -1,7 +1,8 @@
 <resources>
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 
     <string name="open_drawer">Open driwer</string>
     <string name="close_drawer">Close driwer</string>
+
+    <string name="title_activity_psalm_fullscreen">PsalmFullscreenActivity</string>
 </resources>

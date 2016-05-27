@@ -1,48 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".fragment.PsalmTextFragment">
-
-    <android.support.v7.widget.CardView
+    tools:context=".PsalmActivity"
+    tools:showIn="@layout/activity_psalm">
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:id="@+id/cv_tonalities">
-        <TextView
-            style="@style/AppTheme.Psalm.Tonalities"
+        android:layout_height="match_parent"
+        android:id="@+id/ll_psalm_text_content"
+        android:orientation="vertical"
+        tools:context=".fragment.PsalmTextFragment">
+
+        <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/txt_psalm_tonalities"/>
-    </android.support.v7.widget.CardView>
+            android:layout_marginBottom="8dp"
+            android:id="@+id/cv_tonalities">
+            <TextView
+                style="@style/AppTheme.Psalm.Tonalities"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/txt_psalm_tonalities"/>
+        </android.support.v7.widget.CardView>
 
-    <android.support.v7.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp">
-        <TextView
-            style="@style/AppTheme.Psalm.Text"
-            android:layout_gravity="center_horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/txt_psalm_text"/>
-    </android.support.v7.widget.CardView>
-
-    <android.support.v7.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:id="@+id/cv_psalm_info">
-        <TextView
-            android:gravity="center"
-            android:layout_marginBottom="20dp"
-            android:layout_marginTop="20dp"
+        <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/txt_psalm_info"/>
-    </android.support.v7.widget.CardView>
+            android:layout_marginBottom="8dp">
+            <TextView
+                style="@style/AppTheme.Psalm.Text"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/txt_psalm_text"/>
+        </android.support.v7.widget.CardView>
 
-</LinearLayout>
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:id="@+id/cv_psalm_info">
+            <TextView
+                android:gravity="center"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/txt_psalm_info"/>
+        </android.support.v7.widget.CardView>
+
+    </LinearLayout>
+</android.support.v4.widget.NestedScrollView>
