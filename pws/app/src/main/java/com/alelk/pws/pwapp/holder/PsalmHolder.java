@@ -5,6 +5,8 @@ import android.text.TextUtils;
 
 import com.alelk.pws.database.provider.PwsDataProviderContract.PsalmNumbers.Psalm;
 
+import java.util.Arrays;
+
 /**
  * Created by AlexElkin on 27.05.2016.
  */
@@ -176,5 +178,23 @@ public class PsalmHolder implements PwsHolder {
 
     public void setFavoritePsalm(boolean favoritePsalm) {
         isFavoritePsalm = favoritePsalm;
+    }
+
+    @Override
+    public String toString() {
+        return "PsalmHolder{" +
+                "mPsalmNumberId=" + mPsalmNumberId +
+                ", mPsalmNumber=" + mPsalmNumber +
+                ", mPsalmName='" + mPsalmName + '\'' +
+                ", mPsalmText: " + (mPsalmText == null ? null : mPsalmText.length() + " symbols") +
+                ", mPsalmAuthor='" + mPsalmAuthor + '\'' +
+                ", mPsalmTranslator='" + mPsalmTranslator + '\'' +
+                ", mPsalmComposer='" + mPsalmComposer + '\'' +
+                ", mPsalmLocale='" + mPsalmLocale + '\'' +
+                ", mPsalmTonalities=" + Arrays.toString(mPsalmTonalities) +
+                ", mBibleRef='" + mBibleRef + '\'' +
+                ", mBookName='" + mBookName + '\'' +
+                ", isFavoritePsalm=" + isFavoritePsalm +
+                '}';
     }
 }

@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.text.Html;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,14 +17,12 @@ import android.widget.TextView;
 
 import com.alelk.pws.database.data.Tonality;
 import com.alelk.pws.database.provider.PwsDataProvider;
-import com.alelk.pws.database.provider.PwsDataProviderContract;
 import com.alelk.pws.database.table.PwsFavoritesTable;
 import com.alelk.pws.database.table.PwsHistoryTable;
 import com.alelk.pws.database.util.PwsPsalmUtil;
 import com.alelk.pws.pwapp.R;
 import com.alelk.pws.pwapp.holder.PsalmHolder;
 
-import java.util.ArrayList;
 import java.util.Locale;
 
 /**
@@ -35,9 +32,9 @@ import java.util.Locale;
  */
 public class PsalmTextFragment extends Fragment {
 
-    public static final String KEY_PSALM_NUMBER_ID = "com.alelk.pws.pwapp.psalmNumberId";
+    private final static String LOG_TAG = PsalmTextFragment.class.getSimpleName();
 
-    private static final String LOG_TAG = PsalmTextFragment.class.getSimpleName();
+    public static final String KEY_PSALM_NUMBER_ID = "com.alelk.pws.pwapp.psalmNumberId";
     private static final String SELECTION_FAVORITES_PSALM_NUMBER_MATCH = PwsDataProvider.Favorites.COLUMN_PSALMNUMBER_ID + " = ?";
     private final String[] SELECTION_ARGS = new String[1];
     private final ContentValues CONTENT_VALUES_FAVORITES = new ContentValues(1);
@@ -70,43 +67,41 @@ public class PsalmTextFragment extends Fragment {
         vPsalmText = (TextView) v.findViewById(R.id.txt_psalm_text);
         vPsalmInfo = (TextView) v.findViewById(R.id.txt_psalm_info);
         vPsalmTonalities = (TextView) v.findViewById(R.id.txt_psalm_tonalities);
-        setRetainInstance(true);
         updateUi();
+        setRetainInstance(true);
         return v;
     }
 
     private void init() {
         if (mPsalmNumberId < 0) return;
         SELECTION_ARGS[0] = String.valueOf(mPsalmNumberId);
-        CONTENT_VALUES_FAVORITES.clear();
-        CONTENT_VALUES_HISTORY.clear();
         CONTENT_VALUES_FAVORITES.put(PwsFavoritesTable.COLUMN_PSALMNUMBERID, String.valueOf(mPsalmNumberId));
         CONTENT_VALUES_HISTORY.put(PwsHistoryTable.COLUMN_PSALMNUMBERID, String.valueOf(mPsalmNumberId));
     }
 
-    private boolean loadData() {
-        if (mPsalmNumberId < 0) {
-            return false;
-        }
-        Cursor cursor = null;
-        try {
-            cursor = getActivity().getContentResolver()
-                    .query(PwsDataProvider.PsalmNumbers.Psalm.getContentUri(mPsalmNumberId), null, null, null, null);
-            if (cursor == null || !cursor.moveToFirst()) {
-                return false;
-            }
-            mPsalmHolder = new PsalmHolder(cursor, isFavoritePsalm());
-        } finally {
-            if (cursor != null) cursor.close();
-        }
-        return true;
-    }
-
-    public void updateUi() {
+    private void loadData() {
+        final String METHOD_NAME = "loadData";
         if (mPsalmNumberId < 0) {
             return;
         }
-        if (!loadData()) return;
+        Cursor cursor = null;
+        try {
+            cursor = getActivity().getContentResolver().query(PwsDataProvider.PsalmNumbers.Psalm.getContentUri(mPsalmNumberId), null, null, null, null);
+            if (cursor == null || !cursor.moveToFirst()) {
+                return;
+            }
+            mPsalmHolder = new PsalmHolder(cursor, isFavoritePsalm());
+            Log.v(LOG_TAG, METHOD_NAME + (mPsalmHolder != null ? ": The psalm data successfully loaded: " : ": Error loading psalm data: ") + "mPsalmHolder=" + mPsalmHolder.toString());
+        } finally {
+            if (cursor != null) cursor.close();
+        }
+    }
+
+    public void updateUi() {
+        if (mPsalmNumberId < 0 || mPsalmHolder == null) {
+            return;
+        }
+        if (mPsalmHolder == null) return;
         vPsalmText.setText(Html.fromHtml(PwsPsalmUtil.psalmTextToHtml(getActivity(), new Locale(mPsalmHolder.getPsalmLocale()), mPsalmHolder.getPsalmText())));
         final String psalmInfo = PwsPsalmUtil.buildPsalmInfoHtml(getActivity(), new Locale(mPsalmHolder.getPsalmLocale()), mPsalmHolder.getPsalmAuthor(), mPsalmHolder.getPsalmTranslator(), mPsalmHolder.getPsalmComposer());
         if (psalmInfo == null) {
@@ -130,7 +125,6 @@ public class PsalmTextFragment extends Fragment {
         callbacks.onUpdatePsalmInfo(mPsalmHolder);
     }
 
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -139,6 +133,16 @@ public class PsalmTextFragment extends Fragment {
             mPsalmNumberId = getArguments().getLong(KEY_PSALM_NUMBER_ID, -10L);
         }
         init();
+        loadData();
+    }
+
+    @Override
+    public void setMenuVisibility(boolean menuVisible) {
+        super.setMenuVisibility(menuVisible);
+        if (menuVisible == true && callbacks != null) {
+            callbacks.onUpdatePsalmInfo(mPsalmHolder);
+            addPsalmToHistory();
+        }
     }
 
     /**
@@ -154,7 +158,7 @@ public class PsalmTextFragment extends Fragment {
         return fragment;
     }
 
-    private void addPsalmToHistory() {
+    public void addPsalmToHistory() {
         final String METHOD_NAME = "addPsalmToHistory";
         if (mPsalmNumberId < 0 || isAddedToHistory) return;
         final Cursor cursor = getActivity().getContentResolver().query(PwsDataProvider.History.Last.CONTENT_URI, null, null, null, null);
@@ -177,20 +181,26 @@ public class PsalmTextFragment extends Fragment {
      * Add psalm to favorites table
      */
     public void addPsalmToFavorites() {
+        final String METHOD_NAME = "addPsalmToFavorites";
         if (mPsalmNumberId < 0) return;
         getActivity().getContentResolver().insert(PwsDataProvider.Favorites.CONTENT_URI, CONTENT_VALUES_FAVORITES);
         mPsalmHolder.setFavoritePsalm(isFavoritePsalm());
         callbacks.onUpdatePsalmInfo(mPsalmHolder);
+
+        callbacks.onUpdatePsalmInfo(mPsalmHolder);
+        Log.v(LOG_TAG, METHOD_NAME + ": Result: isFavoritePsalm=" + mPsalmHolder.isFavoritePsalm());
     }
 
     /**
      * Remove psalm from favorites table
      */
     public void removePsalmFromFavorites() {
+        final String METHOD_NAME = "removePsalmFromFavorites";
         if (mPsalmNumberId < 0) return;
         getActivity().getContentResolver().delete(PwsDataProvider.Favorites.CONTENT_URI, SELECTION_FAVORITES_PSALM_NUMBER_MATCH, SELECTION_ARGS);
-        mPsalmHolder.setFavoritePsalm(isFavoritePsalm());
+        mPsalmHolder.setFavoritePsalm(false);
         callbacks.onUpdatePsalmInfo(mPsalmHolder);
+        Log.v(LOG_TAG, METHOD_NAME + ": Result: isFavoritePsalm=" + mPsalmHolder.isFavoritePsalm());
     }
 
     /**
@@ -216,7 +226,7 @@ public class PsalmTextFragment extends Fragment {
          * This method is called when any psalm information is changed.
          * @param psalmHolder
          */
-        void onUpdatePsalmInfo(PsalmHolder psalmHolder);
+        void onUpdatePsalmInfo(@Nullable PsalmHolder psalmHolder);
 
         void onRequestFullscreenMode();
     }

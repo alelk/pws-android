@@ -37,7 +37,6 @@ public class ReadNowFragment extends Fragment implements LoaderManager.LoaderCal
         rvRecentPsalms = (RecyclerView) v.findViewById(R.id.rv_recent);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         rvRecentPsalms.setLayoutManager(layoutManager);
-
         getLoaderManager().initLoader(PWS_RECENT_PSALM_LOADER, null, this);
         return v;
     }
