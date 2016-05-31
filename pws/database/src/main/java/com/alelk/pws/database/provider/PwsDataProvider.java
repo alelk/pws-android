@@ -189,6 +189,7 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
                     return null;
                 }
                 itemUri = ContentUris.withAppendedId(uri, id);
+                getContext().getContentResolver().notifyChange(uri, null);
                 break;
             case History.URI_MATCH:
                 id = insertHistory(values);
@@ -198,6 +199,7 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
                     return null;
                 }
                 itemUri = ContentUris.withAppendedId(uri, id);
+                getContext().getContentResolver().notifyChange(uri, null);
                 break;
             default:
                 // TODO: 24.02.2016 throw exception incorrect uri

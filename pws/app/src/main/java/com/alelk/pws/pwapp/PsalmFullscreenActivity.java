@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.alelk.pws.database.provider.PwsDataProvider;
+import com.alelk.pws.pwapp.adapter.PsalmTextFragmentStatePagerAdapter;
 import com.alelk.pws.pwapp.fragment.PsalmTextFragment;
 import com.alelk.pws.pwapp.holder.PsalmHolder;
 
@@ -70,6 +71,7 @@ public class PsalmFullscreenActivity extends AppCompatActivity implements PsalmT
     private Button mBtnFavorites;
     private ArrayList<Long> mBookPsalmNumberIds;
     private ViewPager mPagerPsalmText;
+    private PsalmTextFragmentStatePagerAdapter mFragmentStatePagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,10 +87,11 @@ public class PsalmFullscreenActivity extends AppCompatActivity implements PsalmT
         mBtnFavorites.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mPsalmTextFragment.isFavoritePsalm()) {
-                    mPsalmTextFragment.removePsalmFromFavorites();
+                PsalmTextFragment fragment = (PsalmTextFragment) mFragmentStatePagerAdapter.getRegisteredFragments().get(mPagerPsalmText.getCurrentItem());
+                if(fragment.isFavoritePsalm()) {
+                    fragment.removePsalmFromFavorites();
                 } else {
-                    mPsalmTextFragment.addPsalmToFavorites();
+                    fragment.addPsalmToFavorites();
                 }
             }
         });
@@ -103,7 +106,8 @@ public class PsalmFullscreenActivity extends AppCompatActivity implements PsalmT
         });
 
         mPagerPsalmText = (ViewPager) findViewById(R.id.pager_psalm_text);
-        mPagerPsalmText.setAdapter(new PsalmTextFragmentStatePagerAdapter(getSupportFragmentManager()));
+        mFragmentStatePagerAdapter = new PsalmTextFragmentStatePagerAdapter(getSupportFragmentManager(), mBookPsalmNumberIds);
+        mPagerPsalmText.setAdapter(mFragmentStatePagerAdapter);
         mPagerPsalmText.setCurrentItem(mBookPsalmNumberIds.indexOf(mPsalmNumberId));
     }
 
@@ -133,10 +137,6 @@ public class PsalmFullscreenActivity extends AppCompatActivity implements PsalmT
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-
-        // Trigger the initial hide() shortly after the activity has been
-        // created, to briefly hint to the user that UI controls
-        // are available.
         delayedHide(100);
     }
 
@@ -149,15 +149,12 @@ public class PsalmFullscreenActivity extends AppCompatActivity implements PsalmT
     }
 
     private void hide() {
-        // Hide UI first
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
         }
         mControlsView.setVisibility(View.GONE);
         mVisible = false;
-
-        // Schedule a runnable to remove the status and navigation bar after a delay
         mHideHandler.removeCallbacks(mShowPart2Runnable);
         mHideHandler.postDelayed(mHidePart2Runnable, UI_ANIMATION_DELAY);
     }
@@ -185,6 +182,9 @@ public class PsalmFullscreenActivity extends AppCompatActivity implements PsalmT
 
     @Override
     public void onUpdatePsalmInfo(PsalmHolder psalmHolder) {
+        if (psalmHolder == null ||
+                mBookPsalmNumberIds.get(mPagerPsalmText.getCurrentItem()) != psalmHolder.getPsalmNumberId()) return;
+
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setTitle("№ " + psalmHolder.getPsalmNumber() + " " + psalmHolder.getBookName());
@@ -205,21 +205,4 @@ public class PsalmFullscreenActivity extends AppCompatActivity implements PsalmT
         toggle();
     }
 
-    private class PsalmTextFragmentStatePagerAdapter extends FragmentStatePagerAdapter {
-
-        public PsalmTextFragmentStatePagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            mPsalmTextFragment = PsalmTextFragment.newInstance(mBookPsalmNumberIds.get(position));
-            return mPsalmTextFragment;
-        }
-
-        @Override
-        public int getCount() {
-            return mBookPsalmNumberIds.size();
-        }
-    }
 }
