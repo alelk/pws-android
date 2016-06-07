@@ -9,4 +9,9 @@
         android:title="Search psalm"
         android:icon="@drawable/ic_search"
         app:showAsAction="always"/>
+
+    <item android:id="@+id/menu_jump"
+          android:title="Jump to number"
+          android:icon="@drawable/ic_dialpad"
+          app:showAsAction="ifRoom"/>
 </menu>

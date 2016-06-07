@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -29,6 +30,8 @@ import com.alelk.pws.pwapp.fragment.PsalmTextFragment;
 import com.alelk.pws.pwapp.holder.PsalmHolder;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * Created by Alex Elkin on 25.03.2016.
@@ -76,7 +79,7 @@ public class PsalmActivity extends AppCompatActivity implements PsalmTextFragmen
         try {
             cursor = getContentResolver().query(PwsDataProvider.PsalmNumbers.Book.BookPsalmNumbers.Info.getContentUri(mPsalmNumberId), null, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
-                final String[] psalmNumberIdsList = cursor.getString(
+                String[] psalmNumberIdsList = cursor.getString(
                         cursor.getColumnIndex(PwsDataProvider.PsalmNumbers.Book.BookPsalmNumbers.Info.COLUMN_PSALMNUMBERID_LIST))
                         .split(",");
                 mBookPsalmNumberIds = new ArrayList<>(psalmNumberIdsList.length);
@@ -106,6 +109,9 @@ public class PsalmActivity extends AppCompatActivity implements PsalmTextFragmen
             Intent intent = new Intent(this, SearchActivity.class);
             startActivity(intent);
         }
+        if (id == R.id.menu_jump) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -116,7 +122,7 @@ public class PsalmActivity extends AppCompatActivity implements PsalmTextFragmen
 
         CollapsingToolbarLayout collapsingToolbarLayout= (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_psalm);
         collapsingToolbarLayout.setTitle("№ " + psalmHolder.getPsalmNumber());
-        getSupportActionBar().setTitle("№ " + psalmHolder.getPsalmNumber());
+        //getSupportActionBar().setTitle("№ " + psalmHolder.getPsalmNumber());
         mPsalmHeaderFragment.updateUi(psalmHolder.getPsalmName(), psalmHolder.getBookName(), psalmHolder.getBibleRef());
         drawFavoriteFabIcon(psalmHolder.isFavoritePsalm());
     }
