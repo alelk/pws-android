@@ -293,10 +293,16 @@ public interface PwsDataProviderContract {
                                         PsalmNumbers.Book.BookPsalmNumbers.PATH_SEGMENT + "/" +
                                         PATH_SEGMENT).build();
                     }
+                    protected static String buildRawTables(long psalmNumberId) {
+                        return "(" + SQLiteQueryBuilder.buildQueryString(false,
+                                BookPsalmNumbers.buildRawTables(psalmNumberId),
+                                BookPsalmNumbers.PROJECTION,
+                                null, null, null, BookPsalmNumbers.ORDER_BY, null) + ")";
+                    }
                     protected static final String[] PROJECTION = {
-                            "max (pn." + PwsPsalmNumbersTable.COLUMN_NUMBER + ") as " + COLUMN_MAX_PSALMNUMBER,
-                            "group_concat (pn." + PwsPsalmNumbersTable.COLUMN_ID + ") as " + COLUMN_PSALMNUMBERID_LIST,
-                            "count (pn." + PwsPsalmNumbersTable.COLUMN_ID + ") as " + COLUMN_COUNT_OF_ITEMS
+                            "max (" + BookPsalmNumbers.COLUMN_PSALMNUMBER + ") as " + COLUMN_MAX_PSALMNUMBER,
+                            "group_concat (" + BookPsalmNumbers.COLUMN_ID + ") as " + COLUMN_PSALMNUMBERID_LIST,
+                            "count (" + BookPsalmNumbers.COLUMN_ID + ") as " + COLUMN_COUNT_OF_ITEMS
                     };
                 }
             }

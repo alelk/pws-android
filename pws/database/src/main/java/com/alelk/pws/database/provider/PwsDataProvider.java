@@ -137,7 +137,7 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
                 break;
             case PsalmNumbers.Book.BookPsalmNumbers.Info.URI_MATCH:
                 psalmNumberId = Long.parseLong(uri.getPathSegments().get(1));
-                mCursor = queryPsalmNumberBookPsalmNumbers(psalmNumberId, PsalmNumbers.Book.BookPsalmNumbers.Info.PROJECTION);
+                mCursor = queryPsalmNumberBookPsalmNumberInfo(psalmNumberId);
                 break;
             default:
                 // todo: throw exception - incorrect uri
@@ -394,8 +394,20 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
                 projection, null, null, null,
                 PsalmNumbers.Book.BookPsalmNumbers.ORDER_BY, null);
         Cursor cursor = mDatabase.rawQuery(rawQuery, selectionArgs);
-        Log.d(LOG_TAG, METHOD_NAME + ": rawQuery='" + rawQuery + "' selectionArgs=" +
+        Log.v(LOG_TAG, METHOD_NAME + ": rawQuery='" + rawQuery + "' selectionArgs=" +
                 Arrays.toString(selectionArgs) + " results:" + (cursor == null ? 0 : cursor.getCount()));
+        return cursor;
+    }
+
+    private Cursor queryPsalmNumberBookPsalmNumberInfo(long psalmNumberId) {
+        final String METHOD_NAME = "queryPsalmNumberBookPsalmNumberInfo";
+
+        final String rawQuery = SQLiteQueryBuilder.buildQueryString(false,
+                PsalmNumbers.Book.BookPsalmNumbers.Info.buildRawTables(psalmNumberId),
+                PsalmNumbers.Book.BookPsalmNumbers.Info.PROJECTION, null, null, null,
+                null, null);
+        Cursor cursor = mDatabase.rawQuery(rawQuery, null);
+        Log.v(LOG_TAG, METHOD_NAME + ": rawQuery='" + rawQuery + " results:" + (cursor == null ? 0 : cursor.getCount()));
         return cursor;
     }
 
