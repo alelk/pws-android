@@ -24,11 +24,21 @@ public class SearchRecyclerViewAdapter extends RecyclerView.Adapter<SearchRecycl
     }
 
     private Cursor mCursor;
-    private OnItemClickListener mClickListener;
+    private final OnItemClickListener mClickListener;
+
+    public SearchRecyclerViewAdapter(OnItemClickListener onItemClickListener) {
+        mClickListener = onItemClickListener;
+    }
 
     public SearchRecyclerViewAdapter(Cursor cursor, OnItemClickListener onItemClickListener) {
         mCursor = cursor;
         mClickListener = onItemClickListener;
+    }
+
+    public void swapCursor(Cursor cursor) {
+        if (mCursor != null) mCursor.close();
+        mCursor = cursor;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -39,14 +49,14 @@ public class SearchRecyclerViewAdapter extends RecyclerView.Adapter<SearchRecycl
 
     @Override
     public void onBindViewHolder(SearchViewHolder holder, int position) {
-        if (mCursor != null && mCursor.moveToPosition(position)) {
+        if (mCursor != null && !mCursor.isClosed() && mCursor.moveToPosition(position)) {
             holder.bind(mCursor, mClickListener);
         }
     }
 
     @Override
     public int getItemCount() {
-        if (mCursor == null) return 0;
+        if (mCursor == null || mCursor.isClosed()) return 0;
         return mCursor.getCount();
     }
 

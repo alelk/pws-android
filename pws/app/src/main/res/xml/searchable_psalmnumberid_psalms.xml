@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<searchable xmlns:android="http://schemas.android.com/apk/res/android"
+    android:label="@string/lbl_search_widget"
+    android:hint="@string/hint_enter_psalm_number"
+    android:searchSuggestAuthority="com.alelk.pws.database.provider"
+    android:searchSuggestPath="psalms"
+    android:searchSuggestIntentAction="android.intent.action.VIEW"
+    android:searchSuggestIntentData="content://com.alelk.pws.database.provider/psalms"
+    >
+</searchable>

@@ -47,16 +47,9 @@ public class PsalmHeaderFragment extends Fragment {
     }
 
     private void updateUi() {
-        if (vPsalmName == null || vBookName == null || vBibleRef == null) return;
-        if (mPsalmName != null) {
-            vPsalmName.setText(mPsalmName);
-        }
-        if (mBookName != null) {
-            vBookName.setText(mBookName);
-        }
-        if (mBibleRef != null) {
-            vBibleRef.setText(mBibleRef);
-        }
+        vPsalmName.setText(mPsalmName == null ? "" : mPsalmName);
+        vBookName.setText(mBookName == null ? "" : mBookName);
+        vBibleRef.setText(mBibleRef == null ? "" : mBibleRef);
     }
 
     public static PsalmHeaderFragment newInstance(String psalmName, String bookName, String bibleRef) {

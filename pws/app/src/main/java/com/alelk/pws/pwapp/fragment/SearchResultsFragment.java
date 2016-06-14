@@ -32,6 +32,7 @@ public class SearchResultsFragment extends Fragment implements LoaderManager.Loa
 
     private String mQuery;
     private RecyclerView mRecyclerView;
+    private SearchRecyclerViewAdapter mSearchResultsAdapter;
 
     public static SearchResultsFragment newInstance(String query) {
         final Bundle args = new Bundle();
@@ -56,6 +57,15 @@ public class SearchResultsFragment extends Fragment implements LoaderManager.Loa
         mRecyclerView = (RecyclerView) v.findViewById(R.id.rv_search_results);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         mRecyclerView.setLayoutManager(layoutManager);
+        mSearchResultsAdapter = new SearchRecyclerViewAdapter(new SearchRecyclerViewAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(long psalmNumberId) {
+                Intent intentPsalmView = new Intent(getActivity().getBaseContext(), PsalmActivity.class);
+                intentPsalmView.putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, psalmNumberId);
+                startActivity(intentPsalmView);
+            }
+        });
+        mRecyclerView.setAdapter(mSearchResultsAdapter);
 
         getLoaderManager().initLoader(PWS_SEARCH_RESULTS_LOADER, null, this);
 
@@ -80,20 +90,12 @@ public class SearchResultsFragment extends Fragment implements LoaderManager.Loa
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        mRecyclerView.setAdapter(
-                new SearchRecyclerViewAdapter(data,
-                        new SearchRecyclerViewAdapter.OnItemClickListener() {
-                            @Override
-                            public void onItemClick(long psalmNumberId) {
-                                Intent intentPsalmView = new Intent(getActivity().getBaseContext(), PsalmActivity.class);
-                                intentPsalmView.putExtra("psalmNumberId", psalmNumberId);
-                                startActivity(intentPsalmView);
-                            }
-                        }));
+        mSearchResultsAdapter.swapCursor(data);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+        mSearchResultsAdapter.swapCursor(null);
     }
 
     public void updateQuery(String query) {

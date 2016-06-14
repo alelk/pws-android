@@ -3,13 +3,13 @@
     <color name="colorPrimary">#4d7645</color>
     <color name="colorPrimaryDark">#4e6f54</color>
     <color name="colorGradientAccent">#639e50</color>
-    <color name="background_material_light">#f6fcf0</color>
+    <color name="background_material_light">#edfae1</color>
     <color name="color_text_psalm_header">#ffffff</color>
     <color name="primary_text_default_material_dark">#fbfbfb</color>
     <color name="color_text_primary_inverse">#ffffff</color>
     <color name="color_text_secondary">#7b7b7b</color>
     <color name="color_text_secondary_inverse">#ededed</color>
-    <color name="color_window_background">#f7fcf1</color>
+    <color name="color_window_background">#e5f7d0</color>
     <color name="color_text_primary">#060606</color>
     <color name="color_background">#f6fcf0</color>
     <color name="color_primary">#1a7207</color>
