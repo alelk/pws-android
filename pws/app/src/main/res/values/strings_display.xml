@@ -12,21 +12,32 @@
     <string name="lbl_drawer_main_system_menu">System</string>
 
     <string name="lbl_recent">Recent</string>
+    <string name="lbl_search">Search psalm</string>
+    <string name="lbl_search_by_number">Number</string>
+    <string name="lbl_search_by_text">Text</string>
 
     <!-- Search activity display strings. -->
     <string name="title_activity_search">Search</string>
     <string name="lbl_search_widget">Search...</string>
-    <string name="hint_search_widget">Type psalm name or number...</string>
+    <string name="hint_enter_text">Type any text to search psalm...</string>
+    <string name="hint_enter_psalm_number">Enter psalm number...</string>
 
     <!-- Psalm activity display strings. -->
     <string name="lbl_chorus">Chorus</string>
     <string name="lbl_author">Author</string>
     <string name="lbl_translator">Translator</string>
     <string name="lbl_music">Music</string>
+    <string name="lbl_search_psalm">Search psalm</string>
+    <string name="lbl_jump_to_number">Jump to the number</string>
 
     <!-- Psalm fullscreen activity display strings. -->
     <string name="lbl_add_to_favorites">Add to favorites</string>
     <string name="lbl_remove_from_favorites">Remove from favorites</string>
+
+    <!-- Search psalm number dialog display strings. -->
+    <string name="lbl_ok">OK</string>
+    <string name="lbl_cancel">Cancel</string>
+    <string name="msg_no_psalm_number_found">No found psalm number.</string>
 
 
 </resources>

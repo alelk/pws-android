@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(intent);
             }
         });
+        mFActionButton.setVisibility(View.GONE);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.layout_main_drawer);
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.open_drawer, R.string.close_drawer);
@@ -117,6 +118,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             mFragmentTransaction.addToBackStack(null);
             mFragmentTransaction.commit();
             setTitle(getString(R.string.lbl_drawer_main_psalm));
+            mFActionButton.setVisibility(View.GONE);
         } else if (id == R.id.drawer_main_history) {
             mFragmentTransaction = getSupportFragmentManager().beginTransaction();
             HistoryFragment historyFragment = new HistoryFragment();
@@ -124,6 +126,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             mFragmentTransaction.addToBackStack(null);
             mFragmentTransaction.commit();
             setTitle(getString(R.string.lbl_drawer_main_history));
+            mFActionButton.setVisibility(View.VISIBLE);
         } else if (id == R.id.drawer_main_favorite) {
             mFragmentTransaction = getSupportFragmentManager().beginTransaction();
             FavoritesFragment favoritesFragment = new FavoritesFragment();
@@ -131,6 +134,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             mFragmentTransaction.addToBackStack(null);
             mFragmentTransaction.commit();
             setTitle(getString(R.string.lbl_drawer_main_favorite));
+            mFActionButton.setVisibility(View.VISIBLE);
         } else if (id == R.id.drawer_main_settings) {
 
         }

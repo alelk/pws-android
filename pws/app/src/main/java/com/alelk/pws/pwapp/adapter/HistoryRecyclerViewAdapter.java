@@ -26,13 +26,22 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
         void onItemClick(long psalmNumberId);
     }
 
-    private final Cursor mCursor;
+    private Cursor mCursor;
     private final OnItemClickListener mOnItemClickListener;
 
+    public HistoryRecyclerViewAdapter(OnItemClickListener onItemClickListener) {
+        mOnItemClickListener = onItemClickListener;
+    }
 
     public HistoryRecyclerViewAdapter(Cursor cursor, OnItemClickListener onItemClickListener) {
         mCursor = cursor;
         mOnItemClickListener = onItemClickListener;
+    }
+
+    public void swapCursor(Cursor cursor) {
+        if (mCursor != null) mCursor.close();
+        mCursor = cursor;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -50,7 +59,7 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
 
     @Override
     public int getItemCount() {
-        if (mCursor == null) return 0;
+        if (mCursor == null || mCursor.isClosed()) return 0;
         return mCursor.getCount();
     }
 

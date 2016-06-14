@@ -285,7 +285,9 @@ public interface PwsDataProviderContract {
 
                     public static final String COLUMN_COUNT_OF_ITEMS = "count_of_items";
                     public static final String COLUMN_MAX_PSALMNUMBER = "max_psalm_number";
+                    public static final String COLUMN_MIN_PSALMNUMBER = "min_psalm_number";
                     public static final String COLUMN_PSALMNUMBERID_LIST = "psalmnumberids_list";
+                    public static final String COLUMN_PSALMNUMBER_LIST = "psalm_numbers_list";
                     public static Uri getContentUri(long psalmNumberId) {
                         return new Uri.Builder().scheme(SCHEME).authority(AUTHORITY).path(
                                 PsalmNumbers.PATH + "/" + psalmNumberId + "/" +
@@ -299,9 +301,16 @@ public interface PwsDataProviderContract {
                                 BookPsalmNumbers.PROJECTION,
                                 null, null, null, BookPsalmNumbers.ORDER_BY, null) + ")";
                     }
-                    protected static final String[] PROJECTION = {
+                    protected static final String[] PROJECTION_PSALMNUMBER_ID = {
                             "max (" + BookPsalmNumbers.COLUMN_PSALMNUMBER + ") as " + COLUMN_MAX_PSALMNUMBER,
                             "group_concat (" + BookPsalmNumbers.COLUMN_ID + ") as " + COLUMN_PSALMNUMBERID_LIST,
+                            "count (" + BookPsalmNumbers.COLUMN_ID + ") as " + COLUMN_COUNT_OF_ITEMS
+                    };
+                    public static final String[] PROJECTION = {
+                            "max (" + BookPsalmNumbers.COLUMN_PSALMNUMBER + ") as " + COLUMN_MAX_PSALMNUMBER,
+                            "min (" + BookPsalmNumbers.COLUMN_PSALMNUMBER + ") as " + COLUMN_MIN_PSALMNUMBER,
+                            "group_concat (" + BookPsalmNumbers.COLUMN_ID + ") as " + COLUMN_PSALMNUMBERID_LIST,
+                            "group_concat (" + BookPsalmNumbers.COLUMN_PSALMNUMBER + ") as " + COLUMN_PSALMNUMBER_LIST,
                             "count (" + BookPsalmNumbers.COLUMN_ID + ") as " + COLUMN_COUNT_OF_ITEMS
                     };
                 }

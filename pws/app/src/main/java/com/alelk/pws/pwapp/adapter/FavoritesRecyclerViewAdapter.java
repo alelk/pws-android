@@ -20,13 +20,22 @@ public class FavoritesRecyclerViewAdapter extends RecyclerView.Adapter<Favorites
         void onItemClick(long psalmNumberId);
     }
 
-    private final Cursor mCursor;
+    private Cursor mCursor;
     private final OnItemClickListener mOnItemClickListener;
 
+    public FavoritesRecyclerViewAdapter(OnItemClickListener onItemClickListener) {
+        mOnItemClickListener = onItemClickListener;
+    }
 
     public FavoritesRecyclerViewAdapter(Cursor cursor, OnItemClickListener onItemClickListener) {
         mCursor = cursor;
         mOnItemClickListener = onItemClickListener;
+    }
+
+    public void swapCursor(Cursor cursor) {
+        if (mCursor != null) mCursor.close();
+        mCursor = cursor;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -44,7 +53,7 @@ public class FavoritesRecyclerViewAdapter extends RecyclerView.Adapter<Favorites
 
     @Override
     public int getItemCount() {
-        if (mCursor == null) return 0;
+        if (mCursor == null || mCursor.isClosed()) return 0;
         return mCursor.getCount();
     }
 

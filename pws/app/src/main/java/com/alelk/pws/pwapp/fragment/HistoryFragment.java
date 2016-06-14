@@ -31,7 +31,7 @@ public class HistoryFragment extends Fragment implements LoaderManager.LoaderCal
     private final static int DEFAULT_ITEMS_LIMIT = 100;
 
     private RecyclerView mRecyclerView;
-    private Cursor cursor;
+    private HistoryRecyclerViewAdapter mHistoryAdapter;
     private int mItemsLimit;
 
     public static HistoryFragment newInstance(int itemsLimit) {
@@ -49,7 +49,15 @@ public class HistoryFragment extends Fragment implements LoaderManager.LoaderCal
         mRecyclerView = (RecyclerView) v.findViewById(R.id.rv_history);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         mRecyclerView.setLayoutManager(layoutManager);
-
+        mHistoryAdapter = new HistoryRecyclerViewAdapter(new HistoryRecyclerViewAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(long psalmNumberId) {
+                Intent intentPsalmView = new Intent(getActivity().getBaseContext(), PsalmActivity.class);
+                intentPsalmView.putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, psalmNumberId);
+                startActivity(intentPsalmView);
+            }
+        });
+        mRecyclerView.setAdapter(mHistoryAdapter);
         getLoaderManager().initLoader(PWS_HISTORY_LOADER, null, this);
 
         return v;
@@ -76,21 +84,11 @@ public class HistoryFragment extends Fragment implements LoaderManager.LoaderCal
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        cursor = data;
-        mRecyclerView.setAdapter(
-                new HistoryRecyclerViewAdapter(cursor,
-                        new HistoryRecyclerViewAdapter.OnItemClickListener() {
-                            @Override
-                            public void onItemClick(long psalmNumberId) {
-                                Intent intentPsalmView = new Intent(getActivity().getBaseContext(), PsalmActivity.class);
-                                intentPsalmView.putExtra("psalmNumberId", psalmNumberId);
-                                startActivity(intentPsalmView);
-                            }
-                        }));
+        mHistoryAdapter.swapCursor(data);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        cursor = null;
+        mHistoryAdapter.swapCursor(null);
     }
 }
