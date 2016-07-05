@@ -132,7 +132,6 @@ public class PsalmActivity extends AppCompatActivity implements PsalmTextFragmen
 
         CollapsingToolbarLayout collapsingToolbarLayout= (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_psalm);
         collapsingToolbarLayout.setTitle("№ " + psalmHolder.getPsalmNumber());
-        //getSupportActionBar().setTitle("№ " + psalmHolder.getPsalmNumber());
         mPsalmHeaderFragment.updateUi(psalmHolder.getPsalmName(), psalmHolder.getBookName(), psalmHolder.getBibleRef());
         drawFavoriteFabIcon(psalmHolder.isFavoritePsalm());
     }
@@ -184,9 +183,9 @@ public class PsalmActivity extends AppCompatActivity implements PsalmTextFragmen
 
     private void drawFavoriteFabIcon(boolean isFavoritePsalm) {
         if (isFavoritePsalm) {
-            mFabFavorite.setImageDrawable(getDrawable(R.drawable.ic_favorite));
+            mFabFavorite.setImageResource(R.drawable.ic_favorite);
         } else {
-            mFabFavorite.setImageDrawable(getDrawable(R.drawable.ic_favorite_border));
+            mFabFavorite.setImageResource(R.drawable.ic_favorite_border);
         }
     }
 }

@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PsalmActivity"
-    tools:showIn="@layout/activity_psalm">
+    tools:context=".PsalmActivity">
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
         android:padding="4dp"
         android:id="@+id/ll_psalm_text_content"
         android:orientation="vertical"
@@ -19,45 +18,29 @@
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="8dp"
+            style="?attr/cardStylePsalm"
             android:id="@+id/cv_tonalities">
             <TextView
-                style="@style/AppTheme.Psalm.Tonalities"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
+                style="?attr/textStylePsalmBodyTonalities"
                 android:id="@+id/txt_psalm_tonalities"/>
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp">
+            style="?attr/cardStylePsalm">
             <TextView
-                style="@style/AppTheme.Psalm.Text"
-                android:layout_gravity="center_horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="6dp"
-                android:layout_marginEnd="4dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"
+                style="?attr/textStylePsalmBodyText"
                 android:id="@+id/txt_psalm_text"/>
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
+            style="?attr/cardStylePsalm"
             android:id="@+id/cv_psalm_info">
             <TextView
-                android:gravity="center"
-                android:layout_marginBottom="6dp"
-                android:layout_marginTop="6dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                style="?attr/textStylePsalmBodyInfo"
                 android:id="@+id/txt_psalm_info"/>
         </android.support.v7.widget.CardView>
 

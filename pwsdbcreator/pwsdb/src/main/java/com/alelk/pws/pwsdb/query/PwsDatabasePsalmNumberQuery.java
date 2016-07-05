@@ -75,7 +75,7 @@ public class PwsDatabasePsalmNumberQuery extends PwsDatabaseQueryUtils implement
         PsalmNumberEntity psalmNumberEntity;
         BookEntity bookEntity = new PwsDatabaseBookQuery(mDatabase).selectByEdition(mBookEdition);
         if (bookEntity == null) {
-            Log.d(LOG_TAG, METHOD_NAME + ": No book found by book edition: bookEditon=" + mBookEdition);
+            Log.w(LOG_TAG, METHOD_NAME + ": No book found by book edition: bookEditon=" + mBookEdition);
             throw new PwsDatabaseIncorrectValueException(PwsDatabaseMessage.NO_BOOK_EDITION_FOUND);
         }
         final long bookId = bookEntity.getId();
@@ -84,9 +84,10 @@ public class PwsDatabasePsalmNumberQuery extends PwsDatabaseQueryUtils implement
             psalmNumberEntity = selectByNumberAndBookId(number, bookId);
             if (psalmNumberEntity != null) {
                 if (psalmNumberEntity.getPsalmId() != mPsalmId) {
-                    Log.d(LOG_TAG, METHOD_NAME + ": Psalm number already exists for specified book, " +
-                            "but has different mPsalmId " +
-                            "(mBookEdition='" + mBookEdition + "' expected mPsalmId='" + mPsalmId +
+                    Log.w(LOG_TAG, METHOD_NAME + ": Exception for psalm #" + number +
+                            "(" + mBookEdition + "): Psalm number already exists for specified book, " +
+                            "but has different mPsalmId. " +
+                            "mPsalmId='" + mPsalmId + "', duplicate psalm id='" + psalmNumberEntity.getPsalmId() +
                             "'): " + psalmNumberEntity);
                     throw new PwsDatabaseSourceIdExistsException(PwsDatabaseMessage.PSALM_NUMBER_EXISTS_FOR_BOOK_ID, psalmNumberEntity.getId());
                 }
@@ -99,7 +100,7 @@ public class PwsDatabasePsalmNumberQuery extends PwsDatabaseQueryUtils implement
                 Log.v(LOG_TAG, METHOD_NAME + ": New psalm number added: " + psalmNumberEntity);
             }
         } else {
-            Log.d(LOG_TAG, METHOD_NAME + ": Incorrect book edition value: '" + mBookEdition +
+            Log.w(LOG_TAG, METHOD_NAME + ": Incorrect book edition value: '" + mBookEdition +
                     "'. No psalm numbers found for this book edition.");
             throw new PwsDatabaseIncorrectValueException(PwsDatabaseMessage.UNEXPECTED_BOOK_EDITION_VALUE);
         }

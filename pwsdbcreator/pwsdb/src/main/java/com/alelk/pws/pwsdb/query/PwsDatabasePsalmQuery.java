@@ -117,11 +117,11 @@ public class PwsDatabasePsalmQuery extends PwsDatabaseQueryUtils implements PwsD
             psalmEntity = selectByNumbers(psalm);
             if (psalmEntity != null) {
                 if (!isVersionMatches(psalm.getVersion(), psalmEntity.getVersion())) {
-                    Log.d(LOG_TAG, METHOD_NAME + ": Psalm already exists, but it's version does not match the current version: " + psalmEntity
+                    Log.w(LOG_TAG, METHOD_NAME + ": Psalm already exists, but it's version does not match the current version: " + psalmEntity
                             + " (current version: " + psalm.getVersion() + ")");
                     throw new PwsDatabaseSourceIdExistsException(PwsDatabaseMessage.PSALM_ID_EXISTS, psalmEntity.getId());
                 }
-                Log.v(LOG_TAG, METHOD_NAME + ": psalm already exists: " + psalmEntity);
+                Log.w(LOG_TAG, METHOD_NAME + ": psalm already exists: " + psalmEntity);
             } else {
                 final ContentValues contentValues = new ContentValues();
                 fillContentValues(contentValues, psalm);

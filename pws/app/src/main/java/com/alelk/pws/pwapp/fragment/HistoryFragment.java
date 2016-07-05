@@ -9,11 +9,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 
 import com.alelk.pws.database.provider.PwsDataProvider;
 import com.alelk.pws.pwapp.PsalmActivity;
@@ -47,19 +49,18 @@ public class HistoryFragment extends Fragment implements LoaderManager.LoaderCal
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.fragment_history, null);
         mRecyclerView = (RecyclerView) v.findViewById(R.id.rv_history);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(layoutManager);
         mHistoryAdapter = new HistoryRecyclerViewAdapter(new HistoryRecyclerViewAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(long psalmNumberId) {
-                Intent intentPsalmView = new Intent(getActivity().getBaseContext(), PsalmActivity.class);
+                Intent intentPsalmView = new Intent(getActivity(), PsalmActivity.class);
                 intentPsalmView.putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, psalmNumberId);
                 startActivity(intentPsalmView);
             }
         });
         mRecyclerView.setAdapter(mHistoryAdapter);
         getLoaderManager().initLoader(PWS_HISTORY_LOADER, null, this);
-
         return v;
     }
 
@@ -76,7 +77,7 @@ public class HistoryFragment extends Fragment implements LoaderManager.LoaderCal
     public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
         switch (loaderId) {
             case PWS_HISTORY_LOADER:
-                return new CursorLoader(getActivity().getBaseContext(), PwsDataProvider.History.getContentUri(mItemsLimit), null, null, null, null);
+                return new CursorLoader(getActivity(), PwsDataProvider.History.getContentUri(mItemsLimit), null, null, null, null);
             default:
         }
         return null;

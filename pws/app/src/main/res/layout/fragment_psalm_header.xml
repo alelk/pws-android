@@ -16,33 +16,15 @@
         android:layout_marginTop="30dp">
 
         <TextView
-            style="@style/AppTheme.Psalm.Header"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:gravity="bottom|center"
-            android:textSize="40sp"
+            style="?attr/textStylePsalmHeaderPsalmName"
             android:id="@+id/txt_psalm_name" />
 
         <TextView
-            style="@style/AppTheme.Psalm.Header.BibleRef"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:id="@+id/txt_bible_ref"
-            android:gravity="center"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"/>
+            style="?attr/textStylePsalmHeaderBibleRef"
+            android:id="@+id/txt_bible_ref"/>
 
         <TextView
-            style="@style/AppTheme.Psalm.Header.BookName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="left"
-            android:layout_marginStart="50dp"
-            android:layout_marginBottom="5dp"
-            android:layout_marginTop="10dp"
-            android:lines="1"
+            style="?attr/textStylePsalmHeaderBookName"
             android:id="@+id/txt_book_name"/>
 
     </LinearLayout>

@@ -11,7 +11,8 @@
     <color name="color_text_secondary_inverse">#ededed</color>
     <color name="color_window_background">#e5f7d0</color>
     <color name="color_text_primary">#060606</color>
-    <color name="color_background">#f6fcf0</color>
+    <color name="color_background">#ffffff</color>
+    <color name="color_background_fullscreen">#001771</color>
     <color name="color_primary">#1a7207</color>
     <color name="color_primary_dark">#105c1e</color>
     <color name="color_accent">#ff407c</color>
