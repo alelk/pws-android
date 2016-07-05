@@ -14,22 +14,20 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:contentDescription="@string/app_name"
         android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         android:src="@drawable/ic_launcher" />
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="16dp"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         android:text="@string/app_name"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+        style="?attr/textStyleNavHeaderAppName" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingStart="16dp"
+        android:paddingBottom="16dp"
+        style="?attr/textStyleNavHeaderAppDescription"
         android:text="@string/txt_main_navigation_header_comment" />
 
 </LinearLayout>

@@ -1,5 +1,6 @@
 package com.alelk.pws.pwapp.fragment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -8,6 +9,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.view.ContextThemeWrapper;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
@@ -29,13 +32,33 @@ import com.alelk.pws.pwapp.adapter.HistoryRecyclerViewAdapter;
  */
 public class ReadNowFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
 
-    public final static int PWS_RECENT_PSALM_LOADER = 3;
-    public final static int DEFAULT_RECENT_LIMIT = 3;
+    public final static int PWS_RECENT_PSALM_LOADER = 30;
+    public final static int DEFAULT_RECENT_LIMIT = 6;
 
     private RecyclerView rvRecentPsalms;
     private HistoryRecyclerViewAdapter mRecentPsalmsAdapter;
     private Button btnSearchPsalmNumber;
     private Button btnSearchPsalmText;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mRecentPsalmsAdapter = new HistoryRecyclerViewAdapter(new HistoryRecyclerViewAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(long psalmNumberId) {
+                Intent intentPsalmView = new Intent(getActivity().getBaseContext(), PsalmActivity.class);
+                intentPsalmView.putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, psalmNumberId);
+                startActivity(intentPsalmView);
+            }
+        });
+        getLoaderManager().initLoader(PWS_RECENT_PSALM_LOADER, null, this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mRecentPsalmsAdapter.notifyDataSetChanged();
+    }
 
     @Nullable
     @Override
@@ -48,16 +71,7 @@ public class ReadNowFragment extends Fragment implements LoaderManager.LoaderCal
         btnSearchPsalmText.setOnClickListener(this);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         rvRecentPsalms.setLayoutManager(layoutManager);
-        mRecentPsalmsAdapter = new HistoryRecyclerViewAdapter(new HistoryRecyclerViewAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(long psalmNumberId) {
-                Intent intentPsalmView = new Intent(getActivity().getBaseContext(), PsalmActivity.class);
-                intentPsalmView.putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, psalmNumberId);
-                startActivity(intentPsalmView);
-            }
-        });
         rvRecentPsalms.setAdapter(mRecentPsalmsAdapter);
-        getLoaderManager().initLoader(PWS_RECENT_PSALM_LOADER, null, this);
         return v;
     }
 

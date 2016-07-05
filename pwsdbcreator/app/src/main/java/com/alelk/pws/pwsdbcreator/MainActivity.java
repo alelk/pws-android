@@ -28,6 +28,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
+    private static final String DATABASE_DISPLAY_VERSION = "0.9.1v";
 
     private final static String mPwsLibFilePath = "content.pwslib";
     private PwsDataSource pwsDataSource;
@@ -96,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
             inputStream = new FileInputStream(file.getAbsoluteFile());
             for (int i = 1; (count = inputStream.read(buffer)) != -1; i++) {
                 try {
-                    outputStream = new FileOutputStream(DB_PATH + databaseName + "." + i);
+                    outputStream = new FileOutputStream(DB_PATH + databaseName + "." + DATABASE_DISPLAY_VERSION + "." + i);
                     outputStream.write(buffer, 0, count);
                     Log.i(LOG_TAG, METHOD_NAME + ": New file part created: " + DB_PATH + databaseName + "." + i);
                 } finally {

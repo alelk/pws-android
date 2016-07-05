@@ -2,6 +2,7 @@ package com.alelk.pws.database.table;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.support.annotation.NonNull;
 
 import static com.alelk.pws.database.table.PwsPsalmTable.COLUMN_TEXT;
@@ -26,6 +27,9 @@ public class PwsPsalmFtsTable extends PwsTableHelper implements PwsTable {
     public static final String TRIGGER_AFTER_UPDATE = TABLE_PSALMS_FTS + "_au";
     public static final String TRIGGER_AFTER_INSERT = TABLE_PSALMS_FTS + "_ai";
 
+    private static final String TOKENIZER_API21 = "icu ru_RU";
+    private static final String TOKENIZER_API17 = "porter";
+
     private static final String TABLE_CREATE_SCRIPT = "create virtual table " + TABLE_PSALMS_FTS +
             " using fts4 " +
             "(content=" + TABLE_PSALMS + ", " +
@@ -34,7 +38,8 @@ public class PwsPsalmFtsTable extends PwsTableHelper implements PwsTable {
             COLUMN_TRANSLATOR + ", " +
             COLUMN_COMPOSER + ", " +
             COLUMN_ANNOTATION + ", " +
-            COLUMN_TEXT + ", tokenize=icu ru_RU);";
+            COLUMN_TEXT + ", tokenize=" +
+            (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP ? TOKENIZER_API21 : TOKENIZER_API17) + ");";
     private static final String TABLE_DROP_SCRIPT = "drop table if exists " + TABLE_PSALMS_FTS;
 
     private static final String TABLE_FILL_VALUES_SCRIPT = "insert into " + TABLE_PSALMS_FTS +
