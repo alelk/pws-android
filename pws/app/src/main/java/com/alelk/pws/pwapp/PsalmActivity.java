@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -28,6 +29,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.alelk.pws.database.provider.PwsDataProvider;
 import com.alelk.pws.pwapp.adapter.PsalmTextFragmentStatePagerAdapter;
@@ -49,6 +51,7 @@ public class PsalmActivity extends AppCompatActivity implements PsalmTextFragmen
 
     public static final String KEY_PSALM_NUMBER_ID = "psalmNumberId";
     private static final int REQUEST_CODE_FULLSCREEN_ACTIVITY = 1;
+    private static final int ADD_TO_HISTORY_DELAY = 5000;
     private Long mPsalmNumberId = -1L;
     private ViewPager mPagerPsalmText;
     private PsalmHeaderFragment mPsalmHeaderFragment;
@@ -56,6 +59,15 @@ public class PsalmActivity extends AppCompatActivity implements PsalmTextFragmen
     private FloatingActionButton mFabFavorite;
     private ArrayList<Long> mBookPsalmNumberIds;
     private PsalmTextFragmentStatePagerAdapter mPsalmTextPagerAdapter;
+    private Handler mAddToHistoryHandler = new Handler();
+    private Runnable mAddToHistoryRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (mPsalmTextPagerAdapter == null || mPagerPsalmText == null) return;
+            final PsalmTextFragment fragment = (PsalmTextFragment) mPsalmTextPagerAdapter.getRegisteredFragments().get(mPagerPsalmText.getCurrentItem());
+            fragment.addPsalmToHistory();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,6 +146,8 @@ public class PsalmActivity extends AppCompatActivity implements PsalmTextFragmen
         collapsingToolbarLayout.setTitle("№ " + psalmHolder.getPsalmNumber());
         mPsalmHeaderFragment.updateUi(psalmHolder.getPsalmName(), psalmHolder.getBookName(), psalmHolder.getBibleRef());
         drawFavoriteFabIcon(psalmHolder.isFavoritePsalm());
+        mAddToHistoryHandler.removeCallbacks(mAddToHistoryRunnable);
+        mAddToHistoryHandler.postDelayed(mAddToHistoryRunnable, ADD_TO_HISTORY_DELAY);
     }
 
     @Override

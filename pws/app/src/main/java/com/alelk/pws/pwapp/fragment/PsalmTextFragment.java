@@ -1,5 +1,6 @@
 package com.alelk.pws.pwapp.fragment;
 
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -141,7 +142,6 @@ public class PsalmTextFragment extends Fragment {
         super.setMenuVisibility(menuVisible);
         if (menuVisible == true && callbacks != null) {
             callbacks.onUpdatePsalmInfo(mPsalmHolder);
-            addPsalmToHistory();
         }
     }
 
@@ -160,8 +160,10 @@ public class PsalmTextFragment extends Fragment {
 
     public void addPsalmToHistory() {
         final String METHOD_NAME = "addPsalmToHistory";
-        if (mPsalmNumberId < 0 || isAddedToHistory) return;
-        final Cursor cursor = getActivity().getContentResolver().query(PwsDataProvider.History.Last.CONTENT_URI, null, null, null, null);
+        if (mPsalmNumberId < 0 || isAddedToHistory || getActivity() == null) return;
+        final ContentResolver contentResolver = getActivity().getContentResolver();
+        if (contentResolver == null) return;
+        final Cursor cursor = contentResolver.query(PwsDataProvider.History.Last.CONTENT_URI, null, null, null, null);
         try {
             if (cursor != null && cursor.moveToFirst()) {
                 if (cursor.getLong(cursor.getColumnIndex(PwsDataProvider.History.Last.COLUMN_PSALMNUMBER_ID)) == mPsalmNumberId) {
