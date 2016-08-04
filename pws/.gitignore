@@ -4,5 +4,3 @@
 /.idea/libraries
 .DS_Store
 /build
-/app/hs_err_pid*.log
-/app/replay_pid*.log
