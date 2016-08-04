@@ -33,6 +33,7 @@ public class PsalmFullscreenActivity extends AppCompatActivity implements PsalmT
     private static final boolean AUTO_HIDE = true;
     private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
     private static final int UI_ANIMATION_DELAY = 300;
+    private static final int ADD_TO_HISTORY_DELAY = 5000;
     private final Handler mHideHandler = new Handler();
     private View mContentView;
     private final Runnable mHidePart2Runnable = new Runnable() {
@@ -63,6 +64,15 @@ public class PsalmFullscreenActivity extends AppCompatActivity implements PsalmT
         @Override
         public void run() {
             hide();
+        }
+    };
+    private Handler mAddToHistoryHandler = new Handler();
+    private Runnable mAddToHistoryRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (mFragmentStatePagerAdapter == null || mPagerPsalmText == null) return;
+            final PsalmTextFragment fragment = (PsalmTextFragment) mFragmentStatePagerAdapter.getRegisteredFragments().get(mPagerPsalmText.getCurrentItem());
+            fragment.addPsalmToHistory();
         }
     };
 
@@ -198,6 +208,8 @@ public class PsalmFullscreenActivity extends AppCompatActivity implements PsalmT
         Intent intent = new Intent();
         intent.putExtra(KEY_PSALM_NUMBER_ID, mPsalmNumberId);
         setResult(RESULT_OK, intent);
+        mAddToHistoryHandler.removeCallbacks(mAddToHistoryRunnable);
+        mAddToHistoryHandler.postDelayed(mAddToHistoryRunnable, ADD_TO_HISTORY_DELAY);
     }
 
     @Override
