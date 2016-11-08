@@ -11,6 +11,7 @@ import com.alelk.pws.database.R;
 
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 
 /**
@@ -100,7 +101,7 @@ public class PwsPsalmUtil {
     private static String getLocalizedString(Context context, Locale locale, int resource) {
         Resources baseRes = context.getResources();
         Configuration configuration = new Configuration(baseRes.getConfiguration());
-        configuration.locale = locale;
+        configuration.setLocale(locale);
         Resources localRes = new Resources(baseRes.getAssets(), baseRes.getDisplayMetrics(), configuration);
         return localRes.getString(resource);
     }
