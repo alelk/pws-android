@@ -94,19 +94,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
+        boolean result = false;
         switch (id) {
             case R.id.drawer_main_home:
             case R.id.drawer_main_history:
             case R.id.drawer_main_favorite:
                 mNavigationItemId = id;
                 displayFragment();
+                result = true;
                 break;
             case R.id.drawer_main_settings:
+                Intent intent = new Intent(this, MainSettingsActivity.class);
+                startActivity(intent);
+                result = true;
                 break;
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.layout_main_drawer);
         drawer.closeDrawer(GravityCompat.START);
-        return true;
+        return result;
     }
 
     private void displayFragment() {

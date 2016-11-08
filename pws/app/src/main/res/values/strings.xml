@@ -4,13 +4,13 @@
     <string name="open_drawer">Open driwer</string>
     <string name="close_drawer">Close driwer</string>
 
-    <string name="title_activity_psalm_fullscreen">PsalmFullscreenActivity</string>
+    <string name="title_activity_psalm_fullscreen">Psalm</string>
     <string name="title_activity_main_settings">Settings</string>
 
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->
-    <string name="pref_header_general">General</string>
+
 
     <string name="pref_title_social_recommendations">Enable social recommendations</string>
     <string name="pref_description_social_recommendations">Recommendations for people to contact
