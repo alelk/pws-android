@@ -18,6 +18,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.alelk.pws.database.helper.PwsDatabaseHelper;
+import com.alelk.pws.database.table.PwsBookStatisticTable;
 import com.alelk.pws.database.table.PwsFavoritesTable;
 import com.alelk.pws.database.table.PwsHistoryTable;
 import com.alelk.pws.database.table.PwsPsalmTable;
@@ -52,6 +53,9 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
         URI_MATCHER.addURI(AUTHORITY, PsalmNumbers.Psalm.PATH, PsalmNumbers.Psalm.URI_MATCH);
         URI_MATCHER.addURI(AUTHORITY, PsalmNumbers.Book.BookPsalmNumbers.PATH, PsalmNumbers.Book.BookPsalmNumbers.URI_MATCH);
         URI_MATCHER.addURI(AUTHORITY, PsalmNumbers.Book.BookPsalmNumbers.Info.PATH, PsalmNumbers.Book.BookPsalmNumbers.Info.URI_MATCH);
+        URI_MATCHER.addURI(AUTHORITY, BookStatistic.PATH, BookStatistic.URI_MATCH);
+        URI_MATCHER.addURI(AUTHORITY, BookStatistic.PATH_ID, BookStatistic.URI_MATCH_ID);
+        URI_MATCHER.addURI(AUTHORITY, BookStatistic.PATH_TEXT, BookStatistic.URI_MATCH_TEXT);
     }
 
     private SQLiteDatabase mDatabase;
@@ -139,6 +143,9 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
                 psalmNumberId = Long.parseLong(uri.getPathSegments().get(1));
                 mCursor = queryPsalmNumberBookPsalmNumberInfo(psalmNumberId, projection);
                 break;
+            case BookStatistic.URI_MATCH:
+                mCursor = queryBookStatistic(null, null, null, null);
+                break;
             default:
                 // todo: throw exception - incorrect uri
         }
@@ -214,7 +221,7 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         final String METHOD_NAME = "delete";
         Log.v(LOG_TAG, METHOD_NAME + ": uri='" + uri.toString() + "'");
-        mDatabase = mDatabaseHelper.getReadableDatabase();
+        mDatabase = mDatabaseHelper.getWritableDatabase();
         int n = 0;
         switch (URI_MATCHER.match(uri)) {
             case Favorites.URI_MATCH:
@@ -229,8 +236,18 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        return 0;
+        final String METHOD_NAME = "update";
+        Log.v(LOG_TAG, METHOD_NAME + ": uri='" + uri.toString() + "'");
+        mDatabase = mDatabaseHelper.getWritableDatabase();
+        int m = 0;
+        switch (URI_MATCHER.match(uri)) {
+            case BookStatistic.URI_MATCH_TEXT:
+                m = updateBookStatistic(values, uri.getLastPathSegment());
+                break;
+        }
+        return m;
     }
+
 
     private Cursor queryFavorites(@Nullable String[] projection,
                                   @Nullable String selection,
@@ -413,6 +430,20 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
         return cursor;
     }
 
+    private Cursor queryBookStatistic(@Nullable String[] projection,
+                                @Nullable String selection,
+                                @Nullable String[] selectionArgs,
+                                @Nullable String orderBy) {
+        if (projection == null) projection = BookStatistic.PROJECTION;
+        if (orderBy == null) orderBy = BookStatistic.SORT_ORDER;
+
+        Cursor cursor = mDatabase.query(BookStatistic.TABLES,
+                projection, selection, selectionArgs,
+                null, null,
+                orderBy, null);
+        return cursor;
+    }
+
     /*
     private Cursor queryPsalmNumberMorePreferred(long psalmId) {
         final String orderBy = "pn." + PwsPsalmNumbersTable.COLUMN_BOOKID;
@@ -466,5 +497,15 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
 
     private int deleteFavorites(String whereClause, String[] whereArgs) {
         return mDatabase.delete(TABLE_FAVORITES, whereClause, whereArgs);
+    }
+
+    private int updateBookStatistic(ContentValues values, String bookEdition){
+        final String rawSelection = SQLiteQueryBuilder.buildQueryString(false,
+                BookStatistic.RAW_TABLES,
+                BookStatistic.RAW_PROJECTION,
+                BookStatistic.getRawSelection(bookEdition), null, null, null, null);
+        return mDatabase.update(PwsBookStatisticTable.TABLE_BOOKSTATISTIC,
+                values, "_id=(" + rawSelection + ")",
+                null);
     }
 }

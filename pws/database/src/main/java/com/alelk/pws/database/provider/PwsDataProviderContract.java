@@ -17,7 +17,6 @@ import static android.app.SearchManager.SUGGEST_COLUMN_TEXT_2;
 import static android.app.SearchManager.SUGGEST_URI_PATH_QUERY;
 import static com.alelk.pws.database.table.PwsBookStatisticTable.TABLE_BOOKSTATISTIC;
 import static com.alelk.pws.database.table.PwsPsalmFtsTable.TABLE_PSALMS_FTS;
-import static com.alelk.pws.database.table.PwsPsalmFtsTable.populateTable;
 import static com.alelk.pws.database.table.PwsPsalmNumbersTable.TABLE_PSALMNUMBERS;
 import static com.alelk.pws.database.table.PwsPsalmTable.TABLE_PSALMS;
 import static com.alelk.pws.database.table.PwsFavoritesTable.TABLE_FAVORITES;
@@ -49,8 +48,8 @@ public interface PwsDataProviderContract {
         public static final String COLUMN_PSALMNUMBER = "psalm_number";
         public static final String COLUMN_PSALMLOCALE = "psalm_locale";
 
-        public static final String PATH = TABLE_PSALMS;
-        protected static final String PATH_ID = TABLE_PSALMS + "/#";
+        public static final String PATH = "psalms";
+        protected static final String PATH_ID = PATH + "/#";
         protected static final int URI_MATCH = 20;
         protected static final int URI_MATCH_ID = 21;
         public static final Uri CONTENT_URI = new Uri.Builder().scheme(SCHEME).authority(AUTHORITY).path(PATH).build();
@@ -59,7 +58,7 @@ public interface PwsDataProviderContract {
             public static final String COLUMN_ID = "_id";
             protected static final String COLUMN_PSALMID = Psalms.COLUMN_PSALMID;
             protected static final String COLUMN_PSALMNUMBER = Psalms.COLUMN_PSALMNUMBER;
-            public static final String COLUMN_BOOKSTATISTICPREFERENCE = BookStatistic.COLUMN_BOOKSTATISTICPREFERENCE;
+            public static final String COLUMN_BOOKSTATISTICPREFERENCE = BookStatistic.COLUMN_BOOKSTATISTIC_PREFERENCE;
 
             public static final String PATH = TABLE_PSALMS +  "/" + SUGGEST_URI_PATH_QUERY;
             protected static final String PATH_NUMBER = TABLE_PSALMS +  "/" + SUGGEST_URI_PATH_QUERY + "/#";
@@ -110,7 +109,7 @@ public interface PwsDataProviderContract {
             public static final String COLUMN_PSALMNUMBER = PwsDataProviderContract.PsalmNumbers.COLUMN_PSALMNUMBER;
             public static final String COLUMN_BOOKEDITION = Books.COLUMN_BOOKEDITION;
             public static final String COLUMN_BOOKDISPLAYNAME = Books.COLUMN_BOOKDISPLAYNAME;
-            public static final String COLUMN_BOOKSTATISTICPREFERENCE = BookStatistic.COLUMN_BOOKSTATISTICPREFERENCE;
+            public static final String COLUMN_BOOKSTATISTICPREFERENCE = BookStatistic.COLUMN_BOOKSTATISTIC_PREFERENCE;
             public static final String COLUMN_SNIPPET = "snippet";
             protected static final String COLUMN_MATCHINFO = "matchinfo";
 
@@ -173,12 +172,12 @@ public interface PwsDataProviderContract {
     }
 
     class PsalmNumbers {
-        public static final String PATH = TABLE_PSALMNUMBERS;
+        public static final String PATH = "psalmnumbers";
         public static final String COLUMN_PSALMNUMBER = "psalm_number";
         public static final String COLUMN_BOOKID = "book_id";
         public static final String COLUMN_PSALMNUMBER_ID = "psalmnumberid";
 
-        protected static final String PATH_ID = TABLE_PSALMNUMBERS + "/#";
+        protected static final String PATH_ID = PATH + "/#";
         protected static final int URI_MATCH = 30;
         protected static final int URI_MATCH_ID = 31;
         public static final Uri CONTENT_URI = new Uri.Builder().scheme(SCHEME).authority(AUTHORITY).path(PATH).build();
@@ -338,8 +337,8 @@ public interface PwsDataProviderContract {
         public static final String COLUMN_BOOKEDITION = Books.COLUMN_BOOKEDITION;
         public static final String COLUMN_BOOKDISPLAYNAME = Books.COLUMN_BOOKDISPLAYNAME;
 
-        public static final String PATH = TABLE_FAVORITES;
-        protected static final String PATH_ID = TABLE_FAVORITES + "/#";
+        public static final String PATH = "favorites";
+        protected static final String PATH_ID = PATH + "/#";
         protected static final int URI_MATCH = 40;
         protected static final int URI_MATCH_ID = 41;
         public static final Uri CONTENT_URI = new Uri.Builder().scheme(SCHEME).authority(AUTHORITY).path(PATH).build();
@@ -388,8 +387,8 @@ public interface PwsDataProviderContract {
         protected static final String COLUMN_HISTORYID = "history_id";
         public static final String COLUMN_HISTORYTIMESTAMP = "history_timestamp";
 
-        public static final String PATH = TABLE_HISTORY;
-        protected static final String PATH_ID = TABLE_HISTORY + "/#";
+        public static final String PATH = "history";
+        protected static final String PATH_ID = PATH + "/#";
         protected static final int URI_MATCH = 50;
         protected static final int URI_MATCH_ID = 51;
         public static final Uri CONTENT_URI = new Uri.Builder().scheme(SCHEME).authority(AUTHORITY).path(PATH).build();
@@ -438,7 +437,7 @@ public interface PwsDataProviderContract {
             public static final String COLUMN_HISTORYTIMESTAMP = History.COLUMN_HISTORYTIMESTAMP;
             public static final String COLUMN_HISTORYID = History.COLUMN_HISTORYID;
 
-            public static final String PATH = TABLE_HISTORY + "/last";
+            public static final String PATH = History.PATH + "/last";
             protected static final int URI_MATCH = 53;
             public static final Uri CONTENT_URI = new Uri.Builder().scheme(SCHEME).authority(AUTHORITY).path(PATH).build();
 
@@ -474,10 +473,48 @@ public interface PwsDataProviderContract {
     }
 
     class BookStatistic {
-        public static final String COLUMN_BOOKSTATISTICPREFERENCE = "bookstatistic" + PwsBookStatisticTable.COLUMN_USERPREFERENCE;
+        public static final String COLUMN_BOOKSTATISTIC_ID = "bookstatistic_id";
+        public static final String COLUMN_BOOKSTATISTIC_PREFERENCE = "bookstatistic_userpref";
+        public static final String COLUMN_BOOKSTATISTIC_READINGS = "bookstatistic_readings";
+        public static final String COLUMN_BOOKSTATISTIC_RAITING = "bookstatistic_raiting";
+        public static final String COLUMN_BOOKID = Books.COLUMN_BOOKID;
+        public static final String COLUMN_BOOKDISPLAYNAME = Books.COLUMN_BOOKDISPLAYNAME;
+        public static final String COLUMN_BOOKEDITION = Books.COLUMN_BOOKEDITION;
+        public static final String COLUMN_BOOKDISPLAYSHORTNAME = Books.COLUMN_BOOKDISPLAYSHORTNAME;
+        public static final String PATH = "bookstatistic";
+        protected static final String PATH_ID = PATH + "/#";
+        protected static final String PATH_TEXT = PATH + "/*";
+        protected static final int URI_MATCH = 60;
+        protected static final int URI_MATCH_ID = 61;
+        protected static final int URI_MATCH_TEXT = 62;
+        public static final Uri CONTENT_URI = new Uri.Builder().scheme(SCHEME).authority(AUTHORITY).path(PATH).build();
+        public static final Uri getBookStatisticBookEditionUri(String bookEdition) {
+            return CONTENT_URI.buildUpon().appendPath(bookEdition).build();
+        }
+        protected static final String TABLES = TABLE_BOOKS_JOIN_BOOKSTATISTIC;
+        protected static final String SORT_ORDER = COLUMN_BOOKSTATISTIC_PREFERENCE + " DESC";
+        protected static final String[] PROJECTION = {
+                "bs." + PwsBookStatisticTable.COLUMN_ID + " AS " + COLUMN_BOOKSTATISTIC_ID,
+                "bs." + PwsBookStatisticTable.COLUMN_USERPREFERENCE + " AS " + COLUMN_BOOKSTATISTIC_PREFERENCE,
+                "bs." + PwsBookStatisticTable.COLUMN_READINGS + " AS " + COLUMN_BOOKSTATISTIC_READINGS,
+                "bs." + PwsBookStatisticTable.COLUMN_RATING + " AS " + COLUMN_BOOKSTATISTIC_RAITING,
+                "b." + PwsBookTable.COLUMN_EDITION + " AS " + COLUMN_BOOKEDITION,
+                "b." + PwsBookTable.COLUMN_DISPLAYNAME + " AS " + COLUMN_BOOKDISPLAYNAME
+        };
+        public static final String SELECTION_PREFERRED_BOOKS_ONLY = COLUMN_BOOKSTATISTIC_PREFERENCE + " > 0";
 
-        public static final String SELECTION_PREFERRED_BOOKS_ONLY = COLUMN_BOOKSTATISTICPREFERENCE + " > 0";
+        protected static final String[] RAW_PROJECTION = {
+                "b." + PwsBookTable.COLUMN_ID
+        };
+        protected static final String RAW_TABLES = TABLE_BOOKS_JOIN_BOOKSTATISTIC;
+        protected static String getRawSelection(String bookEdition) {
+            return "b." + PwsBookTable.COLUMN_EDITION + " LIKE '" + bookEdition + "'";
+        }
     }
+
+    String TABLE_BOOKS_JOIN_BOOKSTATISTIC = TABLE_BOOKS + " as b " +
+            " INNER JOIN " + TABLE_BOOKSTATISTIC + " as bs " +
+            "ON bs." + PwsBookStatisticTable.COLUMN_BOOKID + "=b." + PwsBookTable.COLUMN_ID;
 
     String TABLE_PSALMS_JOIN_PSALMNUMBERS_JOIN_BOOKS =
             TABLE_PSALMS + " AS p " +
