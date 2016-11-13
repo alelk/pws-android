@@ -35,7 +35,7 @@ public class PsalmTextFragmentStatePagerAdapter extends FragmentStatePagerAdapte
 
     @Override
     public int getCount() {
-        return mPsalmNumberIdList.size();
+        return mPsalmNumberIdList != null ? mPsalmNumberIdList.size() : 0;
     }
 
     @Override

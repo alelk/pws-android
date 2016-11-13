@@ -115,8 +115,11 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
                 break;
             case Psalms.Suggestions.URI_MATCH_NAME:
                 mLimit = uri.getQueryParameter(SUGGEST_PARAMETER_LIMIT);
-                String searchText = uri.getLastPathSegment().trim() + '*';
-                mCursor = querySuggestionsPsalmName(searchText, mLimit);
+                //String searchText = uri.getLastPathSegment().trim() + '*';
+                String searchText = uri.getLastPathSegment();
+                // TODO: 13.11.2016 refactor these statements
+                // mCursor = querySuggestionsPsalmName(searchText, mLimit);
+                mCursor = querySuggestionsPsalmNameApi16(searchText, mLimit);
                 break;
             case Psalms.Search.URI_MATCH:
                 if (selectionArgs == null || selectionArgs.length < 1) {
@@ -309,6 +312,30 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
                         BookStatistic.SELECTION_PREFERRED_BOOKS_ONLY, null, null, null,
                 Psalms.Suggestions.SGNUM_SORT_ORDER,
                 limit);
+        return cursor;
+    }
+
+    private Cursor querySuggestionsPsalmNameApi16(@Nullable String searchName, @Nullable String limit) {
+        return querySuggestionsPsalmNameApi16(searchName, limit, false);
+    }
+
+    private Cursor querySuggestionsPsalmNameApi16(@Nullable String searchName, @Nullable String limit, boolean more) {
+        final String METHOD_NAME = "querySuggestionsPsalmNameApi16";
+        if(TextUtils.isEmpty(limit)) limit = Psalms.Suggestions.Api16.LIMIT;
+        mSelection = more ? Psalms.Suggestions.Api16.getSgNameSelectionMore(searchName):
+                Psalms.Suggestions.Api16.getSgNameSelection(searchName);
+
+        Cursor cursor = mDatabase.query(Psalms.Suggestions.Api16.TABLES,
+                Psalms.Suggestions.Api16.SGNAME_PROJECTION,
+                mSelection,
+                null, null, null,
+                Psalms.Suggestions.Api16.SGNAME_SORT_ORDER,
+                limit);
+        Log.v(LOG_TAG, METHOD_NAME + ": selection={" + mSelection + "} more=" + more +
+                " results:" + (cursor == null? 0 : cursor.getCount()));
+        if (!more && (cursor == null || cursor.getCount() < 2)) {
+            cursor = querySuggestionsPsalmNameApi16(searchName, limit, true);
+        }
         return cursor;
     }
 

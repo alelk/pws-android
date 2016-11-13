@@ -3,6 +3,7 @@ package com.alelk.pws.database.util;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -62,6 +63,7 @@ public class PwsPsalmUtil {
         return html;
     }
 
+    @Nullable
     public static String buildPsalmInfoHtml(@NonNull Context context,
                                             @NonNull Locale locale,
                                             @Nullable String psalmAuthor,
@@ -78,30 +80,39 @@ public class PwsPsalmUtil {
         return TextUtils.join("<br>", psalmInfo);
     }
 
-    public static String getLocalizedAuthorLabel(Context context, Locale locale) {
+    @NonNull
+    private static String getLocalizedAuthorLabel(Context context, Locale locale) {
         return getLocalizedString(context, locale, R.string.lbl_author);
     }
 
-    public static String getLocalizedTranslatorLabel(Context context, Locale locale) {
+    private static String getLocalizedTranslatorLabel(Context context, Locale locale) {
         return getLocalizedString(context, locale, R.string.lbl_translator);
     }
 
-    public static String getLocalizedMusicLabel(Context context, Locale locale) {
+    @NonNull
+    private static String getLocalizedMusicLabel(Context context, Locale locale) {
         return getLocalizedString(context, locale, R.string.lbl_music);
     }
 
-    public static String getLocalizedChorusLabel(Context context, Locale locale) {
+    @NonNull
+    private static String getLocalizedChorusLabel(Context context, Locale locale) {
         return getLocalizedString(context, locale, R.string.lbl_chorus);
     }
 
-    public static String getLocalizedVerseLabel(Context context, Locale locale) {
+    @NonNull
+    private static String getLocalizedVerseLabel(Context context, Locale locale) {
         return getLocalizedString(context, locale, R.string.lbl_verse);
     }
 
+    @NonNull
     private static String getLocalizedString(Context context, Locale locale, int resource) {
         Resources baseRes = context.getResources();
         Configuration configuration = new Configuration(baseRes.getConfiguration());
-        configuration.setLocale(locale);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            configuration.setLocale(locale);
+        } else {
+            configuration.locale = locale;
+        }
         Resources localRes = new Resources(baseRes.getAssets(), baseRes.getDisplayMetrics(), configuration);
         return localRes.getString(resource);
     }

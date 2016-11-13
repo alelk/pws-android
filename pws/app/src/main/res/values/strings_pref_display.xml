@@ -16,7 +16,7 @@
     <string name="pref_donate_summary">If you want to donate us, you can do it using the following methods:</string>
     <!-- Yandex Money -->
     <string name="pref_donate_yandexmoney_title">Yandex Money</string>
-    <string name="pref_donate_yandexmoney_wallet_number_title">410013077413462</string>
+    <string name="pref_donate_yandexmoney_wallet_number_title" translatable="false">410013077413462</string>
     <string name="pref_donate_yandexmoney_wallet_number_summary">is our Yandex Money wallet number.</string>
     <string name="pref_donate_yandexmoney_wallet_number_link" translatable="false">http://money.yandex.ru/to/410013077413462</string>
     <string name="pref_donate_yandexmoney_web_form_title">Open web form</string>
@@ -25,7 +25,7 @@
     <!-- PayPal -->
     <string name="pref_donate_paypal_title">PayPal</string>
     <string name="pref_donate_paypal_web_form_title">Open web form</string>
-    <string name="pref_donate_paypal_web_form_summary"></string>
+    <string name="pref_donate_paypal_web_form_summary" />
     <string name="pref_donate_paypal_web_form_link" translatable="false">http://www.paypal.me/alelk</string>
 
     <!-- About screen -->
@@ -40,10 +40,10 @@
     <string name="pref_about_developer_alex_link">http://sites.google.com/site/elckinne/</string>
     <string name="pref_about_developer_vera_title">Vera Elkina</string>
     <string name="pref_about_developer_vera_summary">Song lyrics editor</string>
-    <string name="pref_about_developer_vera_intent_data">"mailto:alelkdev@gmail.com?subject=PWSongs"</string>
+    <string name="pref_about_developer_vera_intent_data" formatted="false">"mailto:alelkdev@gmail.com?subject=PW%20Songs%20-%20Suggest%20content%20edit"</string>
     <!-- Contact us -->
     <string name="pref_about_contact_title">Contact us</string>
     <string name="pref_about_contact_email_title">E-mail</string>
     <string name="pref_about_contact_email_summary">@string/email</string>
-    <string name="pref_about_contact_email_intent_data">"mailto:alelkdev@gmail.com?subject=PWSongs"</string>
+    <string name="pref_about_contact_email_intent_data" formatted="false">"mailto:alelkdev@gmail.com?subject=PW%20Songs%20-%20Support"</string>
 </resources>

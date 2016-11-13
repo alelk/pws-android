@@ -4,44 +4,28 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.text.InputType;
-import android.text.TextUtils;
-import android.util.Log;
-import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.alelk.pws.database.provider.PwsDataProvider;
 import com.alelk.pws.pwapp.adapter.PsalmTextFragmentStatePagerAdapter;
 import com.alelk.pws.pwapp.dialog.SearchPsalmNumberDialogFragment;
 import com.alelk.pws.pwapp.fragment.PsalmHeaderFragment;
 import com.alelk.pws.pwapp.fragment.PsalmTextFragment;
-import com.alelk.pws.pwapp.fragment.SearchResultsFragment;
 import com.alelk.pws.pwapp.holder.PsalmHolder;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 
 /**
  * Created by Alex Elkin on 25.03.2016.
@@ -197,9 +181,9 @@ public class PsalmActivity extends AppCompatActivity implements PsalmTextFragmen
 
     private void drawFavoriteFabIcon(boolean isFavoritePsalm) {
         if (isFavoritePsalm) {
-            mFabFavorite.setImageResource(R.drawable.ic_favorite);
+            mFabFavorite.setImageResource(R.drawable.ic_favorite_white);
         } else {
-            mFabFavorite.setImageResource(R.drawable.ic_favorite_border);
+            mFabFavorite.setImageResource(R.drawable.ic_favorite_border_white);
         }
     }
 }

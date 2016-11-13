@@ -100,6 +100,27 @@ public interface PwsDataProviderContract {
             protected static String getSgNumberSelection(String psalmNumber) {
                 return COLUMN_PSALMNUMBER + "=" + psalmNumber;
             }
+            protected static class Api16 {
+                // TODO: 13.11.2016 refactor this code block
+                protected static final String TABLES = TABLE_PSALMS_JOIN_PSALMNUMBERS_JOIN_BOOKS_JOIN_BOOKSTATISTIC;
+                protected static final String[] SGNAME_PROJECTION = {
+                        "p." + PwsPsalmTable.COLUMN_NAME + " AS " + SUGGEST_COLUMN_TEXT_1,
+                        "pn._id AS " + SUGGEST_COLUMN_INTENT_DATA_ID,
+                        "pn._id AS _id"
+                };
+                protected static final String SGNAME_SORT_ORDER = "bs." + PwsBookStatisticTable.COLUMN_USERPREFERENCE + " DESC";
+                protected static final String LIMIT = "30";
+                protected static String getSgNameSelection(String searchName) {
+                    return  "p." + PwsPsalmTable.COLUMN_NAME + " LIKE '" +
+                            searchName.trim().replaceAll("\\s+", "%") + "%' and "
+                            + "bs." + PwsBookStatisticTable.COLUMN_USERPREFERENCE + ">0";
+                }
+                protected static String getSgNameSelectionMore(String searchName) {
+                    return "p." + PwsPsalmTable.COLUMN_NAME + " LIKE '% " +
+                            searchName.trim().replaceAll("\\s+", "%") + "%' and "
+                            + "bs." + PwsBookStatisticTable.COLUMN_USERPREFERENCE + ">0";
+                }
+            }
         }
         public static class Search {
             public static final String COLUMN_ID = "_id";

@@ -28,7 +28,6 @@ public class PwsPsalmFtsTable extends PwsTableHelper implements PwsTable {
     public static final String TRIGGER_AFTER_INSERT = TABLE_PSALMS_FTS + "_ai";
 
     private static final String TOKENIZER_API21 = "icu ru_RU";
-    private static final String TOKENIZER_API17 = "porter";
 
     private static final String TABLE_CREATE_SCRIPT = "create virtual table " + TABLE_PSALMS_FTS +
             " using fts4 " +
@@ -38,8 +37,8 @@ public class PwsPsalmFtsTable extends PwsTableHelper implements PwsTable {
             COLUMN_TRANSLATOR + ", " +
             COLUMN_COMPOSER + ", " +
             COLUMN_ANNOTATION + ", " +
-            COLUMN_TEXT + ", tokenize=" +
-            (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP ? TOKENIZER_API21 : TOKENIZER_API17) + ");";
+            COLUMN_TEXT +
+            (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? ", tokenize=" + TOKENIZER_API21 : "") + ");";
     private static final String TABLE_DROP_SCRIPT = "drop table if exists " + TABLE_PSALMS_FTS;
 
     private static final String TABLE_FILL_VALUES_SCRIPT = "insert into " + TABLE_PSALMS_FTS +
