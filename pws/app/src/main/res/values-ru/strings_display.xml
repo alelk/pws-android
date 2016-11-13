@@ -16,7 +16,24 @@
 
     <!-- Search activity display strings. -->
     <string name="title_activity_search">Поиск</string>
-    <string name="lbl_search_widget">Поиск...</string>
-    <string name="hint_enter_text">Введите любой текст для поиска песни...</string>
-    <string name="hint_enter_psalm_number">Введите номер песни...</string>
+    <string name="lbl_search_widget">Поиск&#8230;</string>
+    <string name="hint_enter_text">Введите любой текст для поиска песни&#8230;</string>
+    <string name="hint_enter_psalm_number">Введите номер песни&#8230;</string>
+
+    <!-- Psalm activity display strings. -->
+    <string name="lbl_chorus">Припев</string>
+    <string name="lbl_author">Слова</string>
+    <string name="lbl_translator">Перевод</string>
+    <string name="lbl_music">Музыка</string>
+    <string name="lbl_search_psalm">Найти</string>
+    <string name="lbl_jump_to_number">Перейти на номер</string>
+
+    <!-- Psalm fullscreen activity display strings. -->
+    <string name="lbl_add_to_favorites">Добавить в избранное</string>
+    <string name="lbl_remove_from_favorites">Удалить из избранного</string>
+
+    <!-- Search psalm number dialog display strings. -->
+    <string name="lbl_ok">OK</string>
+    <string name="lbl_cancel">Отмена</string>
+    <string name="msg_no_psalm_number_found">Номер не найден</string>
 </resources>

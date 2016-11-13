@@ -130,7 +130,6 @@ public class PsalmFullscreenActivity extends AppCompatActivity implements PsalmT
                 final String[] psalmNumberIdsList = cursor.getString(
                         cursor.getColumnIndex(PwsDataProvider.PsalmNumbers.Book.BookPsalmNumbers.Info.COLUMN_PSALMNUMBERID_LIST))
                         .split(",");
-                Log.w("ids", TextUtils.join(",", psalmNumberIdsList));
                 mBookPsalmNumberIds = new ArrayList<>(psalmNumberIdsList.length);
                 for (String id : psalmNumberIdsList) {
                     try {
