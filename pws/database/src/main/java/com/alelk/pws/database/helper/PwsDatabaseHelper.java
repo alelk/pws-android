@@ -1,15 +1,19 @@
 package com.alelk.pws.database.helper;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.res.AssetManager;
-import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
+import com.alelk.pws.database.R;
 import com.alelk.pws.database.table.PwsPsalmFtsTable;
+
+import android.database.sqlite.SQLiteDatabase;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -24,24 +28,35 @@ import java.io.OutputStream;
 public class PwsDatabaseHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "pws.0.9.1.db";
+    public static final int DB_INIT_NOTIFICATION_ID = 1331;
 
     private static final String LOG_TAG = PwsDatabaseHelper.class.getSimpleName();
     private static final String DB_FOLDER = "/data/data/com.alelk.pws.pwapp/databases/";
     private static final String DB_PATH = DB_FOLDER + DATABASE_NAME;
-    private static final String ASSETS_DB_FOLDER = "db/";
+    private static final String ASSETS_DB_FOLDER = "db";
 
-    private Context mContext;
+    private final Context mContext;
+    private NotificationCompat.Builder mNotificationBuilder;
+    private NotificationManager mNotificationManager;
 
     public PwsDatabaseHelper(@NonNull Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        mContext = context.getApplicationContext();
-        try {
-            if (!isDatabaseExists()) {
+        mContext = context;
+        if (!isDatabaseExists()) {
+            try {
+                mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+                mNotificationBuilder = new NotificationCompat.Builder(mContext);
+                mNotificationBuilder.setContentTitle(mContext.getString(R.string.txt_title_database_init))
+                        .setSmallIcon(R.drawable.ic_data_usage_black)
+                        .setTicker(mContext.getString(R.string.txt_title_database_init));
                 copyDatabase();
                 setUpPsalmFts();
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "constructor" + ": Error copying database file: " + e.getLocalizedMessage());
+            } finally {
+                if (mNotificationManager != null)
+                    mNotificationManager.cancel(DB_INIT_NOTIFICATION_ID);
             }
-        } catch (IOException ex) {
-            Log.e(LOG_TAG, "" + ": Error copying asset database files: " + ex.getLocalizedMessage());
         }
     }
 
@@ -78,15 +93,21 @@ public class PwsDatabaseHelper extends SQLiteOpenHelper {
                     Log.e(LOG_TAG, METHOD_NAME + ": Could not create directory: " + DB_FOLDER);
                 }
             }
+            String[] fileList = am.list(ASSETS_DB_FOLDER);
+            if (fileList == null || fileList.length == 0) {
+                Log.e(LOG_TAG, METHOD_NAME + ": No database files found in asset directory " + ASSETS_DB_FOLDER);
+                return;
+            }
             outputStream = new FileOutputStream(DB_PATH);
-            for (int i = 1; i < 20; i++) {
+            for (int i = 1; i <= fileList.length; i++) {
+                publishProgress(R.string.txt_copy_files, fileList.length, i);
                 try {
-                    inputStream = am.open(ASSETS_DB_FOLDER + DATABASE_NAME + "." + i);
+                    inputStream = am.open(ASSETS_DB_FOLDER + "/" + DATABASE_NAME + "." + i);
                     int count;
                     while ((count = inputStream.read(buffer)) != -1) {
                         outputStream.write(buffer, 0, count);
                     }
-                    Log.i(LOG_TAG, METHOD_NAME + ": Copying success: File " + ASSETS_DB_FOLDER + DATABASE_NAME + "." + i);
+                    Log.i(LOG_TAG, METHOD_NAME + ": Copying success: File " + ASSETS_DB_FOLDER + "/" + DATABASE_NAME + "." + i);
                 } catch (FileNotFoundException ex) {
                     if (i == 1) {
                         Log.w(LOG_TAG, METHOD_NAME + ": Could not open asset database file: " + ex.getLocalizedMessage());
@@ -133,9 +154,24 @@ public class PwsDatabaseHelper extends SQLiteOpenHelper {
         PwsPsalmFtsTable.dropAllTriggers(db);
         PwsPsalmFtsTable.dropTable(db);
         PwsPsalmFtsTable.createTable(db);
-        PwsPsalmFtsTable.populateTable(db);
+        PwsPsalmFtsTable.populateTable(db, new PwsPsalmFtsTable.UpdateProgressListener() {
+            @Override
+            public void onUpdateProgress(int max, int current) {
+                publishProgress(R.string.txt_fts_setup, max, current);
+            }
+        });
         PwsPsalmFtsTable.setUpAllTriggers(db);
         Log.i(LOG_TAG, METHOD_NAME + ": The PWS Psalm FTS table has been created and populated. All needed triggers are setting up.");
         db.close();
+    }
+
+    private void publishProgress(int resourceId, int max, int current) {
+        if (mNotificationBuilder == null || mNotificationManager == null) {
+            Log.w(LOG_TAG, "publishProgress: cannot show notification");
+            return;
+        }
+        mNotificationBuilder.setContentText(String.format(mContext.getString(resourceId), current, max));
+        mNotificationBuilder.setProgress(max, current, false);
+        mNotificationManager.notify(DB_INIT_NOTIFICATION_ID, mNotificationBuilder.build());
     }
 }

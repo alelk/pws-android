@@ -12,10 +12,12 @@ import android.support.v4.content.Loader;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Layout;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.alelk.pws.database.provider.PwsDataProvider;
 import com.alelk.pws.pwapp.PsalmActivity;
@@ -33,6 +35,7 @@ public class SearchResultsFragment extends Fragment implements LoaderManager.Loa
     private String mQuery;
     private RecyclerView mRecyclerView;
     private SearchRecyclerViewAdapter mSearchResultsAdapter;
+    private View mLayoutSearchProgress;
 
     public static SearchResultsFragment newInstance(String query) {
         final Bundle args = new Bundle();
@@ -55,6 +58,7 @@ public class SearchResultsFragment extends Fragment implements LoaderManager.Loa
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.fragment_search_results, null);
         mRecyclerView = (RecyclerView) v.findViewById(R.id.rv_search_results);
+        mLayoutSearchProgress = v.findViewById(R.id.layout_search_progress);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         mRecyclerView.setLayoutManager(layoutManager);
         mSearchResultsAdapter = new SearchRecyclerViewAdapter(new SearchRecyclerViewAdapter.OnItemClickListener() {
@@ -67,6 +71,7 @@ public class SearchResultsFragment extends Fragment implements LoaderManager.Loa
         });
         mRecyclerView.setAdapter(mSearchResultsAdapter);
 
+        mLayoutSearchProgress.setVisibility(View.VISIBLE);
         getLoaderManager().initLoader(PWS_SEARCH_RESULTS_LOADER, null, this);
 
         return v;
@@ -91,6 +96,8 @@ public class SearchResultsFragment extends Fragment implements LoaderManager.Loa
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mSearchResultsAdapter.swapCursor(data);
+        mLayoutSearchProgress.setVisibility(View.GONE);
+        mRecyclerView.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -101,5 +108,9 @@ public class SearchResultsFragment extends Fragment implements LoaderManager.Loa
     public void updateQuery(String query) {
         mQuery = query;
         getLoaderManager().restartLoader(PWS_SEARCH_RESULTS_LOADER, null, this);
+        if (mLayoutSearchProgress != null)
+            mLayoutSearchProgress.setVisibility(View.VISIBLE);
+        if (mRecyclerView != null)
+            mRecyclerView.setVisibility(View.INVISIBLE);
     }
 }

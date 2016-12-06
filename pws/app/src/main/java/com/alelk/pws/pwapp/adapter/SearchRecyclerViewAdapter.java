@@ -1,9 +1,11 @@
 package com.alelk.pws.pwapp.adapter;
 
 import android.database.Cursor;
+import android.os.Build;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -82,7 +84,14 @@ public class SearchRecyclerViewAdapter extends RecyclerView.Adapter<SearchRecycl
             psalmNumber.setText(cursor.getString(cursor.getColumnIndex(COLUMN_PSALMNUMBER)));
             psalmName.setText(cursor.getString(cursor.getColumnIndex(COLUMN_PSALMNAME)));
             bookDisplayName.setText(cursor.getString(cursor.getColumnIndex(COLUMN_BOOKDISPLAYNAME)));
-            text.setText(Html.fromHtml(cursor.getString(cursor.getColumnIndex(COLUMN_SNIPPET))));
+            final String snippet = cursor.getString(cursor.getColumnIndex(COLUMN_SNIPPET));
+            if (snippet != null) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    text.setText(Html.fromHtml(snippet, Html.FROM_HTML_MODE_LEGACY));
+                } else {
+                    text.setText(Html.fromHtml(snippet));
+                }
+            }
             psalmNumberId = cursor.getLong(cursor.getColumnIndex(COLUMN_PSALMNUMBER_ID));
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

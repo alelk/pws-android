@@ -1,9 +1,12 @@
 package com.alelk.pws.database.table;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
+import android.util.Log;
 
 import static com.alelk.pws.database.table.PwsPsalmTable.COLUMN_TEXT;
 import static com.alelk.pws.database.table.PwsPsalmTable.COLUMN_NAME;
@@ -21,13 +24,20 @@ import static com.alelk.pws.database.table.PwsPsalmTable.COLUMN_ID;
  */
 public class PwsPsalmFtsTable extends PwsTableHelper implements PwsTable {
 
+    public interface UpdateProgressListener {
+        void onUpdateProgress(int max, int current);
+    }
+
+    private static final String LOG_TAG = PwsPsalmFtsTable.class.getSimpleName();
     public static final String TABLE_PSALMS_FTS = "psalms_fts";
-    public static final String TRIGGER_BEFORE_UPDATE = TABLE_PSALMS_FTS + "_bu";
-    public static final String TRIGGER_BEFORE_DELETE = TABLE_PSALMS_FTS + "_bd";
-    public static final String TRIGGER_AFTER_UPDATE = TABLE_PSALMS_FTS + "_au";
-    public static final String TRIGGER_AFTER_INSERT = TABLE_PSALMS_FTS + "_ai";
+    private static final String TRIGGER_BEFORE_UPDATE = TABLE_PSALMS_FTS + "_bu";
+    private static final String TRIGGER_BEFORE_DELETE = TABLE_PSALMS_FTS + "_bd";
+    private static final String TRIGGER_AFTER_UPDATE = TABLE_PSALMS_FTS + "_au";
+    private static final String TRIGGER_AFTER_INSERT = TABLE_PSALMS_FTS + "_ai";
 
     private static final String TOKENIZER_API21 = "icu ru_RU";
+
+    private static final boolean IS_API_21 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
 
     private static final String TABLE_CREATE_SCRIPT = "create virtual table " + TABLE_PSALMS_FTS +
             " using fts4 " +
@@ -38,7 +48,7 @@ public class PwsPsalmFtsTable extends PwsTableHelper implements PwsTable {
             COLUMN_COMPOSER + ", " +
             COLUMN_ANNOTATION + ", " +
             COLUMN_TEXT +
-            (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? ", tokenize=" + TOKENIZER_API21 : "") + ");";
+            (IS_API_21 ? ", tokenize=" + TOKENIZER_API21 : "") + ");";
     private static final String TABLE_DROP_SCRIPT = "drop table if exists " + TABLE_PSALMS_FTS;
 
     private static final String TABLE_FILL_VALUES_SCRIPT = "insert into " + TABLE_PSALMS_FTS +
@@ -58,6 +68,16 @@ public class PwsPsalmFtsTable extends PwsTableHelper implements PwsTable {
             COLUMN_ANNOTATION + ", " +
             COLUMN_TEXT +
             " from " + TABLE_PSALMS + ";";
+
+    private static final String[] TABLE_PSALMS_PROJECTION = {
+            COLUMN_ID,
+            COLUMN_NAME,
+            COLUMN_AUTHOR,
+            COLUMN_TRANSLATOR,
+            COLUMN_COMPOSER,
+            COLUMN_ANNOTATION,
+            COLUMN_TEXT
+    };
 
     private static final String TRIGGER_BU_SCRIPT = "create trigger " + TRIGGER_BEFORE_UPDATE +
             " before update on " + TABLE_PSALMS +
@@ -110,8 +130,58 @@ public class PwsPsalmFtsTable extends PwsTableHelper implements PwsTable {
         db.execSQL(TABLE_CREATE_SCRIPT);
     }
 
-    public static void populateTable(@NonNull SQLiteDatabase db) {
-        db.execSQL(TABLE_FILL_VALUES_SCRIPT);
+    public static void populateTable(@NonNull SQLiteDatabase db, UpdateProgressListener progressListener) {
+        final String METHOD_NAME = "populateTable";
+        if (IS_API_21) {
+            db.execSQL(TABLE_FILL_VALUES_SCRIPT);
+            return;
+        }
+        Cursor cursor = db.query(TABLE_PSALMS, new String[]{"max(" + COLUMN_ID + ") as maxid"}, null, null, null, null, null);
+        if (cursor == null || !cursor.moveToFirst()) {
+            Log.w(LOG_TAG, METHOD_NAME + ": looks like no rows in '" + TABLE_PSALMS + "' table. Could not populate '" + TABLE_PSALMS_FTS + "' table");
+            return;
+        }
+        long maxId = cursor.getLong(cursor.getColumnIndex("maxid"));
+        for (long id = 0; id < maxId; id += 100) {
+            progressListener.onUpdateProgress((int) maxId, (int) id);
+            Log.v(LOG_TAG, METHOD_NAME + ": Insert to " + TABLE_PSALMS_FTS + " table rows with id between " + id + " and " + (id + 100) + " from " + TABLE_PSALMS + " table.");
+            cursor = query(db, id, id + 99);
+            if (cursor == null || !cursor.moveToFirst()) {
+                Log.w(LOG_TAG, METHOD_NAME + ": unsuccessful attempt to query data from '" + TABLE_PSALMS + "' table with id between " + id + " and " + (id + 100) + ". No results.");
+                continue;
+            }
+            do {
+                db.insert(TABLE_PSALMS_FTS, null, fromPsalmsTableCursor(cursor));
+            } while (cursor.moveToNext());
+        }
+    }
+
+    private static Cursor query(@NonNull SQLiteDatabase db, long fromId, long toId) {
+        return db.query(TABLE_PSALMS, TABLE_PSALMS_PROJECTION, "_id >= " + fromId + " and _id <= " + toId, null, null, null, null);
+    }
+
+    private static ContentValues fromPsalmsTableCursor(Cursor cursor) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("docid", cursor.getLong(cursor.getColumnIndex(COLUMN_ID)));
+        contentValues.put(COLUMN_NAME, cursor.getString(cursor.getColumnIndex(COLUMN_NAME)).toLowerCase());
+        final String translator = cursor.getString(cursor.getColumnIndex(COLUMN_TRANSLATOR));
+        if (!TextUtils.isEmpty(translator)) {
+            contentValues.put(COLUMN_TRANSLATOR, translator.toLowerCase());
+        }
+        final String composer = cursor.getString(cursor.getColumnIndex(COLUMN_COMPOSER));
+        if (!TextUtils.isEmpty(composer)) {
+            contentValues.put(COLUMN_COMPOSER, composer.toLowerCase());
+        }
+        final String author = cursor.getString(cursor.getColumnIndex(COLUMN_AUTHOR));
+        if (!TextUtils.isEmpty(author)) {
+            contentValues.put(COLUMN_AUTHOR, author.toLowerCase());
+        }
+        final String annotation = cursor.getString(cursor.getColumnIndex(COLUMN_ANNOTATION));
+        if (!TextUtils.isEmpty(annotation)) {
+            contentValues.put(COLUMN_AUTHOR, annotation.toLowerCase());
+        }
+        contentValues.put(COLUMN_TEXT, cursor.getString(cursor.getColumnIndex(COLUMN_TEXT)).toLowerCase());
+        return contentValues;
     }
 
     public static void dropTable(@NonNull SQLiteDatabase db) {
@@ -133,57 +203,54 @@ public class PwsPsalmFtsTable extends PwsTableHelper implements PwsTable {
     }
 
     public static boolean isAllTriggersExists(@NonNull SQLiteDatabase db) {
-        if (isAiTriggerExists(db) && isAuTriggerExists(db) && isBuTriggerExists(db) && isBdTriggerExists(db)) {
-            return true;
-        }
-        return false;
+        return isAiTriggerExists(db) && isAuTriggerExists(db) && isBuTriggerExists(db) && isBdTriggerExists(db);
     }
 
-    public static void setBeforeUpdateTrigger(@NonNull SQLiteDatabase db) {
+    private static void setBeforeUpdateTrigger(@NonNull SQLiteDatabase db) {
         db.execSQL(TRIGGER_BU_SCRIPT);
     }
 
-    public static void setBeforeDeleteTrigger(@NonNull SQLiteDatabase db) {
+    private static void setBeforeDeleteTrigger(@NonNull SQLiteDatabase db) {
         db.execSQL(TRIGGER_BD_SCRIPT);
     }
 
-    public static void setAfterUpdateTrigger(@NonNull SQLiteDatabase db) {
+    private static void setAfterUpdateTrigger(@NonNull SQLiteDatabase db) {
         db.execSQL(TRIGGER_AU_SCRIPT);
     }
 
-    public static void setAfterInsertTrigger(@NonNull SQLiteDatabase db) {
+    private static void setAfterInsertTrigger(@NonNull SQLiteDatabase db) {
         db.execSQL(TRIGGER_AI_SCRIPT);
     }
 
-    public static void dropBeforeUpdateTrigger(@NonNull SQLiteDatabase db) {
+    private static void dropBeforeUpdateTrigger(@NonNull SQLiteDatabase db) {
         db.execSQL(TRIGGER_BU_DROP_SCRIPT);
     }
 
-    public static void dropBeforeDeleteTrigger(@NonNull SQLiteDatabase db) {
+    private static void dropBeforeDeleteTrigger(@NonNull SQLiteDatabase db) {
         db.execSQL(TRIGGER_BD_DROP_SCRIPT);
     }
 
-    public static void dropAfterUpdateTrigger(@NonNull SQLiteDatabase db) {
+    private static void dropAfterUpdateTrigger(@NonNull SQLiteDatabase db) {
         db.execSQL(TRIGGER_AU_DROP_SCRIPT);
     }
 
-    public static void dropAfterInsertTrigger(@NonNull SQLiteDatabase db) {
+    private static void dropAfterInsertTrigger(@NonNull SQLiteDatabase db) {
         db.execSQL(TRIGGER_AI_DROP_SCRIPT);
     }
 
-    public static boolean isBuTriggerExists(@NonNull SQLiteDatabase db) {
+    private static boolean isBuTriggerExists(@NonNull SQLiteDatabase db) {
         return isTriggerExists(db, TRIGGER_BEFORE_UPDATE);
     }
 
-    public static boolean isBdTriggerExists(@NonNull SQLiteDatabase db) {
+    private static boolean isBdTriggerExists(@NonNull SQLiteDatabase db) {
         return isTriggerExists(db, TRIGGER_BEFORE_DELETE);
     }
 
-    public static boolean isAuTriggerExists(@NonNull SQLiteDatabase db) {
+    private static boolean isAuTriggerExists(@NonNull SQLiteDatabase db) {
         return isTriggerExists(db, TRIGGER_AFTER_UPDATE);
     }
 
-    public static boolean isAiTriggerExists(@NonNull SQLiteDatabase db) {
+    private static boolean isAiTriggerExists(@NonNull SQLiteDatabase db) {
         return isTriggerExists(db, TRIGGER_AFTER_INSERT);
     }
 

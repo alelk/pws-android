@@ -13,6 +13,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.os.Build;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
@@ -36,6 +37,7 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
 
     private static final UriMatcher URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
     static {
+        //System.loadLibrary("sqlite");
         URI_MATCHER.addURI(AUTHORITY, Psalms.PATH, Psalms.URI_MATCH);
         URI_MATCHER.addURI(AUTHORITY, Psalms.PATH_ID, Psalms.URI_MATCH_ID);
         URI_MATCHER.addURI(AUTHORITY, Psalms.PsalmNumbers.PATH, Psalms.PsalmNumbers.URI_MATCH);
@@ -119,7 +121,9 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
                 String searchText = uri.getLastPathSegment();
                 // TODO: 13.11.2016 refactor these statements
                 // mCursor = querySuggestionsPsalmName(searchText, mLimit);
-                mCursor = querySuggestionsPsalmNameApi16(searchText, mLimit);
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
+                    mCursor = querySuggestionsPsalmNameApi16_2(searchText, mLimit);
+                else mCursor = querySuggestionsPsalmNameApi21(searchText, mLimit);
                 break;
             case Psalms.Search.URI_MATCH:
                 if (selectionArgs == null || selectionArgs.length < 1) {
@@ -129,7 +133,7 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
                     Integer.parseInt(selectionArgs[0]);
                     mCursor = querySearchPsalmNumber(selectionArgs, "50");
                 } catch (NumberFormatException ex) {
-                    String text = selectionArgs[0];
+                    String text = (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)? selectionArgs[0].toLowerCase() : selectionArgs[0];
                     selectionArgs[0] = text.trim().replaceAll("\\s++", "* NEAR/6 ") + "*";
                     mCursor = querySearchPsalmText(selection, selectionArgs, "50");
                 }
@@ -315,31 +319,39 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
         return cursor;
     }
 
-    private Cursor querySuggestionsPsalmNameApi16(@Nullable String searchName, @Nullable String limit) {
-        return querySuggestionsPsalmNameApi16(searchName, limit, false);
+    private Cursor querySuggestionsPsalmNameApi21(@Nullable String searchName, @Nullable String limit) {
+        return querySuggestionsPsalmNameApi21(searchName, limit, false);
     }
 
-    private Cursor querySuggestionsPsalmNameApi16(@Nullable String searchName, @Nullable String limit, boolean more) {
-        final String METHOD_NAME = "querySuggestionsPsalmNameApi16";
-        if(TextUtils.isEmpty(limit)) limit = Psalms.Suggestions.Api16.LIMIT;
-        mSelection = more ? Psalms.Suggestions.Api16.getSgNameSelectionMore(searchName):
-                Psalms.Suggestions.Api16.getSgNameSelection(searchName);
+    private Cursor querySuggestionsPsalmNameApi16(@Nullable String searchName, @Nullable String limit) {
+        return querySuggestionsPsalmNameFtsApi16(searchName, limit);
+    }
 
-        Cursor cursor = mDatabase.query(Psalms.Suggestions.Api16.TABLES,
-                Psalms.Suggestions.Api16.SGNAME_PROJECTION,
+    private Cursor querySuggestionsPsalmNameApi16_2(@Nullable String searchName, @Nullable String limit) {
+        return querySuggestionsPsalmNameFtsApi16_2(searchName, limit);
+    }
+
+    private Cursor querySuggestionsPsalmNameApi21(@Nullable String searchName, @Nullable String limit, boolean more) {
+        final String METHOD_NAME = "querySuggestionsPsalmNameApi21";
+        if(TextUtils.isEmpty(limit)) limit = Psalms.Suggestions.Api21.LIMIT;
+        mSelection = more ? Psalms.Suggestions.Api21.getSgNameSelectionMore(searchName):
+                Psalms.Suggestions.Api21.getSgNameSelection(searchName);
+
+        Cursor cursor = mDatabase.query(Psalms.Suggestions.Api21.TABLES,
+                Psalms.Suggestions.Api21.SGNAME_PROJECTION,
                 mSelection,
                 null, null, null,
-                Psalms.Suggestions.Api16.SGNAME_SORT_ORDER,
+                Psalms.Suggestions.Api21.SGNAME_SORT_ORDER,
                 limit);
         Log.v(LOG_TAG, METHOD_NAME + ": selection={" + mSelection + "} more=" + more +
                 " results:" + (cursor == null? 0 : cursor.getCount()));
         if (!more && (cursor == null || cursor.getCount() < 2)) {
-            cursor = querySuggestionsPsalmNameApi16(searchName, limit, true);
+            cursor = querySuggestionsPsalmNameApi21(searchName, limit, true);
         }
         return cursor;
     }
 
-    private Cursor querySuggestionsPsalmName(@Nullable String searchName, @Nullable String limit) {
+    private Cursor querySuggestionsPsalmNameFts(@Nullable String searchName, @Nullable String limit) {
         final String METHOD_NAME = "querySuggestionsPsalmName";
         String rawQuery = SQLiteQueryBuilder.buildQueryString(false,
                 Psalms.Suggestions.SGNAME_TABLES,
@@ -352,20 +364,36 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
                 Psalms.Suggestions.SGNAME_PROJECTION, null,
                 Psalms.Suggestions.SGNAME_RAW2_GROUPBY, null, null, limit);
         Log.v(LOG_TAG, METHOD_NAME + ": SQLite raw query: " + rawQuery);
-        Cursor cursor = mDatabase.rawQuery(rawQuery, null);
+        return mDatabase.rawQuery(rawQuery, null);
+    }
+
+    private Cursor querySuggestionsPsalmNameFtsApi16(@Nullable String searchName, @Nullable String limit) {
+        Cursor cursor =  mDatabase.query(Psalms.Suggestions.Api16.TABLES,
+                Psalms.Suggestions.Api16.PROJECTION,
+                Psalms.Suggestions.Api16.getSelection(searchName.toLowerCase()), null, Psalms.Suggestions.Api16.GROUPBY,
+                null, null, limit);
+        Log.i(LOG_TAG, " size = " + cursor.getCount() + cursor);
+        return cursor;
+    }
+
+    private Cursor querySuggestionsPsalmNameFtsApi16_2(@Nullable String searchName, @Nullable String limit) {
+        Cursor cursor =  mDatabase.query(Psalms.Suggestions.Api16_2.TABLES,
+                Psalms.Suggestions.Api16_2.PROJECTION,
+                Psalms.Suggestions.Api16_2.getSelection(searchName.toLowerCase()), null, Psalms.Suggestions.Api16_2.GROUPBY,
+                null, null, limit);
+        Log.i(LOG_TAG, " size = " + cursor.getCount() + cursor);
         return cursor;
     }
 
     private Cursor querySearchPsalmNumber(@Nullable String[] selectionArgs,
                                           @Nullable String limit) {
-        Cursor cursor = mDatabase.query(Psalms.Search.SNUM_TABLES,
+        return mDatabase.query(Psalms.Search.SNUM_TABLES,
                 Psalms.Search.SNUM_PROJECTION,
                 Psalms.Search.SNUM_SELECTION + " and " +
                         BookStatistic.SELECTION_PREFERRED_BOOKS_ONLY,
                 selectionArgs, null, null,
                 Psalms.Search.SNUM_ORDER_BY,
                 limit);
-        return cursor;
     }
 
     private Cursor querySearchPsalmText(@Nullable String selection,
