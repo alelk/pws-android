@@ -2,6 +2,7 @@ package com.alelk.pws.database.provider;
 
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.os.Build;
 
 import com.alelk.pws.database.helper.PwsDatabaseHelper;
 import com.alelk.pws.database.table.PwsBookStatisticTable;
@@ -100,7 +101,36 @@ public interface PwsDataProviderContract {
             protected static String getSgNumberSelection(String psalmNumber) {
                 return COLUMN_PSALMNUMBER + "=" + psalmNumber;
             }
-            protected static class Api16 {
+            static class Api16 {
+                protected static final String TABLES = TABLE_PSALMS_JOIN_PSALMS_FTS_JOIN_PSALMNUMBERS_JOIN_BOOKS_JOIN_BOOKSTATISTIC;
+                protected static final String[] PROJECTION = {
+                        "pn." + PwsPsalmNumbersTable.COLUMN_ID + " as " + SUGGEST_COLUMN_INTENT_DATA_ID,
+                        "p." + PwsPsalmTable.COLUMN_NAME + " as " + SUGGEST_COLUMN_TEXT_1,
+                        "pn." + PwsPsalmNumbersTable.COLUMN_ID + " as _id"
+                };
+                protected static final String GROUPBY = "p._id";
+                protected static String getSelection(String searchText) {
+                    return  TABLE_PSALMS_FTS + "." + PwsPsalmTable.COLUMN_NAME + " MATCH '" +
+                            searchText.trim().replaceAll("\\s+", "*") + "*' and "
+                            + "bs." + PwsBookStatisticTable.COLUMN_USERPREFERENCE + ">0";
+                }
+            }
+            static class Api16_2 {
+                protected static final String TABLES = TABLE_SUGGESTIONS_FTS;
+                protected static final String[] PROJECTION = {
+                        "pn." + PwsPsalmNumbersTable.COLUMN_ID + " as " + SUGGEST_COLUMN_INTENT_DATA_ID,
+                        "p." + PwsPsalmTable.COLUMN_NAME + " as " + SUGGEST_COLUMN_TEXT_1,
+                        "group_concat(b." + PwsBookTable.COLUMN_DISPLAYSHORTNAME + ", ' | ') as " + SUGGEST_COLUMN_TEXT_2,
+                        "pn." + PwsPsalmNumbersTable.COLUMN_ID + " as _id"
+                };
+                protected static final String GROUPBY = "p.docid";
+                protected static String getSelection(String searchText) {
+                    return  "p." + PwsPsalmTable.COLUMN_NAME + " MATCH '" +
+                            searchText.trim().replaceAll("\\s+", "*") + "*'";
+                }
+            }
+
+            protected static class Api21 {
                 // TODO: 13.11.2016 refactor this code block
                 protected static final String TABLES = TABLE_PSALMS_JOIN_PSALMNUMBERS_JOIN_BOOKS_JOIN_BOOKSTATISTIC;
                 protected static final String[] SGNAME_PROJECTION = {
@@ -112,7 +142,8 @@ public interface PwsDataProviderContract {
                 protected static final String LIMIT = "30";
                 protected static String getSgNameSelection(String searchName) {
                     return  "p." + PwsPsalmTable.COLUMN_NAME + " LIKE '" +
-                            searchName.trim().replaceAll("\\s+", "%") + "%' and "
+                            searchName
+                            .trim().replaceAll("\\s+", "%") + "%' and "
                             + "bs." + PwsBookStatisticTable.COLUMN_USERPREFERENCE + ">0";
                 }
                 protected static String getSgNameSelectionMore(String searchName) {
@@ -552,6 +583,19 @@ public interface PwsDataProviderContract {
                     "ON pn." + PwsPsalmNumbersTable.COLUMN_BOOKID + "=b." + PwsBookTable.COLUMN_ID +
                     " INNER JOIN " + TABLE_BOOKSTATISTIC + " as bs " +
                     "ON bs." + PwsBookStatisticTable.COLUMN_BOOKID + "=b." + PwsBookTable.COLUMN_ID;
+
+    String TABLE_SUGGESTIONS_FTS =
+            TABLE_BOOKS + " AS b " +
+                    " INNER JOIN (SELECT " +
+                    PwsBookStatisticTable.COLUMN_BOOKID +
+                    " FROM " + TABLE_BOOKSTATISTIC +
+                    " WHERE " + PwsBookStatisticTable.COLUMN_USERPREFERENCE + ">0 " +
+                    " ORDER BY " + PwsBookStatisticTable.COLUMN_USERPREFERENCE + ") AS bs " +
+                    " ON b." + PwsBookTable.COLUMN_ID + "=bs." + PwsBookStatisticTable.COLUMN_BOOKID +
+                    " INNER JOIN " + TABLE_PSALMNUMBERS + " AS pn " +
+                    "ON pn." + PwsPsalmNumbersTable.COLUMN_BOOKID + "=b." + PwsBookTable.COLUMN_ID +
+                    " INNER JOIN " + TABLE_PSALMS_FTS +  " AS p " +
+                    " ON p.docid=pn." + PwsPsalmNumbersTable.COLUMN_PSALMID;
 
     String TABLE_PSALMS_JOIN_PSALMS_FTS_JOIN_PSALMNUMBERS_JOIN_BOOKS_JOIN_BOOKSTATISTIC =
             TABLE_PSALMS + " AS p " +

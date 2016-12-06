@@ -6,6 +6,11 @@
     <string name="lbl_translator">Translator</string>
     <string name="lbl_music">Music</string>
 
+    <!-- Database initialize dialog -->
+    <string name="txt_title_database_init">Database initialize</string>
+    <string name="txt_copy_files">Copying database files..\n%1$d of %2$d files copied</string>
+    <string name="txt_fts_setup">Setup full-text-search engine..\n%1$d of %2$d songs indexed</string>
+
     <!-- Tonalities -->
     <string name="c_flat_major">C-flat major</string>
     <string name="a_flat_minor">A-flat minor</string>

@@ -21,6 +21,7 @@
     <string name="lbl_search_widget">Search&#8230;</string>
     <string name="hint_enter_text">Type any text to search psalm&#8230;</string>
     <string name="hint_enter_psalm_number">Enter psalm number&#8230;</string>
+    <string name="lbl_fts_search_progress">Full-text search is in progress..\n</string>
 
     <!-- Psalm activity display strings. -->
     <string name="lbl_chorus">Chorus</string>
