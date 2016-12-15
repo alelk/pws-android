@@ -5,6 +5,8 @@ import android.content.Context;
 import com.alelk.pws.database.R;
 
 /**
+ * Tonalities signature map to resources
+ *
  * Created by Alex Elkin on 12.05.2016.
  */
 public enum Tonality {

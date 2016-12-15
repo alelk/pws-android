@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
@@ -14,6 +13,7 @@ import com.alelk.pws.database.R;
 import com.alelk.pws.database.table.PwsPsalmFtsTable;
 
 import android.database.sqlite.SQLiteDatabase;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -23,16 +23,18 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
+ * Pws Database Helper
+ *
  * Created by Alex Elkin on 29.04.2015.
  */
 public class PwsDatabaseHelper extends SQLiteOpenHelper {
-    public static final int DATABASE_VERSION = 1;
-    public static final String DATABASE_NAME = "pws.0.9.1.db";
-    public static final int DB_INIT_NOTIFICATION_ID = 1331;
+    private static final int DATABASE_VERSION = 1;
+    private static final String DATABASE_NAME = "pws.0.9.1.db";
+    private static final int DB_INIT_NOTIFICATION_ID = 1331;
 
     private static final String LOG_TAG = PwsDatabaseHelper.class.getSimpleName();
-    private static final String DB_FOLDER = "/data/data/com.alelk.pws.pwapp/databases/";
-    private static final String DB_PATH = DB_FOLDER + DATABASE_NAME;
+    private final String dbFolder;
+    private final String dbPath;
     private static final String ASSETS_DB_FOLDER = "db";
 
     private final Context mContext;
@@ -42,6 +44,8 @@ public class PwsDatabaseHelper extends SQLiteOpenHelper {
     public PwsDatabaseHelper(@NonNull Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         mContext = context;
+        dbPath = context.getDatabasePath(DATABASE_NAME).getPath();
+        dbFolder = context.getDatabasePath(DATABASE_NAME).getParent() + "/";
         if (!isDatabaseExists()) {
             try {
                 mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -50,9 +54,13 @@ public class PwsDatabaseHelper extends SQLiteOpenHelper {
                         .setSmallIcon(R.drawable.ic_data_usage_black)
                         .setTicker(mContext.getString(R.string.txt_title_database_init));
                 copyDatabase();
+                if (!isDatabaseExists()) {
+                    Log.e(LOG_TAG, "PwsDatabaseHelper: Database was not be copied from asset folder: Database does not exists: " + dbPath);
+                    return;
+                }
                 setUpPsalmFts();
             } catch (IOException e) {
-                Log.e(LOG_TAG, "constructor" + ": Error copying database file: " + e.getLocalizedMessage());
+                Log.e(LOG_TAG, "PwsDatabaseHelper: Error copying database file: " + e.getLocalizedMessage());
             } finally {
                 if (mNotificationManager != null)
                     mNotificationManager.cancel(DB_INIT_NOTIFICATION_ID);
@@ -87,10 +95,10 @@ public class PwsDatabaseHelper extends SQLiteOpenHelper {
         InputStream inputStream = null;
         byte[] buffer = new byte[1024];
         try {
-            File dbFolder = new File(DB_FOLDER);
+            File dbFolder = new File(this.dbFolder);
             if (!dbFolder.exists() || !dbFolder.isDirectory()) {
                 if (!dbFolder.mkdir()) {
-                    Log.e(LOG_TAG, METHOD_NAME + ": Could not create directory: " + DB_FOLDER);
+                    Log.e(LOG_TAG, METHOD_NAME + ": Could not create directory: " + this.dbFolder);
                 }
             }
             String[] fileList = am.list(ASSETS_DB_FOLDER);
@@ -98,7 +106,7 @@ public class PwsDatabaseHelper extends SQLiteOpenHelper {
                 Log.e(LOG_TAG, METHOD_NAME + ": No database files found in asset directory " + ASSETS_DB_FOLDER);
                 return;
             }
-            outputStream = new FileOutputStream(DB_PATH);
+            outputStream = new FileOutputStream(dbPath);
             for (int i = 1; i <= fileList.length; i++) {
                 publishProgress(R.string.txt_copy_files, fileList.length, i);
                 try {
@@ -114,27 +122,33 @@ public class PwsDatabaseHelper extends SQLiteOpenHelper {
                     }
                     return;
                 } finally {
-                    if (inputStream != null) inputStream.close();
+                    try {
+                        if (inputStream != null) inputStream.close();
+                    } catch (IOException e) {
+                        Log.e(LOG_TAG, METHOD_NAME + ": Error closing input stream: " + e.getLocalizedMessage());
+                    }
                 }
             }
         } catch (FileNotFoundException ex) {
             Log.w(LOG_TAG, METHOD_NAME + ": Error copying database file: " + ex.getLocalizedMessage());
         } finally {
             if (outputStream != null) {
-                outputStream.flush();
-                outputStream.close();
+                try {
+                    outputStream.flush();
+                    outputStream.close();
+                } catch (IOException e) {
+                    Log.e(LOG_TAG, METHOD_NAME + ": Error closing output stream: " + e.getLocalizedMessage());
+                }
             }
-
         }
     }
 
     private boolean isDatabaseExists() {
         final String METHOD_NAME = "isDatabaseExists";
-        File file = new File(DB_PATH);
         SQLiteDatabase database = null;
         int version = 0;
         try {
-            database = SQLiteDatabase.openDatabase(DB_PATH, null, SQLiteDatabase.OPEN_READONLY);
+            database = SQLiteDatabase.openDatabase(dbPath, null, SQLiteDatabase.OPEN_READONLY);
             version = database.getVersion();
         } catch (SQLiteException ex) {
             Log.i(LOG_TAG, METHOD_NAME + ": Looks like database does not exists. It is needed to create. Message: " + ex.getLocalizedMessage());
@@ -146,7 +160,7 @@ public class PwsDatabaseHelper extends SQLiteOpenHelper {
 
     private void setUpPsalmFts() {
         final String METHOD_NAME = "setUpPsalmFts";
-        SQLiteDatabase db = SQLiteDatabase.openDatabase(DB_PATH, null, SQLiteDatabase.OPEN_READWRITE);
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbPath, null, SQLiteDatabase.OPEN_READWRITE);
         if (PwsPsalmFtsTable.isTableExists(db) && PwsPsalmFtsTable.isAllTriggersExists(db)) {
             Log.d(LOG_TAG, METHOD_NAME + ": The PWS Psalm FTS table and it's triggers are exist. No need to recreate.");
             return;

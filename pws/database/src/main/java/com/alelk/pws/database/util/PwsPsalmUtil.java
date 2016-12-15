@@ -12,18 +12,19 @@ import com.alelk.pws.database.R;
 
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 
 /**
+ * Pws Psalm Util
+ *
  * Created by Alex Elkin on 14.03.2016.
  */
 public class PwsPsalmUtil {
 
-    public final static String PSALM_VERSE_NUMBER_REGEX = "^\\s*+(\\d{1,2})\\.\\s*+$";
-    public final static String PSALM_VERSE_LABEL_FORMAT = "^\\s*+\\[(%s)\\s*+(\\d{1,2})\\]\\s*+$";
-    public final static String PSALM_CHORUS_NUMBER_FORMAT = "^\\s*+(%s)\\s*+(\\d{1,2})??:\\s*+$";
-    public final static String PSALM_CHORUS_LABEL_FORMAT = "^\\s*+\\[(%s)\\s*+(\\d{1,2})??\\]\\s*+$";
+    private final static String PSALM_VERSE_NUMBER_REGEX = "^\\s*+(\\d{1,2})\\.\\s*+$";
+    private final static String PSALM_VERSE_LABEL_FORMAT = "^\\s*+\\[(%s)\\s*+(\\d{1,2})\\]\\s*+$";
+    private final static String PSALM_CHORUS_NUMBER_FORMAT = "^\\s*+(%s)\\s*+(\\d{1,2})??:\\s*+$";
+    private final static String PSALM_CHORUS_LABEL_FORMAT = "^\\s*+\\[(%s)\\s*+(\\d{1,2})??\\]\\s*+$";
 
     private static String getPsalmVerseNumberRegex(Context context, Locale locale) {
         return PSALM_VERSE_NUMBER_REGEX;

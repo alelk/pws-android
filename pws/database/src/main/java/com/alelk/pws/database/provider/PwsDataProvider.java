@@ -8,27 +8,30 @@ import static android.app.SearchManager.*;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.alelk.pws.database.helper.PwsDatabaseHelper;
 import com.alelk.pws.database.table.PwsBookStatisticTable;
 import com.alelk.pws.database.table.PwsFavoritesTable;
 import com.alelk.pws.database.table.PwsHistoryTable;
-import com.alelk.pws.database.table.PwsPsalmTable;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Locale;
 
 /**
+ * Pws data provider
+ *
  * Created by Alex Elkin on 21.05.2015.
  */
 public class PwsDataProvider extends ContentProvider implements PwsDataProviderContract {
@@ -37,7 +40,6 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
 
     private static final UriMatcher URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
     static {
-        //System.loadLibrary("sqlite");
         URI_MATCHER.addURI(AUTHORITY, Psalms.PATH, Psalms.URI_MATCH);
         URI_MATCHER.addURI(AUTHORITY, Psalms.PATH_ID, Psalms.URI_MATCH_ID);
         URI_MATCHER.addURI(AUTHORITY, Psalms.PsalmNumbers.PATH, Psalms.PsalmNumbers.URI_MATCH);
@@ -60,112 +62,99 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
         URI_MATCHER.addURI(AUTHORITY, BookStatistic.PATH_TEXT, BookStatistic.URI_MATCH_TEXT);
     }
 
+    private Context mContext;
     private SQLiteDatabase mDatabase;
     private PwsDatabaseHelper mDatabaseHelper;
-    private String mSelection;
-    private String mLimit;
-    private Cursor mCursor;
-    SimpleDateFormat mDateFormat = new SimpleDateFormat(HISTORY_TIMESTAMP_FORMAT);
+    SimpleDateFormat mDateFormat = new SimpleDateFormat(HISTORY_TIMESTAMP_FORMAT, Locale.ENGLISH);
 
     @Override
     public boolean onCreate() {
-        mDatabaseHelper = new PwsDatabaseHelper(getContext());
+        mContext = getContext();
+        if (mContext == null) return false;
+        mDatabaseHelper = new PwsDatabaseHelper(mContext);
         return true;
     }
 
     @Override
     public Cursor query(
-            Uri uri,
+            @NonNull Uri uri,
             @Nullable String[] projection,
             @Nullable String selection,
             @Nullable String[] selectionArgs,
             @Nullable String sortOrder) {
         final String METHOD_NAME = "query";
-        Log.v(LOG_TAG, METHOD_NAME + ": uri='" + uri.toString() + "'");
         mDatabase = mDatabaseHelper.getReadableDatabase();
-        mCursor = null;
+        Cursor cursor = null;
         long psalmNumberId;
         switch (URI_MATCHER.match(uri)) {
             case Psalms.URI_MATCH:
-                mCursor = mDatabase.query(TABLE_PSALMS, projection, selection, selectionArgs, null, null, sortOrder);
+                cursor = mDatabase.query(TABLE_PSALMS, projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             case Psalms.URI_MATCH_ID:
-                mSelection = PwsPsalmTable.COLUMN_ID + "=" + uri.getLastPathSegment();
-                if (!TextUtils.isEmpty(selection)) mSelection += " AND " + selection;
                 break;
             case Psalms.PsalmNumbers.URI_MATCH:
-                long psalmId = Long.parseLong(uri.getPathSegments().get(1));
-                //mCursor = queryPsalmNumbers(psalmId, null, null, null);
                 break;
             case Favorites.URI_MATCH:
-                mCursor = queryFavorites(projection, selection, selectionArgs, null, null);
+                cursor = queryFavorites(projection, selection, selectionArgs, null, null);
                 break;
             case Favorites.URI_MATCH_ID:
-                long id = Long.parseLong(uri.getLastPathSegment());
-                mCursor = queryFavorite(id);
+                cursor = queryFavorite(Long.parseLong(uri.getLastPathSegment()));
                 break;
             case History.URI_MATCH:
-                mLimit = uri.getQueryParameter(QUERY_PARAMETER_LIMIT);
-                mCursor = queryHistory(projection, selection, selectionArgs, null, mLimit);
+                cursor = queryHistory(projection, selection, selectionArgs, null, uri.getQueryParameter(QUERY_PARAMETER_LIMIT));
                 break;
             case History.Last.URI_MATCH:
-                mCursor = queryHistory(projection, null, null, History.Last.SORT_ORDER, History.Last.LIMIT);
+                cursor = queryHistory(projection, null, null, History.Last.SORT_ORDER, History.Last.LIMIT);
                 break;
             case Psalms.Suggestions.URI_MATCH_NUMBER:
-                mLimit = uri.getQueryParameter(SUGGEST_PARAMETER_LIMIT);
-                mCursor = querySuggestionsPsalmNumber(uri.getLastPathSegment(), mLimit);
+                cursor = querySuggestionsPsalmNumber(uri.getLastPathSegment(), uri.getQueryParameter(SUGGEST_PARAMETER_LIMIT));
                 break;
             case Psalms.Suggestions.URI_MATCH_NAME:
-                mLimit = uri.getQueryParameter(SUGGEST_PARAMETER_LIMIT);
-                //String searchText = uri.getLastPathSegment().trim() + '*';
                 String searchText = uri.getLastPathSegment();
-                // TODO: 13.11.2016 refactor these statements
-                // mCursor = querySuggestionsPsalmName(searchText, mLimit);
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
-                    mCursor = querySuggestionsPsalmNameApi16_2(searchText, mLimit);
-                else mCursor = querySuggestionsPsalmNameApi21(searchText, mLimit);
+                if (searchText != null) cursor = querySuggestionsPsalmName(searchText, uri.getQueryParameter(SUGGEST_PARAMETER_LIMIT));
                 break;
             case Psalms.Search.URI_MATCH:
                 if (selectionArgs == null || selectionArgs.length < 1) {
                     break;
                 }
                 try {
-                    Integer.parseInt(selectionArgs[0]);
-                    mCursor = querySearchPsalmNumber(selectionArgs, "50");
+                    int num = Integer.parseInt(selectionArgs[0]);
+                    cursor = querySearchPsalmNumber(num, "50");
                 } catch (NumberFormatException ex) {
                     String text = (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)? selectionArgs[0].toLowerCase() : selectionArgs[0];
-                    selectionArgs[0] = text.trim().replaceAll("\\s++", "* NEAR/6 ") + "*";
-                    mCursor = querySearchPsalmText(selection, selectionArgs, "50");
+                    text = text.trim().replaceAll("\\s++", "* NEAR/6 ") + "*";
+                    cursor = querySearchPsalmText(text, "50");
                 }
                 break;
             case PsalmNumbers.Psalm.URI_MATCH:
                 psalmNumberId = Long.parseLong(uri.getPathSegments().get(1));
-                mCursor = queryPsalmNumberPsalm(psalmNumberId, projection, selection, selectionArgs);
+                cursor = queryPsalmNumberPsalm(psalmNumberId, projection, selection, selectionArgs);
                 break;
             case PsalmNumbers.Book.BookPsalmNumbers.URI_MATCH:
                 psalmNumberId = Long.parseLong(uri.getPathSegments().get(1));
-                mCursor = queryPsalmNumberBookPsalmNumbers(psalmNumberId, projection);
+                cursor = queryPsalmNumberBookPsalmNumbers(psalmNumberId, projection);
                 break;
             case PsalmNumbers.Book.BookPsalmNumbers.Info.URI_MATCH:
                 psalmNumberId = Long.parseLong(uri.getPathSegments().get(1));
-                mCursor = queryPsalmNumberBookPsalmNumberInfo(psalmNumberId, projection);
+                cursor = queryPsalmNumberBookPsalmNumberInfo(psalmNumberId, projection);
                 break;
             case BookStatistic.URI_MATCH:
-                mCursor = queryBookStatistic(null, null, null, null);
+                cursor = queryBookStatistic(null, null, null, null);
                 break;
             default:
-                // todo: throw exception - incorrect uri
+                Log.w(LOG_TAG, METHOD_NAME + ": Incorrect uri: '" + uri + '\'');
         }
-        if (mCursor == null) {
-            // todo: throw exception
+        if (cursor == null) {
+            Log.d(LOG_TAG, METHOD_NAME + ": No results for uri: '" + uri + '\'');
             return null;
         }
-        mCursor.setNotificationUri(getContext().getContentResolver(), uri);
-        return mCursor;
+        Log.v(LOG_TAG, METHOD_NAME + ": Query for uri='" + uri.toString() + "'. Results: " + cursor.getCount());
+        cursor.setNotificationUri(mContext.getContentResolver(), uri);
+        return cursor;
     }
 
     @Override
-    public String getType(Uri uri) {
+    public String getType(@NonNull Uri uri) {
         switch (URI_MATCHER.match(uri)) {
             case Psalms.URI_MATCH:
                 return "vnd.android.cursor.dir/" + AUTHORITY + "." + Psalms.PATH;
@@ -176,7 +165,7 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
     }
 
     @Override
-    public Uri insert(Uri uri, ContentValues values) {
+    public Uri insert(@NonNull Uri uri, ContentValues values) {
         final String METHOD_NAME = "insert";
         Log.v(LOG_TAG, METHOD_NAME + ": uri='" + uri + "'");
         mDatabase = mDatabaseHelper.getWritableDatabase();
@@ -203,7 +192,7 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
                     return null;
                 }
                 itemUri = ContentUris.withAppendedId(uri, id);
-                getContext().getContentResolver().notifyChange(uri, null);
+                mContext.getContentResolver().notifyChange(uri, null);
                 break;
             case History.URI_MATCH:
                 id = insertHistory(values);
@@ -213,7 +202,7 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
                     return null;
                 }
                 itemUri = ContentUris.withAppendedId(uri, id);
-                getContext().getContentResolver().notifyChange(uri, null);
+                mContext.getContentResolver().notifyChange(uri, null);
                 break;
             default:
                 // TODO: 24.02.2016 throw exception incorrect uri
@@ -225,7 +214,7 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
     }
 
     @Override
-    public int delete(Uri uri, String selection, String[] selectionArgs) {
+    public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
         final String METHOD_NAME = "delete";
         Log.v(LOG_TAG, METHOD_NAME + ": uri='" + uri.toString() + "'");
         mDatabase = mDatabaseHelper.getWritableDatabase();
@@ -237,12 +226,12 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
             default:
                 // todo: throw exception - incorrect uri
         }
-        getContext().getContentResolver().notifyChange(uri, null);
+        mContext.getContentResolver().notifyChange(uri, null);
         return n;
     }
 
     @Override
-    public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+    public int update(@NonNull Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         final String METHOD_NAME = "update";
         Log.v(LOG_TAG, METHOD_NAME + ": uri='" + uri.toString() + "'");
         mDatabase = mDatabaseHelper.getWritableDatabase();
@@ -284,20 +273,14 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
         if (projection == null) projection = History.PROJECTION;
         if (orderBy == null) orderBy = History.SORT_ORDER;
 
-        Cursor cursor = mDatabase.query(History.TABLES,
+        return mDatabase.query(History.TABLES,
                 projection, selection, selectionArgs,
                 History.GROUP_BY, null,
                 orderBy, limit);
-        return cursor;
-    }
-
-    private Cursor queryAllFavorites(@Nullable String[] projection,
-                                      @Nullable String orderBy) {
-        return queryFavorites(projection, null, null, orderBy, null);
     }
 
     private Cursor queryFavorite(long id) {
-        String[] selectionArgs = (String[]) Arrays.asList(String.valueOf(id)).toArray();
+        String[] selectionArgs = new String[]{String.valueOf(id)};
         return queryFavorites(null, Favorites.SELECTION_ID_MATCH, selectionArgs, null, null);
     }
 
@@ -310,127 +293,40 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
 
     private Cursor querySuggestionsPsalmNumber(String psalmNumber,
                                                @Nullable String limit) {
-        Cursor cursor = mDatabase.query(Psalms.Suggestions.SGNUM_TABLES,
+        return  mDatabase.query(Psalms.Suggestions.SGNUM_TABLES,
                 Psalms.Suggestions.SGNUM_PROJECTION,
-                Psalms.Suggestions.getSgNumberSelection(psalmNumber) + " and " +
-                        BookStatistic.SELECTION_PREFERRED_BOOKS_ONLY, null, null, null,
+                Psalms.Suggestions.getSgNumberSelection(psalmNumber), null, null, null,
                 Psalms.Suggestions.SGNUM_SORT_ORDER,
                 limit);
-        return cursor;
     }
 
-    private Cursor querySuggestionsPsalmNameApi21(@Nullable String searchName, @Nullable String limit) {
-        return querySuggestionsPsalmNameApi21(searchName, limit, false);
-    }
-
-    private Cursor querySuggestionsPsalmNameApi16(@Nullable String searchName, @Nullable String limit) {
-        return querySuggestionsPsalmNameFtsApi16(searchName, limit);
-    }
-
-    private Cursor querySuggestionsPsalmNameApi16_2(@Nullable String searchName, @Nullable String limit) {
-        return querySuggestionsPsalmNameFtsApi16_2(searchName, limit);
-    }
-
-    private Cursor querySuggestionsPsalmNameApi21(@Nullable String searchName, @Nullable String limit, boolean more) {
-        final String METHOD_NAME = "querySuggestionsPsalmNameApi21";
-        if(TextUtils.isEmpty(limit)) limit = Psalms.Suggestions.Api21.LIMIT;
-        mSelection = more ? Psalms.Suggestions.Api21.getSgNameSelectionMore(searchName):
-                Psalms.Suggestions.Api21.getSgNameSelection(searchName);
-
-        Cursor cursor = mDatabase.query(Psalms.Suggestions.Api21.TABLES,
-                Psalms.Suggestions.Api21.SGNAME_PROJECTION,
-                mSelection,
-                null, null, null,
-                Psalms.Suggestions.Api21.SGNAME_SORT_ORDER,
-                limit);
-        Log.v(LOG_TAG, METHOD_NAME + ": selection={" + mSelection + "} more=" + more +
-                " results:" + (cursor == null? 0 : cursor.getCount()));
-        if (!more && (cursor == null || cursor.getCount() < 2)) {
-            cursor = querySuggestionsPsalmNameApi21(searchName, limit, true);
-        }
-        return cursor;
-    }
-
-    private Cursor querySuggestionsPsalmNameFts(@Nullable String searchName, @Nullable String limit) {
-        final String METHOD_NAME = "querySuggestionsPsalmName";
-        String rawQuery = SQLiteQueryBuilder.buildQueryString(false,
-                Psalms.Suggestions.SGNAME_TABLES,
-                Psalms.Suggestions.SGNAME_RAW1_PROJECTION,
-                Psalms.Suggestions.getSgNameSelection(searchName) + " and " +
-                        Psalms.Suggestions.SELECTION_PREFERRED_BOOKS_ONLY, null, null,
-                Psalms.Suggestions.SGNAME_RAW1_ORDERBY, null);
-        rawQuery = SQLiteQueryBuilder.buildQueryString(false,
-                "(" + rawQuery + ") AS " + Psalms.Suggestions.SGNAME_TABLE,
-                Psalms.Suggestions.SGNAME_PROJECTION, null,
-                Psalms.Suggestions.SGNAME_RAW2_GROUPBY, null, null, limit);
-        Log.v(LOG_TAG, METHOD_NAME + ": SQLite raw query: " + rawQuery);
-        return mDatabase.rawQuery(rawQuery, null);
-    }
-
-    private Cursor querySuggestionsPsalmNameFtsApi16(@Nullable String searchName, @Nullable String limit) {
-        Cursor cursor =  mDatabase.query(Psalms.Suggestions.Api16.TABLES,
-                Psalms.Suggestions.Api16.PROJECTION,
-                Psalms.Suggestions.Api16.getSelection(searchName.toLowerCase()), null, Psalms.Suggestions.Api16.GROUPBY,
+    private Cursor querySuggestionsPsalmName(@NonNull String searchName, @Nullable String limit) {
+        return mDatabase.query(Psalms.Suggestions.SG_NAME_TABLES,
+                Psalms.Suggestions.SG_NAME_PROJECTION,
+                Psalms.Suggestions.getSgNameSelection(searchName.toLowerCase()), null, Psalms.Suggestions.SG_NAME_GROUPBY,
                 null, null, limit);
-        Log.i(LOG_TAG, " size = " + cursor.getCount() + cursor);
-        return cursor;
     }
 
-    private Cursor querySuggestionsPsalmNameFtsApi16_2(@Nullable String searchName, @Nullable String limit) {
-        Cursor cursor =  mDatabase.query(Psalms.Suggestions.Api16_2.TABLES,
-                Psalms.Suggestions.Api16_2.PROJECTION,
-                Psalms.Suggestions.Api16_2.getSelection(searchName.toLowerCase()), null, Psalms.Suggestions.Api16_2.GROUPBY,
-                null, null, limit);
-        Log.i(LOG_TAG, " size = " + cursor.getCount() + cursor);
-        return cursor;
-    }
-
-    private Cursor querySearchPsalmNumber(@Nullable String[] selectionArgs,
+    private Cursor querySearchPsalmNumber(int psalmNumber,
                                           @Nullable String limit) {
-        return mDatabase.query(Psalms.Search.SNUM_TABLES,
-                Psalms.Search.SNUM_PROJECTION,
-                Psalms.Search.SNUM_SELECTION + " and " +
-                        BookStatistic.SELECTION_PREFERRED_BOOKS_ONLY,
-                selectionArgs, null, null,
-                Psalms.Search.SNUM_ORDER_BY,
+        return mDatabase.query(Psalms.Search.S_NUM_TABLES,
+                Psalms.Search.S_NUM_PROJECTION,
+                Psalms.Search.getSNumSelection(psalmNumber),
+                null, null, null,
+                Psalms.Search.S_NUM_ORDER_BY,
                 limit);
     }
 
-    private Cursor querySearchPsalmText(@Nullable String selection,
-                                        @Nullable String[] selectionArgs,
+    private Cursor querySearchPsalmText(@NonNull String searchText,
                                         @Nullable String limit) {
         final String METHOD_NAME = "querySearchPsalmText";
-        String rawQuery = SQLiteQueryBuilder.buildQueryString(false,
-                Psalms.Search.STXT_RAW1_TABLES,
-                Psalms.Search.STXT_RAW1_PROJECTION,
-                selection + " and " + Psalms.Search.STXT_RAW1_SELECTION_PREFERRED_BOOKS_ONLY,
+        Cursor cursor = mDatabase.query(Psalms.Search.S_TXT_TABLES,
+                Psalms.Search.S_TXT_PROJECTION, Psalms.Search.getSTxtSelection(searchText), null,
                 null, null,
-                Psalms.Search.STXT_RAW1_ORDER_BY,
-                limit);
-        rawQuery = SQLiteQueryBuilder.buildQueryString(false,
-                "(" + rawQuery + ") AS search",
-                Psalms.Search.STXT_PROJECTION, null, Psalms.Search.STXT_RAW2_GROUP_BY, null, Psalms.Search.STXT_RAW2_ORDER_BY, limit);
-        Cursor cursor = mDatabase.rawQuery(rawQuery, selectionArgs);
-        Log.d(LOG_TAG, METHOD_NAME + ": rawQuery='" + rawQuery + "' selectionArgs=" +
-                Arrays.toString(selectionArgs) + " results:" + (cursor == null ? 0 : cursor.getCount()));
+                Psalms.Search.S_TXT_ORDER_BY, limit);
+        Log.d(LOG_TAG, METHOD_NAME + ": searchQuery='" + searchText + "' results:" + (cursor == null ? 0 : cursor.getCount()));
         return cursor;
     }
-
-    /*
-    private Cursor queryPsalmNumbers(long psalmId,
-                                     @Nullable String[] projection,
-                                     @Nullable String sortOrder,
-                                     @Nullable String limit) {
-        String selection = PwsPsalmNumbersTable.COLUMN_PSALMID + "=" + psalmId;
-        if (projection == null) projection = DEFAULT_PSALMNUMBERS_PROJECTION;
-
-        Cursor cursor = mDatabase.query(TABLE_PSALMNUMBERS_JOIN_BOOKS,
-                projection,
-                selection, null, null, null,
-                sortOrder,
-                limit);
-        return cursor;
-    } */
 
     private Cursor queryPsalmNumberPsalm(long psalmNumberId,
                                          @Nullable String[] projection,
@@ -441,11 +337,10 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
             selection = PsalmNumbers.Psalm.DEFAULT_SELECTION;
             selectionArgs = new String[] {Long.toString(psalmNumberId)};
         }
-        Cursor cursor = mDatabase.query(PsalmNumbers.Psalm.TABLES,
+        return mDatabase.query(PsalmNumbers.Psalm.TABLES,
                 projection,
                 selection, selectionArgs, null, null,
                 null);
-        return cursor;
     }
 
     private Cursor queryPsalmNumberBookPsalmNumbers(long psalmNumberId, @Nullable String[] projection){
@@ -492,11 +387,10 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
         if (projection == null) projection = BookStatistic.PROJECTION;
         if (orderBy == null) orderBy = BookStatistic.SORT_ORDER;
 
-        Cursor cursor = mDatabase.query(BookStatistic.TABLES,
+        return mDatabase.query(BookStatistic.TABLES,
                 projection, selection, selectionArgs,
                 null, null,
                 orderBy, null);
-        return cursor;
     }
 
     /*

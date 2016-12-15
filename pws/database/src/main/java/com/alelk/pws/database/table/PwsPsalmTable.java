@@ -3,6 +3,8 @@ package com.alelk.pws.database.table;
 import android.database.sqlite.SQLiteDatabase;
 
 /**
+ * Pws Psalm Table
+ *
  * Created by Alex Elkin on 21.04.2015.
  */
 public class PwsPsalmTable implements PwsTable {
