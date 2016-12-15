@@ -3,6 +3,8 @@ package com.alelk.pws.database.table;
 import android.database.sqlite.SQLiteDatabase;
 
 /**
+ * Pws Book Table
+ *
  * Created by Alex Elkin on 22.04.2015.
  */
 public class PwsBookTable implements PwsTable {

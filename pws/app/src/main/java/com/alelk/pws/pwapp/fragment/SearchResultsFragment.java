@@ -86,8 +86,8 @@ public class SearchResultsFragment extends Fragment implements LoaderManager.Loa
                         getActivity().getBaseContext(),
                         PwsDataProvider.Psalms.Search.CONTENT_URI,
                         null,
-                        PwsDataProvider.Psalms.Search.STXT_SELECTION,
-                        PwsDataProvider.Psalms.Search.getSelectionArgs(mQuery),
+                        null,
+                        new String[]{ mQuery },
                         null);
         }
         return null;

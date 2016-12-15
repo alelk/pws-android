@@ -19,8 +19,10 @@ import static com.alelk.pws.database.table.PwsPsalmTable.COLUMN_ID;
 
 
 /**
- * Created by Alex Elkin on 15.03.2016.
+ * Pws Psalm FTS Table
  * Implements functionality to providing Full Text Search functionality for psalm.
+ *
+ * Created by Alex Elkin on 15.03.2016.
  */
 public class PwsPsalmFtsTable extends PwsTableHelper implements PwsTable {
 

@@ -6,6 +6,11 @@
     <string name="lbl_translator">Перевод</string>
     <string name="lbl_music">Музыка</string>
 
+    <!-- Database initialize dialog -->
+    <string name="txt_title_database_init">Подготовка базы данных</string>
+    <string name="txt_copy_files">Копирование файлов базы данных..\n%1$d из %2$d файлов скопировано</string>
+    <string name="txt_fts_setup">Настройка полнотекстового поиска..\n%1$d из %2$d песен проиндексировано</string>
+
     <!-- Tonalities -->
     <string name="c_flat_major">до-бемоль мажор</string>
     <string name="a_flat_minor">ля-бемоль минор</string>

@@ -12,10 +12,11 @@
 
         <TextView
             android:paddingTop="20dp"
+            android:textSize="@dimen/txt_size_body"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="6dp"
-            android:paddingEnd="4dp"
+            android:paddingLeft="6dp"
+            android:paddingRight="4dp"
             android:text="@string/lbl_search"/>
 
         <android.support.v7.widget.CardView
@@ -50,10 +51,11 @@
 
         <TextView
             android:paddingTop="20dp"
+            android:textSize="@dimen/txt_size_body"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="6dp"
-            android:paddingEnd="4dp"
+            android:paddingLeft="6dp"
+            android:paddingRight="4dp"
             android:text="@string/lbl_recent"/>
 
         <android.support.v7.widget.RecyclerView

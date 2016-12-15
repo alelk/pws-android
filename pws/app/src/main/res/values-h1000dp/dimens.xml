@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Psalm Activity -->
+    <dimen name="app_bar_psalm_height">350dp</dimen>
+
+</resources>
