@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="action_settings">Настройки</string>
+    <string name="title_activity_psalm_fullscreen">Песня</string>
+    <string name="title_activity_main_settings">Настройки</string>
+
+    <!-- Application display strings. -->
+    <string name="app_name">P&amp;W Songs</string>
+
+    <!-- Main activity display strings. -->
+    <string name="txt_main_navigation_header_comment">Библиотека христианских песен.</string>
+    <string name="lbl_drawer_main_history">История</string>
+    <string name="lbl_drawer_main_home">Главная</string>
+    <string name="lbl_drawer_main_favorite">Избранное</string>
+    <string name="lbl_drawer_main_settings">Настройки</string>
+    <string name="lbl_drawer_main_system_menu"></string>
+
+    <string name="lbl_recent">Последние</string>
+    <string name="lbl_search">Поиск текста песни</string>
+    <string name="lbl_search_by_number">Найти по номеру</string>
+    <string name="lbl_search_by_text">Поиск по тексту</string>
+
+    <!-- Search activity display strings. -->
+    <string name="title_activity_search">Поиск</string>
+    <string name="lbl_search_widget">Поиск&#8230;</string>
+    <string name="hint_enter_text">Введите любой текст для поиска песни&#8230;</string>
+    <string name="hint_enter_psalm_number">Введите номер песни&#8230;</string>
+    <string name="lbl_fts_search_progress">Выполняется полнотекстовый поиск..\n</string>
+
+    <!-- Psalm activity display strings. -->
+    <string name="lbl_chorus">Припев</string>
+    <string name="lbl_author">Слова</string>
+    <string name="lbl_translator">Перевод</string>
+    <string name="lbl_music">Музыка</string>
+    <string name="lbl_search_psalm">Найти</string>
+    <string name="lbl_jump_to_number">Перейти по номеру</string>
+    <string name="msg_added_to_favorites">Добавлено в избранное.</string>
+    <string name="msg_removed_from_favorites">Удалено из избранного.</string>
+
+    <!-- Psalm fullscreen activity display strings. -->
+    <string name="lbl_add_to_favorites">Добавить в избранное</string>
+    <string name="lbl_remove_from_favorites">Удалить из избранного</string>
+
+    <!-- Search psalm number dialog display strings. -->
+    <string name="lbl_ok">OK</string>
+    <string name="lbl_cancel">Отмена</string>
+    <string name="lbl_enter_psalm_number">Введите номер в данном сборнике, на который желаете перейти: </string>
+    <string name="msg_no_psalm_number_found">Номер не найден</string>
+</resources>

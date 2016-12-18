@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppTheme" parent="BaseTheme"/>
+
+    <style name="AppTheme.Launcher" parent="BaseTheme.Launcher"/>
+
+    <style name="AppTheme.NoActionBar" parent="BaseTheme.NoActionBar"/>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="AppTheme.Fullscreen" parent="BaseTheme.Fullscreen" />
+
+</resources>

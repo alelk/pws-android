@@ -1,0 +1,227 @@
+<resources>
+
+    <style name="BaseTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/color_primary</item>
+        <item name="colorPrimaryDark">@color/color_primary_dark</item>
+        <item name="colorAccent">@color/color_accent</item>
+        <item name="android:colorBackground">@color/color_background</item>
+        <item name="android:textColorPrimary">@color/color_text_primary</item>
+        <item name="android:textColorPrimaryInverse">@color/color_text_primary_inverse</item>
+        <item name="android:textColorSecondary">@color/color_text_secondary</item>
+        <item name="android:textColorSecondaryInverse">@color/color_text_secondary_inverse</item>
+        <item name="android:windowBackground">@color/color_window_background</item>
+        <item name="android:colorForeground">@color/color_foreground</item>
+        <item name="cardStyle">@style/BaseTheme.CardViewStyle</item>
+        <item name="cardStylePsalm">@style/BaseTheme.CardViewStyle.Psalm</item>
+        <item name="cardButtonStyle">@style/BaseTheme.ButtonStyle</item>
+        <item name="textAppearanceBody">@style/BaseTheme.TextAppearance.Body1</item>
+        <item name="textAppearanceBodyInverse">@style/BaseTheme.TextAppearance.Body1.Inverse</item>
+        <item name="textAppearanceTitle">@style/BaseTheme.TextAppearance.Title</item>
+        <item name="textAppearanceTitleInverse">@style/BaseTheme.TextAppearance.Title.Inverse</item>
+        <item name="textStyleCardPsalmNumber">@style/BaseTheme.TextStyle.Card.PsalmNumber</item>
+        <item name="textStyleCardPsalmName">@style/BaseTheme.TextStyle.Card.PsalmName</item>
+        <item name="textStyleCardBookName">@style/BaseTheme.TextStyle.Card.BookName</item>
+        <item name="textStyleCardTimestamp">@style/BaseTheme.TextStyle.Card.Timestamp</item>
+        <item name="textStyleCardPsalmText">@style/BaseTheme.TextStyle.Card.PsalmText</item>
+        <item name="textStyleNavHeaderAppName">@style/BaseTheme.TextStyle.NavHeader.AppName</item>
+        <item name="textStyleNavHeaderAppDescription">@style/BaseTheme.TextStyle.NavHeader.AppDescription</item>
+        <item name="textStylePsalmHeaderPsalmName">@style/BaseTheme.TextStyle.PsalmHeader.PsalmName</item>
+        <item name="textStylePsalmHeaderBibleRef">@style/BaseTheme.TextStyle.PsalmHeader.BibleRef</item>
+        <item name="textStylePsalmHeaderBookName">@style/BaseTheme.TextStyle.PsalmHeader.BookName</item>
+        <item name="textStylePsalmBodyText">@style/BaseTheme.TextStyle.PsalmBody.PsalmText</item>
+        <item name="textStylePsalmBodyTonalities">@style/BaseTheme.TextStyle.PsalmBody.Tonalities</item>
+        <item name="textStylePsalmBodyInfo">@style/BaseTheme.TextStyle.PsalmBody.Info</item>
+    </style>
+
+    <style name="BaseTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="BaseTheme.Launcher">
+        <item name="android:windowBackground">@drawable/im_launcher</item>
+    </style>
+
+    <style name="BaseTheme.TextAppearance">
+        <item name="android:textSize">@dimen/txt_size_body</item>
+        <item name="android:textColor">@color/color_text_secondary</item>
+    </style>
+
+    <style name="BaseTheme.TextAppearance.Body1"/>
+
+    <style name="BaseTheme.TextAppearance.Body1.Inverse">
+        <item name="android:textColor">@color/color_text_secondary_inverse</item>
+    </style>
+
+    <style name="BaseTheme.TextAppearance.Title">
+        <item name="android:textSize">@dimen/txt_size_title</item>
+        <item name="android:textColor">@color/color_text_primary</item>
+    </style>
+
+    <style name="BaseTheme.TextAppearance.Title.Inverse">
+        <item name="android:textSize">@dimen/txt_size_title</item>
+        <item name="android:textColor">@color/color_text_primary_inverse</item>
+    </style>
+
+    <style name="BaseTheme.TextStyle">
+        <item name="android:textAppearance">?attr/textAppearanceBody</item>
+    </style>
+
+    <style name="BaseTheme.TextStyle.Card">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="BaseTheme.TextStyle.Card.PsalmNumber">
+        <item name="android:textAppearance">?attr/textAppearanceTitle</item>
+        <item name="android:textSize">30sp</item>
+        <item name="android:textColor">@color/color_primary_dark</item>
+        <item name="android:minWidth">@dimen/txt_min_width_psalm_number</item>
+        <item name="android:paddingLeft">@dimen/txt_padding_horizontal_card</item>
+        <item name="android:paddingRight">@dimen/txt_padding_horizontal_card</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="BaseTheme.TextStyle.Card.PsalmName">
+        <item name="android:textAppearance">?attr/textAppearanceTitle</item>
+    </style>
+
+    <style name="BaseTheme.TextStyle.Card.BookName"/>
+
+    <style name="BaseTheme.TextStyle.Card.PsalmText"/>
+
+    <style name="BaseTheme.TextStyle.Card.Timestamp">
+        <item name="android:paddingRight">@dimen/txt_padding_horizontal_card</item>
+        <item name="android:layout_gravity">end</item>
+    </style>
+
+    <style name="BaseTheme.TextStyle.NavHeader">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:paddingLeft">@dimen/padding_horizontal</item>
+        <item name="android:textAppearance">?attr/textAppearanceBodyInverse</item>
+    </style>
+
+    <style name="BaseTheme.TextStyle.NavHeader.AppName">
+        <item name="android:textAppearance">?attr/textAppearanceTitleInverse</item>
+    </style>
+
+    <style name="BaseTheme.TextStyle.NavHeader.AppDescription"/>
+
+    <style name="BaseTheme.TextStyle.PsalmHeader">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:textAppearance">?attr/textAppearanceTitleInverse</item>
+    </style>
+
+    <style name="BaseTheme.TextStyle.PsalmHeader.PsalmName">
+        <item name="android:paddingLeft">@dimen/txt_padding_horizontal</item>
+        <item name="android:paddingRight">@dimen/txt_padding_horizontal</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center_horizontal|bottom</item>
+        <item name="android:textSize">@dimen/txt_size_psalm_header_name</item>
+    </style>
+
+    <style name="BaseTheme.TextStyle.PsalmHeader.BibleRef">
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textAppearance">?attr/textAppearanceBodyInverse</item>
+        <item name="android:paddingLeft">@dimen/padding_horizontal</item>
+        <item name="android:paddingRight">@dimen/padding_horizontal</item>
+        <item name="android:textSize">@dimen/txt_size_psalm_header_bible_ref</item>
+    </style>
+
+    <style name="BaseTheme.TextStyle.PsalmHeader.BookName">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAppearance">?attr/textAppearanceBodyInverse</item>
+        <item name="android:layout_gravity">left</item>
+        <item name="android:lines">1</item>
+        <item name="android:layout_marginBottom">5dp</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:layout_marginLeft">50dp</item>
+    </style>
+
+    <style name="BaseTheme.TextStyle.PsalmBody">
+        <item name="android:textAppearance">?attr/textAppearanceTitle</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:paddingLeft">@dimen/padding_horizontal</item>
+        <item name="android:paddingRight">@dimen/padding_horizontal</item>
+    </style>
+
+    <style name="BaseTheme.TextStyle.PsalmBody.PsalmText">
+        <item name="android:textSize">@dimen/txt_size_psalm_text</item>
+        <item name="android:textColor">@color/color_text_primary</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:paddingTop">20dp</item>
+        <item name="android:paddingBottom">20dp</item>
+    </style>
+
+    <style name="BaseTheme.TextStyle.PsalmBody.PsalmText.Fullscreen">
+        <item name="android:textColor">@color/color_text_primary_inverse</item>
+    </style>
+
+    <style name="BaseTheme.TextStyle.PsalmBody.Tonalities">
+        <item name="android:textSize">@dimen/txt_size_psalm_tonalities</item>
+        <item name="android:textColor">@color/color_primary</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:paddingBottom">6dp</item>
+    </style>
+
+    <style name="BaseTheme.TextStyle.PsalmBody.Tonalities.Fullscreen">
+        <item name="android:textColor">@color/color_text_secondary_inverse</item>
+    </style>
+
+    <style name="BaseTheme.TextStyle.PsalmBody.Info">
+        <item name="android:textSize">@dimen/txt_size_psalm_info</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:paddingBottom">6dp</item>
+    </style>
+
+    <style name="BaseTheme.TextStyle.PsalmBody.Info.Fullscreen">
+        <item name="android:textColor">@color/color_text_secondary_inverse</item>
+    </style>
+
+    <style name="BaseTheme.CardViewStyle" parent="CardView.Light">
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:layout_marginBottom">4dp</item>
+    </style>
+
+    <style name="BaseTheme.CardViewStyle.Psalm">
+        <item name="cardBackgroundColor">@color/color_background</item>
+    </style>
+
+    <style name="BaseTheme.CardViewStyle.Psalm.Fullscreen">
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:layout_marginBottom">4dp</item>
+        <item name="cardBackgroundColor">@color/color_background_fullscreen</item>
+    </style>
+
+    <style name="BaseTheme.ButtonStyle" parent="android:ButtonBar"/>
+
+    <style name="BaseTheme.Fullscreen">
+        <item name="android:actionBarStyle">@style/BaseTheme.Fullscreen.ActionBar</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:windowBackground">@null</item>
+        <item name="metaButtonBarStyle">?android:attr/buttonBarStyle</item>
+        <item name="metaButtonBarButtonStyle">?android:attr/buttonBarButtonStyle</item>
+        <item name="cardStylePsalm">@style/BaseTheme.CardViewStyle.Psalm.Fullscreen</item>
+        <item name="textAppearanceBody">@style/BaseTheme.TextAppearance.Body1.Inverse</item>
+        <item name="textAppearanceBodyInverse">@style/BaseTheme.TextAppearance.Body1</item>
+        <item name="textAppearanceTitle">@style/BaseTheme.TextAppearance.Title.Inverse</item>
+        <item name="textAppearanceTitleInverse">@style/BaseTheme.TextAppearance.Title</item>
+        <item name="textStylePsalmBodyText">@style/BaseTheme.TextStyle.PsalmBody.PsalmText.Fullscreen</item>
+        <item name="textStylePsalmBodyTonalities">@style/BaseTheme.TextStyle.PsalmBody.Tonalities.Fullscreen</item>
+        <item name="textStylePsalmBodyInfo">@style/BaseTheme.TextStyle.PsalmBody.Info.Fullscreen</item>
+    </style>
+
+    <style name="BaseTheme.Fullscreen.ActionBar" parent="Widget.AppCompat.ActionBar">
+        <item name="android:background">@color/black_overlay</item>
+    </style>
+
+</resources>

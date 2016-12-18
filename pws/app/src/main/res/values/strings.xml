@@ -1,0 +1,9 @@
+<resources>
+    <string name="open_drawer" translatable="false">Open drawer</string>
+    <string name="close_drawer" translatable="false">Close drawer</string>
+
+    <!-- Contacts -->
+    <string name="email" translatable="false">alelkdev@gmail.com</string>
+    <string name="app_page_link" translatable="false">http://sites.google.com/view/pwsongs</string>
+    <string name="developer_page_link" translatable="false">http://sites.google.com/view/pwsongs</string>
+</resources>
