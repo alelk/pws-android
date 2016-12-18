@@ -12,13 +12,13 @@
     <dimen name="txt_min_width_psalm_number">68dp</dimen>
 
     <!-- Psalm Activity -->
-    <dimen name="txt_size_psalm_header_name">40sp</dimen>
+    <dimen name="txt_size_psalm_header_name">28sp</dimen>
     <dimen name="txt_size_psalm_header_bible_ref">20sp</dimen>
-    <dimen name="txt_size_psalm_text">30sp</dimen>
+    <dimen name="txt_size_psalm_text">25sp</dimen>
     <dimen name="txt_size_psalm_tonalities">20sp</dimen>
     <dimen name="txt_size_psalm_info">15sp</dimen>
     <dimen name="padding_psalm_body_horizontal">16dp</dimen>
-    <dimen name="app_bar_psalm_height">280dp</dimen>
+    <dimen name="app_bar_psalm_height">350dp</dimen>
 
     <!--  -->
     <dimen name="nav_header_vertical_spacing">16dp</dimen>

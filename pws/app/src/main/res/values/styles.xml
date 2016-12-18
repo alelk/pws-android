@@ -76,9 +76,9 @@
         <item name="android:textAppearance">?attr/textAppearanceTitle</item>
         <item name="android:textSize">30sp</item>
         <item name="android:textColor">@color/color_primary_dark</item>
-        <item name="android:minWidth">60dp</item>
-        <item name="android:layout_marginStart">6dp</item>
-        <item name="android:layout_marginEnd">6dp</item>
+        <item name="android:minWidth">@dimen/txt_min_width_psalm_number</item>
+        <item name="android:paddingLeft">@dimen/txt_padding_horizontal_card</item>
+        <item name="android:paddingRight">@dimen/txt_padding_horizontal_card</item>
         <item name="android:layout_gravity">center</item>
         <item name="android:gravity">center</item>
     </style>
@@ -92,14 +92,14 @@
     <style name="BaseTheme.TextStyle.Card.PsalmText"/>
 
     <style name="BaseTheme.TextStyle.Card.Timestamp">
-        <item name="android:layout_marginEnd">10dp</item>
+        <item name="android:paddingRight">@dimen/txt_padding_horizontal_card</item>
         <item name="android:layout_gravity">end</item>
     </style>
 
     <style name="BaseTheme.TextStyle.NavHeader">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingLeft">@dimen/padding_horizontal</item>
         <item name="android:textAppearance">?attr/textAppearanceBodyInverse</item>
     </style>
 
@@ -117,21 +117,21 @@
     </style>
 
     <style name="BaseTheme.TextStyle.PsalmHeader.PsalmName">
-        <item name="android:paddingLeft">6dp</item>
-        <item name="android:paddingRight">6dp</item>
+        <item name="android:paddingLeft">@dimen/txt_padding_horizontal</item>
+        <item name="android:paddingRight">@dimen/txt_padding_horizontal</item>
         <item name="android:layout_height">0dp</item>
         <item name="android:layout_weight">1</item>
         <item name="android:gravity">center_horizontal|bottom</item>
-        <item name="android:textSize">40sp</item>
+        <item name="android:textSize">@dimen/txt_size_psalm_header_name</item>
     </style>
 
     <style name="BaseTheme.TextStyle.PsalmHeader.BibleRef">
         <item name="android:layout_height">0dp</item>
         <item name="android:layout_weight">1</item>
         <item name="android:textAppearance">?attr/textAppearanceBodyInverse</item>
-        <item name="android:paddingLeft">16dp</item>
-        <item name="android:paddingRight">16dp</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:paddingLeft">@dimen/padding_horizontal</item>
+        <item name="android:paddingRight">@dimen/padding_horizontal</item>
+        <item name="android:textSize">@dimen/txt_size_psalm_header_bible_ref</item>
     </style>
 
     <style name="BaseTheme.TextStyle.PsalmHeader.BookName">
@@ -141,19 +141,19 @@
         <item name="android:lines">1</item>
         <item name="android:layout_marginBottom">5dp</item>
         <item name="android:layout_marginTop">10dp</item>
-        <item name="android:layout_marginStart">50dp</item>
+        <item name="android:layout_marginLeft">50dp</item>
     </style>
 
     <style name="BaseTheme.TextStyle.PsalmBody">
         <item name="android:textAppearance">?attr/textAppearanceTitle</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:paddingStart">16dp</item>
-        <item name="android:paddingEnd">16dp</item>
+        <item name="android:paddingLeft">@dimen/padding_horizontal</item>
+        <item name="android:paddingRight">@dimen/padding_horizontal</item>
     </style>
 
     <style name="BaseTheme.TextStyle.PsalmBody.PsalmText">
-        <item name="android:textSize">30sp</item>
+        <item name="android:textSize">@dimen/txt_size_psalm_text</item>
         <item name="android:textColor">@color/color_text_primary</item>
         <item name="android:layout_gravity">center_horizontal</item>
         <item name="android:paddingTop">20dp</item>
@@ -165,7 +165,7 @@
     </style>
 
     <style name="BaseTheme.TextStyle.PsalmBody.Tonalities">
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">@dimen/txt_size_psalm_tonalities</item>
         <item name="android:textColor">@color/color_primary</item>
         <item name="android:layout_gravity">center_horizontal</item>
         <item name="android:paddingTop">6dp</item>
@@ -177,7 +177,7 @@
     </style>
 
     <style name="BaseTheme.TextStyle.PsalmBody.Info">
-        <item name="android:textSize">10sp</item>
+        <item name="android:textSize">@dimen/txt_size_psalm_info</item>
         <item name="android:layout_gravity">center_horizontal</item>
         <item name="android:paddingTop">6dp</item>
         <item name="android:paddingBottom">6dp</item>
@@ -193,8 +193,6 @@
     </style>
 
     <style name="BaseTheme.CardViewStyle.Psalm">
-        <item name="android:layout_marginTop">4dp</item>
-        <item name="android:layout_marginBottom">4dp</item>
         <item name="cardBackgroundColor">@color/color_background</item>
     </style>
 

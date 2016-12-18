@@ -169,11 +169,11 @@ public class PsalmActivity extends AppCompatActivity implements PsalmTextFragmen
             final PsalmTextFragment fragment = (PsalmTextFragment) mPsalmTextPagerAdapter.getRegisteredFragments().get(mPagerPsalmText.getCurrentItem());
             if(fragment.isFavoritePsalm()) {
                 fragment.removePsalmFromFavorites();
-                Snackbar.make(v, "Removed from favorites.", Snackbar.LENGTH_SHORT)
+                Snackbar.make(v, R.string.msg_removed_from_favorites, Snackbar.LENGTH_SHORT)
                         .setAction("Action", null).show();
             } else {
                 fragment.addPsalmToFavorites();
-                Snackbar.make(v, "Added to favorites.", Snackbar.LENGTH_SHORT)
+                Snackbar.make(v, R.string.msg_added_to_favorites, Snackbar.LENGTH_SHORT)
                         .setAction("Action", null).show();
             }
         }
