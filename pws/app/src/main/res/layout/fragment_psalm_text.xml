@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PsalmActivity">
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:padding="4dp"
+        android:id="@+id/ll_psalm_text_content"
+        android:orientation="vertical"
+        tools:context=".fragment.PsalmTextFragment">
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="?attr/cardStylePsalm"
+            android:id="@+id/cv_tonalities">
+            <TextView
+                style="?attr/textStylePsalmBodyTonalities"
+                android:id="@+id/txt_psalm_tonalities"/>
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="?attr/cardStylePsalm">
+            <TextView
+                style="?attr/textStylePsalmBodyText"
+                android:id="@+id/txt_psalm_text"/>
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="?attr/cardStylePsalm"
+            android:id="@+id/cv_psalm_info">
+            <TextView
+                style="?attr/textStylePsalmBodyInfo"
+                android:id="@+id/txt_psalm_info"/>
+        </android.support.v7.widget.CardView>
+
+    </LinearLayout>
+</android.support.v4.widget.NestedScrollView>

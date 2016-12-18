@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_psalm_fullscreen">Psalm</string>
+    <string name="title_activity_main_settings">Settings</string>
+
+    <!-- Application display strings. -->
+    <string name="app_name">P&amp;W Songs</string>
+
+    <!-- Main activity display strings. -->
+    <string name="txt_main_navigation_header_comment">The library of Christian psalms.</string>
+    <string name="lbl_drawer_main_history">History</string>
+    <string name="lbl_drawer_main_home">Home</string>
+    <string name="lbl_drawer_main_favorite">Favorite</string>
+    <string name="lbl_drawer_main_settings">Settings</string>
+    <string name="lbl_drawer_main_system_menu"></string>
+
+    <string name="lbl_recent">Recent</string>
+    <string name="lbl_search">Search psalm</string>
+    <string name="lbl_search_by_number">Number</string>
+    <string name="lbl_search_by_text">Text</string>
+
+    <!-- Search activity display strings. -->
+    <string name="title_activity_search">Search</string>
+    <string name="lbl_search_widget">Search&#8230;</string>
+    <string name="hint_enter_text">Type any text to search psalm&#8230;</string>
+    <string name="hint_enter_psalm_number">Enter psalm number&#8230;</string>
+    <string name="lbl_fts_search_progress">Full-text search is in progress..\n</string>
+
+    <!-- Psalm activity display strings. -->
+    <string name="lbl_chorus">Chorus</string>
+    <string name="lbl_author">Author</string>
+    <string name="lbl_translator">Translator</string>
+    <string name="lbl_music">Music</string>
+    <string name="lbl_search_psalm">Search psalm</string>
+    <string name="lbl_jump_to_number">Jump to the number</string>
+    <string name="msg_added_to_favorites">Added to favorites.</string>
+    <string name="msg_removed_from_favorites">Removed from favorites.</string>
+
+    <!-- Psalm fullscreen activity display strings. -->
+    <string name="lbl_add_to_favorites">Add to favorites</string>
+    <string name="lbl_remove_from_favorites">Remove from favorites</string>
+
+    <!-- Search psalm number dialog display strings. -->
+    <string name="lbl_ok">OK</string>
+    <string name="lbl_cancel">Cancel</string>
+    <string name="lbl_enter_psalm_number">Please enter psalm number: </string>
+    <string name="msg_no_psalm_number_found">No found psalm number.</string>
+</resources>

@@ -1,0 +1,116 @@
+package com.alelk.pws.pwapp.fragment;
+
+import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.text.Layout;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+
+import com.alelk.pws.database.provider.PwsDataProvider;
+import com.alelk.pws.pwapp.PsalmActivity;
+import com.alelk.pws.pwapp.R;
+import com.alelk.pws.pwapp.adapter.SearchRecyclerViewAdapter;
+
+/**
+ * Created by Alex Elkin on 23.05.2016.
+ */
+public class SearchResultsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+
+    public static final String KEY_QUERY = "com.alelk.pws.pwapp.query";
+    public static final int PWS_SEARCH_RESULTS_LOADER = 4;
+
+    private String mQuery;
+    private RecyclerView mRecyclerView;
+    private SearchRecyclerViewAdapter mSearchResultsAdapter;
+    private View mLayoutSearchProgress;
+
+    public static SearchResultsFragment newInstance(String query) {
+        final Bundle args = new Bundle();
+        args.putString(KEY_QUERY, query);
+        final SearchResultsFragment fragment = new SearchResultsFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (getArguments() != null) {
+            mQuery = getArguments().getString(KEY_QUERY);
+        }
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        final View v = inflater.inflate(R.layout.fragment_search_results, null);
+        mRecyclerView = (RecyclerView) v.findViewById(R.id.rv_search_results);
+        mLayoutSearchProgress = v.findViewById(R.id.layout_search_progress);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+        mRecyclerView.setLayoutManager(layoutManager);
+        mSearchResultsAdapter = new SearchRecyclerViewAdapter(new SearchRecyclerViewAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(long psalmNumberId) {
+                Intent intentPsalmView = new Intent(getActivity().getBaseContext(), PsalmActivity.class);
+                intentPsalmView.putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, psalmNumberId);
+                startActivity(intentPsalmView);
+            }
+        });
+        mRecyclerView.setAdapter(mSearchResultsAdapter);
+
+        mLayoutSearchProgress.setVisibility(View.VISIBLE);
+        getLoaderManager().initLoader(PWS_SEARCH_RESULTS_LOADER, null, this);
+
+        return v;
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
+        if (TextUtils.isEmpty(mQuery)) return null;
+        switch (loaderId) {
+            case PWS_SEARCH_RESULTS_LOADER:
+                return new CursorLoader(
+                        getActivity().getBaseContext(),
+                        PwsDataProvider.Psalms.Search.CONTENT_URI,
+                        null,
+                        null,
+                        new String[]{ mQuery },
+                        null);
+        }
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        mSearchResultsAdapter.swapCursor(data);
+        mLayoutSearchProgress.setVisibility(View.GONE);
+        mRecyclerView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mSearchResultsAdapter.swapCursor(null);
+    }
+
+    public void updateQuery(String query) {
+        mQuery = query;
+        getLoaderManager().restartLoader(PWS_SEARCH_RESULTS_LOADER, null, this);
+        if (mLayoutSearchProgress != null)
+            mLayoutSearchProgress.setVisibility(View.VISIBLE);
+        if (mRecyclerView != null)
+            mRecyclerView.setVisibility(View.INVISIBLE);
+    }
+}

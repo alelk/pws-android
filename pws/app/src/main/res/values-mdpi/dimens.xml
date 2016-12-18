@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- General -->
+    <dimen name="txt_size_title">16sp</dimen>
+    <dimen name="txt_size_body">12sp</dimen>
+    <dimen name="padding_horizontal">8dp</dimen>
+
+    <!-- Cards -->
+    <dimen name="txt_sise_psalm_number">20sp</dimen>
+    <dimen name="txt_min_width_psalm_number">60dp</dimen>
+
+    <!-- Psalm Activity -->
+    <dimen name="txt_size_psalm_header_name">30sp</dimen>
+    <dimen name="txt_size_psalm_header_bible_ref">15sp</dimen>
+    <dimen name="txt_size_psalm_tonalities">15sp</dimen>
+    <dimen name="txt_size_psalm_text">22sp</dimen>
+    <dimen name="txt_size_psalm_info">12sp</dimen>
+    <dimen name="app_bar_psalm_height">280dp</dimen>
+</resources>
