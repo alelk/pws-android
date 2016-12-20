@@ -10,7 +10,7 @@ android {
         targetSdkVersion 25
         versionCode 4
         versionName '1.0.1'
-        versionNameSuffix '-' + getDate()
+        versionNameSuffix '-' + getDate().toLowerCase()
     }
     buildTypes {
         release {

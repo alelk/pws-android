@@ -2,8 +2,10 @@ package com.alelk.pws.pwapp.fragment.preference;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.view.MenuItem;
 
+import com.alelk.pws.database.BuildConfig;
 import com.alelk.pws.pwapp.MainSettingsActivity;
 import com.alelk.pws.pwapp.R;
 
@@ -13,11 +15,19 @@ import com.alelk.pws.pwapp.R;
 
 public class AboutPreferenceFragment extends PwsPreferenceFragment{
 
+    private Preference mPrefAboutApp;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.pref_about);
+        mPrefAboutApp = findPreference(getString(R.string.pref_about_app_key));
+        init();
         setHasOptionsMenu(true);
+    }
+
+    private void init() {
+        mPrefAboutApp.setSummary(getString(R.string.pref_about_app_version_prefix, BuildConfig.VERSION_NAME));
     }
 
     @Override
