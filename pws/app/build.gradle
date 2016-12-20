@@ -11,7 +11,7 @@ android {
         targetSdkVersion 25
         versionCode 4
         versionName '1.0.1'
-        versionNameSuffix '-' + getDate()
+        versionNameSuffix '-' + getDate().toLowerCase()
     }
     buildTypes {
         release {
@@ -21,6 +21,9 @@ android {
     }
     sourceSets { main { assets.srcDirs = ['src/main/assets', 'src/main/assets/'] } }
     productFlavors {
+    }
+    applicationVariants.all { variant ->
+        variant.resValue "string", "versionName", variant.versionName
     }
 }
 

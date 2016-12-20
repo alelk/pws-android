@@ -6,4 +6,8 @@
     <string name="email" translatable="false">alelkdev@gmail.com</string>
     <string name="app_page_link" translatable="false">http://sites.google.com/view/pwsongs</string>
     <string name="developer_page_link" translatable="false">http://sites.google.com/view/pwsongs</string>
+
+    <!-- Preferences -->
+    <string name="pref_books_key" translatable="false">prefGeneralBooks</string>
+    <string name="pref_about_app_key" translatable="false">prefAboutApp</string>
 </resources>
