@@ -222,7 +222,7 @@ public class PsalmFullscreenActivity extends AppCompatActivity implements PsalmT
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                finishActivity(RESULT_OK);
+                finish();
                 break;
         }
         return super.onOptionsItemSelected(item);

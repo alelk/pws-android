@@ -63,7 +63,9 @@ public class PsalmActivity extends AppCompatActivity implements PsalmTextFragmen
         mFabFavorite.setOnClickListener(new FabFavoritesOnClick());
 
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         mPsalmHeaderFragment = (PsalmHeaderFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_psalm_header);
         if (mPsalmHeaderFragment == null) {
