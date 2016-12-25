@@ -1,54 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
     android:layout_height="match_parent"
     android:layout_width="match_parent">
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="10dp">
-
-        <TextView
-            android:paddingTop="20dp"
-            android:textSize="@dimen/txt_size_body"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="6dp"
-            android:paddingRight="4dp"
-            android:text="@string/lbl_search"/>
-
-        <android.support.v7.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-                <Button
-                    android:id="@+id/btn_search_psalm_number"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:text="@string/lbl_search_by_number"
-                    style="?attr/cardButtonStyle"
-                    android:background="@color/cardview_light_background"
-                    android:drawableTop="@drawable/ic_dialpad_black"/>
-                <Button
-                    android:id="@+id/btn_search_psalm_text"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:text="@string/lbl_search_by_text"
-                    style="?attr/cardButtonStyle"
-                    android:drawableTop="@drawable/ic_search_black"
-                    android:background="@color/cardview_light_background"/>
-            </LinearLayout>
-        </android.support.v7.widget.CardView>
-
+        android:padding="6dp"
+        android:layout_height="match_parent">
         <TextView
             android:paddingTop="20dp"
             android:textSize="@dimen/txt_size_body"
@@ -61,6 +22,8 @@
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:id="@+id/rv_recent"
             android:theme="@style/AppTheme">
         </android.support.v7.widget.RecyclerView>

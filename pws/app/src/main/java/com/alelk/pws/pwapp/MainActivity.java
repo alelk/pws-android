@@ -1,6 +1,8 @@
 package com.alelk.pws.pwapp;
 
 import android.content.Intent;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -10,6 +12,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,9 +30,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout mDrawerLayout;
     private int mNavigationItemId = R.id.drawer_main_home;
     private Toolbar mToolbar;
-    private FloatingActionButton mFActionButton;
+    private FloatingActionButton mFabSearchText;
+    private FloatingActionButton mFabSearchNumber;
     private ActionBarDrawerToggle mDrawerToggle;
     private NavigationView mNavigationView;
+    private AppBarLayout mAppBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme_NoActionBar);
@@ -43,10 +48,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mToolbar = (Toolbar) findViewById(R.id.toolbar_main);
         setSupportActionBar(mToolbar);
 
-        mFActionButton = (FloatingActionButton) findViewById(R.id.fab);
-        mFActionButton.setVisibility(View.GONE);
+        mFabSearchText = (FloatingActionButton) findViewById(R.id.fab_search_text);
+        mFabSearchNumber = (FloatingActionButton) findViewById(R.id.fab_search_number);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.layout_main_drawer);
+        mAppBar = (AppBarLayout) findViewById(R.id.appbar_main);
+        mAppBar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                if (verticalOffset == 0) {
+                    mFabSearchText.hide();
+                    mFabSearchNumber.hide();
+                } else {
+                    mFabSearchText.show();
+                    mFabSearchNumber.show();
+                }
+            }
+        });
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.open_drawer, R.string.close_drawer);
         mDrawerLayout.addDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
@@ -96,9 +114,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
         boolean result = false;
         switch (id) {
-            case R.id.drawer_main_home:
             case R.id.drawer_main_history:
             case R.id.drawer_main_favorite:
+                mAppBar.setExpanded(false, true);
+                mNavigationItemId = id;
+                displayFragment();
+                result = true;
+                break;
+            case R.id.drawer_main_home:
+                mAppBar.setExpanded(true, true);
                 mNavigationItemId = id;
                 displayFragment();
                 result = true;
@@ -117,23 +141,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void displayFragment() {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         Fragment fragment = null;
+        int titleResId = R.string.app_name;
         switch (mNavigationItemId) {
             case R.id.drawer_main_home:
                 fragment = new ReadNowFragment();
-                setTitle(getString(R.string.lbl_drawer_main_home));
-                mFActionButton.hide();
+                titleResId = R.string.lbl_drawer_main_home;
                 break;
             case R.id.drawer_main_history:
                 fragment = new HistoryFragment();
-                setTitle(getString(R.string.lbl_drawer_main_history));
-                mFActionButton.show();
+                titleResId = R.string.lbl_drawer_main_history;
                 break;
             case R.id.drawer_main_favorite:
                 fragment = new FavoritesFragment();
-                setTitle(getString(R.string.lbl_drawer_main_favorite));
-                mFActionButton.show();
+                titleResId = R.string.lbl_drawer_main_favorite;
                 break;
         }
+        CollapsingToolbarLayout collapsingToolbarLayout= (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_main);
+        collapsingToolbarLayout.setTitle(getString(titleResId));
         fragmentTransaction.replace(R.id.fragment_main_container, fragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
@@ -142,5 +166,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onClickSearchFab(View v) {
         Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
         startActivity(intent);
+    }
+
+    public void onClickSearchText(View v) {
+        Intent intentSearchText = new Intent(getBaseContext(), SearchActivity.class);
+        intentSearchText.putExtra(SearchActivity.KEY_INPUT_TYPE, InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_AUTO_COMPLETE);
+        startActivity(intentSearchText);
+    }
+
+    public void onClickSearchNumber(View v) {
+        Intent intentSearchNumber = new Intent(getBaseContext(), SearchActivity.class);
+        intentSearchNumber.putExtra(SearchActivity.KEY_INPUT_TYPE, InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        startActivity(intentSearchNumber);
     }
 }
