@@ -202,7 +202,11 @@
         <item name="cardBackgroundColor">@color/color_background_fullscreen</item>
     </style>
 
-    <style name="BaseTheme.ButtonStyle" parent="android:ButtonBar"/>
+    <style name="BaseTheme.ButtonStyle" parent="android:ButtonBar">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:textAppearance">@style/BaseTheme.TextAppearance.Body1.Inverse</item>
+        <item name="android:layout_margin">4dp</item>
+        </style>
 
     <style name="BaseTheme.Fullscreen">
         <item name="android:actionBarStyle">@style/BaseTheme.Fullscreen.ActionBar</item>
