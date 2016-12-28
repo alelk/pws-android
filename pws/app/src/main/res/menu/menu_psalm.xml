@@ -1,17 +1,24 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:app="http://schemas.android.com/apk/res-auto"
-      xmlns:tools="http://schemas.android.com/tools"
-      tools:context="com.alelk.pws.pwapp.PsalmActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.alelk.pws.pwapp.PsalmActivity">
 
     <item android:id="@+id/menu_search"
-          android:title="@string/lbl_search_psalm"
-          app:showAsAction="always"
-          app:actionViewClass="android.support.v7.widget.SearchView"
+        android:title="@string/lbl_search_psalm"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_search_black"
+        app:actionViewClass="android.support.v7.widget.SearchView"
         />
 
     <item android:id="@+id/menu_jump"
-          android:title="@string/lbl_jump_to_number"
-          android:icon="@drawable/ic_dialpad"
-          app:showAsAction="never"
+        android:title="@string/lbl_jump_to_number"
+        android:icon="@drawable/ic_dialpad"
+        app:showAsAction="never"
+        />
+
+    <item android:id="@+id/menu_text_size"
+        android:title="@string/lbl_psalm_text_size"
+        android:icon="@drawable/ic_settings"
+        app:showAsAction="never"
         />
 </menu>

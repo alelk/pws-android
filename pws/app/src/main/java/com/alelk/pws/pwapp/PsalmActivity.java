@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -20,6 +21,7 @@ import android.view.View;
 
 import com.alelk.pws.database.provider.PwsDataProvider;
 import com.alelk.pws.pwapp.adapter.PsalmTextFragmentStatePagerAdapter;
+import com.alelk.pws.pwapp.dialog.PsalmPreferencesDialogFragment;
 import com.alelk.pws.pwapp.dialog.SearchPsalmNumberDialogFragment;
 import com.alelk.pws.pwapp.fragment.PsalmHeaderFragment;
 import com.alelk.pws.pwapp.fragment.PsalmTextFragment;
@@ -31,14 +33,17 @@ import java.util.ArrayList;
  * Created by Alex Elkin on 25.03.2016.
  */
 public class PsalmActivity extends AppCompatActivity implements PsalmTextFragment.Callbacks,
-        SearchPsalmNumberDialogFragment.SearchPsalmNumberDialogListener{
+        SearchPsalmNumberDialogFragment.SearchPsalmNumberDialogListener,
+        PsalmPreferencesDialogFragment.OnPsalmPreferencesChangedCallbacks{
 
     public static final String KEY_PSALM_NUMBER_ID = "psalmNumberId";
     private static final int REQUEST_CODE_FULLSCREEN_ACTIVITY = 1;
     private static final int ADD_TO_HISTORY_DELAY = 5000;
     private Long mPsalmNumberId = -1L;
+    private float mPsalmTextSize = -1;
     private ViewPager mPagerPsalmText;
     private PsalmHeaderFragment mPsalmHeaderFragment;
+    private PsalmTextFragment mCurrentPsalmTextFragment;
     private Toolbar mToolbar;
     private FloatingActionButton mFabFavorite;
     private ArrayList<Long> mBookPsalmNumberIds;
@@ -74,7 +79,7 @@ public class PsalmActivity extends AppCompatActivity implements PsalmTextFragmen
         }
 
         mPagerPsalmText = (ViewPager) findViewById(R.id.pager_psalm_text);
-        mPsalmTextPagerAdapter = new PsalmTextFragmentStatePagerAdapter(getSupportFragmentManager(), mBookPsalmNumberIds);
+        mPsalmTextPagerAdapter = new PsalmTextFragmentStatePagerAdapter(getSupportFragmentManager(), mBookPsalmNumberIds, mPsalmTextSize);
         mPagerPsalmText.setAdapter(mPsalmTextPagerAdapter);
         mPagerPsalmText.setCurrentItem(mBookPsalmNumberIds.indexOf(mPsalmNumberId));
     }
@@ -82,6 +87,7 @@ public class PsalmActivity extends AppCompatActivity implements PsalmTextFragmen
     private void init() {
         if (mPsalmNumberId >= 0) return;
         mPsalmNumberId = getIntent().getLongExtra(KEY_PSALM_NUMBER_ID, -10L);
+        mPsalmTextSize = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getFloat(PsalmTextFragment.KEY_PSALM_TEXT_SIZE, -1);
 
         Cursor cursor = null;
         try {
@@ -119,6 +125,15 @@ public class PsalmActivity extends AppCompatActivity implements PsalmTextFragmen
         if (id == R.id.menu_jump) {
             DialogFragment searchNumberDialog = SearchPsalmNumberDialogFragment.newInstance(mPsalmNumberId);
             searchNumberDialog.show(getSupportFragmentManager(), SearchPsalmNumberDialogFragment.class.getSimpleName());
+            return true;
+        } else if (id == R.id.menu_text_size ){
+            if (mPsalmTextSize < 0) {
+                PsalmTextFragment fragment = (PsalmTextFragment) mPsalmTextPagerAdapter.getRegisteredFragments().get(mPagerPsalmText.getCurrentItem());
+                mPsalmTextSize = fragment.getPsalmTextSize();
+            }
+            DialogFragment psalmPreferencesDialog = PsalmPreferencesDialogFragment.newInstance(mPsalmTextSize);
+            psalmPreferencesDialog.show(getSupportFragmentManager(), PsalmPreferencesDialogFragment.class.getSimpleName());
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -163,6 +178,30 @@ public class PsalmActivity extends AppCompatActivity implements PsalmTextFragmen
     @Override
     public void onNegativeButtonClick() {
 
+    }
+
+    @Override
+    public void onPsalmTextSizeChanged(float textSize) {
+        mPsalmTextSize = textSize;
+        PsalmTextFragment fragment = (PsalmTextFragment) mPsalmTextPagerAdapter.getRegisteredFragments().get(mPagerPsalmText.getCurrentItem());
+        fragment.setPsalmTextSize(textSize);
+    }
+
+    @Override
+    public void onApplyPsalmPreferences(float textSize) {
+        mPsalmTextSize = textSize;
+        PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit()
+                .putFloat(PsalmTextFragment.KEY_PSALM_TEXT_SIZE, textSize).apply();
+        PsalmTextFragment fragment = (PsalmTextFragment) mPsalmTextPagerAdapter.getRegisteredFragments().get(mPagerPsalmText.getCurrentItem());
+        fragment.setPsalmTextSize(textSize);
+        mPsalmTextPagerAdapter.applyPsalmTextPreferences(textSize);
+    }
+
+    @Override
+    public void onCancelPsalmPreferences(float previousTextSize) {
+        mPsalmTextSize = previousTextSize;
+        PsalmTextFragment fragment = (PsalmTextFragment) mPsalmTextPagerAdapter.getRegisteredFragments().get(mPagerPsalmText.getCurrentItem());
+        fragment.setPsalmTextSize(previousTextSize);
     }
 
     public class FabFavoritesOnClick implements View.OnClickListener {

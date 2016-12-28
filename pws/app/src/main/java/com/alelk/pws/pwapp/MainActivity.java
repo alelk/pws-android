@@ -1,6 +1,7 @@
 package com.alelk.pws.pwapp;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -29,11 +30,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private DrawerLayout mDrawerLayout;
     private int mNavigationItemId = R.id.drawer_main_home;
-    private Toolbar mToolbar;
     private FloatingActionButton mFabSearchText;
     private FloatingActionButton mFabSearchNumber;
-    private ActionBarDrawerToggle mDrawerToggle;
-    private NavigationView mNavigationView;
     private AppBarLayout mAppBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,11 +43,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             mNavigationItemId = savedInstanceState.getInt(KEY_NAVIGATION_ITEM_ID);
         }
 
-        mToolbar = (Toolbar) findViewById(R.id.toolbar_main);
-        setSupportActionBar(mToolbar);
-
         mFabSearchText = (FloatingActionButton) findViewById(R.id.fab_search_text);
         mFabSearchNumber = (FloatingActionButton) findViewById(R.id.fab_search_number);
+        mFabSearchText.setOnClickListener(onButtonClick);
+        mFabSearchNumber.setOnClickListener(onButtonClick);
+
+        findViewById(R.id.btn_search_psalm_number).setOnClickListener(onButtonClick);
+        findViewById(R.id.btn_search_psalm_text).setOnClickListener(onButtonClick);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.layout_main_drawer);
         mAppBar = (AppBarLayout) findViewById(R.id.appbar_main);
@@ -65,12 +65,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             }
         });
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.open_drawer, R.string.close_drawer);
-        mDrawerLayout.addDrawerListener(mDrawerToggle);
-        mDrawerToggle.syncState();
 
-        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
-        mNavigationView.setNavigationItemSelectedListener(this);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
+        setSupportActionBar(toolbar);
+
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.open_drawer, R.string.close_drawer);
+        mDrawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+
+        ((NavigationView) findViewById(R.id.nav_view)).setNavigationItemSelectedListener(this);
 
         displayFragment();
     }
@@ -110,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         boolean result = false;
         switch (id) {
@@ -163,20 +166,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fragmentTransaction.commit();
     }
 
-    public void onClickSearchFab(View v) {
-        Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
-        startActivity(intent);
-    }
-
-    public void onClickSearchText(View v) {
-        Intent intentSearchText = new Intent(getBaseContext(), SearchActivity.class);
-        intentSearchText.putExtra(SearchActivity.KEY_INPUT_TYPE, InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_AUTO_COMPLETE);
-        startActivity(intentSearchText);
-    }
-
-    public void onClickSearchNumber(View v) {
-        Intent intentSearchNumber = new Intent(getBaseContext(), SearchActivity.class);
-        intentSearchNumber.putExtra(SearchActivity.KEY_INPUT_TYPE, InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-        startActivity(intentSearchNumber);
-    }
+    private View.OnClickListener onButtonClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            switch (view.getId()) {
+                case R.id.btn_search_psalm_number:
+                case R.id.fab_search_number:
+                    Intent intentSearchNumber = new Intent(getBaseContext(), SearchActivity.class);
+                    intentSearchNumber.putExtra(SearchActivity.KEY_INPUT_TYPE, InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                    startActivity(intentSearchNumber);
+                    break;
+                case R.id.btn_search_psalm_text:
+                case R.id.fab_search_text:
+                    Intent intentSearchText = new Intent(getBaseContext(), SearchActivity.class);
+                    intentSearchText.putExtra(SearchActivity.KEY_INPUT_TYPE, InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_AUTO_COMPLETE);
+                    startActivity(intentSearchText);
+                    break;
+            }
+        }
+    };
 }

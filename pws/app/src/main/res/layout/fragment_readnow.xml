@@ -2,23 +2,24 @@
 <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:layout_width="match_parent">
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:padding="6dp"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
         <TextView
             android:paddingTop="20dp"
             android:textSize="@dimen/txt_size_body"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="6dp"
+            android:paddingStart="6dp"
             android:paddingRight="4dp"
+            android:paddingEnd="4dp"
             android:text="@string/lbl_recent"/>
-
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
