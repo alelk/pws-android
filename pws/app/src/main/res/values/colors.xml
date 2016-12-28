@@ -3,13 +3,13 @@
     <color name="colorPrimary">#4d7645</color>
     <color name="colorPrimaryDark">#4e6f54</color>
     <color name="colorGradientAccent">#639e50</color>
-    <color name="background_material_light">#edfae1</color>
     <color name="color_text_psalm_header">#ffffff</color>
-    <color name="primary_text_default_material_dark">#fbfbfb</color>
+    <color name="primary_text_default_dark">#fbfbfb</color>
     <color name="color_text_primary_inverse">#ffffff</color>
     <color name="color_text_secondary">#7b7b7b</color>
     <color name="color_text_secondary_inverse">#ededed</color>
     <color name="color_window_background">#e5f7d0</color>
+    <color name="color_window_background_dark">#a7b695</color>
     <color name="color_text_primary">#060606</color>
     <color name="color_background">#ffffff</color>
     <color name="color_background_fullscreen">#001771</color>
@@ -18,7 +18,7 @@
     <color name="color_accent">#ff407c</color>
     <color name="color_text_on_accent">#ffffff</color>
     <color name="color_foreground">#121212</color>
-    <color name="navigation_bar_color">#2c4432</color>
+    <color name="navigation_bar_color">#1e2d22</color>
 
     <color name="black_overlay">#66000000</color>
 </resources>

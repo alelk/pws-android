@@ -3,6 +3,7 @@ package com.alelk.pws.pwapp;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.database.Cursor;
+import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -118,7 +119,8 @@ public class PsalmFullscreenActivity extends AppCompatActivity implements PsalmT
         });
 
         mPagerPsalmText = (ViewPager) findViewById(R.id.pager_psalm_text);
-        mFragmentStatePagerAdapter = new PsalmTextFragmentStatePagerAdapter(getSupportFragmentManager(), mBookPsalmNumberIds);
+        float psalmTextSize = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getFloat(PsalmTextFragment.KEY_PSALM_TEXT_SIZE, -1);
+        mFragmentStatePagerAdapter = new PsalmTextFragmentStatePagerAdapter(getSupportFragmentManager(), mBookPsalmNumberIds, psalmTextSize);
         mPagerPsalmText.setAdapter(mFragmentStatePagerAdapter);
         mPagerPsalmText.setCurrentItem(mBookPsalmNumberIds.indexOf(mPsalmNumberId));
     }

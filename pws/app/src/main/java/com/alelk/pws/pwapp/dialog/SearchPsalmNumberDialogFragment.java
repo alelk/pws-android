@@ -1,7 +1,7 @@
 package com.alelk.pws.pwapp.dialog;
 
-import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -9,7 +9,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -17,18 +16,13 @@ import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.alelk.pws.database.provider.PwsDataProvider;
-import com.alelk.pws.database.provider.PwsDataProviderContract;
 import com.alelk.pws.pwapp.R;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by Alex Elkin on 12.06.2016.
@@ -84,6 +78,7 @@ public class SearchPsalmNumberDialogFragment extends DialogFragment implements L
                 try {
                     mPsalmNumberIdMap.put(Integer.parseInt(psalmNumberList[i]), Long.parseLong(psalmNumberIdList[i]));
                 } catch (NumberFormatException ex) {
+                    Log.d(LOG_TAG, "onLoadFinished: cannot parse int (long) value: " + psalmNumberList[i] + " " + Long.parseLong(psalmNumberIdList[i]));
                 }
             }
         }
@@ -109,14 +104,14 @@ public class SearchPsalmNumberDialogFragment extends DialogFragment implements L
     }
 
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(Context context) {
         final String METHOD_NAME = "onAttach";
-        super.onAttach(activity);
+        super.onAttach(context);
         try {
-            mListener = (SearchPsalmNumberDialogListener) activity;
+            mListener = (SearchPsalmNumberDialogListener) context;
             init();
         } catch (ClassCastException ex) {
-            final String message = activity.toString() + " must implement " + SearchPsalmNumberDialogListener.class.getCanonicalName();
+            final String message = context.toString() + " must implement " + SearchPsalmNumberDialogListener.class.getCanonicalName();
             Log.e(LOG_TAG, METHOD_NAME + ": " + message);
             throw new ClassCastException(message);
         }

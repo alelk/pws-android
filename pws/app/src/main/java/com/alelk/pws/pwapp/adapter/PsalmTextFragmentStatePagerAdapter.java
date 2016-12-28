@@ -18,19 +18,17 @@ public class PsalmTextFragmentStatePagerAdapter extends FragmentStatePagerAdapte
 
     private SparseArray<Fragment> mRegisteredFragments = new SparseArray<>();
     private ArrayList<Long> mPsalmNumberIdList;
+    private float mPsalmTextSize = -1;
 
-    public PsalmTextFragmentStatePagerAdapter(FragmentManager fm, ArrayList<Long> psalmNumberIdList) {
+    public PsalmTextFragmentStatePagerAdapter(FragmentManager fm, ArrayList<Long> psalmNumberIdList, float psalmTextSize) {
         super(fm);
         mPsalmNumberIdList = psalmNumberIdList;
-    }
-
-    private PsalmTextFragmentStatePagerAdapter(FragmentManager fm) {
-        super(fm);
+        mPsalmTextSize = psalmTextSize;
     }
 
     @Override
     public Fragment getItem(int position) {
-        return PsalmTextFragment.newInstance(mPsalmNumberIdList.get(position));
+        return PsalmTextFragment.newInstance(mPsalmNumberIdList.get(position), mPsalmTextSize);
     }
 
     @Override
@@ -53,5 +51,13 @@ public class PsalmTextFragmentStatePagerAdapter extends FragmentStatePagerAdapte
 
     public SparseArray<Fragment> getRegisteredFragments() {
         return mRegisteredFragments;
+    }
+
+    public void applyPsalmTextPreferences(float psalmTextSize) {
+        mPsalmTextSize = psalmTextSize;
+        for (int i = 0; i < mRegisteredFragments.size(); i++) {
+            final PsalmTextFragment fragment = (PsalmTextFragment) mRegisteredFragments.valueAt(i);
+            fragment.setPsalmTextSize(psalmTextSize);
+        }
     }
 }

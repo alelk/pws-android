@@ -35,6 +35,7 @@
     <string name="lbl_music">Music</string>
     <string name="lbl_search_psalm">Search psalm</string>
     <string name="lbl_jump_to_number">Jump to the number</string>
+    <string name="lbl_psalm_text_size">Text size</string>
     <string name="msg_added_to_favorites">Added to favorites.</string>
     <string name="msg_removed_from_favorites">Removed from favorites.</string>
 
@@ -47,4 +48,7 @@
     <string name="lbl_cancel">Cancel</string>
     <string name="lbl_enter_psalm_number">Please enter psalm number: </string>
     <string name="msg_no_psalm_number_found">No found psalm number.</string>
+
+    <!-- Psalm preferences dialog display strings. -->
+    <string name="lbl_text_size">Text size:</string>
 </resources>

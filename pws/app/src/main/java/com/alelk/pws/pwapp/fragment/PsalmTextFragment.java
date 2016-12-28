@@ -3,6 +3,7 @@ package com.alelk.pws.pwapp.fragment;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.text.Html;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,8 +36,8 @@ import java.util.Locale;
 public class PsalmTextFragment extends Fragment {
 
     private final static String LOG_TAG = PsalmTextFragment.class.getSimpleName();
-
     public static final String KEY_PSALM_NUMBER_ID = "com.alelk.pws.pwapp.psalmNumberId";
+    public static final String KEY_PSALM_TEXT_SIZE = "com.alelk.pws.pwapp.psalmTextSize";
     private static final String SELECTION_FAVORITES_PSALM_NUMBER_MATCH = PwsDataProvider.Favorites.COLUMN_PSALMNUMBER_ID + " = ?";
     private final String[] SELECTION_ARGS = new String[1];
     private final ContentValues CONTENT_VALUES_FAVORITES = new ContentValues(1);
@@ -48,6 +50,7 @@ public class PsalmTextFragment extends Fragment {
     private TextView vPsalmTonalities;
     private PsalmHolder mPsalmHolder;
     private long mPsalmNumberId = -1;
+    private float mPsalmTextSize = -1;
     private boolean isAddedToHistory;
 
     public PsalmTextFragment() {}
@@ -68,6 +71,7 @@ public class PsalmTextFragment extends Fragment {
         vPsalmText = (TextView) v.findViewById(R.id.txt_psalm_text);
         vPsalmInfo = (TextView) v.findViewById(R.id.txt_psalm_info);
         vPsalmTonalities = (TextView) v.findViewById(R.id.txt_psalm_tonalities);
+        setPsalmTextSize();
         updateUi();
         setRetainInstance(true);
         return v;
@@ -132,6 +136,7 @@ public class PsalmTextFragment extends Fragment {
         callbacks = (Callbacks) context;
         if (getArguments() != null) {
             mPsalmNumberId = getArguments().getLong(KEY_PSALM_NUMBER_ID, -10L);
+            mPsalmTextSize = getArguments().getFloat(KEY_PSALM_TEXT_SIZE, -1);
         }
         init();
         loadData();
@@ -148,14 +153,25 @@ public class PsalmTextFragment extends Fragment {
     /**
      * Create new instance of PsalmTextFragment with attached psalmNumberId argument
      * @param psalmNumberId psalmNumber Id
+     * @param psalmTextSize psalm text size
      * @return instance of PsalmTextFragment
      */
-    public static PsalmTextFragment newInstance(long psalmNumberId) {
+    public static PsalmTextFragment newInstance(long psalmNumberId, float psalmTextSize) {
         final Bundle args = new Bundle();
         args.putLong(KEY_PSALM_NUMBER_ID, psalmNumberId);
+        args.putFloat(KEY_PSALM_TEXT_SIZE, psalmTextSize);
         PsalmTextFragment fragment = new PsalmTextFragment();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    /**
+     * Create new instance of PsalmTextFragment with attached psalmNumberId argument
+     * @param psalmNumberId psalmNumber Id
+     * @return instance of PsalmTextFragment
+     */
+    public static PsalmTextFragment newInstance(long psalmNumberId) {
+        return newInstance(psalmNumberId, -1);
     }
 
     public void addPsalmToHistory() {
@@ -176,6 +192,23 @@ public class PsalmTextFragment extends Fragment {
             isAddedToHistory = true;
         } finally {
             if (cursor != null) cursor.close();
+        }
+    }
+
+    public float getPsalmTextSize() {
+        return vPsalmText.getTextSize();
+    }
+
+    public void setPsalmTextSize(float textSize) {
+        mPsalmTextSize = textSize;
+        setPsalmTextSize();
+    }
+
+    private void setPsalmTextSize() {
+        if (mPsalmTextSize > 0 && vPsalmText != null && vPsalmTonalities != null && vPsalmInfo != null) {
+            vPsalmText.setTextSize(TypedValue.COMPLEX_UNIT_PX, mPsalmTextSize);
+            vPsalmTonalities.setTextSize(TypedValue.COMPLEX_UNIT_PX, mPsalmTextSize/1.5f);
+            vPsalmInfo.setTextSize(TypedValue.COMPLEX_UNIT_PX, mPsalmTextSize/1.5f);
         }
     }
 
