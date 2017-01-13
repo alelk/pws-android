@@ -21,6 +21,9 @@
     <string name="lbl_search_by_number">Найти по номеру</string>
     <string name="lbl_search_by_text">Поиск по тексту</string>
 
+    <!-- History fragment display strings. -->
+    <string name="menu_clear_history">Очистить историю</string>
+
     <!-- Search activity display strings. -->
     <string name="title_activity_search">Поиск</string>
     <string name="lbl_search_widget">Поиск&#8230;</string>
