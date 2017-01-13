@@ -18,6 +18,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 /**
+ * History Recycler View Adapter
+ *
  * Created by Alex Elkin on 23.05.2016.
  */
 public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecyclerViewAdapter.HistoryViewHolder> {
@@ -63,7 +65,7 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
         return mCursor.getCount();
     }
 
-    public static class HistoryViewHolder extends RecyclerView.ViewHolder {
+    static class HistoryViewHolder extends RecyclerView.ViewHolder {
 
         CardView cardView;
         TextView psalmName;
@@ -72,7 +74,7 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
         TextView timestamp;
         long psalmNumberId;
 
-        public HistoryViewHolder(View itemView) {
+        HistoryViewHolder(View itemView) {
             super(itemView);
             cardView = (CardView) itemView.findViewById(R.id.cv_history);
             psalmName = (TextView) itemView.findViewById(R.id.txt_psalm_name);

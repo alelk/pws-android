@@ -1,19 +1,30 @@
 package com.alelk.pws.database.helper;
 
 import android.app.NotificationManager;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.NonNull;
 import android.support.v7.app.NotificationCompat;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.alelk.pws.database.R;
-import com.alelk.pws.database.table.PwsPsalmFtsTable;
+import static com.alelk.pws.database.table.PwsFavoritesTable.TABLE_FAVORITES;
+import static com.alelk.pws.database.table.PwsHistoryTable.TABLE_HISTORY;
+import static com.alelk.pws.database.table.PwsPsalmNumbersTable.TABLE_PSALMNUMBERS;
+import static com.alelk.pws.database.table.PwsBookTable.TABLE_BOOKS;
 
-import android.database.sqlite.SQLiteDatabase;
-import android.widget.Toast;
+import com.alelk.pws.database.provider.PwsDataProviderContract;
+import com.alelk.pws.database.table.PwsBookTable;
+import com.alelk.pws.database.table.PwsFavoritesTable;
+import com.alelk.pws.database.table.PwsHistoryTable;
+import com.alelk.pws.database.table.PwsPsalmFtsTable;
+import com.alelk.pws.database.table.PwsPsalmNumbersTable;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -28,8 +39,10 @@ import java.io.OutputStream;
  * Created by Alex Elkin on 29.04.2015.
  */
 public class PwsDatabaseHelper extends SQLiteOpenHelper {
-    private static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_NAME = "pws.0.9.1.db";
+    private static final int DATABASE_VERSION = 2;
+    private static final String DATABASE_NAME = "pws.1.1.0.db";
+    private static final String[] DATABASE_PREVIOUS_NAMES = {"pws.0.9.1.db"};
+    private static final int DATABASE_VERSION_091 = 1;
     private static final int DB_INIT_NOTIFICATION_ID = 1331;
 
     private static final String LOG_TAG = PwsDatabaseHelper.class.getSimpleName();
@@ -47,6 +60,8 @@ public class PwsDatabaseHelper extends SQLiteOpenHelper {
         dbPath = context.getDatabasePath(DATABASE_NAME).getPath();
         dbFolder = context.getDatabasePath(DATABASE_NAME).getParent() + "/";
         if (!isDatabaseExists()) {
+            Log.i(LOG_TAG, "PwsDatabaseHelper: The current version of database does not exists. Looks like it is " +
+                    "first app starting. Trying to create database..");
             try {
                 mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
                 mNotificationBuilder = new NotificationCompat.Builder(mContext);
@@ -59,6 +74,8 @@ public class PwsDatabaseHelper extends SQLiteOpenHelper {
                     return;
                 }
                 setUpPsalmFts();
+                mergePreviousDatabase();
+                removePreviousDatabaseIfExists();
             } catch (IOException e) {
                 Log.e(LOG_TAG, "PwsDatabaseHelper: Error copying database file: " + e.getLocalizedMessage());
             } finally {
@@ -143,19 +160,160 @@ public class PwsDatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    private boolean isDatabaseExists() {
-        final String METHOD_NAME = "isDatabaseExists";
-        SQLiteDatabase database = null;
-        int version = 0;
-        try {
-            database = SQLiteDatabase.openDatabase(dbPath, null, SQLiteDatabase.OPEN_READONLY);
-            version = database.getVersion();
-        } catch (SQLiteException ex) {
-            Log.i(LOG_TAG, METHOD_NAME + ": Looks like database does not exists. It is needed to create. Message: " + ex.getLocalizedMessage());
-        } finally {
-            if (database != null) database.close();
+    private SQLiteDatabase openPreviousDatabaseIfExists() {
+        for (String dbName : DATABASE_PREVIOUS_NAMES) {
+            final String databasePath = mContext.getDatabasePath(dbName).getPath();
+            SQLiteDatabase database = openDatabase(databasePath, SQLiteDatabase.OPEN_READONLY);
+            if (database != null) return database;
         }
-        return database != null && version == DATABASE_VERSION;
+        return null;
+    }
+    private boolean removePreviousDatabaseIfExists() {
+        for (String dbName : DATABASE_PREVIOUS_NAMES) {
+            final String databasePath = mContext.getDatabasePath(dbName).getPath();
+            File file = new File(databasePath);
+            if (file.exists() && file.isFile()) {
+                Log.i(LOG_TAG, "removePreviousDatabaseIfExists: Previous version of database will be removed: "
+                + databasePath);
+                return file.delete();
+            }
+        }
+        return false;
+    }
+
+    private void mergePreviousDatabase() {
+        final String METHOD_NAME = "mergePreviousDatabase";
+        SQLiteDatabase prevDatabase = openPreviousDatabaseIfExists();
+        if (prevDatabase == null) return;
+        SQLiteDatabase database = openDatabase(dbPath, SQLiteDatabase.OPEN_READWRITE);
+        if (database == null) {
+            Log.e(LOG_TAG, METHOD_NAME + ": Could not open database + " + dbPath);
+            return;
+        }
+        Log.i(LOG_TAG, METHOD_NAME + ": Merge user data from database " +
+                prevDatabase.getPath() + " (version " + prevDatabase.getVersion() + ") to " +
+                database.getPath() + " (version " + database.getVersion() + ")");
+        try {
+            switch (prevDatabase.getVersion()) {
+                case DATABASE_VERSION_091:
+                    Cursor cursor = queryFavorites091(prevDatabase);
+                    Log.v(LOG_TAG, METHOD_NAME + ": Count of favorites will be merged from previous database: " + cursor.getCount());
+                    insertFavorites(database, cursor);
+                    cursor.close();
+                    cursor = queryHistory091(prevDatabase);
+                    Log.v(LOG_TAG, METHOD_NAME + ": Count of history items will be merged from previous database: " + cursor.getCount());
+                    insertHistory(database, cursor);
+                    cursor.close();
+                    break;
+                default:
+                    Log.e(LOG_TAG, METHOD_NAME + ": Unexpected database version: " + prevDatabase.getVersion());
+            }
+        } finally {
+            prevDatabase.close();
+            database.close();
+        }
+    }
+
+    private Cursor queryFavorites091(SQLiteDatabase db) {
+        return db.query(false,
+                "favorites as f inner join psalmnumbers as pn on f.psalmnumberid=pn._id" +
+                " inner join books as b on pn.bookid=b._id",
+                new String[]{"f.position as position", "pn.number as number", "b.edition as edition"},
+                null ,null, null, null, null, null);
+    }
+
+    private Cursor queryHistory091(SQLiteDatabase db) {
+        return db.query(false,
+                "history as h inner join psalmnumbers as pn on h.psalmnumberid=pn._id" +
+                        " inner join books as b on pn.bookid=b._id",
+                new String[]{"h.accesstimestamp as accesstimestamp", "pn.number as number", "b.edition as edition"},
+                null ,null, null, null, null, null);
+    }
+
+    private int insertFavorites(SQLiteDatabase db, Cursor cursor) {
+        final String METHOD_NAME = "insertFavorites";
+        if (!cursor.moveToFirst()) {
+            Log.d(LOG_TAG, METHOD_NAME + ": unable insert favorites: no favorites found in previous db");
+            return 0;
+        }
+        int inserted = 0;
+        do {
+            Cursor current = null;
+            try {
+                final String edition = cursor.getString(cursor.getColumnIndex("edition"));
+                final int number = cursor.getInt(cursor.getColumnIndex("number"));
+                current = db.query(false, PwsDataProviderContract.TABLE_PSALMNUMBERS_JOIN_BOOKS,
+                        PwsDataProviderContract.PsalmNumbers.PROJECTION,
+                        "b." + PwsBookTable.COLUMN_EDITION + " like '" + edition +
+                                "' and pn." + PwsPsalmNumbersTable.COLUMN_NUMBER + "=" + number,
+                        null, null, null, null, null);
+                if (!current.moveToFirst()) {
+                    Log.w(LOG_TAG, METHOD_NAME + ": cannot find psalm with number=" + number +
+                            " and edition=" + edition + " in current database.");
+                    continue;
+                }
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(PwsFavoritesTable.COLUMN_POSITION, cursor.getLong(cursor.getColumnIndex("position")));
+                contentValues.put(PwsFavoritesTable.COLUMN_PSALMNUMBERID, current.getLong(current.getColumnIndex(PwsDataProviderContract.PsalmNumbers.COLUMN_PSALMNUMBER_ID)));
+                inserted += db.insert(TABLE_FAVORITES, null, contentValues) > 0 ? 1 : 0;
+                Log.v(LOG_TAG, METHOD_NAME + ": Inserted new item to favorites: edition=" + edition
+                        + " number=" + number);
+            } finally {
+                if (current != null) current.close();
+            }
+
+        } while (cursor.moveToNext());
+        return inserted;
+    }
+
+    private int insertHistory(SQLiteDatabase db, Cursor cursor) {
+        final String METHOD_NAME = "insertHistory";
+        int inserted = 0;
+        if (!cursor.moveToFirst()) {
+            Log.d(LOG_TAG, METHOD_NAME + ": unable insert history: no history items found in previous db");
+            return inserted;
+        }
+        do {
+            Cursor current = null;
+            try {
+                final String edition = cursor.getString(cursor.getColumnIndex("edition"));
+                final int number = cursor.getInt(cursor.getColumnIndex("number"));
+                current = db.query(false, PwsDataProviderContract.TABLE_PSALMNUMBERS_JOIN_BOOKS,
+                        PwsDataProviderContract.PsalmNumbers.PROJECTION,
+                        "b." + PwsBookTable.COLUMN_EDITION + " like '" + edition +
+                                "' and pn." + PwsPsalmNumbersTable.COLUMN_NUMBER + "=" + number,
+                        null, null, null, null, null);
+                if (!current.moveToFirst()) {
+                    Log.w(LOG_TAG, METHOD_NAME + ": cannot find psalm with number=" + number +
+                            " and edition=" + edition + " in current database.");
+                    continue;
+                }
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(PwsHistoryTable.COLUMN_ACCESSTIMESTAMP, cursor.getString(cursor.getColumnIndex("accesstimestamp")));
+                contentValues.put(PwsHistoryTable.COLUMN_PSALMNUMBERID, current.getLong(current.getColumnIndex(PwsDataProviderContract.PsalmNumbers.COLUMN_PSALMNUMBER_ID)));
+                inserted += db.insert(TABLE_HISTORY, null, contentValues) > 0 ? 1 : 0;
+                Log.v(LOG_TAG, METHOD_NAME + ": Inserted new item to history: edition=" + edition
+                        + " number=" + number);
+            } finally {
+                if (current != null) current.close();
+            }
+
+        } while (cursor.moveToNext());
+        return inserted;
+    }
+
+    private boolean isDatabaseExists() {
+        File file = new File(dbPath);
+        return file.exists() && file.isFile();
+    }
+
+    private SQLiteDatabase openDatabase(String dbPath, int flags) {
+        try {
+            return SQLiteDatabase.openDatabase(dbPath, null, flags);
+        } catch (SQLiteException ex) {
+            Log.i(LOG_TAG, "openDatabase: Database " + dbPath + " does not exists. Message: " + ex.getLocalizedMessage());
+        }
+        return null;
     }
 
     private void setUpPsalmFts() {

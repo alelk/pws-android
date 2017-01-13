@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollview_psalm_text"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".PsalmActivity">
@@ -43,6 +44,14 @@
                 style="?attr/textStylePsalmBodyInfo"
                 android:id="@+id/txt_psalm_info"/>
         </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/rv_referred_psalms"
+            android:theme="@style/AppTheme"/>
 
     </LinearLayout>
 </android.support.v4.widget.NestedScrollView>

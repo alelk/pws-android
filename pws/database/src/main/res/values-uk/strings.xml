@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lbl_chorus">Приспів</string>
+    <string name="lbl_verse">Куплет</string>
+    <string name="lbl_author">Автор</string>
+    <string name="lbl_translator">Переклад</string>
+    <string name="lbl_music">Музика</string>
+
+    <!-- Database initialize dialog -->
+    <string name="txt_title_database_init">Підготовка бази даних</string>
+    <string name="txt_copy_files">Копіюю файли бази даних..\n%1$d з %2$d файлів скопійовано</string>
+    <string name="txt_fts_setup">Налаштування повнотекстового пошуку..\n%1$d з %2$d пісень проіндексовано</string>
+
+    <!-- Tonalities -->
+    <string name="c_flat_major">до-бемоль мажор</string>
+    <string name="a_flat_minor">ля-бемоль мінор</string>
+    <string name="g_flat_major">соль-бемоль мажор</string>
+    <string name="e_flat_minor">мі-бемоль мінор</string>
+    <string name="d_flat_major">ре-бемоль мажор</string>
+    <string name="b_flat_minor">сі-бемоль мінор</string>
+    <string name="a_flat_major">ля-бемоль мажор</string>
+    <string name="f_minor">фа мінор</string>
+    <string name="e_flat_major">мі-бемоль мажор</string>
+    <string name="c_minor">до-мінор</string>
+    <string name="b_flat_major">сі-бемоль мажор</string>
+    <string name="g_minor">соль-мінор</string>
+    <string name="f_major">фа мажор</string>
+    <string name="d_minor">ре мінор</string>
+    <string name="c_major">до мажор</string>
+    <string name="a_minor">ля мінор</string>
+    <string name="g_major">соль мажор</string>
+    <string name="e_minor">мі мінор</string>
+    <string name="d_major">ре мажор</string>
+    <string name="b_minor">сі мінор</string>
+    <string name="a_major">ля мажор</string>
+    <string name="f_sharp_minor">фа-дієз мінор</string>
+    <string name="e_major">мі мажор</string>
+    <string name="c_sharp_minor">до-дієз мінор</string>
+    <string name="b_major">сі мажор</string>
+    <string name="g_sharp_minor">соль-дієз мінор</string>
+    <string name="f_sharp_major">фа-дієз мажор</string>
+    <string name="d_sharp_minor">ре-дієз мінор</string>
+    <string name="c_sharp_major">до-дієз мажор</string>
+    <string name="a_sharp_minor">ля-дієз мінор</string>
+</resources>

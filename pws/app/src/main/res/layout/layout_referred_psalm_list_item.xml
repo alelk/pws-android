@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="0dp"
+    android:layout_marginBottom="0dp"
+    android:id="@+id/cv_referred_psalm"
+    style="?attr/cardStyle">
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            style="?attr/textStyleCardPsalmNumber"
+            android:id="@+id/txt_psalm_number"/>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp">
+            <TextView
+                android:id="@+id/txt_psalm_name"
+                style="?attr/textStyleCardPsalmName"
+                android:layout_marginBottom="6dp"/>
+            <TextView
+                style="?attr/textStyleCardBookName"
+                android:id="@+id/txt_book_name"/>
+            <TextView
+                style="?attr/textStyleCardPsalmText"
+                android:lines="1"
+                android:textColor="?attr/colorPrimary"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:id="@+id/txt_reason"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>

@@ -66,7 +66,7 @@ public class ReadNowFragment extends Fragment implements LoaderManager.LoaderCal
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         rvRecentPsalms.setLayoutManager(layoutManager);
         rvRecentPsalms.setAdapter(mRecentPsalmsAdapter);
-        rvRecentPsalms.setNestedScrollingEnabled(false);
+        rvRecentPsalms.setNestedScrollingEnabled(true);
         return v;
     }
 
@@ -74,15 +74,13 @@ public class ReadNowFragment extends Fragment implements LoaderManager.LoaderCal
     public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
         switch (loaderId) {
             case PWS_RECENT_PSALM_LOADER:
-                CursorLoader cursorLoader = new CursorLoader(getActivity().getBaseContext(), PwsDataProvider.History.getContentUri(DEFAULT_RECENT_LIMIT), null, null, null, null);
-                return cursorLoader;
+                return new CursorLoader(getActivity().getBaseContext(), PwsDataProvider.History.getContentUri(DEFAULT_RECENT_LIMIT), null, null, null, null);
         }
         return null;
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        rvRecentPsalms.setNestedScrollingEnabled(false);
         mRecentPsalmsAdapter.swapCursor(data);
     }
 

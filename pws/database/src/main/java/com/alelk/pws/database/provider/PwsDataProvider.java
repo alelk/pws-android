@@ -57,6 +57,7 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
         URI_MATCHER.addURI(AUTHORITY, PsalmNumbers.Psalm.PATH, PsalmNumbers.Psalm.URI_MATCH);
         URI_MATCHER.addURI(AUTHORITY, PsalmNumbers.Book.BookPsalmNumbers.PATH, PsalmNumbers.Book.BookPsalmNumbers.URI_MATCH);
         URI_MATCHER.addURI(AUTHORITY, PsalmNumbers.Book.BookPsalmNumbers.Info.PATH, PsalmNumbers.Book.BookPsalmNumbers.Info.URI_MATCH);
+        URI_MATCHER.addURI(AUTHORITY, PsalmNumbers.ReferencePsalms.PATH, PsalmNumbers.ReferencePsalms.URI_MATCH);
         URI_MATCHER.addURI(AUTHORITY, BookStatistic.PATH, BookStatistic.URI_MATCH);
         URI_MATCHER.addURI(AUTHORITY, BookStatistic.PATH_ID, BookStatistic.URI_MATCH_ID);
         URI_MATCHER.addURI(AUTHORITY, BookStatistic.PATH_TEXT, BookStatistic.URI_MATCH_TEXT);
@@ -137,6 +138,10 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
             case PsalmNumbers.Book.BookPsalmNumbers.Info.URI_MATCH:
                 psalmNumberId = Long.parseLong(uri.getPathSegments().get(1));
                 cursor = queryPsalmNumberBookPsalmNumberInfo(psalmNumberId, projection);
+                break;
+            case PsalmNumbers.ReferencePsalms.URI_MATCH:
+                psalmNumberId = Long.parseLong(uri.getPathSegments().get(1));
+                cursor = queryPsalmNumberReferredPsalms(psalmNumberId);
                 break;
             case BookStatistic.URI_MATCH:
                 cursor = queryBookStatistic(null, null, null, null);
@@ -223,6 +228,8 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
             case Favorites.URI_MATCH:
                 n = deleteFavorites(selection, selectionArgs);
                 break;
+            case History.URI_MATCH:
+                n = deleteHistory(selection, selectionArgs);
             default:
                 // todo: throw exception - incorrect uri
         }
@@ -380,6 +387,19 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
         return cursor;
     }
 
+    private Cursor queryPsalmNumberReferredPsalms(long currentPsalmNumberId) {
+        final String METHOD_NAME = "queryPsalmNumberReferredPsalms";
+
+        final String rawQuery = SQLiteQueryBuilder.buildQueryString(false,
+                PsalmNumbers.ReferencePsalms.buildRawTables(currentPsalmNumberId),
+                PsalmNumbers.ReferencePsalms.PROJECTION, null,
+                PsalmNumbers.ReferencePsalms.COLUMN_PSALM_ID, null,
+                null, null);
+        Cursor cursor = mDatabase.rawQuery(rawQuery, null);
+        Log.v(LOG_TAG, METHOD_NAME + ": rawQuery='" + rawQuery + " results:" + (cursor == null ? 0 : cursor.getCount()));
+        return cursor;
+    }
+
     private Cursor queryBookStatistic(@Nullable String[] projection,
                                 @Nullable String selection,
                                 @Nullable String[] selectionArgs,
@@ -446,6 +466,10 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
 
     private int deleteFavorites(String whereClause, String[] whereArgs) {
         return mDatabase.delete(TABLE_FAVORITES, whereClause, whereArgs);
+    }
+
+    private int deleteHistory(String whereClause, String[] whereArgs) {
+        return mDatabase.delete(TABLE_HISTORY, whereClause, whereArgs);
     }
 
     private int updateBookStatistic(ContentValues values, String bookEdition){
