@@ -19,7 +19,7 @@ public class PwsPsalmTable implements PwsTable {
     public static final String COLUMN_COMPOSER = "composer";
     public static final String COLUMN_TONALITIES = "tonalities";
     public static final String COLUMN_YEAR = "year";
-    public static final String COLUMN_ANNOTATION = "annotation";
+    public static final String COLUMN_ANNOTATION = "bibleref";
     public static final String COLUMN_TEXT = "text";
 
     private static final String TABLE_CREATE_SCRIPT = "create table " + TABLE_PSALMS +

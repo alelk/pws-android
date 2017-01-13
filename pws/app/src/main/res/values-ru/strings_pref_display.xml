@@ -10,11 +10,11 @@
     <string name="pref_books_title">Сборники</string>
 
     <!-- Donate screen -->
-    <string name="pref_donate_title">Помочь разработчкику P&amp;W Songs</string>
+    <string name="pref_donate_title">Помочь разработчику P&amp;W Songs</string>
     <string name="pref_donate_summary">Если вы желаете оказать материальную помощь разработчику приложения, вы можете перевести деньги одним из следующих способов:</string>
     <!-- Yandex Money -->
     <string name="pref_donate_yandexmoney_title">Яндекс.Деньги</string>
-    <string name="pref_donate_yandexmoney_wallet_number_summary">номер нашего кошелька Яндекс.Деньги</string>
+    <string name="pref_donate_yandexmoney_wallet_number_summary">Номер нашего кошелька Яндекс.Деньги</string>
     <string name="pref_donate_yandexmoney_web_form_title">Открыть страницу в браузере</string>
     <string name="pref_donate_yandexmoney_web_form_summary">Способы оплаты: кошелек Яндекс.Деньги, карта Visa или MasterCard</string>
     <!-- PayPal -->

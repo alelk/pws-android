@@ -214,14 +214,14 @@
         <item name="android:windowBackground">@null</item>
         <item name="metaButtonBarStyle">?android:attr/buttonBarStyle</item>
         <item name="metaButtonBarButtonStyle">?android:attr/buttonBarButtonStyle</item>
-        <item name="cardStylePsalm">@style/BaseTheme.CardViewStyle.Psalm.Fullscreen</item>
-        <item name="textAppearanceBody">@style/BaseTheme.TextAppearance.Body1.Inverse</item>
-        <item name="textAppearanceBodyInverse">@style/BaseTheme.TextAppearance.Body1</item>
-        <item name="textAppearanceTitle">@style/BaseTheme.TextAppearance.Title.Inverse</item>
-        <item name="textAppearanceTitleInverse">@style/BaseTheme.TextAppearance.Title</item>
-        <item name="textStylePsalmBodyText">@style/BaseTheme.TextStyle.PsalmBody.PsalmText.Fullscreen</item>
-        <item name="textStylePsalmBodyTonalities">@style/BaseTheme.TextStyle.PsalmBody.Tonalities.Fullscreen</item>
-        <item name="textStylePsalmBodyInfo">@style/BaseTheme.TextStyle.PsalmBody.Info.Fullscreen</item>
+        <item name="cardStylePsalm">@style/BaseTheme.CardViewStyle.Psalm</item>
+        <item name="textAppearanceBody">@style/BaseTheme.TextAppearance.Body1</item>
+        <item name="textAppearanceBodyInverse">@style/BaseTheme.TextAppearance.Body1.Inverse</item>
+        <item name="textAppearanceTitle">@style/BaseTheme.TextAppearance.Title</item>
+        <item name="textAppearanceTitleInverse">@style/BaseTheme.TextAppearance.Title.Inverse</item>
+        <item name="textStylePsalmBodyText">@style/BaseTheme.TextStyle.PsalmBody.PsalmText</item>
+        <item name="textStylePsalmBodyTonalities">@style/BaseTheme.TextStyle.PsalmBody.Tonalities</item>
+        <item name="textStylePsalmBodyInfo">@style/BaseTheme.TextStyle.PsalmBody.Info</item>
     </style>
 
     <style name="BaseTheme.Fullscreen.ActionBar" parent="Widget.AppCompat.ActionBar">

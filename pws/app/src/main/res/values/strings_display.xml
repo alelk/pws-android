@@ -21,6 +21,9 @@
     <string name="lbl_search_by_number">Number</string>
     <string name="lbl_search_by_text">Text</string>
 
+    <!-- History fragment display strings. -->
+    <string name="menu_clear_history">Clear history</string>
+
     <!-- Search activity display strings. -->
     <string name="title_activity_search">Search</string>
     <string name="lbl_search_widget">Search&#8230;</string>
@@ -33,6 +36,8 @@
     <string name="lbl_author">Author</string>
     <string name="lbl_translator">Translator</string>
     <string name="lbl_music">Music</string>
+    <string name="lbl_references">References</string>
+    <string name="lbl_another_variant">The another psalm edition. Lyrics similarity: %1$d%%</string>
     <string name="lbl_search_psalm">Search psalm</string>
     <string name="lbl_jump_to_number">Jump to the number</string>
     <string name="lbl_psalm_text_size">Text size</string>
@@ -47,7 +52,7 @@
     <string name="lbl_ok">OK</string>
     <string name="lbl_cancel">Cancel</string>
     <string name="lbl_enter_psalm_number">Please enter psalm number: </string>
-    <string name="msg_no_psalm_number_found">No found psalm number.</string>
+    <string name="msg_no_psalm_number_found">No psalm number found.</string>
 
     <!-- Psalm preferences dialog display strings. -->
     <string name="lbl_text_size">Text size:</string>

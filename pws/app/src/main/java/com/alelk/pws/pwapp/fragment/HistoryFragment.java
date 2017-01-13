@@ -12,12 +12,17 @@ import android.support.v4.content.Loader;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 
 import com.alelk.pws.database.provider.PwsDataProvider;
+import com.alelk.pws.database.provider.PwsDataProviderContract;
 import com.alelk.pws.pwapp.PsalmActivity;
 import com.alelk.pws.pwapp.R;
 import com.alelk.pws.pwapp.adapter.HistoryRecyclerViewAdapter;
@@ -27,6 +32,7 @@ import com.alelk.pws.pwapp.adapter.HistoryRecyclerViewAdapter;
  */
 public class HistoryFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    private static final String LOG_TAG = HistoryFragment.class.getSimpleName();
     public static final String KEY_ITEMS_LIMIT = "com.alelk.pws.pwapp.historyItemsLimit";
     public final static int PWS_HISTORY_LOADER = 2;
 
@@ -35,6 +41,7 @@ public class HistoryFragment extends Fragment implements LoaderManager.LoaderCal
     private RecyclerView mRecyclerView;
     private HistoryRecyclerViewAdapter mHistoryAdapter;
     private int mItemsLimit;
+    private MenuItem menuClearHistory;
 
     public static HistoryFragment newInstance(int itemsLimit) {
         final Bundle args = new Bundle();
@@ -42,6 +49,12 @@ public class HistoryFragment extends Fragment implements LoaderManager.LoaderCal
         HistoryFragment fragment = new HistoryFragment();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Nullable
@@ -62,6 +75,23 @@ public class HistoryFragment extends Fragment implements LoaderManager.LoaderCal
         mRecyclerView.setAdapter(mHistoryAdapter);
         getLoaderManager().initLoader(PWS_HISTORY_LOADER, null, this);
         return v;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menuClearHistory = menu.add(R.string.menu_clear_history);
+        menuClearHistory.setIcon(R.drawable.ic_delete_black);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == menuClearHistory.getItemId()) {
+            int deleted = getActivity().getContentResolver().delete(PwsDataProvider.History.CONTENT_URI, null, null);
+            Log.d(LOG_TAG, "onOptionsItemSelected: remove history: removed " + deleted + " items.");
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

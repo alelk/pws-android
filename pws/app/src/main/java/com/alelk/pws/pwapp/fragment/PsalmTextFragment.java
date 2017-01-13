@@ -3,12 +3,18 @@ package com.alelk.pws.pwapp.fragment;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.util.Log;
 import android.util.TypedValue;
@@ -23,7 +29,9 @@ import com.alelk.pws.database.provider.PwsDataProvider;
 import com.alelk.pws.database.table.PwsFavoritesTable;
 import com.alelk.pws.database.table.PwsHistoryTable;
 import com.alelk.pws.database.util.PwsPsalmUtil;
+import com.alelk.pws.pwapp.PsalmActivity;
 import com.alelk.pws.pwapp.R;
+import com.alelk.pws.pwapp.adapter.ReferredPsalmsRecyclerViewAdapter;
 import com.alelk.pws.pwapp.holder.PsalmHolder;
 
 import java.util.Locale;
@@ -33,8 +41,9 @@ import java.util.Locale;
  *
  * The Activity who are the host of this fragment should implement Callbacks interface.
  */
-public class PsalmTextFragment extends Fragment {
+public class PsalmTextFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    private final static int PWS_REFERRED_PSALMS_LOADER = 60;
     private final static String LOG_TAG = PsalmTextFragment.class.getSimpleName();
     public static final String KEY_PSALM_NUMBER_ID = "com.alelk.pws.pwapp.psalmNumberId";
     public static final String KEY_PSALM_TEXT_SIZE = "com.alelk.pws.pwapp.psalmTextSize";
@@ -48,6 +57,7 @@ public class PsalmTextFragment extends Fragment {
     private TextView vPsalmText;
     private TextView vPsalmInfo;
     private TextView vPsalmTonalities;
+    private ReferredPsalmsRecyclerViewAdapter mReferredPsalmsAdapter;
     private PsalmHolder mPsalmHolder;
     private long mPsalmNumberId = -1;
     private float mPsalmTextSize = -1;
@@ -71,9 +81,22 @@ public class PsalmTextFragment extends Fragment {
         vPsalmText = (TextView) v.findViewById(R.id.txt_psalm_text);
         vPsalmInfo = (TextView) v.findViewById(R.id.txt_psalm_info);
         vPsalmTonalities = (TextView) v.findViewById(R.id.txt_psalm_tonalities);
+        mReferredPsalmsAdapter = new ReferredPsalmsRecyclerViewAdapter(new ReferredPsalmsRecyclerViewAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(long psalmNumberId) {
+                Intent intentPsalmView = new Intent(getActivity().getBaseContext(), PsalmActivity.class);
+                intentPsalmView.putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, psalmNumberId);
+                startActivity(intentPsalmView);
+            }
+        }, mPsalmTextSize);
+        final RecyclerView rvReferredPsalms =(RecyclerView) v.findViewById(R.id.rv_referred_psalms);
+        rvReferredPsalms.setAdapter(mReferredPsalmsAdapter);
+        rvReferredPsalms.setNestedScrollingEnabled(false);
+        rvReferredPsalms.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
         setPsalmTextSize();
         updateUi();
         setRetainInstance(true);
+        getLoaderManager().initLoader(PWS_REFERRED_PSALMS_LOADER, null, this);
         return v;
     }
 
@@ -145,7 +168,7 @@ public class PsalmTextFragment extends Fragment {
     @Override
     public void setMenuVisibility(boolean menuVisible) {
         super.setMenuVisibility(menuVisible);
-        if (menuVisible == true && callbacks != null) {
+        if (menuVisible && callbacks != null) {
             callbacks.onUpdatePsalmInfo(mPsalmHolder);
         }
     }
@@ -202,6 +225,7 @@ public class PsalmTextFragment extends Fragment {
     public void setPsalmTextSize(float textSize) {
         mPsalmTextSize = textSize;
         setPsalmTextSize();
+        mReferredPsalmsAdapter.setHeaderTextSize(mPsalmTextSize);
     }
 
     private void setPsalmTextSize() {
@@ -250,6 +274,25 @@ public class PsalmTextFragment extends Fragment {
         } finally {
             if (cursor != null) cursor.close();
         }
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        if (i == PWS_REFERRED_PSALMS_LOADER)
+                return new CursorLoader(getActivity().getBaseContext(), PwsDataProvider.PsalmNumbers.ReferencePsalms.getContentUri(mPsalmNumberId), null, null, null, null);
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        if (loader.getId() == PWS_REFERRED_PSALMS_LOADER) {
+            mReferredPsalmsAdapter.swapCursor(cursor);
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mReferredPsalmsAdapter.swapCursor(null);
     }
 
     /**
