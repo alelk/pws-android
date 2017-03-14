@@ -11,7 +11,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -119,7 +118,7 @@ public class PsalmTextFragment extends Fragment implements LoaderManager.LoaderC
                 return;
             }
             mPsalmHolder = new PsalmHolder(cursor, isFavoritePsalm());
-            Log.v(LOG_TAG, METHOD_NAME + (mPsalmHolder != null ? ": The psalm data successfully loaded: " : ": Error loading psalm data: ") + "mPsalmHolder=" + mPsalmHolder.toString());
+            Log.v(LOG_TAG, METHOD_NAME + ": The psalm data successfully loaded: " + "mPsalmHolder=" + mPsalmHolder.toString());
         } finally {
             if (cursor != null) cursor.close();
         }
@@ -129,7 +128,6 @@ public class PsalmTextFragment extends Fragment implements LoaderManager.LoaderC
         if (mPsalmNumberId < 0 || mPsalmHolder == null) {
             return;
         }
-        if (mPsalmHolder == null) return;
         vPsalmText.setText(Html.fromHtml(PwsPsalmUtil.psalmTextToHtml(getActivity(), new Locale(mPsalmHolder.getPsalmLocale()), mPsalmHolder.getPsalmText())));
         final String psalmInfo = PwsPsalmUtil.buildPsalmInfoHtml(getActivity(), new Locale(mPsalmHolder.getPsalmLocale()), mPsalmHolder.getPsalmAuthor(), mPsalmHolder.getPsalmTranslator(), mPsalmHolder.getPsalmComposer());
         if (psalmInfo == null) {
@@ -302,7 +300,7 @@ public class PsalmTextFragment extends Fragment implements LoaderManager.LoaderC
 
         /**
          * This method is called when any psalm information is changed.
-         * @param psalmHolder
+         * @param psalmHolder Psalm Holder
          */
         void onUpdatePsalmInfo(@Nullable PsalmHolder psalmHolder);
 

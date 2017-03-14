@@ -3,31 +3,41 @@ import java.text.SimpleDateFormat
 apply plugin: 'com.android.library'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'pws'
+            keyPassword '1234eaea'
+            storeFile file('/home/alex/Projects/pws/pws keystore/alelk-keystrore.jks')
+            storePassword '1234eaea'
+        }
+    }
     compileSdkVersion 25
-    buildToolsVersion '25.0.1'
+    buildToolsVersion '25.0.2'
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 6
-        versionName '1.0.3'
+        versionCode 10
+        versionName '1.1.0'
         versionNameSuffix '-' + getDate().toLowerCase()
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
         }
         beta {
             debuggable true
             minifyEnabled false
             versionNameSuffix '-' + getDate().toLowerCase() + "-beta"
+            signingConfig signingConfigs.config
         }
     }
     productFlavors {
     }
 }
 
-def getDate() {
+static def getDate() {
     def df = new SimpleDateFormat("MMM-d-yyyy", new Locale("en_EN"))
     df.setTimeZone(TimeZone.getTimeZone("UTC"))
     return df.format(new Date())
@@ -35,6 +45,7 @@ def getDate() {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:25.1.0'
-    compile 'com.android.support:design:25.1.0'
+    compile 'com.android.support:appcompat-v7:25.2.0'
+    compile 'com.android.support:support-core-utils:25.2.0'
+    compile 'com.android.support:design:25.2.0'
 }

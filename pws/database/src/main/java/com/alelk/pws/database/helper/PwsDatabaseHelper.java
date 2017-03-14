@@ -10,15 +10,9 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.NonNull;
 import android.support.v7.app.NotificationCompat;
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.alelk.pws.database.R;
-import static com.alelk.pws.database.table.PwsFavoritesTable.TABLE_FAVORITES;
-import static com.alelk.pws.database.table.PwsHistoryTable.TABLE_HISTORY;
-import static com.alelk.pws.database.table.PwsPsalmNumbersTable.TABLE_PSALMNUMBERS;
-import static com.alelk.pws.database.table.PwsBookTable.TABLE_BOOKS;
-
 import com.alelk.pws.database.provider.PwsDataProviderContract;
 import com.alelk.pws.database.table.PwsBookTable;
 import com.alelk.pws.database.table.PwsFavoritesTable;
@@ -32,6 +26,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
+import static com.alelk.pws.database.table.PwsFavoritesTable.TABLE_FAVORITES;
+import static com.alelk.pws.database.table.PwsHistoryTable.TABLE_HISTORY;
 
 /**
  * Pws Database Helper
