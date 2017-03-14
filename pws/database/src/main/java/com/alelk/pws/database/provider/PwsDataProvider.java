@@ -112,7 +112,10 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
                 break;
             case Psalms.Suggestions.URI_MATCH_NAME:
                 String searchText = uri.getLastPathSegment();
-                if (searchText != null) cursor = querySuggestionsPsalmName(searchText, uri.getQueryParameter(SUGGEST_PARAMETER_LIMIT));
+                if (searchText == null) break;
+                cursor = querySuggestionsPsalmName(searchText, uri.getQueryParameter(SUGGEST_PARAMETER_LIMIT));
+                if (cursor == null || cursor.getCount() < 1)
+                    cursor = querySuggestionsPsalmText(searchText, uri.getQueryParameter(SUGGEST_PARAMETER_LIMIT));
                 break;
             case Psalms.Search.URI_MATCH:
                 if (selectionArgs == null || selectionArgs.length < 1) {
@@ -302,7 +305,7 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
                                                @Nullable String limit) {
         return  mDatabase.query(Psalms.Suggestions.SGNUM_TABLES,
                 Psalms.Suggestions.SGNUM_PROJECTION,
-                Psalms.Suggestions.getSgNumberSelection(psalmNumber), null, null, null,
+                Psalms.Suggestions.getSgNumberSelection(psalmNumber), null, Psalms.Suggestions.COLUMN_PSALMID, null,
                 Psalms.Suggestions.SGNUM_SORT_ORDER,
                 limit);
     }
@@ -311,6 +314,13 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
         return mDatabase.query(Psalms.Suggestions.SG_NAME_TABLES,
                 Psalms.Suggestions.SG_NAME_PROJECTION,
                 Psalms.Suggestions.getSgNameSelection(searchName.toLowerCase()), null, Psalms.Suggestions.SG_NAME_GROUPBY,
+                null, null, limit);
+    }
+
+    private Cursor querySuggestionsPsalmText(@NonNull String searchName, @Nullable String limit) {
+        return mDatabase.query(Psalms.Suggestions.SG_TXT_TABLES,
+                Psalms.Suggestions.SG_TXT_PROJECTION,
+                Psalms.Suggestions.getSgTextSelection(searchName.toLowerCase()), null, Psalms.Suggestions.SG_TXT_GROUPBY,
                 null, null, limit);
     }
 

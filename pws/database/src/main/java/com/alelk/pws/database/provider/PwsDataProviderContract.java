@@ -58,7 +58,8 @@ public interface PwsDataProviderContract {
 
         static class Suggestions {
             public static final String COLUMN_ID = "_id";
-            static final String COLUMN_PSALMNUMBER = Psalms.COLUMN_PSALMNUMBER;
+            public static final String COLUMN_PSALMNUMBER = Psalms.COLUMN_PSALMNUMBER;
+            public static final String COLUMN_PSALMID = Psalms.COLUMN_PSALMID;
 
             static final String PATH = TABLE_PSALMS +  "/" + SUGGEST_URI_PATH_QUERY;
             static final String PATH_NUMBER = TABLE_PSALMS +  "/" + SUGGEST_URI_PATH_QUERY + "/#";
@@ -72,8 +73,9 @@ public interface PwsDataProviderContract {
             static final String[] SGNUM_PROJECTION = {
                     "p." + PwsPsalmTable.COLUMN_ID + " as " + COLUMN_ID,
                     "pn." + PwsPsalmNumbersTable.COLUMN_NUMBER + " as " + COLUMN_PSALMNUMBER,
-                    "b." + PwsBookTable.COLUMN_DISPLAYNAME + " as " + SUGGEST_COLUMN_TEXT_2,
+                    "group_concat(b." + PwsBookTable.COLUMN_DISPLAYSHORTNAME + ", ', ') as " + SUGGEST_COLUMN_TEXT_2,
                     "p." + PwsPsalmTable.COLUMN_NAME + " AS " + SUGGEST_COLUMN_TEXT_1,
+                    "p." + PwsPsalmTable.COLUMN_ID + " AS " + COLUMN_PSALMID,
                     "pn." + PwsPsalmNumbersTable.COLUMN_ID + " AS " + SUGGEST_COLUMN_INTENT_DATA_ID
             };
             static String getSgNumberSelection(String psalmNumber) {
@@ -90,6 +92,18 @@ public interface PwsDataProviderContract {
             static final String SG_NAME_GROUPBY = "p.docid";
             static String getSgNameSelection(@NonNull String searchText) {
                 return "p." + PwsPsalmTable.COLUMN_NAME + " MATCH '" + searchText.trim().replaceAll("\\s+", "*") + "*'";
+            }
+            // Suggestions for psalm text
+            static final String SG_TXT_TABLES = TABLE_PSALMS_FTS_JOIN_PSALMNUMBERS_JOIN_BOOKS_USERPREFERRED;
+            static final String[] SG_TXT_PROJECTION = {
+                    "pn." + PwsPsalmNumbersTable.COLUMN_ID + " as " + SUGGEST_COLUMN_INTENT_DATA_ID,
+                    "p." + PwsPsalmTable.COLUMN_NAME + " as " + SUGGEST_COLUMN_TEXT_1,
+                    "group_concat(b." + PwsBookTable.COLUMN_DISPLAYSHORTNAME + ", ' | ') as " + SUGGEST_COLUMN_TEXT_2,
+                    "pn." + PwsPsalmNumbersTable.COLUMN_ID + " as " + COLUMN_ID
+            };
+            static final String SG_TXT_GROUPBY = "p.docid";
+            static String getSgTextSelection(@NonNull String searchText) {
+                return TABLE_PSALMS_FTS + " MATCH '" + searchText.trim().replaceAll("\\s+", "*") + "*'";
             }
         }
         public static class Search {
@@ -299,7 +313,7 @@ public interface PwsDataProviderContract {
             private static final String COLUMN_CURRENT_PSALMNUMBER_ID = "current_psalmnumber_id";
             public static final String COLUMN_PSALMNUMBER = PsalmNumbers.COLUMN_PSALMNUMBER;
             public static final String COLUMN_BOOKDISPLAYNAME = Books.COLUMN_BOOKDISPLAYNAME;
-            static final String COLUMN_BOOKDISPLAYSHORTNAME = Books.COLUMN_BOOKDISPLAYSHORTNAME;
+            public static final String COLUMN_BOOKDISPLAYSHORTNAME = Books.COLUMN_BOOKDISPLAYSHORTNAME;
 
             static final String PATH = PsalmNumbers.PATH + "/#/" + PATH_SEGMENT;
             static final int URI_MATCH = 34;

@@ -23,14 +23,16 @@
             android:layout_marginBottom="4dp">
             <TextView
                 android:id="@+id/txt_psalm_name"
+                android:layout_height="wrap_content"
                 style="?attr/textStyleCardPsalmName"
                 android:layout_marginBottom="6dp"/>
             <TextView
-                style="?attr/textStyleCardBookName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:id="@+id/txt_book_name"/>
             <TextView
-                style="?attr/textStyleCardPsalmText"
-                android:lines="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:textColor="?attr/colorPrimary"
                 android:paddingTop="4dp"
                 android:paddingBottom="4dp"

@@ -71,10 +71,10 @@ public class GeneralPreferenceFragment extends PwsPreferenceFragment implements 
             final String bookEdition = cursor.getString(cursor.getColumnIndex(PwsDataProvider.BookStatistic.COLUMN_BOOKEDITION));
             final String bookDisplayName = cursor.getString(cursor.getColumnIndex(PwsDataProvider.BookStatistic.COLUMN_BOOKDISPLAYNAME));
             final int bookStatisticPref = cursor.getInt(cursor.getColumnIndex(PwsDataProvider.BookStatistic.COLUMN_BOOKSTATISTIC_PREFERENCE));
-            final String key = "bookstatistic." + bookEdition + ".userPref";
+            final String key = "bookstatistic110." + bookEdition + ".userPref";
             if (bookStatisticPref > 0) {
                 PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext())
-                        .edit().putInt(key, bookStatisticPref).commit();
+                        .edit().putInt(key, bookStatisticPref).apply();
             }
             Preference pref = booksCategory.findPreference(bookEdition);
             if (pref == null) {
@@ -89,7 +89,7 @@ public class GeneralPreferenceFragment extends PwsPreferenceFragment implements 
                 public boolean onPreferenceChange(Preference preference, Object o) {
                     final Uri uri = PwsDataProvider.BookStatistic.getBookStatisticBookEditionUri(preference.getKey());
                     final int defaultPref = PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext())
-                            .getInt("bookstatistic." + preference.getKey() + ".userPref", 1);
+                            .getInt("bookstatistic110." + preference.getKey() + ".userPref", 1);
                     int newPref = (Boolean) o ? defaultPref : 0;
                     final ContentValues values = new ContentValues();
                     values.put(PwsBookStatisticTable.COLUMN_USERPREFERENCE, newPref);

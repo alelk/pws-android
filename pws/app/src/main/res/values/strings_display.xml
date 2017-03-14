@@ -37,7 +37,7 @@
     <string name="lbl_translator">Translator</string>
     <string name="lbl_music">Music</string>
     <string name="lbl_references">References</string>
-    <string name="lbl_another_variant">The another psalm edition. Lyrics similarity: %1$d%%</string>
+    <string name="lbl_another_variant">The another psalm edition.\nLyrics similarity: %1$d%%</string>
     <string name="lbl_search_psalm">Search psalm</string>
     <string name="lbl_jump_to_number">Jump to the number</string>
     <string name="lbl_psalm_text_size">Text size</string>
