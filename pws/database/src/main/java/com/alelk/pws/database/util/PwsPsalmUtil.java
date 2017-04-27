@@ -54,9 +54,9 @@ public class PwsPsalmUtil {
         while (tokenizer.hasMoreTokens()) {
             String line = tokenizer.nextToken();
             if (line.matches(pVerseLabelRgx) || line.matches(pChorusLabelRgx)) {
-                html += "<font color='#888888'><i>" + line + "</i></font>";
+                html += "<font color='#888888'><i>" + line + "</i></font><br>";
             } else if (line.matches(pVerseNumberRgx) || line.matches(pChorusNumberRgx)) {
-                html += "<h1><font color='#7aaf83'>" + line.replace('.', ' ') + "</font></h1>";
+                html += "<font color='#7aaf83'>" + line.replace('.', ' ') + "</font><br>";
             } else {
                 html += line + "<br>";
             }
