@@ -53,16 +53,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.layout_main_drawer);
         mAppBar = (AppBarLayout) findViewById(R.id.appbar_main);
-        mAppBar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-            @Override
-            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                if (verticalOffset == 0) {
-                    mFabSearchText.hide();
-                    mFabSearchNumber.hide();
-                } else {
-                    mFabSearchText.show();
-                    mFabSearchNumber.show();
-                }
+        mAppBar.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
+            if (verticalOffset == 0) {
+                mFabSearchText.hide();
+                mFabSearchNumber.hide();
+            } else {
+                mFabSearchText.show();
+                mFabSearchNumber.show();
             }
         });
 
@@ -166,23 +163,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fragmentTransaction.commit();
     }
 
-    private View.OnClickListener onButtonClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            switch (view.getId()) {
-                case R.id.btn_search_psalm_number:
-                case R.id.fab_search_number:
-                    Intent intentSearchNumber = new Intent(getBaseContext(), SearchActivity.class);
-                    intentSearchNumber.putExtra(SearchActivity.KEY_INPUT_TYPE, InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                    startActivity(intentSearchNumber);
-                    break;
-                case R.id.btn_search_psalm_text:
-                case R.id.fab_search_text:
-                    Intent intentSearchText = new Intent(getBaseContext(), SearchActivity.class);
-                    intentSearchText.putExtra(SearchActivity.KEY_INPUT_TYPE, InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_AUTO_COMPLETE);
-                    startActivity(intentSearchText);
-                    break;
-            }
+    private View.OnClickListener onButtonClick = (View view) -> {
+        switch (view.getId()) {
+            case R.id.btn_search_psalm_number:
+            case R.id.fab_search_number:
+                Intent intentSearchNumber = new Intent(getBaseContext(), SearchActivity.class);
+                intentSearchNumber.putExtra(SearchActivity.KEY_INPUT_TYPE, InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                startActivity(intentSearchNumber);
+                break;
+            case R.id.btn_search_psalm_text:
+            case R.id.fab_search_text:
+                Intent intentSearchText = new Intent(getBaseContext(), SearchActivity.class);
+                intentSearchText.putExtra(SearchActivity.KEY_INPUT_TYPE, InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_AUTO_COMPLETE);
+                startActivity(intentSearchText);
+                break;
         }
     };
 }

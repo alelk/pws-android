@@ -480,7 +480,7 @@ public interface PwsDataProviderContract {
             public static final Uri CONTENT_URI = new Uri.Builder().scheme(SCHEME).authority(AUTHORITY).path(PATH).build();
 
             protected static final String TABLES = History.TABLES;
-            protected static final String SORT_ORDER = COLUMN_HISTORYTIMESTAMP + " DESC";;
+            protected static final String SORT_ORDER = COLUMN_HISTORYTIMESTAMP + " DESC";
             protected static final String LIMIT = "1";
             protected static final String[] PROJECTION = {
                     "p." + PwsPsalmTable.COLUMN_ID + " AS " + COLUMN_ID,

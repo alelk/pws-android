@@ -3,6 +3,8 @@ package com.alelk.pws.database.table;
 import android.database.sqlite.SQLiteDatabase;
 
 /**
+ * Pws Chapter Psalms Table
+ *
  * Created by alelkin on 22.04.2015.
  */
 public class PwsChapterPsalmsTable implements PwsTable {

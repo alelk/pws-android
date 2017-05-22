@@ -28,6 +28,8 @@ import com.alelk.pws.pwapp.R;
 import com.alelk.pws.pwapp.adapter.HistoryRecyclerViewAdapter;
 
 /**
+ * History Fragment
+ *
  * Created by Alex Elkin on 18.02.2016.
  */
 public class HistoryFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -64,13 +66,10 @@ public class HistoryFragment extends Fragment implements LoaderManager.LoaderCal
         mRecyclerView = (RecyclerView) v.findViewById(R.id.rv_history);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(layoutManager);
-        mHistoryAdapter = new HistoryRecyclerViewAdapter(new HistoryRecyclerViewAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(long psalmNumberId) {
-                Intent intentPsalmView = new Intent(getActivity(), PsalmActivity.class);
-                intentPsalmView.putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, psalmNumberId);
-                startActivity(intentPsalmView);
-            }
+        mHistoryAdapter = new HistoryRecyclerViewAdapter(psalmNumberId -> {
+            Intent intentPsalmView = new Intent(getActivity(), PsalmActivity.class);
+            intentPsalmView.putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, psalmNumberId);
+            startActivity(intentPsalmView);
         });
         mRecyclerView.setAdapter(mHistoryAdapter);
         getLoaderManager().initLoader(PWS_HISTORY_LOADER, null, this);

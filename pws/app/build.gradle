@@ -45,6 +45,10 @@ android {
     applicationVariants.all { variant ->
         variant.resValue "string", "versionName", variant.versionName
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 static def getDate() {
