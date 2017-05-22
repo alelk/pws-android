@@ -30,6 +30,8 @@ import com.alelk.pws.pwapp.holder.PsalmHolder;
 import java.util.ArrayList;
 
 /**
+ * Psalm Activity
+ *
  * Created by Alex Elkin on 25.03.2016.
  */
 public class PsalmActivity extends AppCompatActivity implements PsalmTextFragment.Callbacks,
@@ -100,7 +102,7 @@ public class PsalmActivity extends AppCompatActivity implements PsalmTextFragmen
                 for (String id : psalmNumberIdsList) {
                     try {
                         mBookPsalmNumberIds.add(Long.parseLong(id));
-                    } catch (NumberFormatException ex) {
+                    } catch (NumberFormatException ignored) {
                     }
                 }
             }
@@ -204,7 +206,7 @@ public class PsalmActivity extends AppCompatActivity implements PsalmTextFragmen
         fragment.setPsalmTextSize(previousTextSize);
     }
 
-    public class FabFavoritesOnClick implements View.OnClickListener {
+    private class FabFavoritesOnClick implements View.OnClickListener {
         @Override
         public void onClick(View v) {
             final PsalmTextFragment fragment = (PsalmTextFragment) mPsalmTextPagerAdapter.getRegisteredFragments().get(mPagerPsalmText.getCurrentItem());

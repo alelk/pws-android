@@ -28,6 +28,8 @@ import com.alelk.pws.pwapp.adapter.HistoryRecyclerViewAdapter;
 
 
 /**
+ * Read Now Fragment
+ *
  * Created by Alex Elkin on 17.02.2016.
  */
 public class ReadNowFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -41,13 +43,10 @@ public class ReadNowFragment extends Fragment implements LoaderManager.LoaderCal
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mRecentPsalmsAdapter = new HistoryRecyclerViewAdapter(new HistoryRecyclerViewAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(long psalmNumberId) {
-                Intent intentPsalmView = new Intent(getActivity().getBaseContext(), PsalmActivity.class);
-                intentPsalmView.putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, psalmNumberId);
-                startActivity(intentPsalmView);
-            }
+        mRecentPsalmsAdapter = new HistoryRecyclerViewAdapter(psalmNumberId -> {
+            Intent intentPsalmView = new Intent(getActivity().getBaseContext(), PsalmActivity.class);
+            intentPsalmView.putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, psalmNumberId);
+            startActivity(intentPsalmView);
         });
         getLoaderManager().initLoader(PWS_RECENT_PSALM_LOADER, null, this);
     }

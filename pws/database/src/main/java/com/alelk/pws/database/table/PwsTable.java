@@ -1,7 +1,5 @@
 package com.alelk.pws.database.table;
 
-import android.database.sqlite.SQLiteDatabase;
-
 /**
  * Pws Table Interface
  *

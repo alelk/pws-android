@@ -84,18 +84,15 @@ public class GeneralPreferenceFragment extends PwsPreferenceFragment implements 
             }
             pref.setTitle(bookDisplayName);
             ((SwitchPreference) pref).setChecked(bookStatisticPref > 0);
-            pref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object o) {
-                    final Uri uri = PwsDataProvider.BookStatistic.getBookStatisticBookEditionUri(preference.getKey());
-                    final int defaultPref = PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext())
-                            .getInt("bookstatistic110." + preference.getKey() + ".userPref", 1);
-                    int newPref = (Boolean) o ? defaultPref : 0;
-                    final ContentValues values = new ContentValues();
-                    values.put(PwsBookStatisticTable.COLUMN_USERPREFERENCE, newPref);
-                    getActivity().getContentResolver().update(uri, values, null, null);
-                    return true;
-                }
+            pref.setOnPreferenceChangeListener((preference, o) -> {
+                final Uri uri = PwsDataProvider.BookStatistic.getBookStatisticBookEditionUri(preference.getKey());
+                final int defaultPref = PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext())
+                        .getInt("bookstatistic110." + preference.getKey() + ".userPref", 1);
+                int newPref = (Boolean) o ? defaultPref : 0;
+                final ContentValues values = new ContentValues();
+                values.put(PwsBookStatisticTable.COLUMN_USERPREFERENCE, newPref);
+                getActivity().getContentResolver().update(uri, values, null, null);
+                return true;
             });
         } while (cursor.moveToNext());
     }

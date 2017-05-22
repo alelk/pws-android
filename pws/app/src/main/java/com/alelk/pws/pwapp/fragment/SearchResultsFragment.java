@@ -25,6 +25,8 @@ import com.alelk.pws.pwapp.R;
 import com.alelk.pws.pwapp.adapter.SearchRecyclerViewAdapter;
 
 /**
+ * Search Result Fragment
+ *
  * Created by Alex Elkin on 23.05.2016.
  */
 public class SearchResultsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -61,13 +63,10 @@ public class SearchResultsFragment extends Fragment implements LoaderManager.Loa
         mLayoutSearchProgress = v.findViewById(R.id.layout_search_progress);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         mRecyclerView.setLayoutManager(layoutManager);
-        mSearchResultsAdapter = new SearchRecyclerViewAdapter(new SearchRecyclerViewAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(long psalmNumberId) {
-                Intent intentPsalmView = new Intent(getActivity().getBaseContext(), PsalmActivity.class);
-                intentPsalmView.putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, psalmNumberId);
-                startActivity(intentPsalmView);
-            }
+        mSearchResultsAdapter = new SearchRecyclerViewAdapter(psalmNumberId -> {
+            Intent intentPsalmView = new Intent(getActivity().getBaseContext(), PsalmActivity.class);
+            intentPsalmView.putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, psalmNumberId);
+            startActivity(intentPsalmView);
         });
         mRecyclerView.setAdapter(mSearchResultsAdapter);
 

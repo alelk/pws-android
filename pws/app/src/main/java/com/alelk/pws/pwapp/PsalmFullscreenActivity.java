@@ -62,12 +62,7 @@ public class PsalmFullscreenActivity extends AppCompatActivity implements PsalmT
         }
     };
     private boolean mVisible;
-    private final Runnable mHideRunnable = new Runnable() {
-        @Override
-        public void run() {
-            hide();
-        }
-    };
+    private final Runnable mHideRunnable = this::hide;
     private Handler mAddToHistoryHandler = new Handler();
     private Runnable mAddToHistoryRunnable = new Runnable() {
         @Override
@@ -79,7 +74,6 @@ public class PsalmFullscreenActivity extends AppCompatActivity implements PsalmT
     };
 
     private long mPsalmNumberId;
-    private PsalmTextFragment mPsalmTextFragment;
     private Button mBtnFavorites;
     private ArrayList<Long> mBookPsalmNumberIds;
     private ViewPager mPagerPsalmText;
@@ -97,25 +91,19 @@ public class PsalmFullscreenActivity extends AppCompatActivity implements PsalmT
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         mContentView = findViewById(R.id.pager_psalm_text);
         mBtnFavorites = (Button) findViewById(R.id.btn_favorites);
-        mBtnFavorites.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                PsalmTextFragment fragment = (PsalmTextFragment) mFragmentStatePagerAdapter.getRegisteredFragments().get(mPagerPsalmText.getCurrentItem());
-                if(fragment.isFavoritePsalm()) {
-                    fragment.removePsalmFromFavorites();
-                } else {
-                    fragment.addPsalmToFavorites();
-                }
+        mBtnFavorites.setOnClickListener(v -> {
+            PsalmTextFragment fragment = (PsalmTextFragment) mFragmentStatePagerAdapter.getRegisteredFragments().get(mPagerPsalmText.getCurrentItem());
+            if(fragment.isFavoritePsalm()) {
+                fragment.removePsalmFromFavorites();
+            } else {
+                fragment.addPsalmToFavorites();
             }
         });
-        mBtnFavorites.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (AUTO_HIDE) {
-                    delayedHide(AUTO_HIDE_DELAY_MILLIS);
-                }
-                return false;
+        mBtnFavorites.setOnTouchListener((view, motionEvent) -> {
+            if (AUTO_HIDE) {
+                delayedHide(AUTO_HIDE_DELAY_MILLIS);
             }
+            return false;
         });
 
         mPagerPsalmText = (ViewPager) findViewById(R.id.pager_psalm_text);
@@ -138,7 +126,7 @@ public class PsalmFullscreenActivity extends AppCompatActivity implements PsalmT
                 for (String id : psalmNumberIdsList) {
                     try {
                         mBookPsalmNumberIds.add(Long.parseLong(id));
-                    } catch (NumberFormatException ex) {
+                    } catch (NumberFormatException ignore) {
                     }
                 }
             }

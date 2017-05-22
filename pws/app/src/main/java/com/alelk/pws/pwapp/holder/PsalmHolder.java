@@ -8,6 +8,8 @@ import com.alelk.pws.database.provider.PwsDataProviderContract.PsalmNumbers.Psal
 import java.util.Arrays;
 
 /**
+ * Psalm Holder
+ *
  * Created by AlexElkin on 27.05.2016.
  */
 public class PsalmHolder implements PwsHolder {

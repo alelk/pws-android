@@ -5,14 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
-import android.support.v4.widget.SearchViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+
 import com.alelk.pws.pwapp.fragment.SearchResultsFragment;
 
 
@@ -51,7 +50,6 @@ public class SearchActivity extends AppCompatActivity {
                 mResultsFragment = SearchResultsFragment.newInstance(query);
                 getSupportFragmentManager().beginTransaction().add(R.id.fragment_search_results, mResultsFragment).commit();
             }
-            return;
         } else if (Intent.ACTION_VIEW.equals(getIntent().getAction())) {
             Uri data = getIntent().getData();
             long psalmNumberId = Long.parseLong(data.getLastPathSegment());
@@ -60,7 +58,6 @@ public class SearchActivity extends AppCompatActivity {
                 intentPsalmView.putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, psalmNumberId);
                 startActivity(intentPsalmView);
             }
-            return;
         }
     }
 

@@ -3,6 +3,8 @@ package com.alelk.pws.database.table;
 import android.database.sqlite.SQLiteDatabase;
 
 /**
+ * PWS Favorites Table
+ *
  * Created by Alex Elkin on 19.02.2016.
  */
 public class PwsFavoritesTable implements PwsTable {

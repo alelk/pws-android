@@ -1,6 +1,5 @@
 package com.alelk.pws.pwapp.fragment;
 
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -12,6 +11,8 @@ import android.widget.TextView;
 import com.alelk.pws.pwapp.R;
 
 /**
+ * Psalm Header Fragment
+ *
  * Created by Alex Elkin on 11.05.2016.
  */
 public class PsalmHeaderFragment extends Fragment {

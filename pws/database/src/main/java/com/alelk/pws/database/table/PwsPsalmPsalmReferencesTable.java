@@ -3,6 +3,8 @@ package com.alelk.pws.database.table;
 import android.database.sqlite.SQLiteDatabase;
 
 /**
+ * PWS Psalm Psalm Reference Table
+ *
  * Created by alelk on 04.01.2017.
  */
 

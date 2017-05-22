@@ -153,24 +153,16 @@ public class SearchPsalmNumberDialogFragment extends DialogFragment implements L
         getLoaderManager().initLoader(PWS_PSALM_NUMBER_LOADER, null, this);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(mView);
-        builder.setPositiveButton(R.string.lbl_ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (mPsalmNumberId == -1) {
-                    Snackbar.make(mView, R.string.msg_no_psalm_number_found, Snackbar.LENGTH_SHORT)
-                            .setAction("Action", null).show();
-                    dialog.dismiss();
-                    return;
-                }
-                mListener.onPositiveButtonClick(mPsalmNumberId);
+        builder.setPositiveButton(R.string.lbl_ok, (dialog, which) -> {
+            if (mPsalmNumberId == -1) {
+                Snackbar.make(mView, R.string.msg_no_psalm_number_found, Snackbar.LENGTH_SHORT)
+                        .setAction("Action", null).show();
+                dialog.dismiss();
+                return;
             }
+            mListener.onPositiveButtonClick(mPsalmNumberId);
         });
-        builder.setNegativeButton(R.string.lbl_cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                mListener.onNegativeButtonClick();
-            }
-        });
+        builder.setNegativeButton(R.string.lbl_cancel, (dialog, which) -> mListener.onNegativeButtonClick());
         return builder.create();
     }
 }

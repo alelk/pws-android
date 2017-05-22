@@ -20,6 +20,8 @@ import com.alelk.pws.pwapp.R;
 import com.alelk.pws.pwapp.adapter.FavoritesRecyclerViewAdapter;
 
 /**
+ * Favorites Fragment
+ *
  * Created by Alex Elkin on 18.02.2016.
  */
 public class FavoritesFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -36,13 +38,10 @@ public class FavoritesFragment extends Fragment implements LoaderManager.LoaderC
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         recyclerView.setLayoutManager(layoutManager);
         mFavoritesAdapter = new FavoritesRecyclerViewAdapter(
-                new FavoritesRecyclerViewAdapter.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(long psalmNumberId) {
-                        Intent intentPsalmView = new Intent(getActivity().getBaseContext(), PsalmActivity.class);
-                        intentPsalmView.putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, psalmNumberId);
-                        startActivity(intentPsalmView);
-                    }
+                psalmNumberId -> {
+                    Intent intentPsalmView = new Intent(getActivity().getBaseContext(), PsalmActivity.class);
+                    intentPsalmView.putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, psalmNumberId);
+                    startActivity(intentPsalmView);
                 });
         recyclerView.setAdapter(mFavoritesAdapter);
         getLoaderManager().initLoader(PWS_FAVORITES_LOADER, null, this);

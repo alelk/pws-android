@@ -32,6 +32,10 @@ android {
             versionNameSuffix '-' + getDate().toLowerCase() + "-debug"
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 static def getDate() {
