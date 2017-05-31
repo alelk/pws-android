@@ -17,6 +17,7 @@ import com.alelk.pws.pwapp.R;
 import static com.alelk.pws.database.provider.PwsDataProviderContract.Psalms.Search.*;
 
 /**
+ *
  * Created by Alex Elkin on 23.05.2016.
  */
 public class SearchRecyclerViewAdapter extends RecyclerView.Adapter<SearchRecyclerViewAdapter.SearchViewHolder> {
