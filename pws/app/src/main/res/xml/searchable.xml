@@ -2,9 +2,9 @@
 <searchable xmlns:android="http://schemas.android.com/apk/res/android"
             android:label="@string/lbl_search_widget"
             android:hint="@string/hint_enter_text"
-            android:searchSuggestAuthority="com.alelk.pws.database.provider"
+            android:searchSuggestAuthority="@string/db_authority"
             android:searchSuggestPath="psalms"
             android:searchSuggestIntentAction="android.intent.action.VIEW"
-            android:searchSuggestIntentData="content://com.alelk.pws.database.provider/psalms"
+            android:searchSuggestIntentData="psalms"
             android:includeInGlobalSearch="true">
 </searchable>
