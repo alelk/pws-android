@@ -323,7 +323,12 @@ public class PwsDatabaseHelper extends SQLiteOpenHelper {
         PwsPsalmFtsTable.dropAllTriggers(db);
         PwsPsalmFtsTable.dropTable(db);
         PwsPsalmFtsTable.createTable(db);
-        PwsPsalmFtsTable.populateTable(db, (max, current) -> publishProgress(R.string.txt_fts_setup, max, current));
+        PwsPsalmFtsTable.populateTable(db, new PwsPsalmFtsTable.UpdateProgressListener() {
+            @Override
+            public void onUpdateProgress(int max, int current) {
+                publishProgress(R.string.txt_fts_setup, max, current);
+            }
+        });
         PwsPsalmFtsTable.setUpAllTriggers(db);
         Log.i(LOG_TAG, METHOD_NAME + ": The PWS Psalm FTS table has been created and populated. All needed triggers are setting up.");
         db.close();

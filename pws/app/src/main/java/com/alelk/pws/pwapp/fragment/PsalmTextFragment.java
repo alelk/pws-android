@@ -69,16 +69,24 @@ public class PsalmTextFragment extends Fragment implements LoaderManager.LoaderC
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         final View v = inflater.inflate(R.layout.fragment_psalm_text, null);
-        v.findViewById(R.id.ll_psalm_text_content).setOnClickListener(v1 -> callbacks.onRequestFullscreenMode());
+        v.findViewById(R.id.ll_psalm_text_content).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                callbacks.onRequestFullscreenMode();
+            }
+        });
         cvTonalities = (CardView) v.findViewById(R.id.cv_tonalities);
         cvPsalmInfo = (CardView) v.findViewById(R.id.cv_psalm_info);
         vPsalmText = (TextView) v.findViewById(R.id.txt_psalm_text);
         vPsalmInfo = (TextView) v.findViewById(R.id.txt_psalm_info);
         vPsalmTonalities = (TextView) v.findViewById(R.id.txt_psalm_tonalities);
-        mReferredPsalmsAdapter = new ReferredPsalmsRecyclerViewAdapter(psalmNumberId -> {
-            Intent intentPsalmView = new Intent(getActivity().getBaseContext(), PsalmActivity.class);
-            intentPsalmView.putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, psalmNumberId);
-            startActivity(intentPsalmView);
+        mReferredPsalmsAdapter = new ReferredPsalmsRecyclerViewAdapter(new ReferredPsalmsRecyclerViewAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(long psalmNumberId) {
+                Intent intentPsalmView = new Intent(getActivity().getBaseContext(), PsalmActivity.class);
+                intentPsalmView.putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, psalmNumberId);
+                startActivity(intentPsalmView);
+            }
         }, mPsalmTextSize);
         final RecyclerView rvReferredPsalms =(RecyclerView) v.findViewById(R.id.rv_referred_psalms);
         rvReferredPsalms.setAdapter(mReferredPsalmsAdapter);

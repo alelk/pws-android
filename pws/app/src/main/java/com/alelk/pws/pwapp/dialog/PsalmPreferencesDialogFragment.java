@@ -73,8 +73,18 @@ public class PsalmPreferencesDialogFragment extends DialogFragment {
         super.onCreateDialog(savedInstanceState);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(mLayout);
-        builder.setPositiveButton(R.string.lbl_ok, (dialogInterface, i) -> mCallbacks.onApplyPsalmPreferences(mChangedTextSize));
-        builder.setNegativeButton(R.string.lbl_cancel, (dialogInterface, i) -> mCallbacks.onCancelPsalmPreferences(mTextSizeDefault));
+        builder.setPositiveButton(R.string.lbl_ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                mCallbacks.onApplyPsalmPreferences(mChangedTextSize);
+            }
+        });
+        builder.setNegativeButton(R.string.lbl_cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                mCallbacks.onCancelPsalmPreferences(mTextSizeDefault);
+            }
+        });
         return builder.create();
     }
 

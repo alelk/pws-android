@@ -37,12 +37,14 @@ public class FavoritesFragment extends Fragment implements LoaderManager.LoaderC
         final RecyclerView recyclerView = (RecyclerView) v.findViewById(R.id.rv_favorites);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         recyclerView.setLayoutManager(layoutManager);
-        mFavoritesAdapter = new FavoritesRecyclerViewAdapter(
-                psalmNumberId -> {
-                    Intent intentPsalmView = new Intent(getActivity().getBaseContext(), PsalmActivity.class);
-                    intentPsalmView.putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, psalmNumberId);
-                    startActivity(intentPsalmView);
-                });
+        mFavoritesAdapter = new FavoritesRecyclerViewAdapter(new FavoritesRecyclerViewAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(long psalmNumberId) {
+                Intent intentPsalmView = new Intent(getActivity().getBaseContext(), PsalmActivity.class);
+                intentPsalmView.putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, psalmNumberId);
+                startActivity(intentPsalmView);
+            }
+        });
         recyclerView.setAdapter(mFavoritesAdapter);
         getLoaderManager().initLoader(PWS_FAVORITES_LOADER, null, this);
 

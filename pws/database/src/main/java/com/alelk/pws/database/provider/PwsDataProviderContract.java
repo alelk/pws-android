@@ -4,6 +4,7 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
+import com.alelk.pws.database.BuildConfig;
 import com.alelk.pws.database.table.PwsBookStatisticTable;
 import com.alelk.pws.database.table.PwsBookTable;
 import com.alelk.pws.database.table.PwsFavoritesTable;
@@ -32,7 +33,7 @@ import static com.alelk.pws.database.table.PwsPsalmPsalmReferencesTable.TABLE_PS
  */
 public interface PwsDataProviderContract {
     String SCHEME = "content";
-    String AUTHORITY = "com.alelk.pws.database.provider";
+    String AUTHORITY = BuildConfig.DB_AUTHORITY;
     String QUERY_PARAMETER_LIMIT = "limit";
 
     String HISTORY_TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss";
