@@ -6,7 +6,7 @@
             android:title="@string/app_name"
             android:icon="@mipmap/ic_launcher"/>
         <Preference android:title="@string/pref_about_app_page_title"
-            android:icon="@drawable/ic_public_blue">
+            android:icon="@drawable/ic_public_blue_24dp">
             <intent android:action="android.intent.action.VIEW"
                 android:data="@string/pref_about_app_page_link"/>
         </Preference>
@@ -14,13 +14,13 @@
     <PreferenceCategory android:title="@string/pref_about_developer_title">
         <Preference android:title="@string/pref_about_developer_alex_title"
             android:summary="@string/pref_about_developer_alex_summary"
-            android:icon="@drawable/ic_account_circle_blue">
+            android:icon="@drawable/ic_account_circle_blue_24dp">
             <intent android:action="android.intent.action.VIEW"
                 android:data="@string/pref_about_developer_alex_link"/>
         </Preference>
         <Preference android:title="@string/pref_about_developer_vera_title"
             android:summary="@string/pref_about_developer_vera_summary"
-            android:icon="@drawable/ic_contact_mail_blue">
+            android:icon="@drawable/ic_contact_mail_blue_24dp">
             <intent android:action="android.intent.action.SENDTO"
                 android:data="@string/pref_about_developer_vera_intent_data"/>
         </Preference>
@@ -28,7 +28,7 @@
     <PreferenceCategory android:title="@string/pref_about_contact_title">
         <Preference android:title="@string/pref_about_contact_email_title"
             android:summary="@string/pref_about_contact_email_summary"
-            android:icon="@drawable/ic_email_blue">
+            android:icon="@drawable/ic_email_blue_24dp">
             <intent android:action="android.intent.action.SENDTO"
                 android:data="@string/pref_about_contact_email_intent_data"/>
         </Preference>

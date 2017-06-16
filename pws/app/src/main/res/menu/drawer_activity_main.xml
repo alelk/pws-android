@@ -4,15 +4,15 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/drawer_main_home"
-            android:icon="@drawable/ic_book"
+            android:icon="@drawable/ic_book_black_24dp"
             android:title="@string/lbl_drawer_main_home" />
         <item
             android:id="@+id/drawer_main_history"
-            android:icon="@drawable/ic_history"
+            android:icon="@drawable/ic_history_black_24dp"
             android:title="@string/lbl_drawer_main_history" />
         <item
             android:id="@+id/drawer_main_favorite"
-            android:icon="@drawable/ic_favorite_border_white"
+            android:icon="@drawable/ic_favorite_border_white_24dp"
             android:title="@string/lbl_drawer_main_favorite" />
     </group>
 
@@ -20,7 +20,7 @@
         <menu>
             <item
                 android:id="@+id/drawer_main_settings"
-                android:icon="@drawable/ic_settings"
+                android:icon="@drawable/ic_settings_black_24dp"
                 android:title="@string/lbl_drawer_main_settings" />
         </menu>
     </item>

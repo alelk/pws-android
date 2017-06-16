@@ -2,12 +2,12 @@
 
     <header
         android:fragment="com.alelk.pws.pwapp.fragment.preference.GeneralPreferenceFragment"
-        android:icon="@drawable/ic_build_black"
+        android:icon="@drawable/ic_build_black_24dp"
         android:title="@string/pref_header_general"/>
 
     <header
         android:fragment="com.alelk.pws.pwapp.fragment.preference.DonatePreferenceFragment"
-        android:icon="@drawable/ic_donate"
+        android:icon="@drawable/ic_donate_black_24dp"
         android:title="@string/pref_header_donate"/>
 
     <header

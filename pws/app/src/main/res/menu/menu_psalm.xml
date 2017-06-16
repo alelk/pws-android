@@ -6,19 +6,19 @@
     <item android:id="@+id/menu_search"
         android:title="@string/lbl_search_psalm"
         app:showAsAction="ifRoom"
-        android:icon="@drawable/ic_search_black"
+        android:icon="@drawable/ic_search_black_24dp"
         app:actionViewClass="android.support.v7.widget.SearchView"
         />
 
     <item android:id="@+id/menu_jump"
         android:title="@string/lbl_jump_to_number"
-        android:icon="@drawable/ic_dialpad_black"
+        android:icon="@drawable/ic_dialpad_black_24dp"
         app:showAsAction="never"
         />
 
     <item android:id="@+id/menu_text_size"
         android:title="@string/lbl_psalm_text_size"
-        android:icon="@drawable/ic_settings"
+        android:icon="@drawable/ic_settings_black_24dp"
         app:showAsAction="never"
         />
 </menu>

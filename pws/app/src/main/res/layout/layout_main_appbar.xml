@@ -66,7 +66,7 @@
                         android:padding="16dp"
                         android:text="@string/lbl_search_by_number"
                         style="?attr/cardButtonStyle"
-                        android:drawableTop="@drawable/ic_dialpad"/>
+                        android:drawableTop="@drawable/ic_dialpad_white_24dp"/>
                     <Button
                         android:id="@+id/btn_search_psalm_text"
                         android:layout_width="0dp"
@@ -76,7 +76,7 @@
                         android:text="@string/lbl_search_by_text"
                         style="?attr/cardButtonStyle"
                         android:background="#00000000"
-                        android:drawableTop="@drawable/ic_search"/>
+                        android:drawableTop="@drawable/ic_search_white_24dp"/>
                 </LinearLayout>
             </LinearLayout>
 
@@ -98,7 +98,7 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         android:clickable="true"
-        android:src="@drawable/ic_search"/>
+        android:src="@drawable/ic_search_white_24dp"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_search_number"
@@ -109,6 +109,6 @@
         android:layout_marginEnd="90dp"
         android:layout_marginRight="90dp"
         android:clickable="true"
-        android:src="@drawable/ic_dialpad"/>
+        android:src="@drawable/ic_dialpad_white_24dp"/>
 
 </android.support.design.widget.CoordinatorLayout>
