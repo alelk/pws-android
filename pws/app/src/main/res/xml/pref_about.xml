@@ -4,7 +4,7 @@
         <Preference android:key="@string/pref_about_app_key"
             android:selectable="false"
             android:title="@string/app_name"
-            android:icon="@drawable/ic_launcher"/>
+            android:icon="@mipmap/ic_launcher"/>
         <Preference android:title="@string/pref_about_app_page_title"
             android:icon="@drawable/ic_public_blue">
             <intent android:action="android.intent.action.VIEW"
