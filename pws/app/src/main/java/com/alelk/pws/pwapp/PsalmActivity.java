@@ -224,9 +224,9 @@ public class PsalmActivity extends AppCompatActivity implements PsalmTextFragmen
 
     private void drawFavoriteFabIcon(boolean isFavoritePsalm) {
         if (isFavoritePsalm) {
-            mFabFavorite.setImageResource(R.drawable.ic_favorite_white);
+            mFabFavorite.setImageResource(R.drawable.ic_favorite_white_24dp);
         } else {
-            mFabFavorite.setImageResource(R.drawable.ic_favorite_border_white);
+            mFabFavorite.setImageResource(R.drawable.ic_favorite_border_white_24dp);
         }
     }
 }

@@ -9,7 +9,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -19,10 +18,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
 
 import com.alelk.pws.database.provider.PwsDataProvider;
-import com.alelk.pws.database.provider.PwsDataProviderContract;
 import com.alelk.pws.pwapp.PsalmActivity;
 import com.alelk.pws.pwapp.R;
 import com.alelk.pws.pwapp.adapter.HistoryRecyclerViewAdapter;
@@ -82,7 +79,7 @@ public class HistoryFragment extends Fragment implements LoaderManager.LoaderCal
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menuClearHistory = menu.add(R.string.menu_clear_history);
-        menuClearHistory.setIcon(R.drawable.ic_delete_black);
+        menuClearHistory.setIcon(R.drawable.ic_delete_black_24dp);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
