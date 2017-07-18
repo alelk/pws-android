@@ -24,7 +24,7 @@
     <!-- Search activity display strings. -->
     <string name="title_activity_search">Пошук</string>
     <string name="lbl_search_widget">Пошук&#8230;</string>
-    <string name="hint_enter_text">Введіть любий текст для пошуку пісні&#8230;</string>
+    <string name="hint_enter_text">Введіть будь який текст для пошуку пісні&#8230;</string>
     <string name="hint_enter_psalm_number">Введіть номер пісні&#8230;</string>
     <string name="lbl_fts_search_progress">Виконується повнотекстовий пошук&#8230;\n</string>
 
