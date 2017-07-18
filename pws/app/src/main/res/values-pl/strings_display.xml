@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_settings">Ustawienia</string>
+    <string name="title_activity_psalm_fullscreen">Pieśń</string>
+    <string name="title_activity_main_settings">Ustawienia</string>
+
+    <!-- Main activity display strings. -->
+    <string name="txt_main_navigation_header_comment">Biblioteka pieśni chrześcijańskich.</string>
+    <string name="lbl_drawer_main_history">Historia</string>
+    <string name="lbl_drawer_main_home">Główna</string>
+    <string name="lbl_drawer_main_favorite">Ulubione</string>
+    <string name="lbl_drawer_main_settings">Ustawienia</string>
+    <string name="lbl_drawer_main_system_menu"></string>
+
+    <string name="lbl_recent">Ostatnie</string>
+    <string name="lbl_search">Szukaj tekstu pieśni</string>
+    <string name="lbl_search_by_number">Szukaj wg. numeru</string>
+    <string name="lbl_search_by_text">Szukaj wg. tekstu</string>
+
+    <!-- History fragment display strings. -->
+    <string name="menu_clear_history">Wyczyść historię</string>
+
+    <!-- Search activity display strings. -->
+    <string name="title_activity_search">Szukaj</string>
+    <string name="lbl_search_widget">Szukaj&#8230;</string>
+    <string name="hint_enter_text">Wpisz dowolny tekst w celu wyszukania pieśni&#8230;</string>
+    <string name="hint_enter_psalm_number">Wpisz numer pieśni&#8230;</string>
+    <string name="lbl_fts_search_progress">Trwa pełnotekstowe wyszukiwanie&#8230;\n</string>
+
+    <!-- Psalm activity display strings. -->
+    <string name="lbl_chorus">Refren</string>
+    <string name="lbl_author">Słowa</string>
+    <string name="lbl_translator">Tłumaczenie</string>
+    <string name="lbl_music">Muzyka</string>
+    <string name="lbl_references">Odsyłacze</string>
+    <string name="lbl_another_variant" formatted="true">Druga wersja pieśni. Źródło tekstów: %1$d%%</string>
+    <string name="lbl_search_psalm">Szukaj</string>
+    <string name="lbl_jump_to_number">Przejdź do numeru</string>
+    <string name="lbl_psalm_text_size">Rozmiar tekstu pieśni</string>
+    <string name="msg_added_to_favorites">Dodano do ulubionych</string>
+    <string name="msg_removed_from_favorites">Usunięto z ulubionych</string>
+
+    <!-- Psalm fullscreen activity display strings. -->
+    <string name="lbl_add_to_favorites">Dodaj do ulubionych</string>
+    <string name="lbl_remove_from_favorites">Usuń z ulubionych</string>
+
+    <!-- Search psalm number dialog display strings. -->
+    <string name="lbl_ok">OK</string>
+    <string name="lbl_cancel">Anuluj</string>
+    <string name="lbl_enter_psalm_number">Wpisz numer w określonym śpiewniku, którego poszukujesz: </string>
+    <string name="msg_no_psalm_number_found">Numer nie znaleziono</string>
+
+    <!-- Psalm preferences dialog display strings. -->
+    <string name="lbl_text_size">Rozmiar tekstu:</string>
+</resources>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Headers -->
+    <string name="pref_header_general">Ogólne</string>
+    <string name="pref_header_donate">Wsparcie</string>
+    <string name="pref_header_about">Informacje</string>
+
+    <!-- General screen -->
+    <string name="pref_books_title">Śpiewniki</string>
+
+    <!-- Donate screen -->
+    <string name="pref_donate_title">Wsparcie rozbudowy P&amp;W Songs</string>
+    <string name="pref_donate_summary">Jeśli chciałbyś okazać materialną pomoc dla celów rozbudowy aplikacji, możesz przekazać środki finansowe jednym z poniższych sposobów:</string>
+    <!-- Yandex Money -->
+    <string name="pref_donate_yandexmoney_title">Yandex Money</string>
+    <string name="pref_donate_yandexmoney_wallet_number_summary">Numer naszego portfela Yandex Money</string>
+    <string name="pref_donate_yandexmoney_web_form_title">Otwórz witrynę w przeglądarce</string>
+    <string name="pref_donate_yandexmoney_web_form_summary">Sposoby wpłaty: portfel Yandex.Money, karta Visa lub MasterCard</string>
+    <!-- PayPal -->
+    <string name="pref_donate_paypal_title">PayPal</string>
+    <string name="pref_donate_paypal_web_form_title">Otwórz witrynę w przeglądarce</string>
+    <string name="pref_donate_paypal_web_form_summary" />
+
+    <!-- About screen -->
+    <!-- App -->
+    <string name="pref_about_app_title">O aplikacji:</string>
+    <string name="pref_about_app_version_prefix" formatted="true">Wersja: %1$s</string>
+    <string name="pref_about_app_page_title">Odwiedź witrynę aplikacji P&amp;WSongs</string>
+    <!-- Developer -->
+    <string name="pref_about_developer_title">Deweloperzy</string>
+    <string name="pref_about_developer_alex_title">Alex Elkin</string>
+    <string name="pref_about_developer_alex_summary">Deweloper aplikacji</string>
+    <string name="pref_about_developer_vera_title">Vera Elkina</string>
+    <string name="pref_about_developer_vera_summary">Redaktor zawartości</string>
+    <!-- Contact us -->
+    <string name="pref_about_contact_title">Napisz do nas</string>
+    <string name="pref_about_contact_email_title">E-mail</string>
+</resources>
