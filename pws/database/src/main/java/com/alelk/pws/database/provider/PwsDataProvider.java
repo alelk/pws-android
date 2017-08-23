@@ -23,6 +23,7 @@ import com.alelk.pws.database.helper.PwsDatabaseHelper;
 import com.alelk.pws.database.table.PwsBookStatisticTable;
 import com.alelk.pws.database.table.PwsFavoritesTable;
 import com.alelk.pws.database.table.PwsHistoryTable;
+import com.alelk.pws.database.util.LocalizedStringsProvider;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
