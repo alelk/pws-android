@@ -1,6 +1,14 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <PreferenceCategory android:title="@string/pref_display_title">
+        <ListPreference android:title="@string/pref_display_theme_title"
+            android:entries="@array/pref_display_theme_entries"
+            android:entryValues="@array/pref_display_theme_values"
+            />
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/pref_books_title"
         android:key="@string/pref_books_key">
     </PreferenceCategory>
+
 </PreferenceScreen>

@@ -36,10 +36,11 @@ import static com.alelk.pws.database.table.PwsHistoryTable.TABLE_HISTORY;
  * Created by Alex Elkin on 29.04.2015.
  */
 public class PwsDatabaseHelper extends SQLiteOpenHelper {
-    private static final int DATABASE_VERSION = 2;
-    private static final String DATABASE_NAME = "pws.1.1.0.db";
-    private static final String[] DATABASE_PREVIOUS_NAMES = {"pws.0.9.1.db"};
+    private static final int DATABASE_VERSION = 3;
+    private static final String DATABASE_NAME = "pws.1.2.0.db";
+    private static final String[] DATABASE_PREVIOUS_NAMES = {"pws.1.1.0.db", "pws.0.9.1.db"};
     private static final int DATABASE_VERSION_091 = 1;
+    private static final int DATABASE_VERSION_110 = 2;
     private static final int DB_INIT_NOTIFICATION_ID = 1331;
 
     private static final String LOG_TAG = PwsDatabaseHelper.class.getSimpleName();
@@ -193,6 +194,7 @@ public class PwsDatabaseHelper extends SQLiteOpenHelper {
         try {
             switch (prevDatabase.getVersion()) {
                 case DATABASE_VERSION_091:
+                case DATABASE_VERSION_110:
                     Cursor cursor = queryFavorites091(prevDatabase);
                     Log.v(LOG_TAG, METHOD_NAME + ": Count of favorites will be merged from previous database: " + cursor.getCount());
                     insertFavorites(database, cursor);

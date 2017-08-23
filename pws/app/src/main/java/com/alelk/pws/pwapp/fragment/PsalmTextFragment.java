@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -128,13 +129,19 @@ public class PsalmTextFragment extends Fragment implements LoaderManager.LoaderC
         if (mPsalmNumberId < 0 || mPsalmHolder == null) {
             return;
         }
-        vPsalmText.setText(Html.fromHtml(PwsPsalmUtil.psalmTextToHtml(getActivity(), new Locale(mPsalmHolder.getPsalmLocale()), mPsalmHolder.getPsalmText())));
-        final String psalmInfo = PwsPsalmUtil.buildPsalmInfoHtml(getActivity(), new Locale(mPsalmHolder.getPsalmLocale()), mPsalmHolder.getPsalmAuthor(), mPsalmHolder.getPsalmTranslator(), mPsalmHolder.getPsalmComposer());
-        if (psalmInfo == null) {
-            ((ViewManager) cvPsalmInfo.getParent()).removeView(cvPsalmInfo);
+        final String psalmTextHtml = PwsPsalmUtil.psalmTextToHtml(new Locale(mPsalmHolder.getPsalmLocale()), mPsalmHolder.getPsalmText());
+        if (Build.VERSION.SDK_INT >= 24) {
+            vPsalmText.setText(Html.fromHtml(psalmTextHtml, Html.FROM_HTML_MODE_LEGACY));
+        } else {
+            vPsalmText.setText(Html.fromHtml(psalmTextHtml));
         }
-        else {
-            vPsalmInfo.setText(Html.fromHtml(psalmInfo));
+        final String psalmInfoHtml = PwsPsalmUtil.buildPsalmInfoHtml(new Locale(mPsalmHolder.getPsalmLocale()), mPsalmHolder.getPsalmAuthor(), mPsalmHolder.getPsalmTranslator(), mPsalmHolder.getPsalmComposer());
+        if (psalmInfoHtml == null) {
+            ((ViewManager) cvPsalmInfo.getParent()).removeView(cvPsalmInfo);
+        } else if (Build.VERSION.SDK_INT >= 24) {
+            vPsalmInfo.setText(Html.fromHtml(psalmInfoHtml, Html.FROM_HTML_MODE_LEGACY));
+        } else {
+            vPsalmInfo.setText(Html.fromHtml(psalmInfoHtml));
         }
         String tonalities = null;
         final String[] tonsArray = mPsalmHolder.getPsalmTonalities();

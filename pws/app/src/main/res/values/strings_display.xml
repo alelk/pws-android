@@ -6,7 +6,7 @@
     <string name="title_activity_main_settings">Settings</string>
 
     <!-- Main activity display strings. -->
-    <string name="txt_main_navigation_header_comment">The library of Christian psalms.</string>
+    <string name="txt_main_navigation_header_comment">The library of the Christian psalms.</string>
     <string name="lbl_drawer_main_history">History</string>
     <string name="lbl_drawer_main_home">Home</string>
     <string name="lbl_drawer_main_favorite">Favorite</string>
