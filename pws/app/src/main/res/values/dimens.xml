@@ -1,10 +1,14 @@
 <resources>
 
     <!-- General -->
+    <dimen name="padding_horizontal">8dp</dimen>
+
+
+
     <dimen name="txt_size_title">16sp</dimen>
     <dimen name="txt_size_body">12sp</dimen>
     <dimen name="txt_padding_horizontal">6dp</dimen>
-    <dimen name="padding_horizontal">8dp</dimen>
+
 
     <!-- Cards -->
     <dimen name="txt_padding_horizontal_card">6dp</dimen>

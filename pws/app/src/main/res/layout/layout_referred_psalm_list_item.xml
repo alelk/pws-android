@@ -6,13 +6,15 @@
     android:layout_marginTop="0dp"
     android:layout_marginBottom="0dp"
     android:id="@+id/cv_referred_psalm"
-    style="?attr/cardStyle">
+    style="@style/PsalmContent.ReferredPsalms.Item">
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
-            style="?attr/textStyleCardPsalmNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/PsalmContent.ReferredPsalms.Item.PsalmNumber"
             android:id="@+id/txt_psalm_number"/>
         <LinearLayout
             android:layout_width="0dp"
@@ -24,16 +26,17 @@
             <TextView
                 android:id="@+id/txt_psalm_name"
                 android:layout_height="wrap_content"
-                style="?attr/textStyleCardPsalmName"
+                android:layout_width="match_parent"
+                style="@style/PsalmContent.ReferredPsalms.Item.PsalmName"
                 android:layout_marginBottom="6dp"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                style="@style/PsalmContent.ReferredPsalms.Item.BookName"
                 android:id="@+id/txt_book_name"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/colorPrimary"
                 android:paddingTop="4dp"
                 android:paddingBottom="4dp"
                 android:id="@+id/txt_reason"/>

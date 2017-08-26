@@ -29,7 +29,7 @@ import com.alelk.pws.database.provider.PwsDataProvider;
 import com.alelk.pws.database.table.PwsFavoritesTable;
 import com.alelk.pws.database.table.PwsHistoryTable;
 import com.alelk.pws.database.util.PwsPsalmUtil;
-import com.alelk.pws.pwapp.PsalmActivity;
+import com.alelk.pws.pwapp.activity.PsalmActivity;
 import com.alelk.pws.pwapp.R;
 import com.alelk.pws.pwapp.adapter.ReferredPsalmsRecyclerViewAdapter;
 import com.alelk.pws.pwapp.holder.PsalmHolder;
@@ -129,6 +129,7 @@ public class PsalmTextFragment extends Fragment implements LoaderManager.LoaderC
         if (mPsalmNumberId < 0 || mPsalmHolder == null) {
             return;
         }
+        Log.i(LOG_TAG, "updateUi: psalm locale: " + mPsalmHolder);
         final String psalmTextHtml = PwsPsalmUtil.psalmTextToHtml(new Locale(mPsalmHolder.getPsalmLocale()), mPsalmHolder.getPsalmText());
         if (Build.VERSION.SDK_INT >= 24) {
             vPsalmText.setText(Html.fromHtml(psalmTextHtml, Html.FROM_HTML_MODE_LEGACY));

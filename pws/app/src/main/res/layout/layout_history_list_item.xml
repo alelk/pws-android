@@ -4,13 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/cv_history"
-    style="?attr/cardStyle">
+    style="@style/CardStyle">
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
-            style="?attr/textStyleCardPsalmNumber"
+            style="@style/CardStyle.PsalmNumber"
             android:id="@+id/txt_psalm_number"/>
         <LinearLayout
             android:layout_width="0dp"
@@ -21,13 +21,13 @@
             android:layout_marginBottom="4dp">
             <TextView
                 android:id="@+id/txt_psalm_name"
-                style="?attr/textStyleCardPsalmName"
+                style="@style/CardStyle.PsalmName"
                 android:layout_marginBottom="6dp"/>
             <TextView
-                style="?attr/textStyleCardBookName"
+                style="@style/CardStyle.BookName"
                 android:id="@+id/txt_book_name"/>
             <TextView
-                style="?attr/textStyleCardTimestamp"
+                style="@style/CardStyle.Timestamp"
                 android:id="@+id/txt_timestamp"/>
         </LinearLayout>
 

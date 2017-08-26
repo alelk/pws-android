@@ -2,8 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#d8eff7"
-    tools:context="com.alelk.pws.pwapp.PsalmFullscreenActivity">
+    android:background="?attr/fullscreanBackground"
+    tools:context="com.alelk.pws.pwapp.activity.PsalmFullscreenActivity">
 
     <android.support.v4.view.ViewPager
             android:layout_width="match_parent"
@@ -18,17 +18,17 @@
 
         <LinearLayout
             android:id="@+id/fullscreen_content_controls"
-            style="?metaButtonBarStyle"
+            style="?android:attr/buttonBarStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center_horizontal"
-            android:background="@color/black_overlay"
+            android:background="@color/colorBlackOverlay"
             android:orientation="horizontal"
             tools:ignore="UselessParent">
 
             <Button
                 android:id="@+id/btn_favorites"
-                style="?metaButtonBarButtonStyle"
+                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />

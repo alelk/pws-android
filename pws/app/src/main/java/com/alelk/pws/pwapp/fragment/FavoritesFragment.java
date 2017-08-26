@@ -15,7 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.alelk.pws.database.provider.PwsDataProvider;
-import com.alelk.pws.pwapp.PsalmActivity;
+import com.alelk.pws.pwapp.activity.PsalmActivity;
 import com.alelk.pws.pwapp.R;
 import com.alelk.pws.pwapp.adapter.FavoritesRecyclerViewAdapter;
 

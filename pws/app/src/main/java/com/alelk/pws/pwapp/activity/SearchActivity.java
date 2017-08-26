@@ -1,4 +1,4 @@
-package com.alelk.pws.pwapp;
+package com.alelk.pws.pwapp.activity;
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -12,12 +12,14 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.alelk.pws.pwapp.R;
+import com.alelk.pws.pwapp.activity.base.AppCompatThemedActivity;
 import com.alelk.pws.pwapp.fragment.SearchResultsFragment;
 
 
-public class SearchActivity extends AppCompatActivity {
+public class SearchActivity extends AppCompatThemedActivity {
 
-    public static final String KEY_INPUT_TYPE = "com.alelk.pws.pwapp.SearchActivity.inputType";
+    public static final String KEY_INPUT_TYPE = "com.alelk.pws.pwapp.activity.SearchActivity.inputType";
     private static final String LOG_TAG = SearchActivity.class.getSimpleName();
     private SearchResultsFragment mResultsFragment;
 

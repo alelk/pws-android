@@ -7,6 +7,12 @@
     <string name="pref_header_about">Контакти</string>
 
     <!-- General screen -->
+    <!-- Display -->
+    <string name="pref_display_title">Вид</string>
+    <string name="pref_display_theme_title">Тема</string>
+    <string name="pref_display_theme_light_title">Світла</string>
+    <string name="pref_display_theme_dark_title">Темна</string>
+    <!-- Books -->
     <string name="pref_books_title">Збірники</string>
 
     <!-- Donate screen -->

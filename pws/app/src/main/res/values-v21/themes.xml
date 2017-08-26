@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="AppTheme" parent="BaseTheme">
-        <item name="android:navigationBarColor">@color/navigation_bar_color</item>
-        <item name="android:statusBarColor">@color/color_primary_dark</item>
+    <style name="Theme.Light" parent="BaseTheme.Light">
+        <item name="android:navigationBarColor">#263238</item>
     </style>
 
-    <style name="AppTheme.NoActionBar" parent="BaseTheme.NoActionBar">
-        <item name="android:navigationBarColor">@color/navigation_bar_color</item>
+    <style name="BaseTheme.Light.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:navigationBarColor">#263238</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
+    <style name="BaseTheme.Dark.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>

@@ -1,10 +1,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.alelk.pws.pwapp.SearchActivity">
+    tools:context="com.alelk.pws.pwapp.activity.SearchActivity">
 
     <item android:id="@+id/menu_search"
-        android:title="Search psalm"
+        android:title="@string/lbl_search_psalm"
         app:showAsAction="always"
         app:actionViewClass="android.support.v7.widget.SearchView"/>
 </menu>

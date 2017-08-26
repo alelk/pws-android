@@ -2,9 +2,9 @@
 
     <PreferenceCategory android:title="@string/pref_display_title">
         <ListPreference android:title="@string/pref_display_theme_title"
-            android:entries="@array/pref_display_theme_entries"
-            android:entryValues="@array/pref_display_theme_values"
-            />
+                        android:entries="@array/pref_display_theme_entries"
+                        android:entryValues="@array/pref_display_theme_values"
+                        android:key="@string/pref_themes_key" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_books_title"

@@ -1,4 +1,4 @@
-package com.alelk.pws.pwapp;
+package com.alelk.pws.pwapp.activity;
 
 
 import android.annotation.TargetApi;
@@ -12,6 +12,7 @@ import android.preference.PreferenceFragment;
 import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 
+import com.alelk.pws.pwapp.R;
 import com.alelk.pws.pwapp.fragment.preference.AboutPreferenceFragment;
 import com.alelk.pws.pwapp.fragment.preference.DonatePreferenceFragment;
 import com.alelk.pws.pwapp.fragment.preference.GeneralPreferenceFragment;

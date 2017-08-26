@@ -1,29 +1,17 @@
 <resources>
 
-    <attr name="cardStyle" format="reference"/>
-    <attr name="cardStylePsalm" format="reference"/>
-    <attr name="cardButtonStyle" format="reference"/>
+    <attr name="launcherBackground" format="reference"/>
+    <attr name="toolbarTheme" format="reference"/>
+    <attr name="navigationHeaderTheme" format="reference"/>
+    <attr name="popupTheme" format="reference"/>
     <attr name="textAppearanceBody" format="reference"/>
     <attr name="textAppearanceBodyInverse" format="reference"/>
     <attr name="textAppearanceTitle" format="reference"/>
     <attr name="textAppearanceTitleInverse" format="reference"/>
-    <attr name="textStyleCardPsalmNumber" format="reference"/>
-    <attr name="textStyleCardPsalmName" format="reference"/>
-    <attr name="textStyleCardBookName" format="reference"/>
-    <attr name="textStyleCardTimestamp" format="reference"/>
-    <attr name="textStyleCardPsalmText" format="reference"/>
-    <attr name="textStyleNavHeaderAppName" format="reference"/>
-    <attr name="textStyleNavHeaderAppDescription" format="reference"/>
-    <attr name="textStylePsalmHeaderPsalmName" format="reference"/>
-    <attr name="textStylePsalmHeaderBibleRef" format="reference"/>
-    <attr name="textStylePsalmHeaderBookName" format="reference"/>
-    <attr name="textStylePsalmBodyText" format="reference" />
-    <attr name="textStylePsalmBodyTonalities" format="reference" />
-    <attr name="textStylePsalmBodyInfo" format="reference" />
-
-    <declare-styleable name="ButtonBarContainerTheme">
-        <attr name="metaButtonBarStyle" format="reference" />
-        <attr name="metaButtonBarButtonStyle" format="reference" />
-    </declare-styleable>
+    <attr name="navigationHeaderBackground" format="reference"/>
+    <attr name="toolbarBackgroundFilter" format="color"/>
+    <attr name="toolbarSearchByNumberIcon" format="reference"/>
+    <attr name="toolbarSearchByTextIcon" format="reference"/>
+    <attr name="fullscreanBackground" format="color"/>
 
 </resources>

@@ -25,8 +25,7 @@
             android:layout_height="wrap_content"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
-            android:id="@+id/rv_recent"
-            android:theme="@style/AppTheme">
+            android:id="@+id/rv_recent">
         </android.support.v7.widget.RecyclerView>
 
     </LinearLayout>

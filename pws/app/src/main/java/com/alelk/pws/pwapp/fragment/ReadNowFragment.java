@@ -1,6 +1,5 @@
 package com.alelk.pws.pwapp.fragment;
 
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -9,21 +8,15 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v7.view.ContextThemeWrapper;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageButton;
 
 import com.alelk.pws.database.provider.PwsDataProvider;
-import com.alelk.pws.pwapp.PsalmActivity;
+import com.alelk.pws.pwapp.activity.PsalmActivity;
 import com.alelk.pws.pwapp.R;
-import com.alelk.pws.pwapp.SearchActivity;
 import com.alelk.pws.pwapp.adapter.HistoryRecyclerViewAdapter;
 
 

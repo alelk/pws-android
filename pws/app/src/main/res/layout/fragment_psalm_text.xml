@@ -4,7 +4,7 @@
     android:id="@+id/scrollview_psalm_text"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context=".PsalmActivity">
+    tools:context=".activity.PsalmActivity">
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
@@ -19,29 +19,29 @@
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="?attr/cardStylePsalm"
+            style="@style/PsalmContent"
             android:id="@+id/cv_tonalities">
             <TextView
-                style="?attr/textStylePsalmBodyTonalities"
+                style="@style/PsalmContent.PsalmBody.Tonalities"
                 android:id="@+id/txt_psalm_tonalities"/>
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="?attr/cardStylePsalm">
+            style="@style/PsalmContent">
             <TextView
-                style="?attr/textStylePsalmBodyText"
+                style="@style/PsalmContent.PsalmBody.PsalmText"
                 android:id="@+id/txt_psalm_text"/>
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="?attr/cardStylePsalm"
+            style="@style/PsalmContent"
             android:id="@+id/cv_psalm_info">
             <TextView
-                style="?attr/textStylePsalmBodyInfo"
+                style="@style/PsalmContent.PsalmBody.Info"
                 android:id="@+id/txt_psalm_info"/>
         </android.support.v7.widget.CardView>
 
@@ -51,7 +51,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/rv_referred_psalms"
-            android:theme="@style/AppTheme"/>
+            />
 
     </LinearLayout>
 </android.support.v4.widget.NestedScrollView>

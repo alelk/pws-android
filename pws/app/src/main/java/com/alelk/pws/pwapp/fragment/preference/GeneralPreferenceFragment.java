@@ -1,48 +1,77 @@
 package com.alelk.pws.pwapp.fragment.preference;
 
-import android.app.Activity;
 import android.app.LoaderManager;
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
-import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.SwitchPreference;
 import android.util.Log;
 import android.view.MenuItem;
 
 import com.alelk.pws.database.provider.PwsDataProvider;
-import com.alelk.pws.database.provider.PwsDataProviderContract;
 import com.alelk.pws.database.table.PwsBookStatisticTable;
-import com.alelk.pws.pwapp.MainSettingsActivity;
+import com.alelk.pws.pwapp.activity.MainSettingsActivity;
 import com.alelk.pws.pwapp.R;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.alelk.pws.pwapp.theme.AppTheme;
+import com.alelk.pws.pwapp.theme.ThemePreferences;
 
 /**
+ * General Preference Fragment
+ *
  * Created by Alex Elkin on 06.08.2016.
  */
 public class GeneralPreferenceFragment extends PwsPreferenceFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    private final static String LOG_TAG = GeneralPreferenceFragment.class.getSimpleName();
     public final static int PWS_BOOKS_STATISTIC_LOADER = 44;
 
     private PreferenceCategory booksCategory = null;
+    private ThemePreferences mThemePreferences;
+    private ListPreference mThemeListPreference;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.pref_general);
         booksCategory = (PreferenceCategory) findPreference(getString(R.string.pref_books_key));
+        mThemeListPreference = (ListPreference) findPreference(getString(R.string.pref_themes_key));
+        mThemePreferences = new ThemePreferences(getActivity());
+        initThemePreference();
         setHasOptionsMenu(true);
         getLoaderManager().initLoader(PWS_BOOKS_STATISTIC_LOADER, null, this);
+    }
+
+    private void initThemePreference() {
+        if (mThemeListPreference == null) return;
+        setupThemeListPreference(mThemePreferences.getAppTheme());
+        mThemeListPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                AppTheme newAppTheme;
+                try {
+                    newAppTheme = AppTheme.forThemeKey(getActivity(), newValue.toString());
+                } catch (IllegalArgumentException exc) {
+                    Log.w(LOG_TAG, "Unable to get app theme for the key '" + newValue + '\'');
+                    newAppTheme = AppTheme.LIGHT;
+                }
+                setupThemeListPreference(newAppTheme);
+                mThemePreferences.persistAppTheme(newAppTheme);
+                return true;
+            }
+        });
+    }
+
+    private void setupThemeListPreference(AppTheme appTheme) {
+        mThemeListPreference.setDefaultValue(getString(appTheme.getThemeKeyResId()));
+        mThemeListPreference.setSummary(getString(appTheme.getThemeNameResId()));
     }
 
     @Override

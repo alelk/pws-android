@@ -6,6 +6,12 @@
     <string name="pref_header_about">Informacje</string>
 
     <!-- General screen -->
+    <!-- Display -->
+    <string name="pref_display_title">Pokaz</string>
+    <string name="pref_display_theme_title">Temat</string>
+    <string name="pref_display_theme_light_title">Jasne</string>
+    <string name="pref_display_theme_dark_title">Ciemny</string>
+    <!-- Books -->
     <string name="pref_books_title">Śpiewniki</string>
 
     <!-- Donate screen -->

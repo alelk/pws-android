@@ -1,4 +1,4 @@
-package com.alelk.pws.pwapp;
+package com.alelk.pws.pwapp.activity;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -12,6 +12,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.alelk.pws.pwapp.theme.ThemePreferences;
 
 /**
  * A {@link android.preference.PreferenceActivity} which supports AppCompat.
