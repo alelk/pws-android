@@ -129,7 +129,6 @@ public class PsalmTextFragment extends Fragment implements LoaderManager.LoaderC
         if (mPsalmNumberId < 0 || mPsalmHolder == null) {
             return;
         }
-        Log.i(LOG_TAG, "updateUi: psalm locale: " + mPsalmHolder);
         final String psalmTextHtml = PwsPsalmUtil.psalmTextToHtml(new Locale(mPsalmHolder.getPsalmLocale()), mPsalmHolder.getPsalmText());
         if (Build.VERSION.SDK_INT >= 24) {
             vPsalmText.setText(Html.fromHtml(psalmTextHtml, Html.FROM_HTML_MODE_LEGACY));
