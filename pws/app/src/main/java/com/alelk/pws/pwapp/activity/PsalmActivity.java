@@ -1,4 +1,4 @@
-package com.alelk.pws.pwapp;
+package com.alelk.pws.pwapp.activity;
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -20,12 +20,15 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.alelk.pws.database.provider.PwsDataProvider;
+import com.alelk.pws.pwapp.R;
+import com.alelk.pws.pwapp.activity.base.AppCompatThemedActivity;
 import com.alelk.pws.pwapp.adapter.PsalmTextFragmentStatePagerAdapter;
 import com.alelk.pws.pwapp.dialog.PsalmPreferencesDialogFragment;
 import com.alelk.pws.pwapp.dialog.SearchPsalmNumberDialogFragment;
 import com.alelk.pws.pwapp.fragment.PsalmHeaderFragment;
 import com.alelk.pws.pwapp.fragment.PsalmTextFragment;
 import com.alelk.pws.pwapp.holder.PsalmHolder;
+import com.alelk.pws.pwapp.theme.ThemeType;
 
 import java.util.ArrayList;
 
@@ -34,7 +37,7 @@ import java.util.ArrayList;
  *
  * Created by Alex Elkin on 25.03.2016.
  */
-public class PsalmActivity extends AppCompatActivity implements PsalmTextFragment.Callbacks,
+public class PsalmActivity extends AppCompatThemedActivity implements PsalmTextFragment.Callbacks,
         SearchPsalmNumberDialogFragment.SearchPsalmNumberDialogListener,
         PsalmPreferencesDialogFragment.OnPsalmPreferencesChangedCallbacks{
 
@@ -228,5 +231,10 @@ public class PsalmActivity extends AppCompatActivity implements PsalmTextFragmen
         } else {
             mFabFavorite.setImageResource(R.drawable.ic_favorite_border_white_24dp);
         }
+    }
+
+    @Override
+    protected ThemeType getThemeType() {
+        return ThemeType.NO_ACTION_BAR;
     }
 }

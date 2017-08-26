@@ -6,7 +6,7 @@ import android.preference.Preference;
 import android.view.MenuItem;
 
 import com.alelk.pws.database.BuildConfig;
-import com.alelk.pws.pwapp.MainSettingsActivity;
+import com.alelk.pws.pwapp.activity.MainSettingsActivity;
 import com.alelk.pws.pwapp.R;
 
 /**

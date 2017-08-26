@@ -6,14 +6,14 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="6dp"
     app:cardCornerRadius="6dp"
-    style="?attr/cardStyle"
+    style="@style/CardStyle"
     android:id="@+id/cv_search">
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
-            style="?attr/textStyleCardPsalmNumber"
+            style="@style/CardStyle.PsalmNumber"
             android:id="@+id/txt_psalm_number"/>
         <LinearLayout
             android:layout_width="0dp"
@@ -23,15 +23,15 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp">
             <TextView
-                style="?attr/textStyleCardPsalmName"
+                style="@style/CardStyle.PsalmName"
                 android:id="@+id/txt_psalm_name" />
 
             <TextView
-                style="?attr/textStyleCardBookName"
+                style="@style/CardStyle.BookName"
                 android:id="@+id/txt_book_name" />
 
             <TextView
-                style="?attr/textStyleCardPsalmText"
+                style="@style/CardStyle.PsalmText"
                 android:id="@+id/txt_text" />
         </LinearLayout>
 

@@ -1,4 +1,4 @@
-package com.alelk.pws.pwapp;
+package com.alelk.pws.pwapp.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -21,6 +21,8 @@ import android.view.View;
 import android.widget.Button;
 
 import com.alelk.pws.database.provider.PwsDataProvider;
+import com.alelk.pws.pwapp.R;
+import com.alelk.pws.pwapp.activity.base.AppCompatThemedActivity;
 import com.alelk.pws.pwapp.adapter.PsalmTextFragmentStatePagerAdapter;
 import com.alelk.pws.pwapp.fragment.PsalmTextFragment;
 import com.alelk.pws.pwapp.holder.PsalmHolder;
@@ -28,7 +30,7 @@ import com.alelk.pws.pwapp.holder.PsalmHolder;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-public class PsalmFullscreenActivity extends AppCompatActivity implements PsalmTextFragment.Callbacks {
+public class PsalmFullscreenActivity extends AppCompatThemedActivity implements PsalmTextFragment.Callbacks {
 
     public static final String KEY_PSALM_NUMBER_ID = PsalmTextFragment.KEY_PSALM_NUMBER_ID;
 

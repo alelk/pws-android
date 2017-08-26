@@ -5,14 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.alelk.pws.pwapp.MainActivity">
+    tools:context="com.alelk.pws.pwapp.activity.MainActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:id="@+id/appbar_main"
         android:layout_height="200dp"
         android:fitsSystemWindows="true"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:theme="@style/ToolbarStyle">
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar_main"
@@ -22,7 +22,7 @@
             app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
             app:expandedTitleGravity="top"
-            app:expandedTitleTextAppearance="?textAppearanceTitleInverse"
+            app:expandedTitleTextAppearance="?textAppearanceTitle"
             app:expandedTitleMarginTop="20dp"
             app:expandedTitleMarginStart="70dp"
             app:expandedTitleMarginEnd="64dp">
@@ -34,6 +34,13 @@
                 app:layout_collapseMode="pin"
                 android:scaleType="centerCrop"
                 android:src="@drawable/im_appbar_background"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_collapseMode="pin"
+                android:scaleType="centerCrop"
+                android:background="?attr/toolbarBackgroundFilter"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -51,32 +58,32 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:layout_gravity="center"
-                    android:textAppearance="?textAppearanceTitleInverse"
+                    android:textAppearance="?textAppearanceTitle"
                     android:text="@string/lbl_search"/>
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    style="?attr/buttonBarStyle">
                     <Button
                         android:id="@+id/btn_search_psalm_number"
+                        style="?attr/buttonBarStyle"
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:fitsSystemWindows="true"
                         android:layout_height="wrap_content"
                         android:padding="16dp"
                         android:text="@string/lbl_search_by_number"
-                        style="?attr/cardButtonStyle"
-                        android:drawableTop="@drawable/ic_dialpad_white_24dp"/>
+                        android:drawableTop="?attr/toolbarSearchByNumberIcon"/>
                     <Button
                         android:id="@+id/btn_search_psalm_text"
+                        style="?attr/buttonBarStyle"
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:padding="16dp"
                         android:text="@string/lbl_search_by_text"
-                        style="?attr/cardButtonStyle"
-                        android:background="#00000000"
-                        android:drawableTop="@drawable/ic_search_white_24dp"/>
+                        android:drawableTop="?attr/toolbarSearchByTextIcon"/>
                 </LinearLayout>
             </LinearLayout>
 
@@ -84,7 +91,7 @@
                 android:id="@+id/toolbar_main"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:popupTheme="@style/AppTheme.PopupOverlay"
+                app:popupTheme="?attr/popupTheme"
                 app:layout_collapseMode="pin"/>
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>

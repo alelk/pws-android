@@ -7,11 +7,11 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/Theme.AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.Launcher">
+            android:theme="@style/Theme.AppTheme.Launcher">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <action android:name="android.intent.action.VIEW"/>
@@ -20,10 +20,10 @@
             />
         </activity>
         <activity
-            android:name=".SearchActivity"
+            android:name=".activity.SearchActivity"
             android:label="@string/title_activity_search"
             android:launchMode="singleTop"
-            android:theme="@style/AppTheme">
+            android:theme="@style/Theme.AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH"/>
             </intent-filter>
@@ -33,23 +33,23 @@
                 android:resource="@xml/searchable"/>
         </activity>
         <activity
-            android:name=".PsalmActivity"
+            android:name=".activity.PsalmActivity"
             android:label=""
-            android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:parentActivityName=".activity.MainActivity"
+            android:theme="@style/Theme.AppTheme.NoActionBar">
             <meta-data
                 android:name="android.app.default_searchable"
-                android:value=".SearchActivity"/>
+                android:value=".activity.SearchActivity"/>
         </activity>
         <activity
-            android:name=".PsalmFullscreenActivity"
+            android:name=".activity.PsalmFullscreenActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_psalm_fullscreen"
-            android:theme="@style/AppTheme.Fullscreen"/>
+            android:theme="@style/Theme.AppTheme.NoActionBar"/>
         <activity
-            android:name=".MainSettingsActivity"
+            android:name=".activity.MainSettingsActivity"
             android:label="@string/title_activity_main_settings"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".activity.MainActivity">
         </activity>
     </application>
 

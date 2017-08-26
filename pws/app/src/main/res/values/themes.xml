@@ -1,16 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="AppTheme" parent="BaseTheme"/>
+    <style name="Theme.AppTheme" parent="Theme.Light"/>
+    <style name="Theme.AppTheme.NoActionBar" parent="Theme.Light.NoActionBar"/>
+    <style name="Theme.AppTheme.Launcher" parent="Theme.Light.Launcher"/>
 
-    <style name="AppTheme.Launcher" parent="BaseTheme.Launcher"/>
+    <style name="Theme.Light" parent="BaseTheme.Light"/>
+    <style name="Theme.Light.Launcher" parent="BaseTheme.Light.Launcher"/>
+    <style name="Theme.Light.NoActionBar" parent="BaseTheme.Light.NoActionBar"/>
+    <style name="Theme.Dark" parent="BaseTheme.Dark"/>
+    <style name="Theme.Dark.Launcher" parent="BaseTheme.Dark.Launcher"/>
+    <style name="Theme.Dark.NoActionBar" parent="BaseTheme.Dark.NoActionBar"/>
 
-    <style name="AppTheme.NoActionBar" parent="BaseTheme.NoActionBar"/>
+    <style name="BaseTheme"/>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="BaseTheme.Light" parent="Theme.AppCompat.Light">
+        <item name="colorPrimary">#CFD8DC</item>
+        <item name="colorPrimaryDark">#B0BEC5</item>
+        <item name="colorAccent">#03A9F4</item>
+        <item name="launcherBackground">@drawable/im_launcher</item>
+        <item name="toolbarTheme">@style/ThemeOverlay.AppCompat.ActionBar</item>
+        <item name="navigationHeaderTheme">@style/ThemeOverlay.AppCompat.Dark</item>
+        <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
+        <item name="textAppearanceBody">@style/Base.TextAppearance.AppCompat</item>
+        <item name="textAppearanceBodyInverse">@style/Base.TextAppearance.AppCompat.Inverse</item>
+        <item name="textAppearanceTitle">@style/Base.TextAppearance.AppCompat.Title</item>
+        <item name="textAppearanceTitleInverse">@style/Base.TextAppearance.AppCompat.Title.Inverse</item>
+        <item name="navigationHeaderBackground">@drawable/im_appbar_background</item>
+        <item name="toolbarBackgroundFilter">#75dadada</item>
+        <item name="toolbarSearchByNumberIcon">@drawable/ic_dialpad_black_24dp</item>
+        <item name="toolbarSearchByTextIcon">@drawable/ic_search_black_24dp</item>
+        <item name="fullscreanBackground">#fff</item>
+    </style>
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="BaseTheme.Dark" parent="Theme.AppCompat">
+        <item name="colorAccent">#ff6d00</item>
+        <item name="launcherBackground">@drawable/im_launcher</item>
+        <item name="toolbarTheme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+        <item name="navigationHeaderTheme">@style/ThemeOverlay.AppCompat.Dark</item>
+        <item name="popupTheme">@style/ThemeOverlay.AppCompat.Dark</item>
+        <item name="textAppearanceBody">@style/Base.TextAppearance.AppCompat</item>
+        <item name="textAppearanceBodyInverse">@style/Base.TextAppearance.AppCompat.Inverse</item>
+        <item name="textAppearanceTitle">@style/Base.TextAppearance.AppCompat.Title</item>
+        <item name="textAppearanceTitleInverse">@style/Base.TextAppearance.AppCompat.Title.Inverse</item>
+        <item name="navigationHeaderBackground">?attr/colorPrimary</item>
+        <item name="toolbarBackgroundFilter">#c1000000</item>
+        <item name="toolbarSearchByNumberIcon">@drawable/ic_dialpad_white_24dp</item>
+        <item name="toolbarSearchByTextIcon">@drawable/ic_search_white_24dp</item>
+        <item name="fullscreanBackground">#000</item>
+    </style>
 
-    <style name="AppTheme.Fullscreen" parent="BaseTheme.Fullscreen" />
+    <style name="BaseTheme.Light.Launcher" parent="BaseTheme.Light">
+        <item name="android:windowBackground">?attr/launcherBackground</item>
+    </style>
+
+    <style name="BaseTheme.Light.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="BaseTheme.Dark.Launcher" parent="BaseTheme.Dark.NoActionBar">
+        <item name="android:windowBackground">?attr/launcherBackground</item>
+    </style>
+
+    <style name="BaseTheme.Dark.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
 
 </resources>

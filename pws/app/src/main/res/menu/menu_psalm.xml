@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.alelk.pws.pwapp.PsalmActivity">
+    tools:context="com.alelk.pws.pwapp.activity.PsalmActivity">
 
     <item android:id="@+id/menu_search"
         android:title="@string/lbl_search_psalm"

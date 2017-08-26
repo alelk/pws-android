@@ -1,6 +1,7 @@
-package com.alelk.pws.pwapp;
+package com.alelk.pws.pwapp.activity;
 
 import android.content.Intent;
+import android.preference.PreferenceActivity;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -20,12 +21,16 @@ import android.view.View;
 import android.support.v7.widget.Toolbar;
 
 
+import com.alelk.pws.pwapp.R;
+import com.alelk.pws.pwapp.activity.base.AppCompatThemedActivity;
 import com.alelk.pws.pwapp.fragment.FavoritesFragment;
 import com.alelk.pws.pwapp.fragment.HistoryFragment;
 import com.alelk.pws.pwapp.fragment.ReadNowFragment;
+import com.alelk.pws.pwapp.fragment.preference.DonatePreferenceFragment;
+import com.alelk.pws.pwapp.theme.ThemeType;
 
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatThemedActivity implements NavigationView.OnNavigationItemSelectedListener {
     private final static String KEY_NAVIGATION_ITEM_ID = "navigationItemId";
 
     private DrawerLayout mDrawerLayout;
@@ -35,7 +40,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private AppBarLayout mAppBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.AppTheme_NoActionBar);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -116,6 +120,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         boolean result = false;
+        Intent intent = null;
         switch (id) {
             case R.id.drawer_main_history:
             case R.id.drawer_main_favorite:
@@ -131,10 +136,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 result = true;
                 break;
             case R.id.drawer_main_settings:
-                Intent intent = new Intent(this, MainSettingsActivity.class);
+                intent = new Intent(this, MainSettingsActivity.class);
                 startActivity(intent);
                 result = true;
                 break;
+            case R.id.drawer_main_donate:
+                intent = new Intent(this, MainSettingsActivity.class);
+                intent.putExtra(PreferenceActivity.EXTRA_SHOW_FRAGMENT, DonatePreferenceFragment.class.getName());
+                intent.putExtra( PreferenceActivity.EXTRA_NO_HEADERS, true );
+                startActivity(intent);
+                result = true;
+                break;
+
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.layout_main_drawer);
         drawer.closeDrawer(GravityCompat.START);
@@ -185,4 +198,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         }
     };
+
+    @Override
+    protected ThemeType getThemeType() {
+        return ThemeType.NO_ACTION_BAR;
+    }
 }

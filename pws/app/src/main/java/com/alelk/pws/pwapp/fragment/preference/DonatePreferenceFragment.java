@@ -1,15 +1,10 @@
 package com.alelk.pws.pwapp.fragment.preference;
 
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 
-import com.alelk.pws.pwapp.MainSettingsActivity;
+import com.alelk.pws.pwapp.activity.MainSettingsActivity;
 import com.alelk.pws.pwapp.R;
 
 /**
