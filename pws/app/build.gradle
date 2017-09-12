@@ -16,7 +16,6 @@ android {
     defaultConfig {
         applicationId "com.alelk.pws.pwapp"
         resValue "string", "db_authority", "com.alelk.pws.database"
-        resValue "string", "db_searchable_psalm_suggest", "content://com.alelk.pws.database/psalms"
         minSdkVersion 16
         targetSdkVersion 25
         versionCode 14
