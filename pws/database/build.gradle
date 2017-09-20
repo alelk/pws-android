@@ -18,8 +18,8 @@ android {
         buildConfigField "String", "DB_AUTHORITY", "\"com.alelk.pws.database\""
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 14
-        versionName '1.2.0'
+        versionCode 15
+        versionName '1.2.1'
         versionNameSuffix '-' + getDate().toLowerCase()
     }
     buildTypes {

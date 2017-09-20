@@ -39,7 +39,7 @@
             android:theme="@style/Theme.AppTheme.NoActionBar">
             <meta-data
                 android:name="android.app.default_searchable"
-                android:value=".activity.SearchActivity"/>
+                android:value="com.alelk.pws.pwapp.activity.SearchActivity"/>
         </activity>
         <activity
             android:name=".activity.PsalmFullscreenActivity"
