@@ -1,14 +1,8 @@
 package com.alelk.pws.database.util;
 
-import android.content.Context;
-import android.content.res.Configuration;
-import android.content.res.Resources;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-
-import com.alelk.pws.database.R;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -49,19 +43,19 @@ public class PwsPsalmUtil {
         final String pChorusNumberRgx = getPsalmChorusNumberRegex(locale);
         final String pChorusLabelRgx = getPsalmChorusLabelRegex(locale);
 
-        String html = "";
+        StringBuilder html = new StringBuilder();
 
         while (tokenizer.hasMoreTokens()) {
             String line = tokenizer.nextToken();
             if (line.matches(pVerseLabelRgx) || line.matches(pChorusLabelRgx)) {
-                html += "<font color='#888888'><i>" + line + "</i></font><br>";
+                html.append("<font color='#888888'><i>").append(line).append("</i></font><br>");
             } else if (line.matches(pVerseNumberRgx) || line.matches(pChorusNumberRgx)) {
-                html += "<font color='#7aaf83'>" + line.replace('.', ' ') + "</font><br>";
+                html.append("<font color='#7aaf83'>").append(line.replace('.', ' ')).append("</font><br>");
             } else {
-                html += line + "<br>";
+                html.append(line).append("<br>");
             }
         }
-        return html;
+        return html.toString();
     }
 
     @Nullable

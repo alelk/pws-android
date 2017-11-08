@@ -38,10 +38,6 @@ public class ReferredPsalmsRecyclerViewAdapter extends RecyclerView.Adapter<Recy
     private Cursor mCursor;
     private final OnItemClickListener mOnItemClickListener;
 
-    public ReferredPsalmsRecyclerViewAdapter(final OnItemClickListener onItemClickListener) {
-        mOnItemClickListener = onItemClickListener;
-    }
-
     public ReferredPsalmsRecyclerViewAdapter(final OnItemClickListener onItemClickListener, float headerTextSize) {
         mOnItemClickListener = onItemClickListener;
         mHeaderTextSize = headerTextSize;
@@ -105,13 +101,13 @@ public class ReferredPsalmsRecyclerViewAdapter extends RecyclerView.Adapter<Recy
         ReferredViewHolder(View itemView, Context context) {
             super(itemView);
             mContext = context;
-            psalmName = (TextView) itemView.findViewById(R.id.txt_psalm_name);
-            psalmNumber = (TextView) itemView.findViewById(R.id.txt_psalm_number);
-            bookDisplayName = (TextView) itemView.findViewById(R.id.txt_book_name);
-            reason = (TextView) itemView.findViewById(R.id.txt_reason);
+            psalmName = itemView.findViewById(R.id.txt_psalm_name);
+            psalmNumber = itemView.findViewById(R.id.txt_psalm_number);
+            bookDisplayName = itemView.findViewById(R.id.txt_book_name);
+            reason = itemView.findViewById(R.id.txt_reason);
         }
 
-        public void bind (final Cursor cursor, final OnItemClickListener onItemClickListener) {
+        void bind(final Cursor cursor, final OnItemClickListener onItemClickListener) {
             psalmNumber.setText(cursor.getString(cursor.getColumnIndex(COLUMN_PSALMNUMBER)));
             psalmName.setText(cursor.getString(cursor.getColumnIndex(COLUMN_PSALMNAME)));
             bookDisplayName.setText(cursor.getString(cursor.getColumnIndex(COLUMN_BOOKDISPLAYNAME)));
@@ -122,12 +118,7 @@ public class ReferredPsalmsRecyclerViewAdapter extends RecyclerView.Adapter<Recy
                         cursor.getInt(cursor.getColumnIndex(COLUMN_PSALMREF_VOLUME)));
             }
             reason.setText(reasonTxt);
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onItemClickListener.onItemClick(psalmNumberId);
-                }
-            });
+            itemView.setOnClickListener(v -> onItemClickListener.onItemClick(psalmNumberId));
         }
     }
 
@@ -137,10 +128,10 @@ public class ReferredPsalmsRecyclerViewAdapter extends RecyclerView.Adapter<Recy
 
         HeaderViewHolder(View itemView) {
             super(itemView);
-            txtReferences = (TextView) itemView.findViewById(R.id.lbl_psalm_references);
+            txtReferences = itemView.findViewById(R.id.lbl_psalm_references);
         }
 
-        public void bind(float textSize) {
+        void bind(float textSize) {
             txtReferences.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
         }
     }

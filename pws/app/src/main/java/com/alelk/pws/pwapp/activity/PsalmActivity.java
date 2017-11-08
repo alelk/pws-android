@@ -12,7 +12,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -48,8 +47,6 @@ public class PsalmActivity extends AppCompatThemedActivity implements PsalmTextF
     private float mPsalmTextSize = -1;
     private ViewPager mPagerPsalmText;
     private PsalmHeaderFragment mPsalmHeaderFragment;
-    private PsalmTextFragment mCurrentPsalmTextFragment;
-    private Toolbar mToolbar;
     private FloatingActionButton mFabFavorite;
     private ArrayList<Long> mBookPsalmNumberIds;
     private PsalmTextFragmentStatePagerAdapter mPsalmTextPagerAdapter;
@@ -68,8 +65,8 @@ public class PsalmActivity extends AppCompatThemedActivity implements PsalmTextF
         super.onCreate(savedInstanceState);
         init();
         setContentView(R.layout.activity_psalm);
-        mToolbar = (Toolbar) findViewById(R.id.toolbar_psalm);
-        mFabFavorite = (FloatingActionButton) findViewById(R.id.fab_psalm);
+        Toolbar mToolbar = findViewById(R.id.toolbar_psalm);
+        mFabFavorite = findViewById(R.id.fab_psalm);
         mFabFavorite.setOnClickListener(new FabFavoritesOnClick());
 
         setSupportActionBar(mToolbar);
@@ -83,7 +80,7 @@ public class PsalmActivity extends AppCompatThemedActivity implements PsalmTextF
             getSupportFragmentManager().beginTransaction().add(R.id.fragment_psalm_header, mPsalmHeaderFragment).commit();
         }
 
-        mPagerPsalmText = (ViewPager) findViewById(R.id.pager_psalm_text);
+        mPagerPsalmText = findViewById(R.id.pager_psalm_text);
         mPsalmTextPagerAdapter = new PsalmTextFragmentStatePagerAdapter(getSupportFragmentManager(), mBookPsalmNumberIds, mPsalmTextSize);
         mPagerPsalmText.setAdapter(mPsalmTextPagerAdapter);
         mPagerPsalmText.setCurrentItem(mBookPsalmNumberIds.indexOf(mPsalmNumberId));
@@ -119,7 +116,8 @@ public class PsalmActivity extends AppCompatThemedActivity implements PsalmTextF
         getMenuInflater().inflate(R.menu.menu_psalm, menu);
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         final SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        if (searchManager != null)
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         return true;
     }
 
@@ -148,7 +146,7 @@ public class PsalmActivity extends AppCompatThemedActivity implements PsalmTextF
         if (psalmHolder == null ||
                 mBookPsalmNumberIds.get(mPagerPsalmText.getCurrentItem()) != psalmHolder.getPsalmNumberId()) return;
 
-        CollapsingToolbarLayout collapsingToolbarLayout= (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_psalm);
+        CollapsingToolbarLayout collapsingToolbarLayout= findViewById(R.id.collapsing_toolbar_psalm);
         collapsingToolbarLayout.setTitle("№ " + psalmHolder.getPsalmNumber());
         mPsalmHeaderFragment.updateUi(psalmHolder.getPsalmName(), psalmHolder.getBookName(), psalmHolder.getBibleRef());
         drawFavoriteFabIcon(psalmHolder.isFavoritePsalm());

@@ -2,7 +2,6 @@ package com.alelk.pws.pwapp.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -25,6 +24,8 @@ import com.alelk.pws.pwapp.R;
 import java.util.HashMap;
 
 /**
+ * Search Psalm Number Dialog Fragment
+ *
  * Created by Alex Elkin on 12.06.2016.
  */
 public class SearchPsalmNumberDialogFragment extends DialogFragment implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -127,7 +128,7 @@ public class SearchPsalmNumberDialogFragment extends DialogFragment implements L
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mView = getActivity().getLayoutInflater().inflate(R.layout.dialog_search_psalm_number, null);
-        mTxtPsalmNumber = (EditText) mView.findViewById(R.id.edittxt_psalm_number);
+        mTxtPsalmNumber = mView.findViewById(R.id.edittxt_psalm_number);
         mTxtPsalmNumber.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -153,24 +154,16 @@ public class SearchPsalmNumberDialogFragment extends DialogFragment implements L
         getLoaderManager().initLoader(PWS_PSALM_NUMBER_LOADER, null, this);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(mView);
-        builder.setPositiveButton(R.string.lbl_ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (mPsalmNumberId == -1) {
-                    Snackbar.make(mView, R.string.msg_no_psalm_number_found, Snackbar.LENGTH_SHORT)
-                            .setAction("Action", null).show();
-                    dialog.dismiss();
-                    return;
-                }
-                mListener.onPositiveButtonClick(mPsalmNumberId);
+        builder.setPositiveButton(R.string.lbl_ok, (dialog, which) -> {
+            if (mPsalmNumberId == -1) {
+                Snackbar.make(mView, R.string.msg_no_psalm_number_found, Snackbar.LENGTH_SHORT)
+                        .setAction("Action", null).show();
+                dialog.dismiss();
+                return;
             }
+            mListener.onPositiveButtonClick(mPsalmNumberId);
         });
-        builder.setNegativeButton(R.string.lbl_cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                mListener.onNegativeButtonClick();
-            }
-        });
+        builder.setNegativeButton(R.string.lbl_cancel, (dialog, which) -> mListener.onNegativeButtonClick());
         return builder.create();
     }
 }

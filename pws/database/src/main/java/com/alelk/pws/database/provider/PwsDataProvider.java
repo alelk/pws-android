@@ -1,10 +1,5 @@
 package com.alelk.pws.database.provider;
 
-import static com.alelk.pws.database.table.PwsPsalmTable.TABLE_PSALMS;
-import static com.alelk.pws.database.table.PwsFavoritesTable.TABLE_FAVORITES;
-import static com.alelk.pws.database.table.PwsHistoryTable.TABLE_HISTORY;
-import static android.app.SearchManager.*;
-
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -23,12 +18,16 @@ import com.alelk.pws.database.helper.PwsDatabaseHelper;
 import com.alelk.pws.database.table.PwsBookStatisticTable;
 import com.alelk.pws.database.table.PwsFavoritesTable;
 import com.alelk.pws.database.table.PwsHistoryTable;
-import com.alelk.pws.database.util.LocalizedStringsProvider;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
+
+import static android.app.SearchManager.SUGGEST_PARAMETER_LIMIT;
+import static com.alelk.pws.database.table.PwsFavoritesTable.TABLE_FAVORITES;
+import static com.alelk.pws.database.table.PwsHistoryTable.TABLE_HISTORY;
+import static com.alelk.pws.database.table.PwsPsalmTable.TABLE_PSALMS;
 
 /**
  * Pws data provider

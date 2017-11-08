@@ -1,9 +1,5 @@
 package com.alelk.pws.pwapp.holder;
 
-import android.database.Cursor;
-
-import com.alelk.pws.database.provider.PwsDataProviderContract;
-
 /**
  * Pws Holder
  *

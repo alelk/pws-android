@@ -10,7 +10,7 @@ import java.util.Arrays;
 /**
  * Psalm Holder
  *
- * Created by AlexElkin on 27.05.2016.
+ * Created by Alex Elkin on 27.05.2016.
  */
 public class PsalmHolder implements PwsHolder {
     private long mPsalmNumberId;
@@ -25,23 +25,6 @@ public class PsalmHolder implements PwsHolder {
     private String mBibleRef;
     private String mBookName;
     private boolean isFavoritePsalm;
-
-    public PsalmHolder(){};
-
-    public PsalmHolder(long psalmNumberId, int psalmNumber, String psalmName, String psalmText, String psalmAuthor, String psalmTranslator, String psalmComposer, String psalmLocale, String[] psalmTonalities, String bibleRef, String bookName, boolean isFavoritePsalm) {
-        mPsalmNumberId = psalmNumberId;
-        mPsalmNumber = psalmNumber;
-        mPsalmName = psalmName;
-        mPsalmText = psalmText;
-        mPsalmAuthor = psalmAuthor;
-        mPsalmTranslator = psalmTranslator;
-        mPsalmComposer = psalmComposer;
-        mPsalmLocale = psalmLocale;
-        mPsalmTonalities = psalmTonalities;
-        mBibleRef = bibleRef;
-        mBookName = bookName;
-        this.isFavoritePsalm = isFavoritePsalm;
-    }
 
     public PsalmHolder(Cursor cursor, boolean isFavoritePsalm) {
         setFavoritePsalm(isFavoritePsalm);

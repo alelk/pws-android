@@ -26,12 +26,9 @@ public class ThemePreferences {
     }
 
     public void registerThemeChangeListener(final OnThemeChangeListener listener) {
-        final SharedPreferences.OnSharedPreferenceChangeListener changeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-            @Override
-            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                if (KEY_APP_THEME.equals(key))
-                    listener.onThemeChange(AppTheme.forThemeKeyResId(sharedPreferences.getInt(KEY_APP_THEME, DEFAULT_THEME_KEY_RES_ID)));
-            }
+        final SharedPreferences.OnSharedPreferenceChangeListener changeListener = (sharedPreferences, key) -> {
+            if (KEY_APP_THEME.equals(key))
+                listener.onThemeChange(AppTheme.forThemeKeyResId(sharedPreferences.getInt(KEY_APP_THEME, DEFAULT_THEME_KEY_RES_ID)));
         };
         mPreferences.registerOnSharedPreferenceChangeListener(changeListener);
         mPreferenceMap.put(listener, changeListener);

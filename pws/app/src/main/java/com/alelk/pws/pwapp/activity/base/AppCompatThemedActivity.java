@@ -4,9 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
-import com.alelk.pws.pwapp.theme.AppTheme;
 import com.alelk.pws.pwapp.theme.OnThemeChangeListener;
 import com.alelk.pws.pwapp.theme.ThemePreferences;
 import com.alelk.pws.pwapp.theme.ThemeType;
@@ -42,12 +40,7 @@ public class AppCompatThemedActivity extends AppCompatActivity {
         finish();
     }
 
-    private final OnThemeChangeListener onThemeChange = new OnThemeChangeListener() {
-        @Override
-        public void onThemeChange(AppTheme appTheme) {
-            restartActivity();
-        }
-    };
+    private final OnThemeChangeListener onThemeChange = appTheme -> restartActivity();
 
     protected ThemeType getThemeType() {
         return ThemeType.NORMAL;

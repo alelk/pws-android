@@ -1,1 +1,3 @@
 include ':app', ':database'
+
+rootProject.name = 'P&W Songs for Android'

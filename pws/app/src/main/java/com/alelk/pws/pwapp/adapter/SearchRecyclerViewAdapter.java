@@ -5,7 +5,6 @@ import android.os.Build;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
-import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,10 +12,14 @@ import android.widget.TextView;
 
 import com.alelk.pws.pwapp.R;
 
-
-import static com.alelk.pws.database.provider.PwsDataProviderContract.Psalms.Search.*;
+import static com.alelk.pws.database.provider.PwsDataProviderContract.Psalms.Search.COLUMN_BOOKDISPLAYNAME;
+import static com.alelk.pws.database.provider.PwsDataProviderContract.Psalms.Search.COLUMN_PSALMNAME;
+import static com.alelk.pws.database.provider.PwsDataProviderContract.Psalms.Search.COLUMN_PSALMNUMBER;
+import static com.alelk.pws.database.provider.PwsDataProviderContract.Psalms.Search.COLUMN_PSALMNUMBER_ID;
+import static com.alelk.pws.database.provider.PwsDataProviderContract.Psalms.Search.COLUMN_SNIPPET;
 
 /**
+ *Search Recycler View Adapter
  *
  * Created by Alex Elkin on 23.05.2016.
  */
@@ -30,11 +33,6 @@ public class SearchRecyclerViewAdapter extends RecyclerView.Adapter<SearchRecycl
     private final OnItemClickListener mClickListener;
 
     public SearchRecyclerViewAdapter(OnItemClickListener onItemClickListener) {
-        mClickListener = onItemClickListener;
-    }
-
-    public SearchRecyclerViewAdapter(Cursor cursor, OnItemClickListener onItemClickListener) {
-        mCursor = cursor;
         mClickListener = onItemClickListener;
     }
 
@@ -63,7 +61,7 @@ public class SearchRecyclerViewAdapter extends RecyclerView.Adapter<SearchRecycl
         return mCursor.getCount();
     }
 
-    public static class SearchViewHolder extends RecyclerView.ViewHolder {
+    static class SearchViewHolder extends RecyclerView.ViewHolder {
 
         CardView cardView;
         TextView psalmName;
@@ -72,16 +70,16 @@ public class SearchRecyclerViewAdapter extends RecyclerView.Adapter<SearchRecycl
         TextView text;
         long psalmNumberId;
 
-        public SearchViewHolder(View itemView) {
+        SearchViewHolder(View itemView) {
             super(itemView);
-            cardView = (CardView) itemView.findViewById(R.id.cv_search);
-            psalmName = (TextView) itemView.findViewById(R.id.txt_psalm_name);
-            psalmNumber = (TextView) itemView.findViewById(R.id.txt_psalm_number);
-            bookDisplayName = (TextView) itemView.findViewById(R.id.txt_book_name);
-            text = (TextView) itemView.findViewById(R.id.txt_text);
+            cardView = itemView.findViewById(R.id.cv_search);
+            psalmName = itemView.findViewById(R.id.txt_psalm_name);
+            psalmNumber = itemView.findViewById(R.id.txt_psalm_number);
+            bookDisplayName = itemView.findViewById(R.id.txt_book_name);
+            text = itemView.findViewById(R.id.txt_text);
         }
 
-        public void bind (final Cursor cursor, final OnItemClickListener onItemClickListener) {
+        void bind(final Cursor cursor, final OnItemClickListener onItemClickListener) {
             psalmNumber.setText(cursor.getString(cursor.getColumnIndex(COLUMN_PSALMNUMBER)));
             psalmName.setText(cursor.getString(cursor.getColumnIndex(COLUMN_PSALMNAME)));
             bookDisplayName.setText(cursor.getString(cursor.getColumnIndex(COLUMN_BOOKDISPLAYNAME)));
@@ -94,12 +92,7 @@ public class SearchRecyclerViewAdapter extends RecyclerView.Adapter<SearchRecycl
                 }
             }
             psalmNumberId = cursor.getLong(cursor.getColumnIndex(COLUMN_PSALMNUMBER_ID));
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onItemClickListener.onItemClick(psalmNumberId);
-                }
-            });
+            itemView.setOnClickListener(v -> onItemClickListener.onItemClick(psalmNumberId));
         }
     }
 }

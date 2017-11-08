@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.NonNull;
-import android.support.v7.app.NotificationCompat;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.alelk.pws.database.R;
@@ -166,17 +166,17 @@ public class PwsDatabaseHelper extends SQLiteOpenHelper {
         }
         return null;
     }
-    private boolean removePreviousDatabaseIfExists() {
+    private void removePreviousDatabaseIfExists() {
         for (String dbName : DATABASE_PREVIOUS_NAMES) {
             final String databasePath = mContext.getDatabasePath(dbName).getPath();
             File file = new File(databasePath);
             if (file.exists() && file.isFile()) {
                 Log.i(LOG_TAG, "removePreviousDatabaseIfExists: Previous version of database will be removed: "
                 + databasePath);
-                return file.delete();
+                file.delete();
+                return;
             }
         }
-        return false;
     }
 
     private void mergePreviousDatabase() {
@@ -229,13 +229,12 @@ public class PwsDatabaseHelper extends SQLiteOpenHelper {
                 null ,null, null, null, null, null);
     }
 
-    private int insertFavorites(SQLiteDatabase db, Cursor cursor) {
+    private void insertFavorites(SQLiteDatabase db, Cursor cursor) {
         final String METHOD_NAME = "insertFavorites";
         if (!cursor.moveToFirst()) {
             Log.d(LOG_TAG, METHOD_NAME + ": unable insert favorites: no favorites found in previous db");
-            return 0;
+            return;
         }
-        int inserted = 0;
         do {
             Cursor current = null;
             try {
@@ -254,7 +253,6 @@ public class PwsDatabaseHelper extends SQLiteOpenHelper {
                 ContentValues contentValues = new ContentValues();
                 contentValues.put(PwsFavoritesTable.COLUMN_POSITION, cursor.getLong(cursor.getColumnIndex("position")));
                 contentValues.put(PwsFavoritesTable.COLUMN_PSALMNUMBERID, current.getLong(current.getColumnIndex(PwsDataProviderContract.PsalmNumbers.COLUMN_PSALMNUMBER_ID)));
-                inserted += db.insert(TABLE_FAVORITES, null, contentValues) > 0 ? 1 : 0;
                 Log.v(LOG_TAG, METHOD_NAME + ": Inserted new item to favorites: edition=" + edition
                         + " number=" + number);
             } finally {
@@ -262,15 +260,13 @@ public class PwsDatabaseHelper extends SQLiteOpenHelper {
             }
 
         } while (cursor.moveToNext());
-        return inserted;
     }
 
-    private int insertHistory(SQLiteDatabase db, Cursor cursor) {
+    private void insertHistory(SQLiteDatabase db, Cursor cursor) {
         final String METHOD_NAME = "insertHistory";
-        int inserted = 0;
         if (!cursor.moveToFirst()) {
             Log.d(LOG_TAG, METHOD_NAME + ": unable insert history: no history items found in previous db");
-            return inserted;
+            return;
         }
         do {
             Cursor current = null;
@@ -290,7 +286,6 @@ public class PwsDatabaseHelper extends SQLiteOpenHelper {
                 ContentValues contentValues = new ContentValues();
                 contentValues.put(PwsHistoryTable.COLUMN_ACCESSTIMESTAMP, cursor.getString(cursor.getColumnIndex("accesstimestamp")));
                 contentValues.put(PwsHistoryTable.COLUMN_PSALMNUMBERID, current.getLong(current.getColumnIndex(PwsDataProviderContract.PsalmNumbers.COLUMN_PSALMNUMBER_ID)));
-                inserted += db.insert(TABLE_HISTORY, null, contentValues) > 0 ? 1 : 0;
                 Log.v(LOG_TAG, METHOD_NAME + ": Inserted new item to history: edition=" + edition
                         + " number=" + number);
             } finally {
@@ -298,7 +293,6 @@ public class PwsDatabaseHelper extends SQLiteOpenHelper {
             }
 
         } while (cursor.moveToNext());
-        return inserted;
     }
 
     private boolean isDatabaseExists() {
@@ -325,12 +319,7 @@ public class PwsDatabaseHelper extends SQLiteOpenHelper {
         PwsPsalmFtsTable.dropAllTriggers(db);
         PwsPsalmFtsTable.dropTable(db);
         PwsPsalmFtsTable.createTable(db);
-        PwsPsalmFtsTable.populateTable(db, new PwsPsalmFtsTable.UpdateProgressListener() {
-            @Override
-            public void onUpdateProgress(int max, int current) {
-                publishProgress(R.string.txt_fts_setup, max, current);
-            }
-        });
+        PwsPsalmFtsTable.populateTable(db, (max, current) -> publishProgress(R.string.txt_fts_setup, max, current));
         PwsPsalmFtsTable.setUpAllTriggers(db);
         Log.i(LOG_TAG, METHOD_NAME + ": The PWS Psalm FTS table has been created and populated. All needed triggers are setting up.");
         db.close();

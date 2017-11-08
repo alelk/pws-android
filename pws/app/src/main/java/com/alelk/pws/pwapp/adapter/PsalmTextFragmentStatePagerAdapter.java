@@ -1,9 +1,9 @@
 package com.alelk.pws.pwapp.adapter;
 
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.ViewGroup;
 
@@ -12,6 +12,8 @@ import com.alelk.pws.pwapp.fragment.PsalmTextFragment;
 import java.util.ArrayList;
 
 /**
+ * Psalm Text Fragment State Pager Adapter
+ *
  * Created by Alex Elkin on 31.05.2016.
  */
 public class PsalmTextFragmentStatePagerAdapter extends FragmentStatePagerAdapter {
@@ -36,6 +38,7 @@ public class PsalmTextFragmentStatePagerAdapter extends FragmentStatePagerAdapte
         return mPsalmNumberIdList != null ? mPsalmNumberIdList.size() : 0;
     }
 
+    @NonNull
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         Fragment fragment = (Fragment) super.instantiateItem(container, position);

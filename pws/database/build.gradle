@@ -1,8 +1,9 @@
-import java.text.SimpleDateFormat
-
 apply plugin: 'com.android.library'
 
 android {
+    compileSdkVersion rootProject.sdkVersion
+    buildToolsVersion rootProject.buildTools
+
     signingConfigs {
         releaseSignConfig {
             keyAlias 'pws'
@@ -11,17 +12,17 @@ android {
             storePassword '1234eaea'
         }
     }
-    compileSdkVersion 25
-    buildToolsVersion '26.0.0'
+
     defaultConfig {
         resValue "string", "db_authority", "com.alelk.pws.database"
         buildConfigField "String", "DB_AUTHORITY", "\"com.alelk.pws.database\""
         minSdkVersion 16
-        targetSdkVersion 25
-        versionCode 15
-        versionName '1.2.1'
-        versionNameSuffix '-' + getDate().toLowerCase()
+        targetSdkVersion rootProject.sdkVersion
+        versionCode rootProject.versionCode
+        versionName rootProject.versionName
+        versionNameSuffix '-' + rootProject.versionNameSuffix
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -34,21 +35,26 @@ android {
             versionNameSuffix "-debug"
         }
     }
+
     compileOptions {
-        //sourceCompatibility JavaVersion.VERSION_1_7
-        //targetCompatibility JavaVersion.VERSION_1_7
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
+
     publishNonDefault true
+    flavorDimensions "contentLevel"
     productFlavors {
         ru {
-
+            dimension "contentLevel"
         }
         uk {
+            dimension "contentLevel"
             resValue "string", "db_authority", "com.alelk.pws.database.uk"
             buildConfigField "String", "DB_AUTHORITY", "\"com.alelk.pws.database.uk\""
             versionNameSuffix "-uk"
         }
         full {
+            dimension "contentLevel"
             resValue "string", "db_authority", "com.alelk.pws.database.full"
             buildConfigField "String", "DB_AUTHORITY", "\"com.alelk.pws.database.full\""
             versionNameSuffix "-full"
@@ -56,15 +62,8 @@ android {
     }
 }
 
-static def getDate() {
-    def df = new SimpleDateFormat("MMM-d-yyyy", new Locale("en_EN"))
-    df.setTimeZone(TimeZone.getTimeZone("UTC"))
-    return df.format(new Date())
-}
-
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support:support-core-utils:25.3.1'
-    compile 'com.android.support:design:25.3.1'
+    implementation "com.android.support:appcompat-v7:$support_version"
+    implementation "com.android.support:support-core-utils:$support_version"
+    implementation "com.android.support:design:$support_version"
 }

@@ -36,13 +36,10 @@ public class ReadNowFragment extends Fragment implements LoaderManager.LoaderCal
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mRecentPsalmsAdapter = new HistoryRecyclerViewAdapter(new HistoryRecyclerViewAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(long psalmNumberId) {
-                Intent intentPsalmView = new Intent(getActivity().getBaseContext(), PsalmActivity.class);
-                intentPsalmView.putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, psalmNumberId);
-                startActivity(intentPsalmView);
-            }
+        mRecentPsalmsAdapter = new HistoryRecyclerViewAdapter(psalmNumberId -> {
+            Intent intentPsalmView = new Intent(getActivity().getBaseContext(), PsalmActivity.class);
+            intentPsalmView.putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, psalmNumberId);
+            startActivity(intentPsalmView);
         });
         getLoaderManager().initLoader(PWS_RECENT_PSALM_LOADER, null, this);
     }
@@ -57,7 +54,7 @@ public class ReadNowFragment extends Fragment implements LoaderManager.LoaderCal
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.fragment_readnow, null);
-        rvRecentPsalms = (RecyclerView) v.findViewById(R.id.rv_recent);
+        rvRecentPsalms = v.findViewById(R.id.rv_recent);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         rvRecentPsalms.setLayoutManager(layoutManager);
         rvRecentPsalms.setAdapter(mRecentPsalmsAdapter);

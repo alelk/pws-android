@@ -12,6 +12,8 @@ import com.alelk.pws.database.provider.PwsDataProvider;
 import com.alelk.pws.pwapp.R;
 
 /**
+ * Favorites Recycler View Adapter
+ *
  * Created by Alex Elkin on 19.05.2016.
  */
 public class FavoritesRecyclerViewAdapter extends RecyclerView.Adapter<FavoritesRecyclerViewAdapter.FavoriteViewHolder> {
@@ -24,11 +26,6 @@ public class FavoritesRecyclerViewAdapter extends RecyclerView.Adapter<Favorites
     private final OnItemClickListener mOnItemClickListener;
 
     public FavoritesRecyclerViewAdapter(OnItemClickListener onItemClickListener) {
-        mOnItemClickListener = onItemClickListener;
-    }
-
-    public FavoritesRecyclerViewAdapter(Cursor cursor, OnItemClickListener onItemClickListener) {
-        mCursor = cursor;
         mOnItemClickListener = onItemClickListener;
     }
 
@@ -57,7 +54,7 @@ public class FavoritesRecyclerViewAdapter extends RecyclerView.Adapter<Favorites
         return mCursor.getCount();
     }
 
-    public static class FavoriteViewHolder extends RecyclerView.ViewHolder {
+    static class FavoriteViewHolder extends RecyclerView.ViewHolder {
 
         CardView cardView;
         TextView psalmName;
@@ -65,25 +62,20 @@ public class FavoritesRecyclerViewAdapter extends RecyclerView.Adapter<Favorites
         TextView bookDisplayName;
         long psalmNumberId;
 
-        public FavoriteViewHolder(View itemView) {
+        FavoriteViewHolder(View itemView) {
             super(itemView);
-            cardView = (CardView) itemView.findViewById(R.id.cv_favorite);
-            psalmName = (TextView) itemView.findViewById(R.id.txt_psalm_name);
-            psalmNumber = (TextView) itemView.findViewById(R.id.txt_psalm_number);
-            bookDisplayName = (TextView) itemView.findViewById(R.id.txt_book_name);
+            cardView = itemView.findViewById(R.id.cv_favorite);
+            psalmName = itemView.findViewById(R.id.txt_psalm_name);
+            psalmNumber = itemView.findViewById(R.id.txt_psalm_number);
+            bookDisplayName = itemView.findViewById(R.id.txt_book_name);
         }
 
-        public void bind (final Cursor cursor, final OnItemClickListener onItemClickListener) {
+        void bind(final Cursor cursor, final OnItemClickListener onItemClickListener) {
             psalmNumber.setText(cursor.getString(cursor.getColumnIndex(PwsDataProvider.Favorites.COLUMN_PSALMNUMBER)));
             psalmName.setText(cursor.getString(cursor.getColumnIndex(PwsDataProvider.Favorites.COLUMN_PSALMNAME)));
             bookDisplayName.setText(cursor.getString(cursor.getColumnIndex(PwsDataProvider.Favorites.COLUMN_BOOKDISPLAYNAME)));
             psalmNumberId = cursor.getLong(cursor.getColumnIndex(PwsDataProvider.Favorites.COLUMN_PSALMNUMBER_ID));
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onItemClickListener.onItemClick(psalmNumberId);
-                }
-            });
+            itemView.setOnClickListener(v -> onItemClickListener.onItemClick(psalmNumberId));
         }
     }
 }
