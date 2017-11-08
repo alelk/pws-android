@@ -60,16 +60,13 @@ public class HistoryFragment extends Fragment implements LoaderManager.LoaderCal
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.fragment_history, null);
-        mRecyclerView = (RecyclerView) v.findViewById(R.id.rv_history);
+        mRecyclerView = v.findViewById(R.id.rv_history);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(layoutManager);
-        mHistoryAdapter = new HistoryRecyclerViewAdapter(new HistoryRecyclerViewAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(long psalmNumberId) {
-                Intent intentPsalmView = new Intent(getActivity(), PsalmActivity.class);
-                intentPsalmView.putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, psalmNumberId);
-                startActivity(intentPsalmView);
-            }
+        mHistoryAdapter = new HistoryRecyclerViewAdapter(psalmNumberId -> {
+            Intent intentPsalmView = new Intent(getActivity(), PsalmActivity.class);
+            intentPsalmView.putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, psalmNumberId);
+            startActivity(intentPsalmView);
         });
         mRecyclerView.setAdapter(mHistoryAdapter);
         getLoaderManager().initLoader(PWS_HISTORY_LOADER, null, this);

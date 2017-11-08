@@ -57,17 +57,14 @@ public class SearchResultsFragment extends Fragment implements LoaderManager.Loa
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.fragment_search_results, null);
-        mRecyclerView = (RecyclerView) v.findViewById(R.id.rv_search_results);
+        mRecyclerView = v.findViewById(R.id.rv_search_results);
         mLayoutSearchProgress = v.findViewById(R.id.layout_search_progress);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         mRecyclerView.setLayoutManager(layoutManager);
-        mSearchResultsAdapter = new SearchRecyclerViewAdapter(new SearchRecyclerViewAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(long psalmNumberId) {
-                Intent intentPsalmView = new Intent(getActivity().getBaseContext(), PsalmActivity.class);
-                intentPsalmView.putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, psalmNumberId);
-                startActivity(intentPsalmView);
-            }
+        mSearchResultsAdapter = new SearchRecyclerViewAdapter(psalmNumberId -> {
+            Intent intentPsalmView = new Intent(getActivity().getBaseContext(), PsalmActivity.class);
+            intentPsalmView.putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, psalmNumberId);
+            startActivity(intentPsalmView);
         });
         mRecyclerView.setAdapter(mSearchResultsAdapter);
 

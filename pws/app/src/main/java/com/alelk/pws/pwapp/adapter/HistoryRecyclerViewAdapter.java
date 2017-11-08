@@ -16,6 +16,7 @@ import com.alelk.pws.pwapp.R;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 /**
  * History Recycler View Adapter
@@ -32,11 +33,6 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
     private final OnItemClickListener mOnItemClickListener;
 
     public HistoryRecyclerViewAdapter(OnItemClickListener onItemClickListener) {
-        mOnItemClickListener = onItemClickListener;
-    }
-
-    public HistoryRecyclerViewAdapter(Cursor cursor, OnItemClickListener onItemClickListener) {
-        mCursor = cursor;
         mOnItemClickListener = onItemClickListener;
     }
 
@@ -76,32 +72,27 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
 
         HistoryViewHolder(View itemView) {
             super(itemView);
-            cardView = (CardView) itemView.findViewById(R.id.cv_history);
-            psalmName = (TextView) itemView.findViewById(R.id.txt_psalm_name);
-            psalmNumber = (TextView) itemView.findViewById(R.id.txt_psalm_number);
-            bookDisplayName = (TextView) itemView.findViewById(R.id.txt_book_name);
-            timestamp = (TextView) itemView.findViewById(R.id.txt_timestamp);
+            cardView = itemView.findViewById(R.id.cv_history);
+            psalmName = itemView.findViewById(R.id.txt_psalm_name);
+            psalmNumber = itemView.findViewById(R.id.txt_psalm_number);
+            bookDisplayName = itemView.findViewById(R.id.txt_book_name);
+            timestamp = itemView.findViewById(R.id.txt_timestamp);
         }
 
-        public void bind (final Cursor cursor, final OnItemClickListener onItemClickListener) {
+        void bind(final Cursor cursor, final OnItemClickListener onItemClickListener) {
             psalmNumber.setText(cursor.getString(cursor.getColumnIndex(COLUMN_PSALMNUMBER)));
             psalmName.setText(cursor.getString(cursor.getColumnIndex(COLUMN_PSALMNAME)));
             bookDisplayName.setText(cursor.getString(cursor.getColumnIndex(COLUMN_BOOKDISPLAYNAME)));
             psalmNumberId = cursor.getLong(cursor.getColumnIndex(COLUMN_PSALMNUMBER_ID));
             String accessTime = cursor.getString(cursor.getColumnIndex(COLUMN_HISTORYTIMESTAMP));
-            SimpleDateFormat df = new SimpleDateFormat(PwsDataProviderContract.HISTORY_TIMESTAMP_FORMAT);
+            SimpleDateFormat df = new SimpleDateFormat(PwsDataProviderContract.HISTORY_TIMESTAMP_FORMAT, Locale.US);
             try {
                 accessTime = (String) DateUtils.getRelativeTimeSpanString(df.parse(accessTime).getTime(), System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS);
                 timestamp.setText(accessTime);
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onItemClickListener.onItemClick(psalmNumberId);
-                }
-            });
+            itemView.setOnClickListener(v -> onItemClickListener.onItemClick(psalmNumberId));
         }
     }
 }

@@ -3,7 +3,6 @@ package com.alelk.pws.pwapp.dialog;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -14,6 +13,8 @@ import android.widget.SeekBar;
 import com.alelk.pws.pwapp.R;
 
 /**
+ * Psalm Preferences Dialog Fragment
+ *
  * Created by Alex Elkin on 26.12.2016.
  */
 
@@ -29,7 +30,6 @@ public class PsalmPreferencesDialogFragment extends DialogFragment {
     private static final float MAX_TEXT_SIZE = 100;
     private final static String LOG_TAG = PsalmPreferencesDialogFragment.class.getSimpleName();
     private View mLayout;
-    private SeekBar mSkBrTextSize;
     private OnPsalmPreferencesChangedCallbacks mCallbacks;
     private float mTextSizeDefault;
     private float mChangedTextSize;
@@ -46,9 +46,9 @@ public class PsalmPreferencesDialogFragment extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mLayout = getActivity().getLayoutInflater().inflate(R.layout.dialog_psalm_preferences, null);
-        mSkBrTextSize = (SeekBar) mLayout.findViewById(R.id.seek_bar_font_size);
-        mSkBrTextSize.setProgress((int) ((MAX_TEXT_SIZE - MIN_TEXT_SIZE)/100 * (mTextSizeDefault - MIN_TEXT_SIZE)));
-        mSkBrTextSize.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        SeekBar skBrTextSize = mLayout.findViewById(R.id.seek_bar_font_size);
+        skBrTextSize.setProgress((int) ((MAX_TEXT_SIZE - MIN_TEXT_SIZE)/100 * (mTextSizeDefault - MIN_TEXT_SIZE)));
+        skBrTextSize.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 mChangedTextSize = i/(MAX_TEXT_SIZE - MIN_TEXT_SIZE) * 100 + MIN_TEXT_SIZE;
@@ -73,18 +73,8 @@ public class PsalmPreferencesDialogFragment extends DialogFragment {
         super.onCreateDialog(savedInstanceState);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(mLayout);
-        builder.setPositiveButton(R.string.lbl_ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                mCallbacks.onApplyPsalmPreferences(mChangedTextSize);
-            }
-        });
-        builder.setNegativeButton(R.string.lbl_cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                mCallbacks.onCancelPsalmPreferences(mTextSizeDefault);
-            }
-        });
+        builder.setPositiveButton(R.string.lbl_ok, (dialog, which) -> mCallbacks.onApplyPsalmPreferences(mChangedTextSize));
+        builder.setNegativeButton(R.string.lbl_cancel, (dialog, which) -> mCallbacks.onCancelPsalmPreferences(mTextSizeDefault));
         return builder.create();
     }
 

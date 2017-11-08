@@ -52,20 +52,17 @@ public class GeneralPreferenceFragment extends PwsPreferenceFragment implements 
     private void initThemePreference() {
         if (mThemeListPreference == null) return;
         setupThemeListPreference(mThemePreferences.getAppTheme());
-        mThemeListPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                AppTheme newAppTheme;
-                try {
-                    newAppTheme = AppTheme.forThemeKey(getActivity(), newValue.toString());
-                } catch (IllegalArgumentException exc) {
-                    Log.w(LOG_TAG, "Unable to get app theme for the key '" + newValue + '\'');
-                    newAppTheme = AppTheme.LIGHT;
-                }
-                setupThemeListPreference(newAppTheme);
-                mThemePreferences.persistAppTheme(newAppTheme);
-                return true;
+        mThemeListPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+            AppTheme newAppTheme;
+            try {
+                newAppTheme = AppTheme.forThemeKey(getActivity(), newValue.toString());
+            } catch (IllegalArgumentException exc) {
+                Log.w(LOG_TAG, "Unable to get app theme for the key '" + newValue + '\'');
+                newAppTheme = AppTheme.LIGHT;
             }
+            setupThemeListPreference(newAppTheme);
+            mThemePreferences.persistAppTheme(newAppTheme);
+            return true;
         });
     }
 
@@ -113,18 +110,15 @@ public class GeneralPreferenceFragment extends PwsPreferenceFragment implements 
             }
             pref.setTitle(bookDisplayName);
             ((SwitchPreference) pref).setChecked(bookStatisticPref > 0);
-            pref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object o) {
-                    final Uri uri = PwsDataProvider.BookStatistic.getBookStatisticBookEditionUri(preference.getKey());
-                    final int defaultPref = PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext())
-                            .getInt("bookstatistic110." + preference.getKey() + ".userPref", 1);
-                    int newPref = (Boolean) o ? defaultPref : 0;
-                    final ContentValues values = new ContentValues();
-                    values.put(PwsBookStatisticTable.COLUMN_USERPREFERENCE, newPref);
-                    getActivity().getContentResolver().update(uri, values, null, null);
-                    return true;
-                }
+            pref.setOnPreferenceChangeListener((preference, o) -> {
+                final Uri uri = PwsDataProvider.BookStatistic.getBookStatisticBookEditionUri(preference.getKey());
+                final int defaultPref = PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext())
+                        .getInt("bookstatistic110." + preference.getKey() + ".userPref", 1);
+                int newPref = (Boolean) o ? defaultPref : 0;
+                final ContentValues values = new ContentValues();
+                values.put(PwsBookStatisticTable.COLUMN_USERPREFERENCE, newPref);
+                getActivity().getContentResolver().update(uri, values, null, null);
+                return true;
             });
         } while (cursor.moveToNext());
     }

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -20,8 +19,6 @@ import com.alelk.pws.pwapp.fragment.SearchResultsFragment;
 public class SearchActivity extends AppCompatThemedActivity {
 
     public static final String KEY_INPUT_TYPE = "com.alelk.pws.pwapp.activity.SearchActivity.inputType";
-    private static final String LOG_TAG = SearchActivity.class.getSimpleName();
-    private SearchResultsFragment mResultsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,18 +39,19 @@ public class SearchActivity extends AppCompatThemedActivity {
     }
 
     private void handleIntent() {
-        mResultsFragment = (SearchResultsFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_search_results);
+        SearchResultsFragment resultsFragment = (SearchResultsFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_search_results);
 
         if (Intent.ACTION_SEARCH.equals(getIntent().getAction())) {
             final String query = getIntent().getStringExtra(SearchManager.QUERY);
-            if (mResultsFragment != null) {
-                mResultsFragment.updateQuery(query);
+            if (resultsFragment != null) {
+                resultsFragment.updateQuery(query);
             } else {
-                mResultsFragment = SearchResultsFragment.newInstance(query);
-                getSupportFragmentManager().beginTransaction().add(R.id.fragment_search_results, mResultsFragment).commit();
+                resultsFragment = SearchResultsFragment.newInstance(query);
+                getSupportFragmentManager().beginTransaction().add(R.id.fragment_search_results, resultsFragment).commit();
             }
         } else if (Intent.ACTION_VIEW.equals(getIntent().getAction())) {
             Uri data = getIntent().getData();
+            if (data == null) return;
             long psalmNumberId = Long.parseLong(data.getLastPathSegment());
             if (psalmNumberId != -1) {
                 Intent intentPsalmView = new Intent(getApplicationContext(), PsalmActivity.class);
@@ -68,7 +66,8 @@ public class SearchActivity extends AppCompatThemedActivity {
         getMenuInflater().inflate(R.menu.menu_search, menu);
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        if (searchManager != null)
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         final String query = getIntent().getStringExtra(SearchManager.QUERY);
         if (TextUtils.isEmpty(query)) {
             searchView.setIconified(false);

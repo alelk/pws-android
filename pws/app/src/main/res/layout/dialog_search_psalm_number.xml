@@ -8,7 +8,8 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:text="@string/lbl_enter_psalm_number"
-        android:id="@+id/lbl_select_psalm_number"/>
+        android:id="@+id/lbl_select_psalm_number"
+        android:layout_marginStart="16dp" />
 
     <EditText
         android:textAlignment="center"

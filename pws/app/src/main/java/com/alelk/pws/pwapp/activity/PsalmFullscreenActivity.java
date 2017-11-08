@@ -3,18 +3,11 @@ package com.alelk.pws.pwapp.activity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.database.Cursor;
-import android.preference.PreferenceManager;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.TextUtils;
-import android.util.Log;
+import android.preference.PreferenceManager;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -28,7 +21,6 @@ import com.alelk.pws.pwapp.fragment.PsalmTextFragment;
 import com.alelk.pws.pwapp.holder.PsalmHolder;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 
 public class PsalmFullscreenActivity extends AppCompatThemedActivity implements PsalmTextFragment.Callbacks {
 
@@ -64,12 +56,7 @@ public class PsalmFullscreenActivity extends AppCompatThemedActivity implements 
         }
     };
     private boolean mVisible;
-    private final Runnable mHideRunnable = new Runnable() {
-        @Override
-        public void run() {
-            hide();
-        }
-    };
+    private final Runnable mHideRunnable = this::hide;
     private Handler mAddToHistoryHandler = new Handler();
     private Runnable mAddToHistoryRunnable = new Runnable() {
         @Override
@@ -97,29 +84,25 @@ public class PsalmFullscreenActivity extends AppCompatThemedActivity implements 
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         mContentView = findViewById(R.id.pager_psalm_text);
-        mBtnFavorites = (Button) findViewById(R.id.btn_favorites);
-        mBtnFavorites.setOnClickListener(new View.OnClickListener() {
-                                             @Override
-                                             public void onClick(View v) {
-                                                 PsalmTextFragment fragment = (PsalmTextFragment) mFragmentStatePagerAdapter.getRegisteredFragments().get(mPagerPsalmText.getCurrentItem());
-                                                 if (fragment.isFavoritePsalm()) {
-                                                     fragment.removePsalmFromFavorites();
-                                                 } else {
-                                                     fragment.addPsalmToFavorites();
-                                                 }
-                                             }
-                                         });
-        mBtnFavorites.setOnTouchListener(new View.OnTouchListener() {
-                                             @Override
-                                             public boolean onTouch(View v, MotionEvent event) {
-                                                 if (AUTO_HIDE) {
-                                                     delayedHide(AUTO_HIDE_DELAY_MILLIS);
-                                                 }
-                                                 return false;
-                                             }
-                                         });
+        mBtnFavorites = findViewById(R.id.btn_favorites);
+        mBtnFavorites.setOnClickListener(v -> {
+            PsalmTextFragment fragment = (PsalmTextFragment) mFragmentStatePagerAdapter.getRegisteredFragments().get(mPagerPsalmText.getCurrentItem());
+            if (fragment.isFavoritePsalm()) {
+                fragment.removePsalmFromFavorites();
+            } else {
+                fragment.addPsalmToFavorites();
+            }
+        });
+        mBtnFavorites.setOnTouchListener((v, event) -> {
+            if (AUTO_HIDE) {
+                delayedHide(AUTO_HIDE_DELAY_MILLIS);
+            }
+            if (MotionEvent.ACTION_UP == event.getAction())
+                v.performClick();
+            return true;
+        });
 
-        mPagerPsalmText = (ViewPager) findViewById(R.id.pager_psalm_text);
+        mPagerPsalmText = findViewById(R.id.pager_psalm_text);
         float psalmTextSize = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getFloat(PsalmTextFragment.KEY_PSALM_TEXT_SIZE, -1);
         mFragmentStatePagerAdapter = new PsalmTextFragmentStatePagerAdapter(getSupportFragmentManager(), mBookPsalmNumberIds, psalmTextSize);
         mPagerPsalmText.setAdapter(mFragmentStatePagerAdapter);

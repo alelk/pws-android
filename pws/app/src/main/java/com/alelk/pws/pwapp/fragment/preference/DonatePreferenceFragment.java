@@ -8,6 +8,8 @@ import com.alelk.pws.pwapp.activity.MainSettingsActivity;
 import com.alelk.pws.pwapp.R;
 
 /**
+ * Donate Fragment
+ *
  * Created by Alex Elkin on 06.08.2016.
  */
 public class DonatePreferenceFragment extends PwsPreferenceFragment {

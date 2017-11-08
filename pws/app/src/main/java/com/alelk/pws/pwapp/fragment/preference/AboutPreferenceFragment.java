@@ -10,6 +10,8 @@ import com.alelk.pws.pwapp.activity.MainSettingsActivity;
 import com.alelk.pws.pwapp.R;
 
 /**
+ * About App
+ *
  * Created by Alex Elkin on 07.11.2016.
  */
 
