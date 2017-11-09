@@ -24,6 +24,11 @@ public enum AppTheme {
             R.style.Theme_Dark_NoActionBar,
             R.string.pref_display_theme_dark_value,
             R.string.pref_display_theme_dark_title
+    ),
+    BLACK(R.style.Theme_Black,
+            R.style.Theme_Black_NoActionBar,
+            R.string.pref_display_theme_black_value,
+            R.string.pref_display_theme_black_title
     );
 
     @StyleRes private final int themeNoActionBarResId;
