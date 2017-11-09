@@ -1,5 +1,8 @@
 package com.alelk.pws.pwapp.fragment;
 
+import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -18,7 +21,10 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewManager;
@@ -89,6 +95,7 @@ public class PsalmTextFragment extends Fragment implements LoaderManager.LoaderC
         updateUi();
         setRetainInstance(true);
         getLoaderManager().initLoader(PWS_REFERRED_PSALMS_LOADER, null, this);
+        registerForContextMenu(vPsalmText);
         return v;
     }
 
@@ -168,6 +175,56 @@ public class PsalmTextFragment extends Fragment implements LoaderManager.LoaderC
         if (menuVisible && callbacks != null) {
             callbacks.onUpdatePsalmInfo(mPsalmHolder);
         }
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        Activity activity = getActivity();
+        if (activity == null) return;
+        MenuInflater menuInflater = activity.getMenuInflater();
+        menuInflater.inflate(R.menu.menu_psalm_text, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        if (R.id.menu_copy == item.getItemId()) {
+            if (mPsalmHolder == null) return false;
+            final Activity activity = getActivity();
+            if (activity == null) return false;
+            final ClipboardManager clipboardManager = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
+            if (clipboardManager == null) return false;
+            final ClipData clip = ClipData.newHtmlText(getString(R.string.app_name), getPsalmDoccument(), getPsalmHtmlDocument());
+            clipboardManager.setPrimaryClip(clip);
+            return true;
+        }
+        return super.onContextItemSelected(item);
+    }
+
+    private String getPsalmDoccument() {
+        if (mPsalmHolder == null) return null;
+        StringBuilder sb = new StringBuilder();
+        sb.append("№").append(mPsalmHolder.getPsalmNumber()).append(" (")
+                .append(mPsalmHolder.getBookName()).append("): ")
+                .append(mPsalmHolder.getPsalmName()).append("\n\n");
+        if (mPsalmHolder.getBibleRef() != null) sb.append(mPsalmHolder.getBibleRef()).append("\n\n");
+        sb.append(mPsalmHolder.getPsalmText());
+        sb.append("\n\n").append("P&W Songs");
+        return sb.toString();
+    }
+
+    private String getPsalmHtmlDocument() {
+        if (mPsalmHolder == null) return null;
+        return PwsPsalmUtil.psalmTextToPrettyHtml(
+                new Locale(mPsalmHolder.getPsalmLocale()),
+                mPsalmHolder.getPsalmText(),
+                mPsalmHolder.getBibleRef(),
+                mPsalmHolder.getPsalmName(),
+                mPsalmHolder.getPsalmAuthor(),
+                mPsalmHolder.getPsalmTranslator(),
+                mPsalmHolder.getPsalmComposer(),
+                "<p><b><i><a href='https://play.google.com/store/apps/details?id=com.alelk.pws.pwapp'>P&W Songs</a></i></b></p>"
+        );
     }
 
     /**

@@ -10,6 +10,7 @@
     <attr name="textAppearanceTitleInverse" format="reference"/>
     <attr name="navigationHeaderBackground" format="reference"/>
     <attr name="toolbarBackgroundFilter" format="color"/>
+    <attr name="toolbarBackground" format="reference"/>
     <attr name="toolbarSearchByNumberIcon" format="reference"/>
     <attr name="toolbarSearchByTextIcon" format="reference"/>
     <attr name="fullscreanBackground" format="color"/>

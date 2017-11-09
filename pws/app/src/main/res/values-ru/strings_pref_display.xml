@@ -12,6 +12,7 @@
     <string name="pref_display_theme_title">Тема</string>
     <string name="pref_display_theme_light_title">Светлая</string>
     <string name="pref_display_theme_dark_title">Тёмная</string>
+    <string name="pref_display_theme_black_title">Чёрная (AMOLED)</string>
     <!-- Books -->
     <string name="pref_books_title">Сборники</string>
 

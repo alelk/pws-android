@@ -137,6 +137,10 @@ public class PsalmActivity extends AppCompatThemedActivity implements PsalmTextF
             DialogFragment psalmPreferencesDialog = PsalmPreferencesDialogFragment.newInstance(mPsalmTextSize);
             psalmPreferencesDialog.show(getSupportFragmentManager(), PsalmPreferencesDialogFragment.class.getSimpleName());
             return true;
+        } else if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, MainSettingsActivity.class);
+            startActivity(intent);
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }

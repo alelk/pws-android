@@ -33,7 +33,7 @@
                 android:layout_height="match_parent"
                 app:layout_collapseMode="pin"
                 android:scaleType="centerCrop"
-                android:src="@drawable/im_appbar_background"/>
+                android:src="?attr/toolbarBackground"/>
 
             <View
                 android:layout_width="match_parent"
