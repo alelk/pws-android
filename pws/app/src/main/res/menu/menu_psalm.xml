@@ -4,6 +4,7 @@
     tools:context="com.alelk.pws.pwapp.activity.PsalmActivity">
 
     <item android:id="@+id/menu_search"
+        android:orderInCategory="1"
         android:title="@string/lbl_search_psalm"
         app:showAsAction="ifRoom"
         android:icon="@drawable/ic_search_black_24dp"
@@ -11,9 +12,10 @@
         />
 
     <item android:id="@+id/menu_jump"
+        android:orderInCategory="2"
         android:title="@string/lbl_jump_to_number"
         android:icon="@drawable/ic_dialpad_black_24dp"
-        app:showAsAction="never"
+        app:showAsAction="ifRoom"
         />
 
     <item android:id="@+id/menu_text_size"

@@ -37,6 +37,7 @@
     <string name="lbl_another_variant">The another psalm edition.\nLyrics similarity: %1$d%%</string>
     <string name="lbl_search_psalm">Search psalm</string>
     <string name="lbl_jump_to_number">Jump to the number</string>
+    <string name="lbl_share">Share</string>
     <string name="lbl_psalm_text_size">Text size</string>
     <string name="msg_added_to_favorites">Added to favorites.</string>
     <string name="msg_removed_from_favorites">Removed from favorites.</string>

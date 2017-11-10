@@ -37,6 +37,7 @@
     <string name="lbl_another_variant" formatted="true">Другая версия песни.\nСходство текстов: %1$d%%</string>
     <string name="lbl_search_psalm">Найти</string>
     <string name="lbl_jump_to_number">Перейти по номеру</string>
+    <string name="lbl_share">Поделиться</string>
     <string name="lbl_psalm_text_size">Размер текста</string>
     <string name="msg_added_to_favorites">Добавлено в избранное.</string>
     <string name="msg_removed_from_favorites">Удалено из избранного.</string>
