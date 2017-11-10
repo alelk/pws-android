@@ -59,12 +59,14 @@ public class PwsPsalmUtil {
     }
 
     public static String psalmTextToPrettyHtml(
-            Locale locale, String psalmText, String bibleRef, String psalmName,
+            Locale locale, String psalmText, String bibleRef, String psalmName, Integer psalmNumber,
             String author, String translator, String composer, String footerHtml
     ) {
         StringBuilder sb = new StringBuilder();
         sb.append("<div>");
-        if (psalmName != null) sb.append("<h1>").append(psalmName).append("</h1>");
+        if (psalmName != null) sb.append("<h1>")
+                .append(psalmNumber != null ? "№ " + psalmNumber + " " : null).append(psalmName)
+                .append("</h1>");
         if (bibleRef != null) sb.append("<p>").append(bibleRef).append("</p>");
         sb.append("<p>").append(psalmTextToHtml(locale, psalmText)).append("</p>");
         if (author != null || translator != null || composer != null)

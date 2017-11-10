@@ -23,6 +23,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -95,6 +96,7 @@ public class PsalmTextFragment extends Fragment implements LoaderManager.LoaderC
         updateUi();
         setRetainInstance(true);
         getLoaderManager().initLoader(PWS_REFERRED_PSALMS_LOADER, null, this);
+        setHasOptionsMenu(true);
         registerForContextMenu(vPsalmText);
         return v;
     }
@@ -178,12 +180,32 @@ public class PsalmTextFragment extends Fragment implements LoaderManager.LoaderC
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        Activity activity = getActivity();
+        if (activity == null) return;
+        activity.getMenuInflater().inflate(R.menu.menu_psalm_text, menu);
+    }
+
+    @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         Activity activity = getActivity();
         if (activity == null) return;
-        MenuInflater menuInflater = activity.getMenuInflater();
-        menuInflater.inflate(R.menu.menu_psalm_text, menu);
+        activity.getMenuInflater().inflate(R.menu.menu_psalm_text_context, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.menu_share) {
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.putExtra(Intent.EXTRA_TEXT, getPsalmDocument());
+            intent.putExtra(Intent.EXTRA_HTML_TEXT, getPsalmHtmlDocument());
+            intent.setType("text/html");
+            startActivity(intent);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -194,14 +216,14 @@ public class PsalmTextFragment extends Fragment implements LoaderManager.LoaderC
             if (activity == null) return false;
             final ClipboardManager clipboardManager = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
             if (clipboardManager == null) return false;
-            final ClipData clip = ClipData.newHtmlText(getString(R.string.app_name), getPsalmDoccument(), getPsalmHtmlDocument());
+            final ClipData clip = ClipData.newHtmlText(getString(R.string.app_name), getPsalmDocument(), getPsalmHtmlDocument());
             clipboardManager.setPrimaryClip(clip);
             return true;
         }
         return super.onContextItemSelected(item);
     }
 
-    private String getPsalmDoccument() {
+    private String getPsalmDocument() {
         if (mPsalmHolder == null) return null;
         StringBuilder sb = new StringBuilder();
         sb.append("№").append(mPsalmHolder.getPsalmNumber()).append(" (")
@@ -220,10 +242,12 @@ public class PsalmTextFragment extends Fragment implements LoaderManager.LoaderC
                 mPsalmHolder.getPsalmText(),
                 mPsalmHolder.getBibleRef(),
                 mPsalmHolder.getPsalmName(),
+                mPsalmHolder.getPsalmNumber(),
                 mPsalmHolder.getPsalmAuthor(),
                 mPsalmHolder.getPsalmTranslator(),
                 mPsalmHolder.getPsalmComposer(),
-                "<p><b><i><a href='https://play.google.com/store/apps/details?id=com.alelk.pws.pwapp'>P&W Songs</a></i></b></p>"
+                "<p><b><i><a href='https://play.google.com/store/apps/details?id=" +
+                        "com.alelk.pws.pwapp'>P&W Songs: " + mPsalmHolder.getBookName() + "</a></i></b></p>"
         );
     }
 
