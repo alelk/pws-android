@@ -201,7 +201,7 @@ public class PsalmTextFragment extends Fragment implements LoaderManager.LoaderC
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.putExtra(Intent.EXTRA_TEXT, getPsalmDocument());
             intent.putExtra(Intent.EXTRA_HTML_TEXT, getPsalmHtmlDocument());
-            intent.setType("text/html");
+            intent.setType("text/plain");
             startActivity(intent);
             return true;
         }
@@ -226,12 +226,11 @@ public class PsalmTextFragment extends Fragment implements LoaderManager.LoaderC
     private String getPsalmDocument() {
         if (mPsalmHolder == null) return null;
         StringBuilder sb = new StringBuilder();
-        sb.append("№").append(mPsalmHolder.getPsalmNumber()).append(" (")
-                .append(mPsalmHolder.getBookName()).append("): ")
+        sb.append("№").append(mPsalmHolder.getPsalmNumber()).append(" - ")
                 .append(mPsalmHolder.getPsalmName()).append("\n\n");
         if (mPsalmHolder.getBibleRef() != null) sb.append(mPsalmHolder.getBibleRef()).append("\n\n");
         sb.append(mPsalmHolder.getPsalmText());
-        sb.append("\n\n").append("P&W Songs");
+        sb.append("\n\n").append("P&W Songs: ").append(mPsalmHolder.getBookName());
         return sb.toString();
     }
 
