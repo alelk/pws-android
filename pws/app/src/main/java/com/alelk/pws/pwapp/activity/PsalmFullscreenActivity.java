@@ -142,7 +142,7 @@ public class PsalmFullscreenActivity extends AppCompatThemedActivity implements 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        delayedHide(100);
+        hide();
     }
 
     private void toggle() {
