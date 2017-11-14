@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -40,6 +41,7 @@ import com.alelk.pws.pwapp.activity.PsalmActivity;
 import com.alelk.pws.pwapp.R;
 import com.alelk.pws.pwapp.adapter.ReferredPsalmsRecyclerViewAdapter;
 import com.alelk.pws.pwapp.holder.PsalmHolder;
+import com.alelk.pws.pwapp.preference.PsalmPreferences;
 
 import java.util.Locale;
 
@@ -54,6 +56,7 @@ public class PsalmTextFragment extends Fragment implements LoaderManager.LoaderC
     private final static String LOG_TAG = PsalmTextFragment.class.getSimpleName();
     public static final String KEY_PSALM_NUMBER_ID = "com.alelk.pws.pwapp.psalmNumberId";
     public static final String KEY_PSALM_TEXT_SIZE = "com.alelk.pws.pwapp.psalmTextSize";
+    public static final String KEY_PSALM_TEXT_EXPANDED = "com.alelk.pws.pwapp.psalmTextExpanded";
     private static final String SELECTION_FAVORITES_PSALM_NUMBER_MATCH = PwsDataProvider.Favorites.COLUMN_PSALMNUMBER_ID + " = ?";
     private final String[] SELECTION_ARGS = new String[1];
     private final ContentValues CONTENT_VALUES_FAVORITES = new ContentValues(1);
@@ -67,37 +70,39 @@ public class PsalmTextFragment extends Fragment implements LoaderManager.LoaderC
     private ReferredPsalmsRecyclerViewAdapter mReferredPsalmsAdapter;
     private PsalmHolder mPsalmHolder;
     private long mPsalmNumberId = -1;
-    private float mPsalmTextSize = -1;
+    private PsalmPreferences mPsalmPreferences;
     private boolean isAddedToHistory;
 
     public PsalmTextFragment() {}
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         final View v = inflater.inflate(R.layout.fragment_psalm_text, null);
-        v.findViewById(R.id.ll_psalm_text_content).setOnClickListener(v1 -> callbacks.onRequestFullscreenMode());
         cvTonalities = v.findViewById(R.id.cv_tonalities);
         cvPsalmInfo = v.findViewById(R.id.cv_psalm_info);
         vPsalmText = v.findViewById(R.id.txt_psalm_text);
         vPsalmInfo = v.findViewById(R.id.txt_psalm_info);
         vPsalmTonalities = v.findViewById(R.id.txt_psalm_tonalities);
+        final Activity activity = getActivity();
+        if (activity == null) return v;
         mReferredPsalmsAdapter = new ReferredPsalmsRecyclerViewAdapter(psalmNumberId -> {
-            Intent intentPsalmView = new Intent(getActivity().getBaseContext(), PsalmActivity.class);
+            Intent intentPsalmView = new Intent(activity.getBaseContext(), PsalmActivity.class);
             intentPsalmView.putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, psalmNumberId);
             startActivity(intentPsalmView);
-        }, mPsalmTextSize);
+        }, -1);
         final RecyclerView rvReferredPsalms = v.findViewById(R.id.rv_referred_psalms);
         rvReferredPsalms.setAdapter(mReferredPsalmsAdapter);
         rvReferredPsalms.setNestedScrollingEnabled(false);
-        rvReferredPsalms.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
-        setPsalmTextSize();
+        rvReferredPsalms.setLayoutManager(new LinearLayoutManager(activity.getApplicationContext()));
+        setPsalmTextSize(mPsalmPreferences.getTextSize());
         updateUi();
         setRetainInstance(true);
         getLoaderManager().initLoader(PWS_REFERRED_PSALMS_LOADER, null, this);
         setHasOptionsMenu(true);
         registerForContextMenu(vPsalmText);
+        vPsalmText.setOnClickListener(click -> callbacks.onRequestFullscreenMode());
         return v;
     }
 
@@ -114,8 +119,10 @@ public class PsalmTextFragment extends Fragment implements LoaderManager.LoaderC
             return;
         }
         Cursor cursor = null;
+        final Activity activity = getActivity();
+        if (activity == null) return;
         try {
-            cursor = getActivity().getContentResolver().query(PwsDataProvider.PsalmNumbers.Psalm.getContentUri(mPsalmNumberId), null, null, null, null);
+            cursor = activity.getContentResolver().query(PwsDataProvider.PsalmNumbers.Psalm.getContentUri(mPsalmNumberId), null, null, null, null);
             if (cursor == null || !cursor.moveToFirst()) {
                 return;
             }
@@ -130,7 +137,11 @@ public class PsalmTextFragment extends Fragment implements LoaderManager.LoaderC
         if (mPsalmNumberId < 0 || mPsalmHolder == null) {
             return;
         }
-        final String psalmTextHtml = PwsPsalmUtil.psalmTextToHtml(new Locale(mPsalmHolder.getPsalmLocale()), mPsalmHolder.getPsalmText());
+        final String psalmTextHtml = PwsPsalmUtil.psalmTextToHtml(
+                new Locale(mPsalmHolder.getPsalmLocale()),
+                mPsalmHolder.getPsalmText(),
+                mPsalmPreferences.isExpandPsalmText()
+        );
         if (Build.VERSION.SDK_INT >= 24) {
             vPsalmText.setText(Html.fromHtml(psalmTextHtml, Html.FROM_HTML_MODE_LEGACY));
         } else {
@@ -138,7 +149,7 @@ public class PsalmTextFragment extends Fragment implements LoaderManager.LoaderC
         }
         final String psalmInfoHtml = PwsPsalmUtil.buildPsalmInfoHtml(new Locale(mPsalmHolder.getPsalmLocale()), mPsalmHolder.getPsalmAuthor(), mPsalmHolder.getPsalmTranslator(), mPsalmHolder.getPsalmComposer());
         if (psalmInfoHtml == null) {
-            ((ViewManager) cvPsalmInfo.getParent()).removeView(cvPsalmInfo);
+            cvPsalmInfo.setVisibility(View.GONE);
         } else if (Build.VERSION.SDK_INT >= 24) {
             vPsalmInfo.setText(Html.fromHtml(psalmInfoHtml, Html.FROM_HTML_MODE_LEGACY));
         } else {
@@ -152,7 +163,7 @@ public class PsalmTextFragment extends Fragment implements LoaderManager.LoaderC
             tonalities = (tonalities == null ? "" : ", ") + tonality.getLabel(getActivity());
         }
         if (tonalities == null) {
-            ((ViewManager) cvTonalities.getParent()).removeView(cvTonalities);
+            cvTonalities.setVisibility(View.GONE);
         } else {
             vPsalmTonalities.setText(tonalities);
         }
@@ -165,7 +176,10 @@ public class PsalmTextFragment extends Fragment implements LoaderManager.LoaderC
         callbacks = (Callbacks) context;
         if (getArguments() != null) {
             mPsalmNumberId = getArguments().getLong(KEY_PSALM_NUMBER_ID, -10L);
-            mPsalmTextSize = getArguments().getFloat(KEY_PSALM_TEXT_SIZE, -1);
+            mPsalmPreferences = new PsalmPreferences(
+                    getArguments().getFloat(KEY_PSALM_TEXT_SIZE, -1),
+                    getArguments().getBoolean(KEY_PSALM_TEXT_EXPANDED, true)
+            );
         }
         init();
         loadData();
@@ -253,25 +267,17 @@ public class PsalmTextFragment extends Fragment implements LoaderManager.LoaderC
     /**
      * Create new instance of PsalmTextFragment with attached psalmNumberId argument
      * @param psalmNumberId psalmNumber Id
-     * @param psalmTextSize psalm text size
+     * @param preferences psalm text preferences
      * @return instance of PsalmTextFragment
      */
-    public static PsalmTextFragment newInstance(long psalmNumberId, float psalmTextSize) {
+    public static PsalmTextFragment newInstance(long psalmNumberId, PsalmPreferences preferences) {
         final Bundle args = new Bundle();
         args.putLong(KEY_PSALM_NUMBER_ID, psalmNumberId);
-        args.putFloat(KEY_PSALM_TEXT_SIZE, psalmTextSize);
+        args.putFloat(KEY_PSALM_TEXT_SIZE, preferences.getTextSize());
+        args.putBoolean(KEY_PSALM_TEXT_EXPANDED, preferences.isExpandPsalmText());
         PsalmTextFragment fragment = new PsalmTextFragment();
         fragment.setArguments(args);
         return fragment;
-    }
-
-    /**
-     * Create new instance of PsalmTextFragment with attached psalmNumberId argument
-     * @param psalmNumberId psalmNumber Id
-     * @return instance of PsalmTextFragment
-     */
-    public static PsalmTextFragment newInstance(long psalmNumberId) {
-        return newInstance(psalmNumberId, -1);
     }
 
     public void addPsalmToHistory() {
@@ -295,22 +301,21 @@ public class PsalmTextFragment extends Fragment implements LoaderManager.LoaderC
         }
     }
 
+    public void applyPsalmPreferences(PsalmPreferences preferences) {
+        setPsalmTextSize(preferences.getTextSize());
+        mPsalmPreferences = preferences;
+        updateUi();
+    }
+
     public float getPsalmTextSize() {
         return vPsalmText.getTextSize();
     }
 
-    public void setPsalmTextSize(float textSize) {
-        mPsalmTextSize = textSize;
-        setPsalmTextSize();
-        mReferredPsalmsAdapter.setHeaderTextSize(mPsalmTextSize);
-    }
-
-    private void setPsalmTextSize() {
-        if (mPsalmTextSize > 0 && vPsalmText != null && vPsalmTonalities != null && vPsalmInfo != null) {
-            vPsalmText.setTextSize(TypedValue.COMPLEX_UNIT_PX, mPsalmTextSize);
-            vPsalmTonalities.setTextSize(TypedValue.COMPLEX_UNIT_PX, mPsalmTextSize/1.5f);
-            vPsalmInfo.setTextSize(TypedValue.COMPLEX_UNIT_PX, mPsalmTextSize/1.5f);
-        }
+    private void setPsalmTextSize(float psalmTextSize) {
+        if (psalmTextSize < 10 || psalmTextSize > 100) return;
+        if (vPsalmText != null) vPsalmText.setTextSize(TypedValue.COMPLEX_UNIT_PX, psalmTextSize);
+        if (vPsalmTonalities != null) vPsalmTonalities.setTextSize(TypedValue.COMPLEX_UNIT_PX, psalmTextSize/1.5f);
+        if (vPsalmInfo != null) vPsalmInfo.setTextSize(TypedValue.COMPLEX_UNIT_PX, psalmTextSize/1.5f);
     }
 
     /**
@@ -319,7 +324,9 @@ public class PsalmTextFragment extends Fragment implements LoaderManager.LoaderC
     public void addPsalmToFavorites() {
         final String METHOD_NAME = "addPsalmToFavorites";
         if (mPsalmNumberId < 0) return;
-        getActivity().getContentResolver().insert(PwsDataProvider.Favorites.CONTENT_URI, CONTENT_VALUES_FAVORITES);
+        final Activity activity = getActivity();
+        if (activity == null) return;
+        activity.getContentResolver().insert(PwsDataProvider.Favorites.CONTENT_URI, CONTENT_VALUES_FAVORITES);
         mPsalmHolder.setFavoritePsalm(isFavoritePsalm());
         callbacks.onUpdatePsalmInfo(mPsalmHolder);
 
@@ -333,7 +340,9 @@ public class PsalmTextFragment extends Fragment implements LoaderManager.LoaderC
     public void removePsalmFromFavorites() {
         final String METHOD_NAME = "removePsalmFromFavorites";
         if (mPsalmNumberId < 0) return;
-        getActivity().getContentResolver().delete(PwsDataProvider.Favorites.CONTENT_URI, SELECTION_FAVORITES_PSALM_NUMBER_MATCH, SELECTION_ARGS);
+        final Activity activity = getActivity();
+        if (activity == null) return;
+        activity.getContentResolver().delete(PwsDataProvider.Favorites.CONTENT_URI, SELECTION_FAVORITES_PSALM_NUMBER_MATCH, SELECTION_ARGS);
         mPsalmHolder.setFavoritePsalm(false);
         callbacks.onUpdatePsalmInfo(mPsalmHolder);
         Log.v(LOG_TAG, METHOD_NAME + ": Result: isFavoritePsalm=" + mPsalmHolder.isFavoritePsalm());
@@ -345,7 +354,9 @@ public class PsalmTextFragment extends Fragment implements LoaderManager.LoaderC
      */
     public boolean isFavoritePsalm() {
         if (mPsalmNumberId < 0) return false;
-        Cursor cursor = getActivity().getContentResolver().query(PwsDataProvider.Favorites.CONTENT_URI, null, SELECTION_FAVORITES_PSALM_NUMBER_MATCH, SELECTION_ARGS, null);
+        final Activity activity = getActivity();
+        if (activity == null) return false;
+        Cursor cursor = activity.getContentResolver().query(PwsDataProvider.Favorites.CONTENT_URI, null, SELECTION_FAVORITES_PSALM_NUMBER_MATCH, SELECTION_ARGS, null);
         try {
             return cursor != null && cursor.moveToFirst();
         } finally {
@@ -355,8 +366,10 @@ public class PsalmTextFragment extends Fragment implements LoaderManager.LoaderC
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        final Activity activity = getActivity();
+        if (activity == null) return null;
         if (i == PWS_REFERRED_PSALMS_LOADER)
-                return new CursorLoader(getActivity().getBaseContext(), PwsDataProvider.PsalmNumbers.ReferencePsalms.getContentUri(mPsalmNumberId), null, null, null, null);
+                return new CursorLoader(activity.getBaseContext(), PwsDataProvider.PsalmNumbers.ReferencePsalms.getContentUri(mPsalmNumberId), null, null, null, null);
         return null;
     }
 

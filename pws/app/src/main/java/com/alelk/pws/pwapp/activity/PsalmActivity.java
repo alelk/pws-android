@@ -3,6 +3,7 @@ package com.alelk.pws.pwapp.activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,6 +28,7 @@ import com.alelk.pws.pwapp.dialog.SearchPsalmNumberDialogFragment;
 import com.alelk.pws.pwapp.fragment.PsalmHeaderFragment;
 import com.alelk.pws.pwapp.fragment.PsalmTextFragment;
 import com.alelk.pws.pwapp.holder.PsalmHolder;
+import com.alelk.pws.pwapp.preference.PsalmPreferences;
 import com.alelk.pws.pwapp.theme.ThemeType;
 
 import java.util.ArrayList;
@@ -44,7 +46,7 @@ public class PsalmActivity extends AppCompatThemedActivity implements PsalmTextF
     private static final int REQUEST_CODE_FULLSCREEN_ACTIVITY = 1;
     private static final int ADD_TO_HISTORY_DELAY = 5000;
     private Long mPsalmNumberId = -1L;
-    private float mPsalmTextSize = -1;
+    private PsalmPreferences mPsalmPreferences;
     private ViewPager mPagerPsalmText;
     private PsalmHeaderFragment mPsalmHeaderFragment;
     private FloatingActionButton mFabFavorite;
@@ -81,7 +83,7 @@ public class PsalmActivity extends AppCompatThemedActivity implements PsalmTextF
         }
 
         mPagerPsalmText = findViewById(R.id.pager_psalm_text);
-        mPsalmTextPagerAdapter = new PsalmTextFragmentStatePagerAdapter(getSupportFragmentManager(), mBookPsalmNumberIds, mPsalmTextSize);
+        mPsalmTextPagerAdapter = new PsalmTextFragmentStatePagerAdapter(getSupportFragmentManager(), mBookPsalmNumberIds, mPsalmPreferences);
         mPagerPsalmText.setAdapter(mPsalmTextPagerAdapter);
         mPagerPsalmText.setCurrentItem(mBookPsalmNumberIds.indexOf(mPsalmNumberId));
     }
@@ -89,7 +91,11 @@ public class PsalmActivity extends AppCompatThemedActivity implements PsalmTextF
     private void init() {
         if (mPsalmNumberId >= 0) return;
         mPsalmNumberId = getIntent().getLongExtra(KEY_PSALM_NUMBER_ID, -10L);
-        mPsalmTextSize = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getFloat(PsalmTextFragment.KEY_PSALM_TEXT_SIZE, -1);
+        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        mPsalmPreferences = new PsalmPreferences(
+                preferences.getFloat(PsalmTextFragment.KEY_PSALM_TEXT_SIZE, -1.0f),
+                preferences.getBoolean(PsalmTextFragment.KEY_PSALM_TEXT_EXPANDED, true)
+        );
 
         Cursor cursor = null;
         try {
@@ -129,17 +135,13 @@ public class PsalmActivity extends AppCompatThemedActivity implements PsalmTextF
             DialogFragment searchNumberDialog = SearchPsalmNumberDialogFragment.newInstance(mPsalmNumberId);
             searchNumberDialog.show(getSupportFragmentManager(), SearchPsalmNumberDialogFragment.class.getSimpleName());
             return true;
-        } else if (id == R.id.menu_text_size ){
-            if (mPsalmTextSize < 0) {
+        } else if (id == R.id.action_settings || id == R.id.menu_text_size) {
+            if (mPsalmPreferences.getTextSize() < 0) {
                 PsalmTextFragment fragment = (PsalmTextFragment) mPsalmTextPagerAdapter.getRegisteredFragments().get(mPagerPsalmText.getCurrentItem());
-                mPsalmTextSize = fragment.getPsalmTextSize();
+                mPsalmPreferences.setTextSize(fragment.getPsalmTextSize());
             }
-            DialogFragment psalmPreferencesDialog = PsalmPreferencesDialogFragment.newInstance(mPsalmTextSize);
+            DialogFragment psalmPreferencesDialog = PsalmPreferencesDialogFragment.newInstance(mPsalmPreferences);
             psalmPreferencesDialog.show(getSupportFragmentManager(), PsalmPreferencesDialogFragment.class.getSimpleName());
-            return true;
-        } else if (id == R.id.action_settings) {
-            Intent intent = new Intent(this, MainSettingsActivity.class);
-            startActivity(intent);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -188,27 +190,29 @@ public class PsalmActivity extends AppCompatThemedActivity implements PsalmTextF
     }
 
     @Override
-    public void onPsalmTextSizeChanged(float textSize) {
-        mPsalmTextSize = textSize;
+    public void onPreferencesChanged(PsalmPreferences preferences) {
         PsalmTextFragment fragment = (PsalmTextFragment) mPsalmTextPagerAdapter.getRegisteredFragments().get(mPagerPsalmText.getCurrentItem());
-        fragment.setPsalmTextSize(textSize);
+        fragment.applyPsalmPreferences(preferences);
     }
 
     @Override
-    public void onApplyPsalmPreferences(float textSize) {
-        mPsalmTextSize = textSize;
-        PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit()
-                .putFloat(PsalmTextFragment.KEY_PSALM_TEXT_SIZE, textSize).apply();
+    public void onApplyPreferences(PsalmPreferences preferences) {
+        mPsalmPreferences = preferences;
+        PreferenceManager.getDefaultSharedPreferences(getBaseContext())
+                .edit()
+                .putFloat(PsalmTextFragment.KEY_PSALM_TEXT_SIZE, preferences.getTextSize())
+                .putBoolean(PsalmTextFragment.KEY_PSALM_TEXT_EXPANDED, preferences.isExpandPsalmText())
+                .apply();
         PsalmTextFragment fragment = (PsalmTextFragment) mPsalmTextPagerAdapter.getRegisteredFragments().get(mPagerPsalmText.getCurrentItem());
-        fragment.setPsalmTextSize(textSize);
-        mPsalmTextPagerAdapter.applyPsalmTextPreferences(textSize);
+        fragment.applyPsalmPreferences(preferences);
+        mPsalmTextPagerAdapter.applyPsalmPreferences(preferences);
     }
 
     @Override
-    public void onCancelPsalmPreferences(float previousTextSize) {
-        mPsalmTextSize = previousTextSize;
+    public void onCancelPreferences(PsalmPreferences previousPreferences) {
+        mPsalmPreferences = previousPreferences;
         PsalmTextFragment fragment = (PsalmTextFragment) mPsalmTextPagerAdapter.getRegisteredFragments().get(mPagerPsalmText.getCurrentItem());
-        fragment.setPsalmTextSize(previousTextSize);
+        fragment.applyPsalmPreferences(previousPreferences);
     }
 
     private class FabFavoritesOnClick implements View.OnClickListener {

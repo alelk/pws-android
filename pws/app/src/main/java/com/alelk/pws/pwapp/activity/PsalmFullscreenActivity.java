@@ -2,6 +2,7 @@ package com.alelk.pws.pwapp.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,6 +20,7 @@ import com.alelk.pws.pwapp.activity.base.AppCompatThemedActivity;
 import com.alelk.pws.pwapp.adapter.PsalmTextFragmentStatePagerAdapter;
 import com.alelk.pws.pwapp.fragment.PsalmTextFragment;
 import com.alelk.pws.pwapp.holder.PsalmHolder;
+import com.alelk.pws.pwapp.preference.PsalmPreferences;
 
 import java.util.ArrayList;
 
@@ -72,6 +74,7 @@ public class PsalmFullscreenActivity extends AppCompatThemedActivity implements 
     private ArrayList<Long> mBookPsalmNumberIds;
     private ViewPager mPagerPsalmText;
     private PsalmTextFragmentStatePagerAdapter mFragmentStatePagerAdapter;
+    private PsalmPreferences mPsalmPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,13 +107,18 @@ public class PsalmFullscreenActivity extends AppCompatThemedActivity implements 
 
         mPagerPsalmText = findViewById(R.id.pager_psalm_text);
         float psalmTextSize = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getFloat(PsalmTextFragment.KEY_PSALM_TEXT_SIZE, -1);
-        mFragmentStatePagerAdapter = new PsalmTextFragmentStatePagerAdapter(getSupportFragmentManager(), mBookPsalmNumberIds, psalmTextSize);
+        mFragmentStatePagerAdapter = new PsalmTextFragmentStatePagerAdapter(getSupportFragmentManager(), mBookPsalmNumberIds, mPsalmPreferences);
         mPagerPsalmText.setAdapter(mFragmentStatePagerAdapter);
         mPagerPsalmText.setCurrentItem(mBookPsalmNumberIds.indexOf(mPsalmNumberId));
     }
 
     private void init() {
         mPsalmNumberId = getIntent().getLongExtra(KEY_PSALM_NUMBER_ID, -10);
+        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        mPsalmPreferences = new PsalmPreferences(
+                preferences.getFloat(PsalmTextFragment.KEY_PSALM_TEXT_SIZE, -1),
+                preferences.getBoolean(PsalmTextFragment.KEY_PSALM_TEXT_EXPANDED, true)
+        );
         Cursor cursor = null;
         try {
             cursor = getContentResolver().query(PwsDataProvider.PsalmNumbers.Book.BookPsalmNumbers.Info.getContentUri(mPsalmNumberId), null, null, null, null);

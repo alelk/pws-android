@@ -14,7 +14,7 @@
     <item android:id="@+id/menu_jump"
         android:orderInCategory="2"
         android:title="@string/lbl_jump_to_number"
-        android:icon="@drawable/ic_dialpad_black_24dp"
+        android:icon="?attr/toolbarSearchByNumberIcon"
         app:showAsAction="ifRoom"
         />
 

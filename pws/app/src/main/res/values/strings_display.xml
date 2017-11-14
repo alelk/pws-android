@@ -54,4 +54,5 @@
 
     <!-- Psalm preferences dialog display strings. -->
     <string name="lbl_text_size">Text size:</string>
+    <string name="lbl_expand_psalm_text">Chorus after each verse</string>
 </resources>

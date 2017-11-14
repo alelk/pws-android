@@ -53,4 +53,5 @@
 
     <!-- Psalm preferences dialog display strings. -->
     <string name="lbl_text_size">Rozmiar tekstu:</string>
+    <string name="lbl_expand_psalm_text">Refren po każdym wersecie</string>
 </resources>
