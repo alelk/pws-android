@@ -5,6 +5,6 @@
         android:orderInCategory="3"
         android:title="@string/lbl_share"
         android:icon="@drawable/ic_share_black_24dp"
-        app:showAsAction="ifRoom"
+        app:showAsAction="never"
         />
 </menu>

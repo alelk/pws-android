@@ -9,8 +9,10 @@ import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.View;
 import android.widget.SeekBar;
+import android.widget.Switch;
 
 import com.alelk.pws.pwapp.R;
+import com.alelk.pws.pwapp.preference.PsalmPreferences;
 
 /**
  * Psalm Preferences Dialog Fragment
@@ -21,22 +23,25 @@ import com.alelk.pws.pwapp.R;
 public class PsalmPreferencesDialogFragment extends DialogFragment {
 
     public interface OnPsalmPreferencesChangedCallbacks {
-        void onPsalmTextSizeChanged(float textSize);
-        void onApplyPsalmPreferences(float textSize);
-        void onCancelPsalmPreferences(float previousTextSize);
+        void onPreferencesChanged(PsalmPreferences preferences);
+        void onApplyPreferences(PsalmPreferences preferences);
+        void onCancelPreferences(PsalmPreferences previousPreferences);
     }
     public static final String KEY_TEXT_SIZE = "text_size";
+    public static final String KEY_EXPANDED_PSALM_TEXT = "text_is_expanded";
     private static final float MIN_TEXT_SIZE = 10;
     private static final float MAX_TEXT_SIZE = 100;
     private final static String LOG_TAG = PsalmPreferencesDialogFragment.class.getSimpleName();
     private View mLayout;
     private OnPsalmPreferencesChangedCallbacks mCallbacks;
-    private float mTextSizeDefault;
-    private float mChangedTextSize;
 
-    public static PsalmPreferencesDialogFragment newInstance(float currentTextSize) {
+    private PsalmPreferences mDefaultPreferences;
+    private PsalmPreferences mChangedPreferences;
+
+    public static PsalmPreferencesDialogFragment newInstance(PsalmPreferences preferences) {
         Bundle args = new Bundle();
-        args.putFloat(KEY_TEXT_SIZE, currentTextSize);
+        args.putFloat(KEY_TEXT_SIZE, preferences.getTextSize());
+        args.putBoolean(KEY_EXPANDED_PSALM_TEXT, preferences.isExpandPsalmText());
         PsalmPreferencesDialogFragment dialogFragment = new PsalmPreferencesDialogFragment();
         dialogFragment.setArguments(args);
         return dialogFragment;
@@ -47,12 +52,18 @@ public class PsalmPreferencesDialogFragment extends DialogFragment {
         super.onCreate(savedInstanceState);
         mLayout = getActivity().getLayoutInflater().inflate(R.layout.dialog_psalm_preferences, null);
         SeekBar skBrTextSize = mLayout.findViewById(R.id.seek_bar_font_size);
-        skBrTextSize.setProgress((int) ((MAX_TEXT_SIZE - MIN_TEXT_SIZE)/100 * (mTextSizeDefault - MIN_TEXT_SIZE)));
+        Switch switchIsPsalmTextExpanded = mLayout.findViewById(R.id.swtch_expand_psalm_text);
+        switchIsPsalmTextExpanded.setChecked(mDefaultPreferences.isExpandPsalmText());
+        skBrTextSize.setProgress((int) ((MAX_TEXT_SIZE - MIN_TEXT_SIZE)/100 * (mDefaultPreferences.getTextSize() - MIN_TEXT_SIZE)));
+        switchIsPsalmTextExpanded.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            mChangedPreferences.setExpandPsalmText(isChecked);
+            mCallbacks.onPreferencesChanged(mChangedPreferences);
+        });
         skBrTextSize.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                mChangedTextSize = i/(MAX_TEXT_SIZE - MIN_TEXT_SIZE) * 100 + MIN_TEXT_SIZE;
-                mCallbacks.onPsalmTextSizeChanged(mChangedTextSize);
+                mChangedPreferences.setTextSize(i/(MAX_TEXT_SIZE - MIN_TEXT_SIZE) * 100 + MIN_TEXT_SIZE);
+                mCallbacks.onPreferencesChanged(mChangedPreferences);
             }
 
             @Override
@@ -73,8 +84,8 @@ public class PsalmPreferencesDialogFragment extends DialogFragment {
         super.onCreateDialog(savedInstanceState);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(mLayout);
-        builder.setPositiveButton(R.string.lbl_ok, (dialog, which) -> mCallbacks.onApplyPsalmPreferences(mChangedTextSize));
-        builder.setNegativeButton(R.string.lbl_cancel, (dialog, which) -> mCallbacks.onCancelPsalmPreferences(mTextSizeDefault));
+        builder.setPositiveButton(R.string.lbl_ok, (dialog, which) -> mCallbacks.onApplyPreferences(mChangedPreferences));
+        builder.setNegativeButton(R.string.lbl_cancel, (dialog, which) -> mCallbacks.onCancelPreferences(mDefaultPreferences));
         return builder.create();
     }
 
@@ -94,8 +105,11 @@ public class PsalmPreferencesDialogFragment extends DialogFragment {
 
     private void init() {
         if (getArguments() != null) {
-            mTextSizeDefault = getArguments().getFloat(KEY_TEXT_SIZE, 15);
-            mChangedTextSize = mTextSizeDefault;
+            mDefaultPreferences = new PsalmPreferences(
+                    getArguments().getFloat(KEY_TEXT_SIZE, 15),
+                    getArguments().getBoolean(KEY_EXPANDED_PSALM_TEXT, false)
+            );
+            mChangedPreferences = new PsalmPreferences(mDefaultPreferences.getTextSize(), mDefaultPreferences.isExpandPsalmText());
         }
     }
 }

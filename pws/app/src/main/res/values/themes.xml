@@ -49,6 +49,7 @@
         <item name="toolbarBackground">@drawable/im_appbar_background</item>
         <item name="toolbarSearchByNumberIcon">@drawable/ic_dialpad_black_24dp</item>
         <item name="toolbarSearchByTextIcon">@drawable/ic_search_black_24dp</item>
+        <item name="cardBackgroundColor">@android:color/white</item>
         <item name="fullscreanBackground">#fff</item>
     </style>
 
@@ -63,6 +64,7 @@
         <item name="textAppearanceTitle">@style/Base.TextAppearance.AppCompat.Title</item>
         <item name="textAppearanceTitleInverse">@style/Base.TextAppearance.AppCompat.Title.Inverse</item>
         <item name="navigationHeaderBackground">?colorPrimary</item>
+        <item name="cardBackgroundColor">#222</item>
         <item name="toolbarBackgroundFilter">#d2000000</item>
         <item name="toolbarBackground">@drawable/im_appbar_background</item>
         <item name="toolbarSearchByNumberIcon">@drawable/ic_dialpad_white_24dp</item>

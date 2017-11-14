@@ -8,6 +8,7 @@ import android.util.SparseArray;
 import android.view.ViewGroup;
 
 import com.alelk.pws.pwapp.fragment.PsalmTextFragment;
+import com.alelk.pws.pwapp.preference.PsalmPreferences;
 
 import java.util.ArrayList;
 
@@ -20,17 +21,17 @@ public class PsalmTextFragmentStatePagerAdapter extends FragmentStatePagerAdapte
 
     private SparseArray<Fragment> mRegisteredFragments = new SparseArray<>();
     private ArrayList<Long> mPsalmNumberIdList;
-    private float mPsalmTextSize = -1;
+    private PsalmPreferences mPsalmPreferences;
 
-    public PsalmTextFragmentStatePagerAdapter(FragmentManager fm, ArrayList<Long> psalmNumberIdList, float psalmTextSize) {
+    public PsalmTextFragmentStatePagerAdapter(FragmentManager fm, ArrayList<Long> psalmNumberIdList, PsalmPreferences psalmPreferences) {
         super(fm);
         mPsalmNumberIdList = psalmNumberIdList;
-        mPsalmTextSize = psalmTextSize;
+        mPsalmPreferences = psalmPreferences;
     }
 
     @Override
     public Fragment getItem(int position) {
-        return PsalmTextFragment.newInstance(mPsalmNumberIdList.get(position), mPsalmTextSize);
+        return PsalmTextFragment.newInstance(mPsalmNumberIdList.get(position), mPsalmPreferences);
     }
 
     @Override
@@ -56,11 +57,11 @@ public class PsalmTextFragmentStatePagerAdapter extends FragmentStatePagerAdapte
         return mRegisteredFragments;
     }
 
-    public void applyPsalmTextPreferences(float psalmTextSize) {
-        mPsalmTextSize = psalmTextSize;
+    public void applyPsalmPreferences(PsalmPreferences preferences) {
+        mPsalmPreferences = preferences;
         for (int i = 0; i < mRegisteredFragments.size(); i++) {
             final PsalmTextFragment fragment = (PsalmTextFragment) mRegisteredFragments.valueAt(i);
-            fragment.setPsalmTextSize(psalmTextSize);
+            fragment.applyPsalmPreferences(mPsalmPreferences);
         }
     }
 }

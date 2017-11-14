@@ -6,7 +6,6 @@ import android.text.TextUtils;
 
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.StringTokenizer;
 
 /**
  * Pws Psalm Util
@@ -15,47 +14,15 @@ import java.util.StringTokenizer;
  */
 public class PwsPsalmUtil {
 
-    private final static String PSALM_VERSE_NUMBER_REGEX = "^\\s*+(\\d{1,2})\\.\\s*+$";
-    private final static String PSALM_VERSE_LABEL_FORMAT = "^\\s*+\\[(%s)\\s*+(\\d{1,2})\\]\\s*+$";
-    private final static String PSALM_CHORUS_NUMBER_FORMAT = "^\\s*+(%s)\\s*+(\\d{1,2})??:\\s*+$";
-    private final static String PSALM_CHORUS_LABEL_FORMAT = "^\\s*+\\[(%s)\\s*+(\\d{1,2})??\\]\\s*+$";
-
-    private static String getPsalmVerseNumberRegex() {
-        return PSALM_VERSE_NUMBER_REGEX;
-    }
-
-    private static String getPsalmVerseLabelRegex(Locale locale) {
-        return String.format(PSALM_VERSE_LABEL_FORMAT, getLocalizedString("lbl_verse", locale));
-    }
-
-    private static String getPsalmChorusNumberRegex(Locale locale) {
-        return String.format(PSALM_CHORUS_NUMBER_FORMAT, getLocalizedString("lbl_chorus", locale));
-    }
-
-    private static String getPsalmChorusLabelRegex(Locale locale) {
-        return String.format(PSALM_CHORUS_LABEL_FORMAT, getLocalizedString("lbl_chorus", locale));
-    }
+    private static PwsPsalmHtmlBuilder builder = new PwsPsalmHtmlBuilder(Locale.getDefault());
 
     public static String psalmTextToHtml(Locale locale, String psalmText) {
-        StringTokenizer tokenizer = new StringTokenizer(psalmText, "\n");
-        final String pVerseNumberRgx = getPsalmVerseNumberRegex();
-        final String pVerseLabelRgx = getPsalmVerseLabelRegex(locale);
-        final String pChorusNumberRgx = getPsalmChorusNumberRegex(locale);
-        final String pChorusLabelRgx = getPsalmChorusLabelRegex(locale);
+        return psalmTextToHtml(locale, psalmText, true);
+    }
 
-        StringBuilder html = new StringBuilder();
-
-        while (tokenizer.hasMoreTokens()) {
-            String line = tokenizer.nextToken();
-            if (line.matches(pVerseLabelRgx) || line.matches(pChorusLabelRgx)) {
-                html.append("<font color='#888888'><i>").append(line).append("</i></font><br>");
-            } else if (line.matches(pVerseNumberRgx) || line.matches(pChorusNumberRgx)) {
-                html.append("<font color='#7aaf83'>").append(line.replace('.', ' ')).append("</font><br>");
-            } else {
-                html.append(line).append("<br>");
-            }
-        }
-        return html.toString();
+    public static String psalmTextToHtml(Locale locale, String psalmText, boolean isExpanded) {
+        builder = builder.forLocale(locale);
+        return builder.buildHtml(psalmText, isExpanded);
     }
 
     public static String psalmTextToPrettyHtml(
