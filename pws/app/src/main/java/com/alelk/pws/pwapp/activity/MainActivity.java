@@ -18,7 +18,6 @@ package com.alelk.pws.pwapp.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
 import androidx.annotation.NonNull;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
@@ -40,7 +39,6 @@ import com.alelk.pws.pwapp.activity.base.AppCompatThemedActivity;
 import com.alelk.pws.pwapp.fragment.FavoritesFragment;
 import com.alelk.pws.pwapp.fragment.HistoryFragment;
 import com.alelk.pws.pwapp.fragment.ReadNowFragment;
-import com.alelk.pws.pwapp.fragment.preference.DonatePreferenceFragment;
 import com.alelk.pws.pwapp.theme.ThemeType;
 
 
@@ -148,13 +146,6 @@ public class MainActivity extends AppCompatThemedActivity implements NavigationV
                 break;
             case R.id.drawer_main_settings:
                 intent = new Intent(this, MainSettingsActivity.class);
-                startActivity(intent);
-                result = true;
-                break;
-            case R.id.drawer_main_donate:
-                intent = new Intent(this, MainSettingsActivity.class);
-                intent.putExtra(PreferenceActivity.EXTRA_SHOW_FRAGMENT, DonatePreferenceFragment.class.getName());
-                intent.putExtra( PreferenceActivity.EXTRA_NO_HEADERS, true );
                 startActivity(intent);
                 result = true;
                 break;

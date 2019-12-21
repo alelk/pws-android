@@ -37,9 +37,5 @@
             android:id="@+id/drawer_main_settings"
             android:icon="@drawable/ic_settings_black_24dp"
             android:title="@string/lbl_drawer_main_settings" />
-        <item
-            android:id="@+id/drawer_main_donate"
-            android:icon="@drawable/ic_donate_black_24dp"
-            android:title="@string/pref_header_donate" />
     </group>
 </menu>
