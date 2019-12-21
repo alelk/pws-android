@@ -18,6 +18,8 @@ package com.alelk.pws.pwapp.adapter;
 
 import android.content.Context;
 import android.database.Cursor;
+
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -65,13 +67,9 @@ public class ReferredPsalmsRecyclerViewAdapter extends RecyclerView.Adapter<Recy
         notifyDataSetChanged();
     }
 
-    public void setHeaderTextSize(float textSize) {
-        mHeaderTextSize = textSize;
-        if (getItemCount() >= 2) notifyItemChanged(0);
-    }
-
+    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == TYPE_HEADER) {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_referred_psalm_list_header, parent, false);
             return new HeaderViewHolder(v);
@@ -81,7 +79,7 @@ public class ReferredPsalmsRecyclerViewAdapter extends RecyclerView.Adapter<Recy
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (position == 0) {
             if (mHeaderTextSize < MIN_HEADER_TEXT_SIZE) return;
             HeaderViewHolder headerViewHolder = (HeaderViewHolder) holder;

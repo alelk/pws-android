@@ -20,28 +20,30 @@ import android.app.Dialog;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.fragment.app.DialogFragment;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.CursorLoader;
-import androidx.loader.content.Loader;
-import androidx.appcompat.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.DialogFragment;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.CursorLoader;
+import androidx.loader.content.Loader;
+
 import com.alelk.pws.database.provider.PwsDataProvider;
 import com.alelk.pws.pwapp.R;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * Search Psalm Number Dialog Fragment
- *
+ * <p>
  * Created by Alex Elkin on 12.06.2016.
  */
 public class SearchPsalmNumberDialogFragment extends DialogFragment implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -52,6 +54,7 @@ public class SearchPsalmNumberDialogFragment extends DialogFragment implements L
 
     public interface SearchPsalmNumberDialogListener {
         void onPositiveButtonClick(long psalmNumberId);
+
         void onNegativeButtonClick();
     }
 
@@ -64,21 +67,20 @@ public class SearchPsalmNumberDialogFragment extends DialogFragment implements L
     private EditText mTxtPsalmNumber;
     private View mView;
 
+    @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        switch (id) {
-            case PWS_PSALM_NUMBER_LOADER:
-                return new CursorLoader(getActivity().getBaseContext(),
-                        PwsDataProvider.PsalmNumbers.Book.BookPsalmNumbers.Info.getContentUri(mCurrentPsalmNumberId),
-                        PwsDataProvider.PsalmNumbers.Book.BookPsalmNumbers.Info.PROJECTION,
-                        null, null, null);
-            default:
+        if (id == PWS_PSALM_NUMBER_LOADER) {
+            return new CursorLoader(Objects.requireNonNull(getActivity()).getBaseContext(),
+                    PwsDataProvider.PsalmNumbers.Book.BookPsalmNumbers.Info.getContentUri(mCurrentPsalmNumberId),
+                    PwsDataProvider.PsalmNumbers.Book.BookPsalmNumbers.Info.PROJECTION,
+                    null, null, null);
         }
         return null;
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor cursor) {
         if (cursor != null && cursor.moveToFirst()) {
             mMinNumber = cursor.getInt(cursor.getColumnIndex(
                     PwsDataProvider.PsalmNumbers.Book.BookPsalmNumbers.Info.COLUMN_MIN_PSALMNUMBER));
@@ -149,6 +151,7 @@ public class SearchPsalmNumberDialogFragment extends DialogFragment implements L
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
+
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 try {
@@ -158,6 +161,7 @@ public class SearchPsalmNumberDialogFragment extends DialogFragment implements L
                     mPsalmNumberId = -1;
                 }
             }
+
             @Override
             public void afterTextChanged(Editable s) {
             }
@@ -167,7 +171,7 @@ public class SearchPsalmNumberDialogFragment extends DialogFragment implements L
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        getLoaderManager().initLoader(PWS_PSALM_NUMBER_LOADER, null, this);
+        LoaderManager.getInstance(this).initLoader(PWS_PSALM_NUMBER_LOADER, null, this);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(mView);
         builder.setPositiveButton(R.string.lbl_ok, (dialog, which) -> {

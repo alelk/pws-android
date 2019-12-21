@@ -66,6 +66,7 @@ public class PsalmPreferencesDialogFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getActivity() == null) return;
         mLayout = getActivity().getLayoutInflater().inflate(R.layout.dialog_psalm_preferences, null);
         SeekBar skBrTextSize = mLayout.findViewById(R.id.seek_bar_font_size);
         Switch switchIsPsalmTextExpanded = mLayout.findViewById(R.id.swtch_expand_psalm_text);
@@ -106,7 +107,7 @@ public class PsalmPreferencesDialogFragment extends DialogFragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         final String METHOD_NAME = "onAttach";
         super.onAttach(context);
         try {
