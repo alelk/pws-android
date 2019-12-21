@@ -29,7 +29,6 @@ import android.view.MenuItem;
 
 import com.alelk.pws.pwapp.R;
 import com.alelk.pws.pwapp.fragment.preference.AboutPreferenceFragment;
-import com.alelk.pws.pwapp.fragment.preference.DonatePreferenceFragment;
 import com.alelk.pws.pwapp.fragment.preference.GeneralPreferenceFragment;
 
 import java.util.List;
@@ -96,7 +95,6 @@ public class MainSettingsActivity extends AppCompatPreferenceActivity {
     protected boolean isValidFragment(String fragmentName) {
         return PreferenceFragment.class.getName().equals(fragmentName)
                 || GeneralPreferenceFragment.class.getName().equals(fragmentName)
-                || DonatePreferenceFragment.class.getName().equals(fragmentName)
                 || AboutPreferenceFragment.class.getName().equals(fragmentName);
     }
 }

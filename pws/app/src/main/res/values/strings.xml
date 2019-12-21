@@ -22,7 +22,7 @@
     <!-- Contacts -->
     <string name="email" translatable="false">alelkdev@gmail.com</string>
     <string name="app_page_link" translatable="false">http://sites.google.com/view/pwsongs</string>
-    <string name="developer_page_link" translatable="false">https://sites.google.com/site/elckinne/</string>
+    <string name="developer_page_link" translatable="false">https://alelk.github.io</string>
 
     <!-- Preferences -->
     <string name="pref_books_key" translatable="false">prefGeneralBooks</string>
