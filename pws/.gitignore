@@ -6,5 +6,4 @@ app/src/uk/assets
 .DS_Store
 /build
 /captures
-/gradle
 *.iml
