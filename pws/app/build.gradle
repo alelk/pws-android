@@ -83,12 +83,12 @@ dependencies {
     implementation project(':database')
 
     /* support libraries */
-    implementation "com.android.support:appcompat-v7:$support_version"
-    implementation "com.android.support:cardview-v7:$support_version"
-    implementation "com.android.support:recyclerview-v7:$support_version"
-    implementation "com.android.support:design:$support_version"
-    implementation "com.android.support:support-v4:$support_version"
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
     /* constraint layout */
-    implementation "com.android.support.constraint:constraint-layout:$constraint_layout_version"
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 }

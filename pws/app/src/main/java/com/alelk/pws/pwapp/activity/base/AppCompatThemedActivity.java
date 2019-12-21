@@ -18,8 +18,8 @@ package com.alelk.pws.pwapp.activity.base;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.alelk.pws.pwapp.theme.OnThemeChangeListener;
 import com.alelk.pws.pwapp.theme.ThemePreferences;

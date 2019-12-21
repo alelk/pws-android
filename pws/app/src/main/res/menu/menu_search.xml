@@ -23,5 +23,5 @@
     <item android:id="@+id/menu_search"
         android:title="@string/lbl_search_psalm"
         app:showAsAction="always"
-        app:actionViewClass="android.support.v7.widget.SearchView"/>
+        app:actionViewClass="androidx.appcompat.widget.SearchView"/>
 </menu>
