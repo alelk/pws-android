@@ -17,6 +17,8 @@
 package com.alelk.pws.pwapp.adapter;
 
 import android.database.Cursor;
+
+import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 import android.text.format.DateUtils;
@@ -33,6 +35,7 @@ import com.alelk.pws.pwapp.R;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * History Recycler View Adapter
@@ -58,6 +61,7 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
         notifyDataSetChanged();
     }
 
+    @NonNull
     @Override
     public HistoryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_history_list_item, parent, false);
@@ -65,7 +69,7 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
     }
 
     @Override
-    public void onBindViewHolder(HistoryViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull HistoryViewHolder holder, int position) {
         if (mCursor != null && mCursor.moveToPosition(position)) {
             holder.bind(mCursor, mOnItemClickListener);
         }
@@ -103,7 +107,7 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
             String accessTime = cursor.getString(cursor.getColumnIndex(COLUMN_HISTORYTIMESTAMP));
             SimpleDateFormat df = new SimpleDateFormat(PwsDataProviderContract.HISTORY_TIMESTAMP_FORMAT, Locale.US);
             try {
-                accessTime = (String) DateUtils.getRelativeTimeSpanString(df.parse(accessTime).getTime(), System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS);
+                accessTime = (String) DateUtils.getRelativeTimeSpanString(Objects.requireNonNull(df.parse(accessTime)).getTime(), System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS);
                 timestamp.setText(accessTime);
             } catch (ParseException e) {
                 e.printStackTrace();

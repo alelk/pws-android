@@ -17,6 +17,8 @@
 package com.alelk.pws.pwapp.adapter;
 
 import android.database.Cursor;
+
+import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -51,6 +53,7 @@ public class FavoritesRecyclerViewAdapter extends RecyclerView.Adapter<Favorites
         notifyDataSetChanged();
     }
 
+    @NonNull
     @Override
     public FavoriteViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_favorites_list_item, parent, false);
@@ -58,7 +61,7 @@ public class FavoritesRecyclerViewAdapter extends RecyclerView.Adapter<Favorites
     }
 
     @Override
-    public void onBindViewHolder(FavoriteViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull FavoriteViewHolder holder, int position) {
         if (mCursor != null && mCursor.moveToPosition(position)) {
             holder.bind(mCursor, mOnItemClickListener);
         }

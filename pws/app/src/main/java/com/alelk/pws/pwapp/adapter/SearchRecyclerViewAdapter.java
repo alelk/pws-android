@@ -18,6 +18,8 @@ package com.alelk.pws.pwapp.adapter;
 
 import android.database.Cursor;
 import android.os.Build;
+
+import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 import android.text.Html;
@@ -58,6 +60,7 @@ public class SearchRecyclerViewAdapter extends RecyclerView.Adapter<SearchRecycl
         notifyDataSetChanged();
     }
 
+    @NonNull
     @Override
     public SearchViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_search_list_item, parent, false);
@@ -65,7 +68,7 @@ public class SearchRecyclerViewAdapter extends RecyclerView.Adapter<SearchRecycl
     }
 
     @Override
-    public void onBindViewHolder(SearchViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull SearchViewHolder holder, int position) {
         if (mCursor != null && !mCursor.isClosed() && mCursor.moveToPosition(position)) {
             holder.bind(mCursor, mClickListener);
         }

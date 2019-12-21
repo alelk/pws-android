@@ -135,9 +135,7 @@ public class PsalmFullscreenActivity extends AppCompatThemedActivity implements 
                 preferences.getFloat(PsalmTextFragment.KEY_PSALM_TEXT_SIZE, -1),
                 preferences.getBoolean(PsalmTextFragment.KEY_PSALM_TEXT_EXPANDED, true)
         );
-        Cursor cursor = null;
-        try {
-            cursor = getContentResolver().query(PwsDataProvider.PsalmNumbers.Book.BookPsalmNumbers.Info.getContentUri(mPsalmNumberId), null, null, null, null);
+        try (Cursor cursor = getContentResolver().query(PwsDataProvider.PsalmNumbers.Book.BookPsalmNumbers.Info.getContentUri(mPsalmNumberId), null, null, null, null)) {
             if (cursor != null && cursor.moveToFirst()) {
                 final String[] psalmNumberIdsList = cursor.getString(
                         cursor.getColumnIndex(PwsDataProvider.PsalmNumbers.Book.BookPsalmNumbers.Info.COLUMN_PSALMNUMBERID_LIST))
@@ -150,8 +148,6 @@ public class PsalmFullscreenActivity extends AppCompatThemedActivity implements 
                     }
                 }
             }
-        } finally {
-            if (cursor != null) cursor.close();
         }
     }
 

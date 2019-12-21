@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatThemedActivity implements NavigationV
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(KEY_NAVIGATION_ITEM_ID, mNavigationItemId);
     }
@@ -183,6 +183,7 @@ public class MainActivity extends AppCompatThemedActivity implements NavigationV
                 titleResId = R.string.lbl_drawer_main_favorite;
                 break;
         }
+        if (fragment == null) return;
         CollapsingToolbarLayout collapsingToolbarLayout= findViewById(R.id.collapsing_toolbar_main);
         collapsingToolbarLayout.setTitle(getString(titleResId));
         fragmentTransaction.replace(R.id.fragment_main_container, fragment);
