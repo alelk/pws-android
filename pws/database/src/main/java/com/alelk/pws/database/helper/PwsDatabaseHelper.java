@@ -75,7 +75,7 @@ public class PwsDatabaseHelper extends SQLiteOpenHelper {
                     "first app starting. Trying to create database..");
             try {
                 mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-                mNotificationBuilder = new NotificationCompat.Builder(mContext);
+                mNotificationBuilder = new NotificationCompat.Builder(mContext, "System");
                 mNotificationBuilder.setContentTitle(mContext.getString(R.string.txt_title_database_init))
                         .setSmallIcon(R.drawable.ic_data_usage_black)
                         .setTicker(mContext.getString(R.string.txt_title_database_init));

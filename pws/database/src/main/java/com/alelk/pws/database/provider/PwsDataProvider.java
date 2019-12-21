@@ -26,9 +26,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.Build;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import android.util.Log;
 
 import com.alelk.pws.database.helper.PwsDatabaseHelper;
 import com.alelk.pws.database.table.PwsBookStatisticTable;
@@ -47,7 +48,7 @@ import static com.alelk.pws.database.table.PwsPsalmTable.TABLE_PSALMS;
 
 /**
  * Pws data provider
- *
+ * <p>
  * Created by Alex Elkin on 21.05.2015.
  */
 public class PwsDataProvider extends ContentProvider implements PwsDataProviderContract {
@@ -55,6 +56,7 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
     private static final String LOG_TAG = PwsDataProvider.class.getSimpleName();
 
     private static final UriMatcher URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
+
     static {
         URI_MATCHER.addURI(AUTHORITY, Psalms.PATH, Psalms.URI_MATCH);
         URI_MATCHER.addURI(AUTHORITY, Psalms.PATH_ID, Psalms.URI_MATCH_ID);
@@ -115,7 +117,9 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
                 cursor = queryFavorites(projection, selection, selectionArgs, null, null);
                 break;
             case Favorites.URI_MATCH_ID:
-                cursor = queryFavorite(Long.parseLong(uri.getLastPathSegment()));
+                String n = uri.getLastPathSegment();
+                if (n == null) break;
+                cursor = queryFavorite(Long.parseLong(n));
                 break;
             case History.URI_MATCH:
                 cursor = queryHistory(projection, selection, selectionArgs, null, uri.getQueryParameter(QUERY_PARAMETER_LIMIT));
@@ -141,7 +145,7 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
                     int num = Integer.parseInt(selectionArgs[0]);
                     cursor = querySearchPsalmNumber(num, "50");
                 } catch (NumberFormatException ex) {
-                    String text = (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)? selectionArgs[0].toLowerCase() : selectionArgs[0];
+                    String text = (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) ? selectionArgs[0].toLowerCase() : selectionArgs[0];
                     text = text.trim().replaceAll("\\s++", "* NEAR/6 ") + "*";
                     cursor = querySearchPsalmText(text, "50");
                 }
@@ -262,10 +266,8 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
         Log.v(LOG_TAG, METHOD_NAME + ": uri='" + uri.toString() + "'");
         mDatabase = mDatabaseHelper.getWritableDatabase();
         int m = 0;
-        switch (URI_MATCHER.match(uri)) {
-            case BookStatistic.URI_MATCH_TEXT:
-                m = updateBookStatistic(values, uri.getLastPathSegment());
-                break;
+        if (URI_MATCHER.match(uri) == BookStatistic.URI_MATCH_TEXT) {
+            m = updateBookStatistic(values, uri.getLastPathSegment());
         }
         return m;
     }
@@ -274,8 +276,8 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
     private Cursor queryFavorites(@Nullable String[] projection,
                                   @Nullable String selection,
                                   @Nullable String[] selectionArgs,
-                                   @Nullable String orderBy,
-                                   @Nullable String limit) {
+                                  @Nullable String orderBy,
+                                  @Nullable String limit) {
         final String METHOD_NAME = "queryFavorites";
         if (projection == null) projection = Favorites.PROJECTION;
         if (orderBy == null) orderBy = Favorites.SORT_ORDER;
@@ -292,10 +294,10 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
     }
 
     private Cursor queryHistory(@Nullable String[] projection,
-                                  @Nullable String selection,
-                                  @Nullable String[] selectionArgs,
-                                  @Nullable String orderBy,
-                                  @Nullable String limit) {
+                                @Nullable String selection,
+                                @Nullable String[] selectionArgs,
+                                @Nullable String orderBy,
+                                @Nullable String limit) {
         if (projection == null) projection = History.PROJECTION;
         if (orderBy == null) orderBy = History.SORT_ORDER;
 
@@ -319,7 +321,7 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
 
     private Cursor querySuggestionsPsalmNumber(String psalmNumber,
                                                @Nullable String limit) {
-        return  mDatabase.query(Psalms.Suggestions.SGNUM_TABLES,
+        return mDatabase.query(Psalms.Suggestions.SGNUM_TABLES,
                 Psalms.Suggestions.SGNUM_PROJECTION,
                 Psalms.Suggestions.getSgNumberSelection(psalmNumber), null, Psalms.Suggestions.COLUMN_PSALMID, null,
                 Psalms.Suggestions.SGNUM_SORT_ORDER,
@@ -368,7 +370,7 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
         if (projection == null) projection = PsalmNumbers.Psalm.PROJECTION;
         if (selection == null) {
             selection = PsalmNumbers.Psalm.DEFAULT_SELECTION;
-            selectionArgs = new String[] {Long.toString(psalmNumberId)};
+            selectionArgs = new String[]{Long.toString(psalmNumberId)};
         }
         return mDatabase.query(PsalmNumbers.Psalm.TABLES,
                 projection,
@@ -376,14 +378,14 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
                 null);
     }
 
-    private Cursor queryPsalmNumberBookPsalmNumbers(long psalmNumberId, @Nullable String[] projection){
+    private Cursor queryPsalmNumberBookPsalmNumbers(long psalmNumberId, @Nullable String[] projection) {
         return queryPsalmNumberBookPsalmNumber(psalmNumberId, projection, null, null);
     }
 
     private Cursor queryPsalmNumberBookPsalmNumber(long psalmNumberId,
-                                         @Nullable String[] projection,
-                                         @Nullable String selection,
-                                         @Nullable String[] selectionArgs) {
+                                                   @Nullable String[] projection,
+                                                   @Nullable String selection,
+                                                   @Nullable String[] selectionArgs) {
         final String METHOD_NAME = "queryPsalmNumberBookPsalmNumber";
 
         if (projection == null) projection = PsalmNumbers.Book.BookPsalmNumbers.PROJECTION;
@@ -402,7 +404,8 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
     private Cursor queryPsalmNumberBookPsalmNumberInfo(long psalmNumberId, String[] projection) {
         final String METHOD_NAME = "queryPsalmNumberBookPsalmNumberInfo";
 
-        if (projection == null) projection = PsalmNumbers.Book.BookPsalmNumbers.Info.PROJECTION_PSALMNUMBER_ID;
+        if (projection == null)
+            projection = PsalmNumbers.Book.BookPsalmNumbers.Info.PROJECTION_PSALMNUMBER_ID;
 
         final String rawQuery = SQLiteQueryBuilder.buildQueryString(false,
                 PsalmNumbers.Book.BookPsalmNumbers.Info.buildRawTables(psalmNumberId),
@@ -427,9 +430,9 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
     }
 
     private Cursor queryBookStatistic(@Nullable String[] projection,
-                                @Nullable String selection,
-                                @Nullable String[] selectionArgs,
-                                @Nullable String orderBy) {
+                                      @Nullable String selection,
+                                      @Nullable String[] selectionArgs,
+                                      @Nullable String orderBy) {
         if (projection == null) projection = BookStatistic.PROJECTION;
         if (orderBy == null) orderBy = BookStatistic.SORT_ORDER;
 
@@ -462,31 +465,35 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
             }
         }
         values.put(PwsFavoritesTable.COLUMN_POSITION, favoritePosition);
-        long id=0;
-        try {
+        long id;
+//        try {
             id = mDatabase.insert(TABLE_FAVORITES, null, values);
-        } finally {
-            Log.v(LOG_TAG, METHOD_NAME + ": resultId=" + id + " " +
-                    "values=[keySet=" + Arrays.toString(values.keySet().toArray()) +
-                    " valueSet=" + Arrays.toString(values.valueSet().toArray()) + "]");
-        }
+//        } finally {
+            // TODO: causes error on Android 10:  java.lang.UnsupportedOperationException
+            //        at android.util.MapCollections$EntrySet.toArray(MapCollections.java:248)
+//            Log.v(LOG_TAG, METHOD_NAME + ": resultId=" + id + " " +
+//                    "values=[keySet=" + Arrays.toString(values.keySet().toArray()) +
+//                    " valueSet=" + Arrays.toString(values.valueSet().toArray()) + "]");
+//        }
         return id;
     }
 
     private long insertHistory(ContentValues values) {
-        final String METHOD_NAME = "insertHistory";
+        //final String METHOD_NAME = "insertHistory";
         if (!values.containsKey(History.COLUMN_HISTORYTIMESTAMP)) {
             String timestamp = mDateFormat.format(new Date());
             values.put(PwsHistoryTable.COLUMN_ACCESSTIMESTAMP, timestamp);
         }
-        long id = 0;
-        try {
+        long id;
+        // try {
             id = mDatabase.insert(TABLE_HISTORY, null, values);
-        } finally {
-            Log.v(LOG_TAG, METHOD_NAME + ": resultId=" + id + " " +
-                    "values=[keySet=" + Arrays.toString(values.keySet().toArray()) +
-                    " valueSet=" + Arrays.toString(values.valueSet().toArray()) + "]");
-        }
+        // } finally {
+            // TODO: causes error on Android 10:  java.lang.UnsupportedOperationException
+            //        at android.util.MapCollections$EntrySet.toArray(MapCollections.java:248)
+            // Log.v(LOG_TAG, METHOD_NAME + ": resultId=" + id + " " +
+            //                    "values=[keySet=" + Arrays.toString(values.keySet().toArray()) +
+            //                    " valueSet=" + String.join(", ", new ArrayList<>(values.valueSet())) + "]");
+       // }
         return id;
     }
 
@@ -498,7 +505,7 @@ public class PwsDataProvider extends ContentProvider implements PwsDataProviderC
         return mDatabase.delete(TABLE_HISTORY, whereClause, whereArgs);
     }
 
-    private int updateBookStatistic(ContentValues values, String bookEdition){
+    private int updateBookStatistic(ContentValues values, String bookEdition) {
         final String rawSelection = SQLiteQueryBuilder.buildQueryString(false,
                 BookStatistic.RAW_TABLES,
                 BookStatistic.RAW_PROJECTION,
