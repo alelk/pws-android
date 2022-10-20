@@ -15,10 +15,10 @@
  */
 
 apply plugin: 'com.android.library'
+apply plugin: 'org.jetbrains.kotlin.android'
 
 android {
     compileSdkVersion rootProject.sdkVersion
-    buildToolsVersion rootProject.buildTools
 
     signingConfigs {
         releaseSignConfig {

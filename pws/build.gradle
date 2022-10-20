@@ -16,27 +16,30 @@
 
 import java.text.SimpleDateFormat
 
-ext.sdkVersion = 26
-ext.buildTools = "26.0.2"
-ext.support_version = "27.1.0"
-ext.constraint_layout_version = "1.0.2"
-ext.versionCode = 17
-ext.versionName = "1.2.3"
+ext.sdkVersion = 28
+ext.support_version = "28.0.0"
+ext.constraint_layout_version = "2.0.4"
+ext.versionCode = 18
+ext.versionName = "1.2.4"
 ext.versionNameSuffix = getDate().toLowerCase()
 
 
 allprojects {
     buildscript {
+        ext {
+            kotlin_version = '1.7.20'
+        }
         repositories {
-            jcenter()
+            mavenCentral()
             google()
         }
         dependencies {
-            classpath 'com.android.tools.build:gradle:3.0.1'
+            classpath 'com.android.tools.build:gradle:7.3.1'
+            classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         }
     }
     repositories {
-        jcenter()
+        mavenCentral()
         google()
     }
 }
