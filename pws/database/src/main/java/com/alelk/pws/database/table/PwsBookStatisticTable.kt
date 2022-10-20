@@ -13,19 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package com.alelk.pws.database.table;
+package com.alelk.pws.database.table
 
 /**
  * Pws Book Statistic Table
  *
  * Created by Alex Elkin on 17.03.2016.
  */
-public class PwsBookStatisticTable implements PwsTable {
-    public static final String TABLE_BOOKSTATISTIC = "bookstatistic";
-    public static final String COLUMN_ID = "_id";
-    public static final String COLUMN_BOOKID = "bookid";
-    public static final String COLUMN_USERPREFERENCE = "userpref";
-    public static final String COLUMN_READINGS = "readings";
-    public static final String COLUMN_RATING = "rating";
+object PwsBookStatisticTable : PwsTable {
+    const val TABLE_BOOKSTATISTIC = "bookstatistic"
+    const val COLUMN_ID = "_id"
+    const val COLUMN_BOOKID = "bookid"
+    const val COLUMN_USERPREFERENCE = "userpref"
+    const val COLUMN_READINGS = "readings"
+    const val COLUMN_RATING = "rating"
 }

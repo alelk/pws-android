@@ -173,7 +173,7 @@ public class PsalmTextFragment extends Fragment implements LoaderManager.LoaderC
         String tonalities = null;
         final String[] tonsArray = mPsalmHolder.getPsalmTonalities();
         for (int i = 0; tonsArray != null && i < tonsArray.length; i++) {
-            Tonality tonality = Tonality.getInstanceBySignature(tonsArray[i]);
+            Tonality tonality = Tonality.Companion.getInstanceBySignature(tonsArray[i]);
             if (tonality == null) continue;
             tonalities = (tonalities == null ? "" : ", ") + tonality.getLabel(getActivity());
         }
