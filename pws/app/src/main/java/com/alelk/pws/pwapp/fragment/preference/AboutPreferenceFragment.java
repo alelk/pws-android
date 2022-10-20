@@ -17,6 +17,8 @@
 package com.alelk.pws.pwapp.fragment.preference;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.view.MenuItem;
@@ -45,7 +47,12 @@ public class AboutPreferenceFragment extends PwsPreferenceFragment{
     }
 
     private void init() {
-        mPrefAboutApp.setSummary(getString(R.string.pref_about_app_version_prefix, BuildConfig.VERSION_NAME));
+        try {
+            PackageInfo pi = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0);
+            mPrefAboutApp.setSummary(getString(R.string.pref_about_app_version_prefix, pi.versionName));
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
