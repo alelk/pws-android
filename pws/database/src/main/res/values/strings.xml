@@ -16,7 +16,7 @@
   -->
 
 <resources>
-    <string name="app_name">P&amp;W Songs Database</string>
+    <string name="app_name" translatable="false">P&amp;W Songs Database</string>
 
     <!-- Database initialize dialog -->
     <string name="txt_title_database_init">Database initialize</string>
