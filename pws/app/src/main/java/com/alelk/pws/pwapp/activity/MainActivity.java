@@ -18,18 +18,17 @@ package com.alelk.pws.pwapp.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
-import android.support.annotation.NonNull;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.Toolbar;
 import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -40,7 +39,6 @@ import com.alelk.pws.pwapp.activity.base.AppCompatThemedActivity;
 import com.alelk.pws.pwapp.fragment.FavoritesFragment;
 import com.alelk.pws.pwapp.fragment.HistoryFragment;
 import com.alelk.pws.pwapp.fragment.ReadNowFragment;
-import com.alelk.pws.pwapp.fragment.preference.DonatePreferenceFragment;
 import com.alelk.pws.pwapp.theme.ThemeType;
 
 
@@ -94,7 +92,7 @@ public class MainActivity extends AppCompatThemedActivity implements NavigationV
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(KEY_NAVIGATION_ITEM_ID, mNavigationItemId);
     }
@@ -151,13 +149,6 @@ public class MainActivity extends AppCompatThemedActivity implements NavigationV
                 startActivity(intent);
                 result = true;
                 break;
-            case R.id.drawer_main_donate:
-                intent = new Intent(this, MainSettingsActivity.class);
-                intent.putExtra(PreferenceActivity.EXTRA_SHOW_FRAGMENT, DonatePreferenceFragment.class.getName());
-                intent.putExtra( PreferenceActivity.EXTRA_NO_HEADERS, true );
-                startActivity(intent);
-                result = true;
-                break;
 
         }
         DrawerLayout drawer = findViewById(R.id.layout_main_drawer);
@@ -183,6 +174,7 @@ public class MainActivity extends AppCompatThemedActivity implements NavigationV
                 titleResId = R.string.lbl_drawer_main_favorite;
                 break;
         }
+        if (fragment == null) return;
         CollapsingToolbarLayout collapsingToolbarLayout= findViewById(R.id.collapsing_toolbar_main);
         collapsingToolbarLayout.setTitle(getString(titleResId));
         fragmentTransaction.replace(R.id.fragment_main_container, fragment);

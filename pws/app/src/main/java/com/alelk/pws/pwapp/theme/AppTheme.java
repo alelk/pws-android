@@ -17,11 +17,10 @@
 package com.alelk.pws.pwapp.theme;
 
 import android.content.Context;
-import android.support.annotation.StringRes;
-import android.support.annotation.StyleRes;
+import androidx.annotation.StringRes;
+import androidx.annotation.StyleRes;
 
 import com.alelk.pws.pwapp.R;
-import com.alelk.pws.pwapp.activity.base.AppCompatThemedActivity;
 
 /**
  * App Theme

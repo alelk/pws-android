@@ -81,7 +81,7 @@ class PwsDataProvider : ContentProvider(), PwsDataProviderContract {
       Psalms.PsalmNumbers.URI_MATCH -> {}
       Favorites.URI_MATCH -> cursor =
         queryFavorites(projection, selection, selectionArgs, null, null)
-      Favorites.URI_MATCH_ID -> cursor = queryFavorite(uri.lastPathSegment.toLong())
+      Favorites.URI_MATCH_ID -> cursor = queryFavorite(uri.lastPathSegment!!.toLong())
       History.URI_MATCH -> cursor = queryHistory(
         projection,
         selection,
@@ -92,7 +92,7 @@ class PwsDataProvider : ContentProvider(), PwsDataProviderContract {
       History.Last.URI_MATCH -> cursor =
         queryHistory(projection, null, null, History.Last.SORT_ORDER, History.Last.LIMIT)
       Psalms.Suggestions.URI_MATCH_NUMBER -> cursor = querySuggestionsPsalmNumber(
-        uri.lastPathSegment,
+        uri.lastPathSegment!!,
         uri.getQueryParameter(SearchManager.SUGGEST_PARAMETER_LIMIT)
       )
       Psalms.Suggestions.URI_MATCH_NAME ->
@@ -104,10 +104,11 @@ class PwsDataProvider : ContentProvider(), PwsDataProviderContract {
               uri.getQueryParameter(SearchManager.SUGGEST_PARAMETER_LIMIT)
             )
           }
-          if (cursor == null || cursor.count < 1) cursor = querySuggestionsPsalmText(
-            searchText,
-            uri.getQueryParameter(SearchManager.SUGGEST_PARAMETER_LIMIT)
-          )
+          if ((cursor == null || cursor.count < 1) && searchText != null) cursor =
+            querySuggestionsPsalmText(
+              searchText,
+              uri.getQueryParameter(SearchManager.SUGGEST_PARAMETER_LIMIT)
+            )
         }
       Psalms.Search.URI_MATCH -> {
         if (selectionArgs?.isNotEmpty() == true) {
@@ -216,33 +217,36 @@ class PwsDataProvider : ContentProvider(), PwsDataProviderContract {
     return itemUri!!
   }
 
-  override fun delete(uri: Uri, selection: String, selectionArgs: Array<String>): Int {
+  override fun delete(uri: Uri, selection: String?, selectionArgs: Array<String>?): Int {
     val METHOD_NAME = "delete"
     Log.v(LOG_TAG, "$METHOD_NAME: uri='$uri'")
     mDatabase = mDatabaseHelper!!.writableDatabase
     var n = 0
-    when (URI_MATCHER.match(uri)) {
-      Favorites.URI_MATCH -> n = deleteFavorites(selection, selectionArgs)
-      History.URI_MATCH -> n = deleteHistory(selection, selectionArgs)
-      else -> {}
-    }
+    if (selection != null)
+      when (URI_MATCHER.match(uri)) {
+        Favorites.URI_MATCH -> n = deleteFavorites(selection, selectionArgs ?: emptyArray())
+        History.URI_MATCH -> n = deleteHistory(selection, selectionArgs ?: emptyArray())
+        else -> {}
+      }
     mContext!!.contentResolver.notifyChange(uri, null)
     return n
   }
 
   override fun update(
     uri: Uri,
-    values: ContentValues,
-    selection: String,
-    selectionArgs: Array<String>
+    values: ContentValues?,
+    selection: String?,
+    selectionArgs: Array<String>?
   ): Int {
     val METHOD_NAME = "update"
     Log.v(LOG_TAG, "$METHOD_NAME: uri='$uri'")
     mDatabase = mDatabaseHelper!!.writableDatabase
+    val bookEdition = uri.lastPathSegment
     var m = 0
-    when (URI_MATCHER.match(uri)) {
-      BookStatistic.URI_MATCH_TEXT -> m = updateBookStatistic(values, uri.lastPathSegment)
-    }
+    if (values != null && bookEdition != null)
+      when (URI_MATCHER.match(uri)) {
+        BookStatistic.URI_MATCH_TEXT -> m = updateBookStatistic(values, bookEdition)
+      }
     return m
   }
 

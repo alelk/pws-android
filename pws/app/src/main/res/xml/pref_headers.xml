@@ -22,11 +22,6 @@
         android:title="@string/pref_header_general"/>
 
     <header
-        android:fragment="com.alelk.pws.pwapp.fragment.preference.DonatePreferenceFragment"
-        android:icon="@drawable/ic_donate_black_24dp"
-        android:title="@string/pref_header_donate"/>
-
-    <header
         android:fragment="com.alelk.pws.pwapp.fragment.preference.AboutPreferenceFragment"
         android:icon="@drawable/ic_info_black_24dp"
         android:title="@string/pref_header_about"/>
