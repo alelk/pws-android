@@ -18,7 +18,7 @@ package com.alelk.pws.database.table;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Pws Table Helper

@@ -21,16 +21,13 @@ import android.database.Cursor
 import android.os.Bundle
 import android.os.Handler
 import android.preference.PreferenceManager
-import android.support.design.widget.CollapsingToolbarLayout
-import android.support.design.widget.FloatingActionButton
-import android.support.design.widget.Snackbar
-import android.support.v4.app.DialogFragment
-import android.support.v4.view.ViewPager
-import android.support.v7.widget.SearchView
-import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.widget.SearchView
+import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.DialogFragment
+import androidx.viewpager.widget.ViewPager
 import com.alelk.pws.database.provider.PwsDataProviderContract
 import com.alelk.pws.pwapp.R
 import com.alelk.pws.pwapp.activity.base.AppCompatThemedActivity
@@ -44,6 +41,9 @@ import com.alelk.pws.pwapp.fragment.PsalmTextFragment
 import com.alelk.pws.pwapp.holder.PsalmHolder
 import com.alelk.pws.pwapp.preference.PsalmPreferences
 import com.alelk.pws.pwapp.theme.ThemeType
+import com.google.android.material.appbar.CollapsingToolbarLayout
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
 
 /**
  * Psalm Activity

@@ -5,11 +5,11 @@
     android:background="?attr/fullscreanBackground"
     tools:context="com.alelk.pws.pwapp.activity.PsalmFullscreenActivity">
 
-    <android.support.v4.view.ViewPager
+    <androidx.viewpager.widget.ViewPager
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/pager_psalm_text">
-    </android.support.v4.view.ViewPager>
+    </androidx.viewpager.widget.ViewPager>
 
     <FrameLayout
         android:layout_width="match_parent"

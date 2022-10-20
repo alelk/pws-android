@@ -22,11 +22,11 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.preference.PreferenceManager
-import android.support.v4.view.ViewPager
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
+import androidx.viewpager.widget.ViewPager
 import com.alelk.pws.database.provider.PwsDataProviderContract
 import com.alelk.pws.database.provider.PwsDataProviderContract.PsalmNumbers.Book.BookPsalmNumbers.Info.getContentUri
 import com.alelk.pws.pwapp.R

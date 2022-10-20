@@ -21,7 +21,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.widget.SearchView;
+import androidx.appcompat.widget.SearchView;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -50,6 +50,7 @@ public class SearchActivity extends AppCompatThemedActivity {
 
     @Override
     protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
         setIntent(intent);
         handleIntent();
     }
@@ -68,7 +69,9 @@ public class SearchActivity extends AppCompatThemedActivity {
         } else if (Intent.ACTION_VIEW.equals(getIntent().getAction())) {
             Uri data = getIntent().getData();
             if (data == null) return;
-            long psalmNumberId = Long.parseLong(data.getLastPathSegment());
+            String n = data.getLastPathSegment();
+            if (n == null) return;
+            long psalmNumberId = Long.parseLong(n);
             if (psalmNumberId != -1) {
                 Intent intentPsalmView = new Intent(getApplicationContext(), PsalmActivity.class);
                 intentPsalmView.putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, psalmNumberId);
@@ -100,10 +103,8 @@ public class SearchActivity extends AppCompatThemedActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                break;
+        if (item.getItemId() == android.R.id.home) {
+            finish();
         }
         return super.onOptionsItemSelected(item);
     }

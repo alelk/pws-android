@@ -24,8 +24,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.support.annotation.NonNull;
-import android.support.v4.app.NotificationCompat;
+import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
 import android.util.Log;
 
 import com.alelk.pws.database.R;
@@ -42,9 +42,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import static com.alelk.pws.database.table.PwsFavoritesTable.TABLE_FAVORITES;
-import static com.alelk.pws.database.table.PwsHistoryTable.TABLE_HISTORY;
 
 /**
  * Pws Database Helper
@@ -78,7 +75,7 @@ public class PwsDatabaseHelper extends SQLiteOpenHelper {
                     "first app starting. Trying to create database..");
             try {
                 mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-                mNotificationBuilder = new NotificationCompat.Builder(mContext);
+                mNotificationBuilder = new NotificationCompat.Builder(mContext, "System");
                 mNotificationBuilder.setContentTitle(mContext.getString(R.string.txt_title_database_init))
                         .setSmallIcon(R.drawable.ic_data_usage_black)
                         .setTicker(mContext.getString(R.string.txt_title_database_init));
