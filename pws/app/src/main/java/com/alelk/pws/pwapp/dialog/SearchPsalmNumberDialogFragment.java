@@ -87,10 +87,10 @@ public class SearchPsalmNumberDialogFragment extends DialogFragment implements L
             mMaxNumber = cursor.getInt(cursor.getColumnIndex(
                     PwsDataProvider.PsalmNumbers.Book.BookPsalmNumbers.Info.COLUMN_MAX_PSALMNUMBER));
             final String[] psalmNumberList = cursor.getString(
-                    cursor.getColumnIndex(PwsDataProvider.PsalmNumbers.Book.BookPsalmNumbers.Info.COLUMN_PSALMNUMBER_LIST))
+                            cursor.getColumnIndex(PwsDataProvider.PsalmNumbers.Book.BookPsalmNumbers.Info.COLUMN_PSALMNUMBER_LIST))
                     .split(",");
             final String[] psalmNumberIdList = cursor.getString(
-                    cursor.getColumnIndex(PwsDataProvider.PsalmNumbers.Book.BookPsalmNumbers.Info.COLUMN_PSALMNUMBERID_LIST))
+                            cursor.getColumnIndex(PwsDataProvider.PsalmNumbers.Book.BookPsalmNumbers.Info.COLUMN_PSALMNUMBERID_LIST))
                     .split(",");
             mPsalmNumberIdMap = new HashMap<>(psalmNumberList.length);
             for (int i = 0; i < psalmNumberList.length; i++) {
