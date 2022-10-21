@@ -89,7 +89,7 @@ class PsalmActivity : AppCompatThemedActivity(), PsalmTextFragment.Callbacks,
     mPsalmTextPagerAdapter = PsalmTextFragmentStatePagerAdapter(
       supportFragmentManager,
       mBookPsalmNumberIds,
-      mPsalmPreferences
+      mPsalmPreferences!!
     )
     mPagerPsalmText!!.adapter = mPsalmTextPagerAdapter
     mPagerPsalmText!!.currentItem = mBookPsalmNumberIds!!.indexOf(mPsalmNumberId)
@@ -159,7 +159,7 @@ class PsalmActivity : AppCompatThemedActivity(), PsalmTextFragment.Callbacks,
         mPsalmPreferences!!.textSize = fragment.psalmTextSize
       }
       val psalmPreferencesDialog: DialogFragment =
-        PsalmPreferencesDialogFragment.newInstance(mPsalmPreferences)
+        PsalmPreferencesDialogFragment.newInstance(mPsalmPreferences!!)
       psalmPreferencesDialog.show(
         supportFragmentManager,
         PsalmPreferencesDialogFragment::class.java.simpleName
@@ -211,26 +211,26 @@ class PsalmActivity : AppCompatThemedActivity(), PsalmTextFragment.Callbacks,
   }
 
   override fun onNegativeButtonClick() {}
-  override fun onPreferencesChanged(preferences: PsalmPreferences) {
+  override fun onPreferencesChanged(preferences: PsalmPreferences?) {
     val fragment =
       mPsalmTextPagerAdapter!!.registeredFragments[mPagerPsalmText!!.currentItem] as PsalmTextFragment
     fragment.applyPsalmPreferences(preferences)
   }
 
-  override fun onApplyPreferences(preferences: PsalmPreferences) {
+  override fun onApplyPreferences(preferences: PsalmPreferences?) {
     mPsalmPreferences = preferences
     PreferenceManager.getDefaultSharedPreferences(baseContext)
       .edit()
-      .putFloat(PsalmTextFragment.KEY_PSALM_TEXT_SIZE, preferences.textSize)
+      .putFloat(PsalmTextFragment.KEY_PSALM_TEXT_SIZE, preferences!!.textSize)
       .putBoolean(PsalmTextFragment.KEY_PSALM_TEXT_EXPANDED, preferences.isExpandPsalmText)
       .apply()
     val fragment =
       mPsalmTextPagerAdapter!!.registeredFragments[mPagerPsalmText!!.currentItem] as PsalmTextFragment
     fragment.applyPsalmPreferences(preferences)
-    mPsalmTextPagerAdapter!!.applyPsalmPreferences(preferences)
+    mPsalmTextPagerAdapter!!.applyPsalmPreferences(preferences!!)
   }
 
-  override fun onCancelPreferences(previousPreferences: PsalmPreferences) {
+  override fun onCancelPreferences(previousPreferences: PsalmPreferences?) {
     mPsalmPreferences = previousPreferences
     val fragment =
       mPsalmTextPagerAdapter!!.registeredFragments[mPagerPsalmText!!.currentItem] as PsalmTextFragment
@@ -261,9 +261,8 @@ class PsalmActivity : AppCompatThemedActivity(), PsalmTextFragment.Callbacks,
     }
   }
 
-  override fun getThemeType(): ThemeType {
-    return ThemeType.NO_ACTION_BAR
-  }
+  override val themeType: ThemeType
+    get() = ThemeType.NO_ACTION_BAR
 
   companion object {
     const val KEY_PSALM_NUMBER_ID = "psalmNumberId"

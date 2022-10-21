@@ -102,7 +102,7 @@ class PsalmFullscreenActivity : AppCompatThemedActivity(), PsalmTextFragment.Cal
     mFragmentStatePagerAdapter = PsalmTextFragmentStatePagerAdapter(
       supportFragmentManager,
       mBookPsalmNumberIds,
-      mPsalmPreferences
+      mPsalmPreferences!!
     )
     mPagerPsalmText!!.adapter = mFragmentStatePagerAdapter
     mPagerPsalmText!!.currentItem = mBookPsalmNumberIds!!.indexOf(mPsalmNumberId)
