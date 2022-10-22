@@ -23,7 +23,7 @@ android {
         releaseSignConfig {
             keyAlias 'pws'
             keyPassword '1234eaea'
-            storeFile file('/home/alex/Projects/pws/pws keystore/alelk-keystrore.jks')
+            storeFile file('/Users/alexelkin/Projects/software-development/android-keystore/alelk-keystrore.jks')
             storePassword '1234eaea'
         }
     }
