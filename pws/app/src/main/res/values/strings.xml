@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2018 The P&W Songs Open Source Project
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,16 +15,16 @@
   -->
 
 <resources>
-    <string name="open_drawer" translatable="false">Open drawer</string>
-    <string name="close_drawer" translatable="false">Close drawer</string>
+  <string name="open_drawer" translatable="false">Open drawer</string>
+  <string name="close_drawer" translatable="false">Close drawer</string>
 
-    <!-- Contacts -->
-    <string name="email" translatable="false">alelkdev@gmail.com</string>
-    <string name="app_page_link" translatable="false">http://sites.google.com/view/pwsongs</string>
-    <string name="developer_page_link" translatable="false">https://alelk.github.io</string>
+  <!-- Contacts -->
+  <string name="email" translatable="false">alelkdev@gmail.com</string>
+  <string name="app_page_link" translatable="false">http://sites.google.com/view/pwsongs</string>
+  <string name="developer_page_link" translatable="false">https://alelk.github.io</string>
 
-    <!-- Preferences -->
-    <string name="pref_books_key" translatable="false">prefGeneralBooks</string>
-    <string name="pref_themes_key" translatable="false">prefGeneralThemes</string>
-    <string name="pref_about_app_key" translatable="false">prefAboutApp</string>
+  <!-- Preferences -->
+  <string name="pref_books_key" translatable="false">prefGeneralBooks</string>
+  <string name="pref_themes_key" translatable="false">prefGeneralThemes</string>
+  <string name="pref_about_app_key" translatable="false">prefAboutApp</string>
 </resources>

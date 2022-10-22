@@ -15,74 +15,27 @@
  */
 package com.alelk.pws.pwapp.activity
 
-import android.content.Context
-import android.content.Intent
-import android.content.res.Configuration
 import android.os.Bundle
-import android.view.MenuItem
-import androidx.preference.PreferenceFragmentCompat
 import com.alelk.pws.pwapp.R
-import com.alelk.pws.pwapp.fragment.preference.AboutPreferenceFragment
-import com.alelk.pws.pwapp.fragment.preference.GeneralPreferenceFragment
+import com.alelk.pws.pwapp.activity.base.AppCompatThemedActivity
+import com.alelk.pws.pwapp.fragment.preference.RootPreferenceFragment
 
 /**
  * A [PreferenceActivity] that contains main PWS App settings.
  *
  * Created by Alex Elkin on 18.02.2016.
  */
-class MainSettingsActivity : AppCompatPreferenceActivity() {
-  @Deprecated("Deprecated in Java")
+class MainSettingsActivity : AppCompatThemedActivity() {
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setupActionBar()
+    setContentView(R.layout.activity_settings)
+//    setupActionBar()
+    supportFragmentManager.beginTransaction().replace(R.id.fragment_settings, RootPreferenceFragment()).commit()
   }
 
-  /**
-   * Set up the [android.app.ActionBar].
-   */
-  private fun setupActionBar() {
-    val actionBar = supportActionBar
-    actionBar?.setDisplayHomeAsUpEnabled(true)
-  }
-
-  @Deprecated("Deprecated in Java")
-  override fun onOptionsItemSelected(item: MenuItem): Boolean {
-    startActivity(Intent(this, MainActivity::class.java))
-    return super.onOptionsItemSelected(item)
-  }
-
-//  /**
-//   * {@inheritDoc}
-//   */
-//  @Deprecated("Deprecated in Java")
-//  override fun onIsMultiPane(): Boolean {
-//    return isXLarge(this)
+//  private fun setupActionBar() {
+//    val actionBar = supportActionBar
+//    actionBar?.setDisplayHomeAsUpEnabled(true)
 //  }
-//
-//  /**
-//   * {@inheritDoc}
-//   */
-//  @Deprecated("Deprecated in Java")
-//  override fun onBuildHeaders(target: List<Header>) {
-//    loadHeadersFromResource(R.xml.pref_headers, target)
-//  }
-//
-//  /**
-//   * This method stops fragment injection in malicious applications.
-//   * Make sure to deny any unknown fragments here.
-//   */
-//  @Deprecated("Deprecated in Java")
-//  override fun isValidFragment(fragmentName: String): Boolean {
-//    return PreferenceFragmentCompat::class.java.name == fragmentName || GeneralPreferenceFragment::class.java.name == fragmentName || AboutPreferenceFragment::class.java.name == fragmentName
-//  }
-
-  companion object {
-    /**
-     * Determine if the extra-large screen.
-     */
-    private fun isXLarge(context: Context): Boolean {
-      return (context.resources.configuration.screenLayout
-        and Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_XLARGE
-    }
-  }
 }

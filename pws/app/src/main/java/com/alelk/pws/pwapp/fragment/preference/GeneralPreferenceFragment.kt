@@ -28,6 +28,7 @@ import androidx.loader.content.Loader
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
+import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import androidx.preference.SwitchPreference
 import com.alelk.pws.database.provider.PwsDataProviderContract
@@ -43,12 +44,11 @@ import com.alelk.pws.pwapp.theme.ThemePreferences
  *
  * Created by Alex Elkin on 06.08.2016.
  */
-class GeneralPreferenceFragment : PwsPreferenceFragment(), LoaderManager.LoaderCallbacks<Cursor?> {
+class GeneralPreferenceFragment : PreferenceFragmentCompat(), LoaderManager.LoaderCallbacks<Cursor?> {
   private var booksCategory: PreferenceCategory? = null
   private var mThemePreferences: ThemePreferences? = null
   private var mThemeListPreference: ListPreference? = null
   override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-    super.onCreate(savedInstanceState)
     addPreferencesFromResource(R.xml.pref_general)
     booksCategory = findPreference(getString(R.string.pref_books_key)) as PreferenceCategory?
     mThemeListPreference = findPreference(getString(R.string.pref_themes_key)) as ListPreference?

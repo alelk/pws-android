@@ -14,47 +14,48 @@
   ~ limitations under the License.
   -->
 
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
-    <PreferenceCategory app:title="@string/pref_about_app_title">
-        <Preference
-            app:icon="@mipmap/ic_launcher"
-            app:key="@string/pref_about_app_key"
-            app:selectable="false"
-            app:title="@string/app_name" />
-        <Preference
-            app:icon="@drawable/ic_public_blue_24dp"
-            app:title="@string/pref_about_app_page_title">
-            <intent
-                app:action="android.intent.action.VIEW"
-                app:data="@string/pref_about_app_page_link" />
-        </Preference>
-    </PreferenceCategory>
-    <PreferenceCategory app:title="@string/pref_about_developer_title">
-        <Preference
-            app:icon="@drawable/ic_account_circle_blue_24dp"
-            app:summary="@string/pref_about_developer_alex_summary"
-            app:title="@string/pref_about_developer_alex_title">
-            <intent
-                app:action="android.intent.action.VIEW"
-                app:data="@string/pref_about_developer_alex_link" />
-        </Preference>
-        <Preference
-            app:icon="@drawable/ic_contact_mail_blue_24dp"
-            app:summary="@string/pref_about_developer_vera_summary"
-            app:title="@string/pref_about_developer_vera_title">
-            <intent
-                app:action="android.intent.action.SENDTO"
-                app:data="@string/pref_about_developer_vera_intent_data" />
-        </Preference>
-    </PreferenceCategory>
-    <PreferenceCategory app:title="@string/pref_about_contact_title">
-        <Preference
-            app:icon="@drawable/ic_email_blue_24dp"
-            app:summary="@string/pref_about_contact_email_summary"
-            app:title="@string/pref_about_contact_email_title">
-            <intent
-                app:action="android.intent.action.SENDTO"
-                app:data="@string/pref_about_contact_email_intent_data" />
-        </Preference>
-    </PreferenceCategory>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+  <PreferenceCategory app:title="@string/pref_about_app_title">
+    <Preference
+      app:icon="@mipmap/ic_launcher"
+      app:key="@string/pref_about_app_key"
+      app:selectable="false"
+      app:title="@string/app_name" />
+    <Preference
+      app:icon="@drawable/ic_public_blue_24dp"
+      app:title="@string/pref_about_app_page_title">
+      <intent
+        android:action="android.intent.action.VIEW"
+        android:data="@string/pref_about_app_page_link" />
+    </Preference>
+  </PreferenceCategory>
+  <PreferenceCategory app:title="@string/pref_about_developer_title">
+    <Preference
+      app:icon="@drawable/ic_account_circle_blue_24dp"
+      app:summary="@string/pref_about_developer_alex_summary"
+      app:title="@string/pref_about_developer_alex_title">
+      <intent
+        android:action="android.intent.action.VIEW"
+        android:data="@string/pref_about_developer_alex_link" />
+    </Preference>
+    <Preference
+      app:icon="@drawable/ic_contact_mail_blue_24dp"
+      app:summary="@string/pref_about_developer_vera_summary"
+      app:title="@string/pref_about_developer_vera_title">
+      <intent
+        android:action="android.intent.action.SENDTO"
+        android:data="@string/pref_about_developer_vera_intent_data" />
+    </Preference>
+  </PreferenceCategory>
+  <PreferenceCategory app:title="@string/pref_about_contact_title">
+    <Preference
+      app:icon="@drawable/ic_email_blue_24dp"
+      app:summary="@string/pref_about_contact_email_summary"
+      app:title="@string/pref_about_contact_email_title">
+      <intent
+        android:action="android.intent.action.SENDTO"
+        android:data="@string/pref_about_contact_email_intent_data" />
+    </Preference>
+  </PreferenceCategory>
 </PreferenceScreen>
