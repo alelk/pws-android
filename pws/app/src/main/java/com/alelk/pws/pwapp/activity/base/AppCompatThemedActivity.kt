@@ -18,7 +18,7 @@ package com.alelk.pws.pwapp.activity.base
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.alelk.pws.pwapp.theme.OnThemeChangeListener
+import com.alelk.pws.pwapp.theme.AppTheme
 import com.alelk.pws.pwapp.theme.ThemePreferences
 import com.alelk.pws.pwapp.theme.ThemeType
 
@@ -32,7 +32,7 @@ open class AppCompatThemedActivity : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     mThemePreferences = ThemePreferences(this)
-    setTheme(mThemePreferences!!.appTheme.getThemeResId(themeType))
+    setTheme(mThemePreferences!!.appTheme.getThemeResId(themeType!!))
     mThemePreferences!!.registerThemeChangeListener(onThemeChange)
   }
 
@@ -48,7 +48,7 @@ open class AppCompatThemedActivity : AppCompatActivity() {
     finish()
   }
 
-  private val onThemeChange = OnThemeChangeListener { restartActivity() }
+  private val onThemeChange: (AppTheme) -> Unit = { restartActivity() }
   protected open val themeType: ThemeType?
     get() = ThemeType.NORMAL
 }

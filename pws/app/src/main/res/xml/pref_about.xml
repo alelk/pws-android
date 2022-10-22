@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2018 The P&W Songs Open Source Project
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,38 +14,47 @@
   ~ limitations under the License.
   -->
 
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory android:title="@string/pref_about_app_title">
-        <Preference android:key="@string/pref_about_app_key"
-            android:selectable="false"
-            android:title="@string/app_name"
-            android:icon="@mipmap/ic_launcher"/>
-        <Preference android:title="@string/pref_about_app_page_title"
-            android:icon="@drawable/ic_public_blue_24dp">
-            <intent android:action="android.intent.action.VIEW"
-                android:data="@string/pref_about_app_page_link"/>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory app:title="@string/pref_about_app_title">
+        <Preference
+            app:icon="@mipmap/ic_launcher"
+            app:key="@string/pref_about_app_key"
+            app:selectable="false"
+            app:title="@string/app_name" />
+        <Preference
+            app:icon="@drawable/ic_public_blue_24dp"
+            app:title="@string/pref_about_app_page_title">
+            <intent
+                app:action="android.intent.action.VIEW"
+                app:data="@string/pref_about_app_page_link" />
         </Preference>
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/pref_about_developer_title">
-        <Preference android:title="@string/pref_about_developer_alex_title"
-            android:summary="@string/pref_about_developer_alex_summary"
-            android:icon="@drawable/ic_account_circle_blue_24dp">
-            <intent android:action="android.intent.action.VIEW"
-                android:data="@string/pref_about_developer_alex_link"/>
+    <PreferenceCategory app:title="@string/pref_about_developer_title">
+        <Preference
+            app:icon="@drawable/ic_account_circle_blue_24dp"
+            app:summary="@string/pref_about_developer_alex_summary"
+            app:title="@string/pref_about_developer_alex_title">
+            <intent
+                app:action="android.intent.action.VIEW"
+                app:data="@string/pref_about_developer_alex_link" />
         </Preference>
-        <Preference android:title="@string/pref_about_developer_vera_title"
-            android:summary="@string/pref_about_developer_vera_summary"
-            android:icon="@drawable/ic_contact_mail_blue_24dp">
-            <intent android:action="android.intent.action.SENDTO"
-                android:data="@string/pref_about_developer_vera_intent_data"/>
+        <Preference
+            app:icon="@drawable/ic_contact_mail_blue_24dp"
+            app:summary="@string/pref_about_developer_vera_summary"
+            app:title="@string/pref_about_developer_vera_title">
+            <intent
+                app:action="android.intent.action.SENDTO"
+                app:data="@string/pref_about_developer_vera_intent_data" />
         </Preference>
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/pref_about_contact_title">
-        <Preference android:title="@string/pref_about_contact_email_title"
-            android:summary="@string/pref_about_contact_email_summary"
-            android:icon="@drawable/ic_email_blue_24dp">
-            <intent android:action="android.intent.action.SENDTO"
-                android:data="@string/pref_about_contact_email_intent_data"/>
+    <PreferenceCategory app:title="@string/pref_about_contact_title">
+        <Preference
+            app:icon="@drawable/ic_email_blue_24dp"
+            app:summary="@string/pref_about_contact_email_summary"
+            app:title="@string/pref_about_contact_email_title">
+            <intent
+                app:action="android.intent.action.SENDTO"
+                app:data="@string/pref_about_contact_email_intent_data" />
         </Preference>
     </PreferenceCategory>
 </PreferenceScreen>

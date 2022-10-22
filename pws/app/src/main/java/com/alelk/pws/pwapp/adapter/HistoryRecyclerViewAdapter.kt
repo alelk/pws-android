@@ -40,11 +40,8 @@ import java.util.*
  *
  * Created by Alex Elkin on 23.05.2016.
  */
-class HistoryRecyclerViewAdapter(private val mOnItemClickListener: OnItemClickListener) :
+class HistoryRecyclerViewAdapter(private val mOnItemClickListener: (id: Long) -> Unit) :
   RecyclerView.Adapter<HistoryViewHolder>() {
-  interface OnItemClickListener {
-    fun onItemClick(psalmNumberId: Long)
-  }
 
   private var mCursor: Cursor? = null
   fun swapCursor(cursor: Cursor?) {
@@ -85,7 +82,7 @@ class HistoryRecyclerViewAdapter(private val mOnItemClickListener: OnItemClickLi
       timestamp = itemView.findViewById(R.id.txt_timestamp)
     }
 
-    fun bind(cursor: Cursor, onItemClickListener: OnItemClickListener) {
+    fun bind(cursor: Cursor, onItemClickListener: (id: Long) -> Unit) {
       psalmNumber.text = cursor.getString(cursor.getColumnIndex(COLUMN_PSALMNUMBER))
       psalmName.text = cursor.getString(cursor.getColumnIndex(COLUMN_PSALMNAME))
       bookDisplayName.text = cursor.getString(cursor.getColumnIndex(COLUMN_BOOKDISPLAYNAME))
@@ -102,7 +99,7 @@ class HistoryRecyclerViewAdapter(private val mOnItemClickListener: OnItemClickLi
       } catch (e: ParseException) {
         e.printStackTrace()
       }
-      itemView.setOnClickListener { onItemClickListener.onItemClick(psalmNumberId) }
+      itemView.setOnClickListener { onItemClickListener(psalmNumberId) }
     }
   }
 }

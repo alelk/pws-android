@@ -37,12 +37,9 @@ import com.alelk.pws.pwapp.R
  * Created by Alex Elkin on 06.01.2017.
  */
 class ReferredPsalmsRecyclerViewAdapter(
-  private val mOnItemClickListener: OnItemClickListener,
+  private val mOnItemClickListener: (psalmNumberId: Long) -> Unit,
   private val mHeaderTextSize: Float
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-  interface OnItemClickListener {
-    fun onItemClick(psalmNumberId: Long)
-  }
 
   private var mCursor: Cursor? = null
   fun swapCursor(cursor: Cursor?) {
@@ -98,7 +95,7 @@ class ReferredPsalmsRecyclerViewAdapter(
       reason = itemView.findViewById(R.id.txt_reason)
     }
 
-    fun bind(cursor: Cursor, onItemClickListener: OnItemClickListener) {
+    fun bind(cursor: Cursor, onItemClickListener: (psalmNumberId: Long) -> Unit) {
       psalmNumber.text = cursor.getString(cursor.getColumnIndex(COLUMN_PSALMNUMBER))
       psalmName.text = cursor.getString(cursor.getColumnIndex(COLUMN_PSALMNAME))
       bookDisplayName.text = cursor.getString(cursor.getColumnIndex(COLUMN_BOOKDISPLAYNAME))
@@ -111,7 +108,7 @@ class ReferredPsalmsRecyclerViewAdapter(
         )
       }
       reason.text = reasonTxt
-      itemView.setOnClickListener { v: View? -> onItemClickListener.onItemClick(psalmNumberId) }
+      itemView.setOnClickListener { v: View? -> onItemClickListener(psalmNumberId) }
     }
   }
 
