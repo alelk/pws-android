@@ -18,19 +18,19 @@ package com.alelk.pws.pwapp.activity
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
 import android.os.Bundle
-import android.preference.PreferenceActivity
 import android.view.MenuInflater
 import android.view.View
 import androidx.annotation.LayoutRes
 import android.view.ViewGroup
 import androidx.appcompat.app.ActionBar
+import androidx.appcompat.app.AppCompatActivity
 
 /**
  * A [android.preference.PreferenceActivity] which supports AppCompat.
  *
  * @author Alex Elkin
  */
-abstract class AppCompatPreferenceActivity : PreferenceActivity() {
+abstract class AppCompatPreferenceActivity : AppCompatActivity() {
   private var mDelegate: AppCompatDelegate? = null
   override fun onCreate(savedInstanceState: Bundle?) {
     delegate.installViewFactory()
@@ -43,8 +43,7 @@ abstract class AppCompatPreferenceActivity : PreferenceActivity() {
     delegate.onPostCreate(savedInstanceState)
   }
 
-  val supportActionBar: ActionBar?
-    get() = delegate.supportActionBar
+  override fun getSupportActionBar(): ActionBar? = delegate.supportActionBar
 
   override fun getMenuInflater(): MenuInflater {
     return delegate.menuInflater
@@ -97,11 +96,10 @@ abstract class AppCompatPreferenceActivity : PreferenceActivity() {
     delegate.invalidateOptionsMenu()
   }
 
-  private val delegate: AppCompatDelegate
-    get() {
-      if (mDelegate == null) {
-        mDelegate = AppCompatDelegate.create(this, null)
-      }
-      return mDelegate!!
+  override fun getDelegate(): AppCompatDelegate {
+    if (mDelegate == null) {
+      mDelegate = AppCompatDelegate.create(this, null)
     }
+    return mDelegate!!
+  }
 }

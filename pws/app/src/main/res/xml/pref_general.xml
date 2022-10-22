@@ -15,17 +15,17 @@
   ~ limitations under the License.
   -->
 
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory android:title="@string/pref_display_title">
-        <ListPreference android:title="@string/pref_display_theme_title"
-                        android:entries="@array/pref_display_theme_entries"
-                        android:entryValues="@array/pref_display_theme_values"
-                        android:key="@string/pref_themes_key" />
+    <PreferenceCategory app:title="@string/pref_display_title">
+        <ListPreference app:title="@string/pref_display_theme_title"
+                        app:entries="@array/pref_display_theme_entries"
+                        app:entryValues="@array/pref_display_theme_values"
+                        app:key="@string/pref_themes_key" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_books_title"
-        android:key="@string/pref_books_key">
+    <PreferenceCategory app:title="@string/pref_books_title"
+        app:key="@string/pref_books_key">
     </PreferenceCategory>
 
 </PreferenceScreen>

@@ -28,7 +28,6 @@ import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.Switch
 import androidx.fragment.app.DialogFragment
 import com.alelk.pws.pwapp.R
-import com.alelk.pws.pwapp.dialog.PsalmPreferencesDialogFragment
 import com.alelk.pws.pwapp.preference.PsalmPreferences
 
 /**
@@ -77,14 +76,10 @@ class PsalmPreferencesDialogFragment : DialogFragment() {
     val builder = AlertDialog.Builder(activity)
     builder.setView(mLayout)
     builder.setPositiveButton(R.string.lbl_ok) { _: DialogInterface?, _: Int ->
-      mCallbacks!!.onApplyPreferences(
-        mChangedPreferences
-      )
+      mCallbacks!!.onApplyPreferences(mChangedPreferences)
     }
     builder.setNegativeButton(R.string.lbl_cancel) { _: DialogInterface?, _: Int ->
-      mCallbacks!!.onCancelPreferences(
-        mDefaultPreferences
-      )
+      mCallbacks!!.onCancelPreferences(mDefaultPreferences)
     }
     return builder.create()
   }

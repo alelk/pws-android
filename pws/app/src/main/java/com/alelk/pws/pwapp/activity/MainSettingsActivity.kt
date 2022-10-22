@@ -19,11 +19,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
-import android.preference.PreferenceActivity
-import android.preference.PreferenceFragment
 import android.view.MenuItem
+import androidx.preference.PreferenceFragmentCompat
 import com.alelk.pws.pwapp.R
-import com.alelk.pws.pwapp.activity.MainActivity
 import com.alelk.pws.pwapp.fragment.preference.AboutPreferenceFragment
 import com.alelk.pws.pwapp.fragment.preference.GeneralPreferenceFragment
 
@@ -53,30 +51,30 @@ class MainSettingsActivity : AppCompatPreferenceActivity() {
     return super.onOptionsItemSelected(item)
   }
 
-  /**
-   * {@inheritDoc}
-   */
-  @Deprecated("Deprecated in Java")
-  override fun onIsMultiPane(): Boolean {
-    return isXLarge(this)
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Deprecated("Deprecated in Java")
-  override fun onBuildHeaders(target: List<Header>) {
-    loadHeadersFromResource(R.xml.pref_headers, target)
-  }
-
-  /**
-   * This method stops fragment injection in malicious applications.
-   * Make sure to deny any unknown fragments here.
-   */
-  @Deprecated("Deprecated in Java")
-  override fun isValidFragment(fragmentName: String): Boolean {
-    return PreferenceFragment::class.java.name == fragmentName || GeneralPreferenceFragment::class.java.name == fragmentName || AboutPreferenceFragment::class.java.name == fragmentName
-  }
+//  /**
+//   * {@inheritDoc}
+//   */
+//  @Deprecated("Deprecated in Java")
+//  override fun onIsMultiPane(): Boolean {
+//    return isXLarge(this)
+//  }
+//
+//  /**
+//   * {@inheritDoc}
+//   */
+//  @Deprecated("Deprecated in Java")
+//  override fun onBuildHeaders(target: List<Header>) {
+//    loadHeadersFromResource(R.xml.pref_headers, target)
+//  }
+//
+//  /**
+//   * This method stops fragment injection in malicious applications.
+//   * Make sure to deny any unknown fragments here.
+//   */
+//  @Deprecated("Deprecated in Java")
+//  override fun isValidFragment(fragmentName: String): Boolean {
+//    return PreferenceFragmentCompat::class.java.name == fragmentName || GeneralPreferenceFragment::class.java.name == fragmentName || AboutPreferenceFragment::class.java.name == fragmentName
+//  }
 
   companion object {
     /**

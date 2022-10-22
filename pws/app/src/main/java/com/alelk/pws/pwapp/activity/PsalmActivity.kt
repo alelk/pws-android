@@ -212,9 +212,10 @@ class PsalmActivity : AppCompatThemedActivity(), PsalmTextFragment.Callbacks,
 
   override fun onNegativeButtonClick() {}
   override fun onPreferencesChanged(preferences: PsalmPreferences?) {
-    val fragment =
-      mPsalmTextPagerAdapter!!.registeredFragments[mPagerPsalmText!!.currentItem] as PsalmTextFragment
-    fragment.applyPsalmPreferences(preferences)
+    if (preferences != null) {
+      val fragment = mPsalmTextPagerAdapter!!.registeredFragments[mPagerPsalmText!!.currentItem] as PsalmTextFragment
+      fragment.applyPsalmPreferences(preferences)
+    }
   }
 
   override fun onApplyPreferences(preferences: PsalmPreferences?) {
@@ -227,14 +228,14 @@ class PsalmActivity : AppCompatThemedActivity(), PsalmTextFragment.Callbacks,
     val fragment =
       mPsalmTextPagerAdapter!!.registeredFragments[mPagerPsalmText!!.currentItem] as PsalmTextFragment
     fragment.applyPsalmPreferences(preferences)
-    mPsalmTextPagerAdapter!!.applyPsalmPreferences(preferences!!)
+    mPsalmTextPagerAdapter?.applyPsalmPreferences(preferences)
   }
 
   override fun onCancelPreferences(previousPreferences: PsalmPreferences?) {
     mPsalmPreferences = previousPreferences
     val fragment =
       mPsalmTextPagerAdapter!!.registeredFragments[mPagerPsalmText!!.currentItem] as PsalmTextFragment
-    fragment.applyPsalmPreferences(previousPreferences)
+    fragment.applyPsalmPreferences(previousPreferences!!)
   }
 
   private inner class FabFavoritesOnClick : View.OnClickListener {

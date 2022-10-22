@@ -31,11 +31,8 @@ import com.alelk.pws.pwapp.adapter.FavoritesRecyclerViewAdapter.FavoriteViewHold
  *
  * Created by Alex Elkin on 19.05.2016.
  */
-class FavoritesRecyclerViewAdapter(private val mOnItemClickListener: OnItemClickListener) :
+class FavoritesRecyclerViewAdapter(private val mOnItemClickListener: ((psalmNumberId: Long) -> Unit)) :
   RecyclerView.Adapter<FavoriteViewHolder>() {
-  interface OnItemClickListener {
-    fun onItemClick(psalmNumberId: Long)
-  }
 
   private var mCursor: Cursor? = null
   fun swapCursor(cursor: Cursor?) {
@@ -74,7 +71,7 @@ class FavoritesRecyclerViewAdapter(private val mOnItemClickListener: OnItemClick
       bookDisplayName = itemView.findViewById(R.id.txt_book_name)
     }
 
-    fun bind(cursor: Cursor, onItemClickListener: OnItemClickListener) {
+    fun bind(cursor: Cursor, onItemClickListener: (psalmNumberId: Long) -> Unit) {
       psalmNumber.text =
         cursor.getString(cursor.getColumnIndex(PwsDataProviderContract.Favorites.COLUMN_PSALMNUMBER))
       psalmName.text =
@@ -83,7 +80,7 @@ class FavoritesRecyclerViewAdapter(private val mOnItemClickListener: OnItemClick
         cursor.getString(cursor.getColumnIndex(PwsDataProviderContract.Favorites.COLUMN_BOOKDISPLAYNAME))
       psalmNumberId =
         cursor.getLong(cursor.getColumnIndex(PwsDataProviderContract.Favorites.COLUMN_PSALMNUMBER_ID))
-      itemView.setOnClickListener { onItemClickListener.onItemClick(psalmNumberId) }
+      itemView.setOnClickListener { onItemClickListener(psalmNumberId) }
     }
   }
 }

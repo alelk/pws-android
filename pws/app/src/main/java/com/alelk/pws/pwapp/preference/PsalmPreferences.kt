@@ -13,16 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package com.alelk.pws.pwapp.theme;
+package com.alelk.pws.pwapp.preference
 
 /**
- * ThemeType
+ * Psalm Preferences
  *
- * Created by Alex Elkin on 25.08.17.
+ * Created by Alex Elkin on 13.11.2017.
  */
-
-public enum ThemeType {
-    NORMAL,
-    NO_ACTION_BAR
+class PsalmPreferences(var textSize: Float, expandPsalmText: Boolean) {
+  var isExpandPsalmText = expandPsalmText
 }

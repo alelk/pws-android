@@ -37,11 +37,8 @@ import com.alelk.pws.database.provider.PwsDataProviderContract.Psalms.Search.COL
  *
  * Created by Alex Elkin on 23.05.2016.
  */
-class SearchRecyclerViewAdapter(private val mClickListener: OnItemClickListener) :
+class SearchRecyclerViewAdapter(private val mClickListener: (psalmNumberId: Long) -> Unit) :
   RecyclerView.Adapter<SearchViewHolder>() {
-  interface OnItemClickListener {
-    fun onItemClick(psalmNumberId: Long)
-  }
 
   private var mCursor: Cursor? = null
   fun swapCursor(cursor: Cursor?) {
@@ -82,7 +79,7 @@ class SearchRecyclerViewAdapter(private val mClickListener: OnItemClickListener)
       text = itemView.findViewById(R.id.txt_text)
     }
 
-    fun bind(cursor: Cursor, onItemClickListener: OnItemClickListener) {
+    fun bind(cursor: Cursor, onItemClickListener: (psalmNumberId: Long) -> Unit) {
       psalmNumber.text = cursor.getString(cursor.getColumnIndex(COLUMN_PSALMNUMBER))
       psalmName.text = cursor.getString(cursor.getColumnIndex(COLUMN_PSALMNAME))
       bookDisplayName.text = cursor.getString(cursor.getColumnIndex(COLUMN_BOOKDISPLAYNAME))
@@ -95,7 +92,9 @@ class SearchRecyclerViewAdapter(private val mClickListener: OnItemClickListener)
         }
       }
       psalmNumberId = cursor.getLong(cursor.getColumnIndex(COLUMN_PSALMNUMBER_ID))
-      itemView.setOnClickListener { v: View? -> onItemClickListener.onItemClick(psalmNumberId) }
+      itemView.setOnClickListener {
+        onItemClickListener(psalmNumberId)
+      }
     }
   }
 }

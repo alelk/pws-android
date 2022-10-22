@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.alelk.pws.pwapp.fragment.preference
 
-package com.alelk.pws.pwapp.holder;
+import androidx.preference.PreferenceFragmentCompat
+
 
 /**
- * Pws Holder
+ * PWS Preference Fragment
  *
- * Created by Alex Elkin on 27.05.2016.
+ * Created by Alex Elkin on 06.08.2016.
  */
-public interface PwsHolder {
-}
+@Deprecated("")
+abstract class PwsPreferenceFragment : PreferenceFragmentCompat()
