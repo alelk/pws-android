@@ -91,7 +91,7 @@ class PsalmTextFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
     psalmTextSize = mPsalmPreferences!!.textSize
     updateUi()
     retainInstance = true
-    loaderManager.initLoader(PWS_REFERRED_PSALMS_LOADER, null, this)
+    LoaderManager.getInstance(this).initLoader(PWS_REFERRED_PSALMS_LOADER, null, this)
     setHasOptionsMenu(true)
     registerForContextMenu(vPsalmText!!)
     vPsalmText?.setOnClickListener { callbacks!!.onRequestFullscreenMode() }
