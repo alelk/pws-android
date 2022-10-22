@@ -32,7 +32,6 @@ class AboutPreferenceFragment : PreferenceFragmentCompat() {
   private var mPrefAboutApp: Preference? = null
 
   override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-    super.onCreate(savedInstanceState)
     addPreferencesFromResource(R.xml.pref_about)
     mPrefAboutApp = findPreference(getString(R.string.pref_about_app_key))
     init()

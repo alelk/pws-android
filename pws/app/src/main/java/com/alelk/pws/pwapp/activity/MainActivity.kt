@@ -43,6 +43,7 @@ open class MainActivity : AppCompatThemedActivity(), NavigationView.OnNavigation
   private var mFabSearchText: FloatingActionButton? = null
   private var mFabSearchNumber: FloatingActionButton? = null
   private var mAppBar: AppBarLayout? = null
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)

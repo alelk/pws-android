@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2018 The P&W Songs Open Source Project
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,56 +15,56 @@
   -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.alelk.pws.pwapp">
+  package="com.alelk.pws.pwapp">
 
-    <application
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:supportsRtl="true"
-        android:theme="@style/Theme.AppTheme">
-        <activity
-            android:name=".activity.MainActivity"
-            android:theme="@style/Theme.AppTheme.Launcher"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".activity.SearchActivity"
-            android:label="@string/title_activity_search"
-            android:launchMode="singleTop"
-            android:theme="@style/Theme.AppTheme"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH"/>
-            </intent-filter>
+  <application
+    android:icon="@mipmap/ic_launcher"
+    android:label="@string/app_name"
+    android:supportsRtl="true"
+    android:theme="@style/Theme.AppTheme">
+    <activity
+      android:name=".activity.MainActivity"
+      android:exported="true"
+      android:theme="@style/Theme.AppTheme.Launcher">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <action android:name="android.intent.action.VIEW" />
+        <action android:name="android.intent.action.SENDTO"/>
+        <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+    </activity>
+    <activity
+      android:name=".activity.SearchActivity"
+      android:exported="false"
+      android:label="@string/title_activity_search"
+      android:launchMode="singleTop"
+      android:theme="@style/Theme.AppTheme">
+      <intent-filter>
+        <action android:name="android.intent.action.SEARCH" />
+      </intent-filter>
 
-            <meta-data
-                android:name="android.app.searchable"
-                android:resource="@xml/searchable"/>
-        </activity>
-        <activity
-            android:name=".activity.PsalmActivity"
-            android:label=""
-            android:parentActivityName=".activity.MainActivity"
-            android:theme="@style/Theme.AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.app.default_searchable"
-                android:value="com.alelk.pws.pwapp.activity.SearchActivity"/>
-        </activity>
-        <activity
-            android:name=".activity.PsalmFullscreenActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/title_activity_psalm_fullscreen"
-            android:theme="@style/Theme.AppTheme.NoActionBar"/>
-        <activity
-            android:name=".activity.MainSettingsActivity"
-            android:label="@string/title_activity_main_settings"
-            android:parentActivityName=".activity.MainActivity">
-        </activity>
-    </application>
+      <meta-data
+        android:name="android.app.searchable"
+        android:resource="@xml/searchable" />
+    </activity>
+    <activity
+      android:name=".activity.PsalmActivity"
+      android:label=""
+      android:parentActivityName=".activity.MainActivity"
+      android:theme="@style/Theme.AppTheme.NoActionBar">
+      <meta-data
+        android:name="android.app.default_searchable"
+        android:value="com.alelk.pws.pwapp.activity.SearchActivity" />
+    </activity>
+    <activity
+      android:name=".activity.PsalmFullscreenActivity"
+      android:configChanges="orientation|keyboardHidden|screenSize"
+      android:label="@string/title_activity_psalm_fullscreen"
+      android:theme="@style/Theme.AppTheme.NoActionBar" />
+    <activity
+      android:name=".activity.MainSettingsActivity"
+      android:label="@string/title_activity_main_settings"
+      android:parentActivityName=".activity.MainActivity" />
+  </application>
 
 </manifest>
