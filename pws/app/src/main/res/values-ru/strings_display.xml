@@ -25,6 +25,7 @@
     <string name="txt_main_navigation_header_comment">Библиотека христианских песен.</string>
     <string name="lbl_drawer_main_history">История</string>
     <string name="lbl_drawer_main_home">Главная</string>
+    <string name="lbl_drawer_main_books">Сборники песен</string>
     <string name="lbl_drawer_main_favorite">Избранное</string>
     <string name="lbl_drawer_main_settings">Настройки</string>
     <string name="lbl_drawer_main_system_menu"></string>

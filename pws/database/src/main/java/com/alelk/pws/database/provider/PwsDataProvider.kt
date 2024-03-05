@@ -31,6 +31,7 @@ import com.alelk.pws.database.provider.PwsDataProviderContract.Companion.AUTHORI
 import com.alelk.pws.database.provider.PwsDataProviderContract.Companion.HISTORY_TIMESTAMP_FORMAT
 import com.alelk.pws.database.provider.PwsDataProviderContract.Companion.QUERY_PARAMETER_LIMIT
 import com.alelk.pws.database.table.PwsBookStatisticTable
+import com.alelk.pws.database.table.PwsBookTable
 import com.alelk.pws.database.table.PwsFavoritesTable
 import com.alelk.pws.database.table.PwsHistoryTable
 import com.alelk.pws.database.table.PwsPsalmTable
@@ -142,6 +143,16 @@ class PwsDataProvider : ContentProvider(), PwsDataProviderContract {
         cursor = queryPsalmNumberReferredPsalms(psalmNumberId)
       }
       BookStatistic.URI_MATCH -> cursor = queryBookStatistic(null, null, null, null)
+
+      Books.URI_MATCH -> cursor = mDatabase!!.query(
+        Books.TABLE,
+        Books.PROJECTION,
+        Books.ACTIVE + " and " + Books.FIRST_SONG,
+        selectionArgs,
+        null,
+        null,
+        Books.SORTED
+      )
       else -> Log.w(LOG_TAG, "$METHOD_NAME: Incorrect uri: '$uri'")
     }
     if (cursor == null) {
@@ -620,6 +631,7 @@ class PwsDataProvider : ContentProvider(), PwsDataProviderContract {
       URI_MATCHER.addURI(AUTHORITY, BookStatistic.PATH, BookStatistic.URI_MATCH)
       URI_MATCHER.addURI(AUTHORITY, BookStatistic.PATH_ID, BookStatistic.URI_MATCH_ID)
       URI_MATCHER.addURI(AUTHORITY, BookStatistic.PATH_TEXT, BookStatistic.URI_MATCH_TEXT)
+      URI_MATCHER.addURI(AUTHORITY, Books.PATH, Books.URI_MATCH)
     }
   }
 }
