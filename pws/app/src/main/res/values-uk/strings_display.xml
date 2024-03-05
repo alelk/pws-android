@@ -25,6 +25,7 @@
     <string name="txt_main_navigation_header_comment">Бібліотека християнських пісень.</string>
     <string name="lbl_drawer_main_history">Історія</string>
     <string name="lbl_drawer_main_home">Головна</string>
+    <string name="lbl_drawer_main_books">Збірники пісень</string>
     <string name="lbl_drawer_main_favorite">Обране</string>
     <string name="lbl_drawer_main_settings">Налаштування</string>
     <string name="lbl_drawer_main_system_menu"></string>

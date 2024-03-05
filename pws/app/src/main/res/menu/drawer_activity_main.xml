@@ -23,6 +23,10 @@
             android:icon="@drawable/ic_book_black_24dp"
             android:title="@string/lbl_drawer_main_home" />
         <item
+          android:id="@+id/drawer_main_books"
+          android:icon="@drawable/ic_book_black_24dp"
+          android:title="@string/lbl_drawer_main_books" />
+        <item
             android:id="@+id/drawer_main_history"
             android:icon="@drawable/ic_history_black_24dp"
             android:title="@string/lbl_drawer_main_history" />
