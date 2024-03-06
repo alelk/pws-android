@@ -32,11 +32,8 @@ android {
     defaultConfig {
         resValue "string", "db_authority", "com.alelk.pws.database"
         buildConfigField "String", "DB_AUTHORITY", "\"com.alelk.pws.database\""
-        minSdkVersion 16
+        minSdkVersion 19
         targetSdkVersion rootProject.sdkVersion
-        versionCode rootProject.versionCode
-        versionName rootProject.versionName
-        versionNameSuffix '-' + rootProject.versionNameSuffix
     }
 
     buildTypes {
@@ -46,15 +43,13 @@ android {
             signingConfig signingConfigs.releaseSignConfig
         }
         debug {
-            debuggable true
             minifyEnabled false
-            versionNameSuffix "-debug"
         }
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     publishNonDefault true
@@ -67,19 +62,16 @@ android {
             dimension "contentLevel"
             resValue "string", "db_authority", "com.alelk.pws.database.uk"
             buildConfigField "String", "DB_AUTHORITY", "\"com.alelk.pws.database.uk\""
-            versionNameSuffix "-uk"
         }
         full {
             dimension "contentLevel"
             resValue "string", "db_authority", "com.alelk.pws.database.full"
             buildConfigField "String", "DB_AUTHORITY", "\"com.alelk.pws.database.full\""
-            versionNameSuffix "-full"
         }
     }
+    namespace 'com.alelk.pws.database'
 }
 
 dependencies {
-//    implementation 'androidx.appcompat:appcompat:1.5.1'
-//    implementation 'androidx.legacy:legacy-support-core-utils:1.0.0'
-    implementation 'com.google.android.material:material:1.7.0'
+    implementation 'com.google.android.material:material:1.11.0'
 }

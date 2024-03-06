@@ -30,7 +30,7 @@ android {
     defaultConfig {
         applicationId "com.alelk.pws.pwapp"
         resValue "string", "db_authority", "com.alelk.pws.database"
-        minSdkVersion 16
+        minSdkVersion 19
         targetSdkVersion rootProject.sdkVersion
         versionCode rootProject.versionCode
         versionName rootProject.versionName
@@ -52,8 +52,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     sourceSets {
         main { assets.srcDirs = ['src/main/assets'] }
@@ -76,7 +76,8 @@ android {
             resValue "string", "db_authority", "com.alelk.pws.database.full"
         }
     }
-    applicationVariants.all { variant ->
+    namespace 'com.alelk.pws.pwapp'
+    applicationVariants.configureEach { variant ->
         variant.resValue "string", "versionName", variant.versionName
     }
 }
@@ -86,15 +87,8 @@ dependencies {
     implementation project(':database')
 
     /* support libraries */
-//    implementation 'androidx.appcompat:appcompat:1.5.1'
-//    implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.preference:preference-ktx:1.2.0'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
-//    implementation 'androidx.recyclerview:recyclerview:1.2.1'
-    implementation 'com.google.android.material:material:1.7.0'
-    implementation 'androidx.appcompat:appcompat:1.5.1'
-//    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-
-    /* constraint layout */
-//    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.preference:preference-ktx:1.2.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0'
+    implementation 'com.google.android.material:material:1.11.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
 }
