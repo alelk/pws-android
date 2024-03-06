@@ -149,6 +149,10 @@ open class MainActivity : AppCompatThemedActivity(), NavigationView.OnNavigation
         fragment = ReadNowFragment()
         titleResId = R.string.lbl_drawer_main_home
       }
+      R.id.drawer_main_books -> {
+        fragment = BooksFragment()
+        titleResId = R.string.lbl_drawer_main_books
+      }
       R.id.drawer_main_history -> {
         fragment = HistoryFragment()
         titleResId = R.string.lbl_drawer_main_history
