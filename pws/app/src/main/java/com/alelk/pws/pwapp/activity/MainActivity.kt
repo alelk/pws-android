@@ -124,6 +124,7 @@ open class MainActivity : AppCompatThemedActivity(), NavigationView.OnNavigation
         result = true
       }
 
+
       R.id.drawer_main_home -> {
         mAppBar!!.setExpanded(true, true)
         mNavigationItemId = id
@@ -149,10 +150,6 @@ open class MainActivity : AppCompatThemedActivity(), NavigationView.OnNavigation
       R.id.drawer_main_home -> {
         fragment = ReadNowFragment()
         titleResId = R.string.lbl_drawer_main_home
-      }
-      R.id.drawer_main_books -> {
-        fragment = BooksFragment()
-        titleResId = R.string.lbl_drawer_main_books
       }
       R.id.drawer_main_history -> {
         fragment = HistoryFragment()
