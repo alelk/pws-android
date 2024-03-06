@@ -123,6 +123,7 @@ open class MainActivity : AppCompatThemedActivity(), NavigationView.OnNavigation
         displayFragment()
         result = true
       }
+
       R.id.drawer_main_home -> {
         mAppBar!!.setExpanded(true, true)
         mNavigationItemId = id
