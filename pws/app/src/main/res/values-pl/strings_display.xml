@@ -24,6 +24,7 @@
     <string name="txt_main_navigation_header_comment">Biblioteka pieśni chrześcijańskich.</string>
     <string name="lbl_drawer_main_history">Historia</string>
     <string name="lbl_drawer_main_home">Główna</string>
+    <string name="lbl_drawer_main_books">Zbiory piosenek</string>
     <string name="lbl_drawer_main_favorite">Ulubione</string>
     <string name="lbl_drawer_main_settings">Ustawienia</string>
     <string name="lbl_drawer_main_system_menu"></string>
