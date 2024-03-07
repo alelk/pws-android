@@ -37,7 +37,7 @@ class ThemePreferences(context: Context?) {
 
   fun registerThemeChangeListener(listener: (AppTheme) -> Unit) {
     val changeListener =
-      OnSharedPreferenceChangeListener { sharedPreferences: SharedPreferences, key: String ->
+      OnSharedPreferenceChangeListener { sharedPreferences: SharedPreferences, key: String? ->
         if (KEY_APP_THEME == key) listener(
           forThemeKeyResId(
             sharedPreferences.getInt(

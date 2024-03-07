@@ -28,6 +28,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.alelk.pws.pwapp.R
 import com.alelk.pws.pwapp.activity.base.AppCompatThemedActivity
+import com.alelk.pws.pwapp.fragment.BooksFragment
 import com.alelk.pws.pwapp.fragment.FavoritesFragment
 import com.alelk.pws.pwapp.fragment.HistoryFragment
 import com.alelk.pws.pwapp.fragment.ReadNowFragment
@@ -116,7 +117,7 @@ open class MainActivity : AppCompatThemedActivity(), NavigationView.OnNavigation
     var result = false
     val intent: Intent
     when (id) {
-      R.id.drawer_main_history, R.id.drawer_main_favorite -> {
+      R.id.drawer_main_history, R.id.drawer_main_favorite, R.id.drawer_main_books -> {
         mAppBar!!.setExpanded(false, true)
         mNavigationItemId = id
         displayFragment()
@@ -147,6 +148,10 @@ open class MainActivity : AppCompatThemedActivity(), NavigationView.OnNavigation
       R.id.drawer_main_home -> {
         fragment = ReadNowFragment()
         titleResId = R.string.lbl_drawer_main_home
+      }
+      R.id.drawer_main_books -> {
+        fragment = BooksFragment()
+        titleResId = R.string.lbl_drawer_main_books
       }
       R.id.drawer_main_history -> {
         fragment = HistoryFragment()

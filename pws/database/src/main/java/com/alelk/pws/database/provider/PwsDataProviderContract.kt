@@ -19,7 +19,14 @@ import android.app.SearchManager
 import android.database.sqlite.SQLiteQueryBuilder
 import android.net.Uri
 import com.alelk.pws.database.BuildConfig
-import com.alelk.pws.database.table.*
+import com.alelk.pws.database.table.PwsBookStatisticTable
+import com.alelk.pws.database.table.PwsBookTable
+import com.alelk.pws.database.table.PwsFavoritesTable
+import com.alelk.pws.database.table.PwsHistoryTable
+import com.alelk.pws.database.table.PwsPsalmFtsTable
+import com.alelk.pws.database.table.PwsPsalmNumbersTable
+import com.alelk.pws.database.table.PwsPsalmPsalmReferencesTable
+import com.alelk.pws.database.table.PwsPsalmTable
 
 /**
  * Pws Data Provider Contract
@@ -536,6 +543,33 @@ interface PwsDataProviderContract {
     const val COLUMN_BOOKEDITION = "book_edition"
     const val COLUMN_BOOKDISPLAYNAME = "book_display_name"
     const val COLUMN_BOOKDISPLAYSHORTNAME = "book_display_short_name"
+    const val PATH = "books"
+    const val URI_MATCH = 70
+    const val COLUMN_DISPLAY_NAME = PwsBookTable.COLUMN_DISPLAYNAME
+    const val COLUMN_DISPLAY_SHORT_NAME = PwsBookTable.COLUMN_DISPLAYSHORTNAME
+    const val PSALM_NUMBER_ID = "psalmId"
+
+    const val TABLE = "${PwsBookTable.TABLE_BOOKS} as b " +
+      "inner join ${PwsBookStatisticTable.TABLE_BOOKSTATISTIC} as bs " +
+      "on b.${PwsBookTable.COLUMN_ID} = bs.${PwsBookStatisticTable.COLUMN_BOOKID} " +
+      "inner join ${PwsPsalmNumbersTable.TABLE_PSALMNUMBERS} as pn " +
+      "on b.${PwsBookTable.COLUMN_ID} = pn.${PwsPsalmNumbersTable.COLUMN_BOOKID}"
+    const val ACTIVE = "bs.${PwsBookStatisticTable.COLUMN_USERPREFERENCE} > 0"
+    const val FIRST_SONG = "pn.${PwsPsalmNumbersTable.COLUMN_NUMBER} = 1"
+    const val SORTED = "bs.${PwsBookStatisticTable.COLUMN_USERPREFERENCE} desc"
+
+    @JvmField
+    val CONTENT_URI = Uri.Builder().scheme(SCHEME).authority(AUTHORITY).path(PATH).build()
+
+    @JvmField
+    val PROJECTION = arrayOf(
+      "b.${PwsBookTable.COLUMN_ID} as ${PwsBookTable.COLUMN_ID}",
+      "b.${PwsBookTable.COLUMN_DISPLAYNAME} as $COLUMN_DISPLAY_NAME",
+      "b.${PwsBookTable.COLUMN_DISPLAYSHORTNAME} as $COLUMN_DISPLAY_SHORT_NAME",
+      "bs.${PwsBookStatisticTable.COLUMN_USERPREFERENCE} as ${PwsBookStatisticTable.COLUMN_USERPREFERENCE}",
+      "pn.${PwsPsalmNumbersTable.COLUMN_NUMBER} as ${PwsPsalmNumbersTable.COLUMN_NUMBER}",
+      "pn.${PwsPsalmNumbersTable.COLUMN_ID} as ${PSALM_NUMBER_ID}"
+    )
   }
 
   object BookStatistic {
