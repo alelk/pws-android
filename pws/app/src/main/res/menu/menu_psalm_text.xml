@@ -18,9 +18,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/menu_share"
-        android:orderInCategory="3"
+        android:orderInCategory="4"
         android:title="@string/lbl_share"
         android:icon="@drawable/ic_share_black_24dp"
         app:showAsAction="never"
         />
+    <item android:id="@+id/menu_edit"
+      android:orderInCategory="3"
+      android:title="@string/lbl_edit"
+      android:icon="@drawable/ic_share_black_24dp"
+      app:showAsAction="never"
+      />
+<!--  change icon for menu_edit-->
 </menu>

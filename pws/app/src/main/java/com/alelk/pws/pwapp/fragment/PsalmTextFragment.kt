@@ -39,8 +39,8 @@ import com.alelk.pws.database.table.PwsHistoryTable
 import com.alelk.pws.database.util.PwsPsalmUtil
 import com.alelk.pws.pwapp.R
 import com.alelk.pws.pwapp.activity.PsalmActivity
+import com.alelk.pws.pwapp.activity.PsalmFullscreenActivity
 import com.alelk.pws.pwapp.adapter.ReferredPsalmsRecyclerViewAdapter
-import com.alelk.pws.pwapp.fragment.PsalmTextFragment
 import com.alelk.pws.pwapp.holder.PsalmHolder
 import com.alelk.pws.pwapp.preference.PsalmPreferences
 import java.util.*
@@ -210,6 +210,10 @@ class PsalmTextFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
     super.onCreateOptionsMenu(menu, inflater)
     val activity = activity ?: return
     activity.menuInflater.inflate(R.menu.menu_psalm_text, menu)
+    if (activity.javaClass == PsalmFullscreenActivity::class.java) {
+      val editMenu = menu.findItem(R.id.menu_edit);
+      editMenu.setVisible(false)
+    }
   }
 
   override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenuInfo?) {
@@ -226,6 +230,9 @@ class PsalmTextFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
       intent.type = "text/plain"
       startActivity(intent)
       return true
+    }
+    if (item.itemId == R.id.menu_edit){
+      callbacks!!.onEditRequest(mPsalmHolder!!.psalmNumberId)
     }
     return super.onOptionsItemSelected(item)
   }
@@ -406,6 +413,7 @@ class PsalmTextFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
      */
     fun onUpdatePsalmInfo(psalmHolder: PsalmHolder?)
     fun onRequestFullscreenMode()
+    fun onEditRequest(psalmNumberId: Long)
   }
 
   companion object {

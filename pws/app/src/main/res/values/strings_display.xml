@@ -55,9 +55,17 @@
     <string name="lbl_search_psalm">Search psalm</string>
     <string name="lbl_jump_to_number">Jump to the number</string>
     <string name="lbl_share">Share</string>
+    <string name="lbl_edit">Edit</string>
     <string name="lbl_psalm_text_size">Text size</string>
     <string name="msg_added_to_favorites">Added to favorites.</string>
     <string name="msg_removed_from_favorites">Removed from favorites.</string>
+
+    <!-- Edit psalm activity -->
+    <string name="label_psalm_name">Psalm Name</string>
+    <string name="label_psalm_text">Psalm Text</string>
+    <string name="label_bible_ref">Bible Reference</string>
+    <string name="label_psalm_tonalities">Psalm Tonalities</string>
+    <string name="btn_save">Save</string>
 
     <!-- Psalm fullscreen activity display strings. -->
     <string name="lbl_add_to_favorites">Add to favorites</string>

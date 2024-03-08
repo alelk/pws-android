@@ -55,9 +55,17 @@
     <string name="lbl_search_psalm">Знайти</string>
     <string name="lbl_jump_to_number">Перейти по номеру</string>
     <string name="lbl_share">Поділитися</string>
+    <string name="lbl_edit">Редагувати</string>
     <string name="lbl_psalm_text_size">Розмір тексту</string>
     <string name="msg_added_to_favorites">Додано до обраного.</string>
     <string name="msg_removed_from_favorites">Видалено з обраного.</string>
+
+    <!-- Edit psalm activity -->
+    <string name="label_psalm_name">Назва псалму</string>
+    <string name="label_psalm_text">Текст псалму</string>
+    <string name="label_bible_ref">Біблійне посилання</string>
+    <string name="label_psalm_tonalities">Тональності псалму</string>
+    <string name="btn_save">Зберегти</string>
 
     <!-- Psalm fullscreen activity display strings. -->
     <string name="lbl_add_to_favorites">Додати до обраного</string>
