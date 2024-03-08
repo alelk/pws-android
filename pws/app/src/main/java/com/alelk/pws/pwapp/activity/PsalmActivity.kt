@@ -195,12 +195,23 @@ class PsalmActivity : AppCompatThemedActivity(), PsalmTextFragment.Callbacks,
     startActivityForResult(intent, REQUEST_CODE_FULLSCREEN_ACTIVITY)
   }
 
+  override fun onEditRequest(psalmNumberId: Long) {
+    val intent = Intent(this, PsalmEditActivity::class.java)
+    intent.putExtra(PsalmEditActivity.KEY_PSALM_NUMBER_ID, psalmNumberId)
+    startActivityForResult(intent, REQUEST_CODE_EDIT_ACTIVITY)
+  }
+
   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
     super.onActivityResult(requestCode, resultCode, data)
     when (requestCode) {
       REQUEST_CODE_FULLSCREEN_ACTIVITY -> {
         if (resultCode != RESULT_OK || data == null) return
         mPsalmNumberId = data.getLongExtra(PsalmFullscreenActivity.KEY_PSALM_NUMBER_ID, -1)
+        mPagerPsalmText!!.currentItem = mBookPsalmNumberIds!!.indexOf(mPsalmNumberId)
+      }
+      REQUEST_CODE_EDIT_ACTIVITY -> {
+        if (data == null) return
+        mPsalmNumberId = data.getLongExtra(KEY_PSALM_NUMBER_ID, -1L)
         mPagerPsalmText!!.currentItem = mBookPsalmNumberIds!!.indexOf(mPsalmNumberId)
       }
     }
@@ -268,6 +279,7 @@ class PsalmActivity : AppCompatThemedActivity(), PsalmTextFragment.Callbacks,
   companion object {
     const val KEY_PSALM_NUMBER_ID = "psalmNumberId"
     private const val REQUEST_CODE_FULLSCREEN_ACTIVITY = 1
+    private const val REQUEST_CODE_EDIT_ACTIVITY = 2
     private const val ADD_TO_HISTORY_DELAY = 5000
   }
 }

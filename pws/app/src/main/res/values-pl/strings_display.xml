@@ -54,9 +54,17 @@
     <string name="lbl_search_psalm">Szukaj</string>
     <string name="lbl_jump_to_number">Przejdź do numeru</string>
     <string name="lbl_share">Udostępnij</string>
+    <string name="lbl_edit">Edytować</string>
     <string name="lbl_psalm_text_size">Rozmiar tekstu pieśni</string>
     <string name="msg_added_to_favorites">Dodano do ulubionych</string>
     <string name="msg_removed_from_favorites">Usunięto z ulubionych</string>
+
+    <!-- Edit psalm activity -->
+    <string name="label_psalm_name">Nazwa Psalmu</string>
+    <string name="label_psalm_text">Tekst Psalmu</string>
+    <string name="label_bible_ref">Odniesienie Biblijne</string>
+    <string name="label_psalm_tonalities">Tonacje Psalmu</string>
+    <string name="btn_save">Zapisz</string>
 
     <!-- Psalm fullscreen activity display strings. -->
     <string name="lbl_add_to_favorites">Dodaj do ulubionych</string>

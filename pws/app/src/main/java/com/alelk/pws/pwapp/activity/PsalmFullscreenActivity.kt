@@ -210,6 +210,10 @@ class PsalmFullscreenActivity : AppCompatThemedActivity(), PsalmTextFragment.Cal
     toggle()
   }
 
+  override fun onEditRequest(psalmNumberId: Long) {
+    // no edit option in full screen
+  }
+
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     when (item.itemId) {
       android.R.id.home -> finish()
