@@ -20,6 +20,7 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_psalm_fullscreen">Psalm</string>
     <string name="title_activity_main_settings">Settings</string>
+    <string name="title_activity_psalm_edit">Edit Psalm</string>
 
     <!-- Main activity display strings. -->
     <string name="txt_main_navigation_header_comment">The library of the Christian psalms.</string>

@@ -19,6 +19,7 @@
     <string name="action_settings">Ustawienia</string>
     <string name="title_activity_psalm_fullscreen">Pieśń</string>
     <string name="title_activity_main_settings">Ustawienia</string>
+    <string name="title_activity_psalm_edit">Edytuj Psalm</string>
 
     <!-- Main activity display strings. -->
     <string name="txt_main_navigation_header_comment">Biblioteka pieśni chrześcijańskich.</string>

@@ -64,10 +64,9 @@
       android:name=".activity.PsalmEditActivity"
       android:configChanges="orientation|keyboardHidden|screenSize"
       android:parentActivityName=".activity.PsalmActivity"
-      android:label="EditPsalm"
+      android:label="@string/title_activity_psalm_edit"
       android:windowSoftInputMode="adjustResize"
       android:theme="@style/Theme.AppTheme.NoActionBar" />
-      <!--    todo android:label="EditPsalm" move to @string/title_activity_psalm_edit -->
     <activity
       android:name=".activity.MainSettingsActivity"
       android:label="@string/title_activity_main_settings"
