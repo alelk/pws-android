@@ -20,6 +20,7 @@
     <string name="action_settings">Настройки</string>
     <string name="title_activity_psalm_fullscreen">Песня</string>
     <string name="title_activity_main_settings">Настройки</string>
+    <string name="title_activity_psalm_edit">Редактирование псалма</string>
 
     <!-- Main activity display strings. -->
     <string name="txt_main_navigation_header_comment">Библиотека христианских песен.</string>
