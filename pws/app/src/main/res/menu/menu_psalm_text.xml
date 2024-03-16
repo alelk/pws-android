@@ -29,5 +29,5 @@
       android:icon="@drawable/ic_share_black_24dp"
       app:showAsAction="never"
       />
-<!--  change icon for menu_edit-->
+<!--  todo: change icon for menu_edit-->
 </menu>
