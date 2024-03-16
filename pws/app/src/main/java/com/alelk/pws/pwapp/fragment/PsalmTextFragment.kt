@@ -185,6 +185,11 @@ class PsalmTextFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
     callbacks!!.onUpdatePsalmInfo(mPsalmHolder)
   }
 
+  fun reloadUi() {
+    loadData()
+    updateUi()
+  }
+
   override fun onAttach(context: Context) {
     super.onAttach(context)
     callbacks = context as Callbacks

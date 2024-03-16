@@ -16,6 +16,7 @@
 package com.alelk.pws.pwapp.activity
 
 import android.app.Activity
+import android.content.ContentValues
 import android.content.Intent
 import android.database.Cursor
 import android.os.Bundle
@@ -26,6 +27,7 @@ import android.widget.EditText
 import android.widget.Spinner
 import com.alelk.pws.database.data.Tonality
 import com.alelk.pws.database.provider.PwsDataProviderContract
+import com.alelk.pws.database.table.PwsPsalmTable
 import com.alelk.pws.pwapp.R
 import com.alelk.pws.pwapp.activity.base.AppCompatThemedActivity
 import com.alelk.pws.pwapp.fragment.PsalmTextFragment
@@ -59,22 +61,40 @@ class PsalmEditActivity : AppCompatThemedActivity() {
     val bibleRef = findViewById<EditText>(R.id.bibleRefEdit).text.toString()
     val tonality = findViewById<Spinner>(R.id.psalmTonalitiesSpinner).selectedItem.toString()
 
-    return //todo save to db
+    val values = ContentValues().apply {
+      if (mPsalmHolder?.psalmName != name) put(PwsPsalmTable.COLUMN_NAME, name)
+      if (mPsalmHolder?.psalmText != text) put(PwsPsalmTable.COLUMN_TEXT, text)
+      if (mPsalmHolder?.bibleRef != bibleRef) put(PwsPsalmTable.COLUMN_ANNOTATION, bibleRef)
+//      val tone = mPsalmHolder?.psalmTonalities!![0].split(";")[0].trim()
+//      if (!tone.equals(tonality, true)) put(PwsPsalmTable.COLUMN_TONALITIES, tonality)
+//      todo figure out hot tonality works
+    }
+
+    if (values.size() > 0)
+      contentResolver.update(
+        PwsDataProviderContract.Psalms.getContentUri(mPsalmHolder!!.psalmId),
+        values,
+        null,
+        null
+      )
+
+    val intent = Intent()
+    intent.putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, mPsalmNumberId)
+    setResult(Activity.RESULT_OK, intent)
+    finish()
   }
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     return when (item.itemId) {
       android.R.id.home -> {
         val intent = Intent()
-        intent.putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, mPsalmNumberId) // Provide original psalm ID
+        intent.putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, mPsalmNumberId)
         setResult(Activity.RESULT_CANCELED, intent)
         finish()
         true
       }
 
-      else -> {
-        super.onOptionsItemSelected(item)
-      }
+      else -> super.onOptionsItemSelected(item)
     }
   }
 
@@ -101,7 +121,6 @@ class PsalmEditActivity : AppCompatThemedActivity() {
   }
 
   private fun populateUIFromPsalmHolder() {
-    // Assuming mPsalmHolder is already populated with the data you need
     mPsalmHolder?.let { holder ->
       // Retrieve each view by its ID
       val psalmNameEdit = findViewById<EditText>(R.id.psalmNameEdit)

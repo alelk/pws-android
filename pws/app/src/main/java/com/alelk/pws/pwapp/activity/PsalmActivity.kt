@@ -213,6 +213,11 @@ class PsalmActivity : AppCompatThemedActivity(), PsalmTextFragment.Callbacks,
         if (data == null) return
         mPsalmNumberId = data.getLongExtra(KEY_PSALM_NUMBER_ID, -1L)
         mPagerPsalmText!!.currentItem = mBookPsalmNumberIds!!.indexOf(mPsalmNumberId)
+        if (resultCode == RESULT_OK) {
+          val fragment =
+            mPsalmTextPagerAdapter!!.registeredFragments[mPagerPsalmText!!.currentItem] as PsalmTextFragment
+          fragment.reloadUi()
+        }
       }
     }
   }
