@@ -180,6 +180,7 @@ class PsalmTextFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
     if (tonalities == null) {
       cvTonalities!!.visibility = View.GONE
     } else {
+      cvTonalities!!.visibility = View.VISIBLE
       vPsalmTonalities!!.text = tonalities
     }
     callbacks!!.onUpdatePsalmInfo(mPsalmHolder)
