@@ -252,12 +252,13 @@ class PwsDataProvider : ContentProvider(), PwsDataProviderContract {
     val METHOD_NAME = "update"
     Log.v(LOG_TAG, "$METHOD_NAME: uri='$uri'")
     mDatabase = mDatabaseHelper!!.writableDatabase
-    val bookEdition = uri.lastPathSegment
     var m = 0
-    if (values != null && bookEdition != null)
+    if (values != null) {
       when (URI_MATCHER.match(uri)) {
-        BookStatistic.URI_MATCH_TEXT -> m = updateBookStatistic(values, bookEdition)
+        BookStatistic.URI_MATCH_TEXT -> m = updateBookStatistic(values, uri.lastPathSegment!!)
+        Psalms.URI_MATCH_ID -> updatePsalm(values,  uri.lastPathSegment!!.toLong())
       }
+    }
     return m
   }
 
@@ -577,6 +578,14 @@ class PwsDataProvider : ContentProvider(), PwsDataProviderContract {
     return mDatabase!!.update(
       PwsBookStatisticTable.TABLE_BOOKSTATISTIC,
       values, "_id=($rawSelection)",
+      null
+    )
+  }
+
+  private fun updatePsalm(values: ContentValues, psalmId: Long): Int {
+    return mDatabase!!.update(
+      PwsPsalmTable.TABLE_PSALMS,
+      values, "_id=($psalmId)",
       null
     )
   }
