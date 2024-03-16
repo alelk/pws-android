@@ -65,9 +65,8 @@ class PsalmEditActivity : AppCompatThemedActivity() {
       if (mPsalmHolder?.psalmName != name) put(PwsPsalmTable.COLUMN_NAME, name)
       if (mPsalmHolder?.psalmText != text) put(PwsPsalmTable.COLUMN_TEXT, text)
       if (mPsalmHolder?.bibleRef != bibleRef) put(PwsPsalmTable.COLUMN_ANNOTATION, bibleRef)
-//      val tone = mPsalmHolder?.psalmTonalities!![0].split(";")[0].trim()
-//      if (!tone.equals(tonality, true)) put(PwsPsalmTable.COLUMN_TONALITIES, tonality)
-//      todo figure out hot tonality works
+      if (mPsalmHolder?.psalmTonalities!![0].split(";")[0].trim() != tonality)
+        put(PwsPsalmTable.COLUMN_TONALITIES, tonality)
     }
 
     if (values.size() > 0)
