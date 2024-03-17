@@ -1,7 +1,6 @@
 -- SQLite does not support directly deleting a column from a table via ALTER TABLE
 -- Instead, you need to create a new table without the 'edited' column,
 -- migrate the data, drop the old table, and rename the new table.
-BEGIN TRANSACTION;
 
 -- Explicitly creating a new table without the 'edited' column
 CREATE TABLE temp_psalms (
@@ -28,5 +27,3 @@ DROP TABLE psalms;
 
 -- Rename the temporary table to its original name
 ALTER TABLE temp_psalms RENAME TO psalms;
-
-COMMIT;
