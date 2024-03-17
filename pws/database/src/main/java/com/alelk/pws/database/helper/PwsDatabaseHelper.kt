@@ -19,13 +19,13 @@ import android.app.NotificationManager
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
+import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.alelk.pws.database.R
-import com.alelk.pws.database.helper.PwsDatabaseHelper
 import com.alelk.pws.database.provider.PwsDataProviderContract
 import com.alelk.pws.database.table.*
 import java.io.*
@@ -98,7 +98,71 @@ class PwsDatabaseHelper(private val mContext: Context) : SQLiteOpenHelper(
 
   override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
     val METHOD_NAME = "onUpgrade"
-    Log.e(LOG_TAG, "$METHOD_NAME: This method should be never called.")
+    Log.e(LOG_TAG, "$METHOD_NAME: oldVersion: $oldVersion. newVersion: $newVersion")
+    for (version in oldVersion + 1..newVersion) {
+      val migrationScriptPath = "db/migrations/${version}.sql"
+      val sqlScript = readSqlScriptFromFile(migrationScriptPath)
+      if (sqlScript.isNotEmpty()) {
+        db.beginTransaction()
+        try {
+          val commands = sqlScript.split(";").map { it.trim() }.filter { it.isNotEmpty() }
+          commands.forEach { command ->
+            db.execSQL(command)
+          }
+          db.setTransactionSuccessful()
+        } catch (e: SQLException) {
+          Log.e(LOG_TAG, "Error while performing migration $migrationScriptPath", e)
+        } finally {
+          db.endTransaction()
+          Log.i(LOG_TAG, "$METHOD_NAME: $migrationScriptPath executed successfully")
+        }
+      }
+    }
+  }
+
+
+  override fun onDowngrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
+    val METHOD_NAME = "onDowngrade"
+    Log.e(LOG_TAG, "$METHOD_NAME: oldVersion: $oldVersion. newVersion: $newVersion")
+    for (version in oldVersion downTo newVersion + 1) {
+      val rollbackScriptPath = "db/rollbacks/${version}.sql"
+      val sqlScript = readSqlScriptFromFile(rollbackScriptPath)
+      if (sqlScript.isNotEmpty()) {
+        db?.beginTransaction()
+        try {
+          val commands = sqlScript.split(";").map { it.trim() }.filter { it.isNotEmpty() }
+          commands.forEach { command ->
+            db?.execSQL(command)
+          }
+          db?.setTransactionSuccessful()
+        } catch (e: SQLException) {
+          Log.e(LOG_TAG, "Error while performing rollback $rollbackScriptPath", e)
+        } finally {
+          db?.endTransaction()
+          Log.i(LOG_TAG, "$METHOD_NAME: $rollbackScriptPath executed successfully")
+        }
+      }
+    }
+  }
+
+  private fun readSqlScriptFromFile(fileName: String): String {
+    val stringBuilder = StringBuilder()
+    try {
+      mContext.assets.open(fileName).use { inputStream ->
+        BufferedReader(InputStreamReader(inputStream)).use { reader ->
+          var line: String?
+          while (reader.readLine().also { line = it } != null) {
+            val trimmedLine = line!!.trim()
+            if (trimmedLine.isNotEmpty() && !trimmedLine.startsWith("--")) {
+              stringBuilder.append(line).append("\n")
+            }
+          }
+        }
+      }
+    } catch (e: IOException) {
+      e.printStackTrace()
+    }
+    return stringBuilder.toString()
   }
 
   @Throws(IOException::class)
