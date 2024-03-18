@@ -19,8 +19,8 @@ import java.text.SimpleDateFormat
 ext.sdkVersion = 34
 ext.support_version = "29.0.2"
 ext.constraint_layout_version = "2.1.4"
-ext.versionCode = 23
-ext.versionName = "1.4.0"
+ext.versionCode = 24
+ext.versionName = "1.5.0"
 ext.versionNameSuffix = getDate().toLowerCase()
 
 

@@ -51,6 +51,10 @@ interface PwsDataProviderContract {
     const val URI_MATCH = 20
     const val URI_MATCH_ID = 21
     val CONTENT_URI = Uri.Builder().scheme(SCHEME).authority(AUTHORITY).path(PATH).build()
+    @JvmStatic
+    fun getContentUri(psalmId: Long): Uri {
+      return Uri.Builder().scheme(SCHEME).authority(AUTHORITY).path("$PATH/$psalmId").build()
+    }
 
     internal object Suggestions {
       const val COLUMN_ID = "_id"
@@ -191,6 +195,7 @@ interface PwsDataProviderContract {
     object Psalm {
       const val PATH_SEGMENT = "psalm"
       const val COLUMN_ID = "_id"
+      const val COLUMN_PSALMID = Psalms.COLUMN_PSALMID
       const val COLUMN_PSALMNAME = Psalms.COLUMN_PSALMNAME
       const val COLUMN_PSALMTEXT = Psalms.COLUMN_PSALMTEXT
       const val COLUMN_PSALMANNOTATION = Psalms.COLUMN_PSALMANNOTATION
@@ -222,6 +227,7 @@ interface PwsDataProviderContract {
         "pn." + PwsPsalmNumbersTable.COLUMN_NUMBER + " AS " + COLUMN_PSALMNUMBER,
         "pn." + PwsPsalmNumbersTable.COLUMN_ID + " AS " + COLUMN_PSALMNUMBER_ID,
         "pn." + PwsPsalmNumbersTable.COLUMN_BOOKID + " AS " + COLUMN_BOOKID,
+        "pn." + PwsPsalmNumbersTable.COLUMN_PSALMID + " AS " + COLUMN_PSALMID,
         "b." + PwsBookTable.COLUMN_EDITION + " AS " + COLUMN_BOOKEDITION,
         "b." + PwsBookTable.COLUMN_DISPLAYNAME + " AS " + COLUMN_BOOKDISPLAYNAME,
         "b." + PwsBookTable.COLUMN_DISPLAYSHORTNAME + " AS " + COLUMN_BOOKDISPLAYSHORTNAME

@@ -19,13 +19,13 @@ import android.app.NotificationManager
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
+import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.alelk.pws.database.R
-import com.alelk.pws.database.helper.PwsDatabaseHelper
 import com.alelk.pws.database.provider.PwsDataProviderContract
 import com.alelk.pws.database.table.*
 import java.io.*
@@ -60,6 +60,7 @@ class PwsDatabaseHelper(private val mContext: Context) : SQLiteOpenHelper(
           .setSmallIcon(R.drawable.ic_data_usage_black)
           .setTicker(mContext.getString(R.string.txt_title_database_init))
         copyDatabase()
+        applyMigrations()
         if (!isDatabaseExists) {
           Log.e(
             LOG_TAG,
@@ -98,7 +99,64 @@ class PwsDatabaseHelper(private val mContext: Context) : SQLiteOpenHelper(
 
   override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
     val METHOD_NAME = "onUpgrade"
-    Log.e(LOG_TAG, "$METHOD_NAME: This method should be never called.")
+    Log.i(LOG_TAG, "$METHOD_NAME: oldVersion: $oldVersion. newVersion: $newVersion")
+    for (version in oldVersion + 1..newVersion) {
+      val scriptPath = "db/migrations/${version}.sql"
+      executeScript(scriptPath, db, METHOD_NAME)
+    }
+  }
+
+
+  override fun onDowngrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+    val METHOD_NAME = "onDowngrade"
+    Log.i(LOG_TAG, "$METHOD_NAME: oldVersion: $oldVersion. newVersion: $newVersion")
+    for (version in oldVersion downTo newVersion + 1) {
+      val scriptPath = "db/rollbacks/${version}.sql"
+      executeScript(scriptPath, db, METHOD_NAME)
+    }
+  }
+
+  private fun executeScript(
+    scriptPath: String,
+    db: SQLiteDatabase,
+    logMethodName: String
+  ) {
+    val sqlScript = readSqlScriptFromFile(scriptPath)
+    if (sqlScript.isNotEmpty()) {
+      db.beginTransaction()
+      try {
+        val commands = sqlScript.split(";").map { it.trim() }.filter { it.isNotEmpty() }
+        commands.forEach { command ->
+          db.execSQL(command)
+        }
+        db.setTransactionSuccessful()
+      } catch (e: SQLException) {
+        Log.e(LOG_TAG, "$logMethodName: Error while performing $scriptPath", e)
+      } finally {
+        db.endTransaction()
+        Log.i(LOG_TAG, "$logMethodName: $scriptPath executed successfully")
+      }
+    }
+  }
+
+  private fun readSqlScriptFromFile(fileName: String): String {
+    val stringBuilder = StringBuilder()
+    try {
+      mContext.assets.open(fileName).use { inputStream ->
+        BufferedReader(InputStreamReader(inputStream)).use { reader ->
+          var line: String?
+          while (reader.readLine().also { line = it } != null) {
+            val trimmedLine = line!!.trim()
+            if (trimmedLine.isNotEmpty() && !trimmedLine.startsWith("--")) {
+              stringBuilder.append(line).append("\n")
+            }
+          }
+        }
+      }
+    } catch (e: IOException) {
+      e.printStackTrace()
+    }
+    return stringBuilder.toString()
   }
 
   @Throws(IOException::class)
@@ -169,6 +227,30 @@ class PwsDatabaseHelper(private val mContext: Context) : SQLiteOpenHelper(
           )
         }
       }
+    }
+  }
+
+  private fun applyMigrations() {
+    val METHOD_NAME = "applyMigrations"
+    val database = openDatabase(dbPath, SQLiteDatabase.OPEN_READWRITE)
+    if (database == null) {
+      Log.e(LOG_TAG, "$METHOD_NAME: Could not open database + $dbPath")
+      return
+    }
+
+    try {
+      val migrationFiles = mContext.assets.list("db/migrations")?.filter { fileName ->
+        val versionNumber = fileName.replace(".sql", "").toIntOrNull()
+        versionNumber != null && versionNumber <= DATABASE_VERSION
+      }
+      migrationFiles?.sorted()?.forEach { fileName ->
+        val scriptPath = "db/migrations/$fileName"
+        executeScript(scriptPath, database, METHOD_NAME)
+      }
+    } catch (e: IOException) {
+      Log.e(LOG_TAG, "$METHOD_NAME: Error applying migration files", e)
+    } finally {
+      database.close()
     }
   }
 
@@ -429,7 +511,7 @@ class PwsDatabaseHelper(private val mContext: Context) : SQLiteOpenHelper(
   }
 
   companion object {
-    private const val DATABASE_VERSION = 3
+    private const val DATABASE_VERSION = 4
     private const val DATABASE_NAME = "pws.1.2.0.db"
     private val DATABASE_PREVIOUS_NAMES = arrayOf("pws.1.1.0.db", "pws.0.9.1.db")
     private const val DATABASE_VERSION_091 = 1
