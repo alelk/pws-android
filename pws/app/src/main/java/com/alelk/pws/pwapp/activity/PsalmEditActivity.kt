@@ -72,7 +72,7 @@ class PsalmEditActivity : AppCompatThemedActivity() {
     if (values.size() > 0)
       contentResolver.update(
         PwsDataProviderContract.Psalms.getContentUri(mPsalmHolder!!.psalmId),
-        values,
+        values.apply { put(PwsPsalmTable.COLUMN_EDITED, true) },
         null,
         null
       )
