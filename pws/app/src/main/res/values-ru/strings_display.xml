@@ -20,6 +20,7 @@
     <string name="action_settings">Настройки</string>
     <string name="title_activity_psalm_fullscreen">Песня</string>
     <string name="title_activity_main_settings">Настройки</string>
+    <string name="title_activity_psalm_edit">Редактирование псалма</string>
 
     <!-- Main activity display strings. -->
     <string name="txt_main_navigation_header_comment">Библиотека христианских песен.</string>
@@ -55,9 +56,17 @@
     <string name="lbl_search_psalm">Найти</string>
     <string name="lbl_jump_to_number">Перейти по номеру</string>
     <string name="lbl_share">Поделиться</string>
+    <string name="lbl_edit">Редактировать</string>
     <string name="lbl_psalm_text_size">Размер текста</string>
     <string name="msg_added_to_favorites">Добавлено в избранное.</string>
     <string name="msg_removed_from_favorites">Удалено из избранного.</string>
+
+    <!-- Edit psalm activity -->
+    <string name="label_psalm_name">Название псалма</string>
+    <string name="label_psalm_text">Текст псалма</string>
+    <string name="label_bible_ref">Библейская ссылка</string>
+    <string name="label_psalm_tonalities">Тональности псалма</string>
+    <string name="btn_save">Сохранить</string>
 
     <!-- Psalm fullscreen activity display strings. -->
     <string name="lbl_add_to_favorites">Добавить в избранное</string>

@@ -26,6 +26,7 @@ import java.util.*
  * Created by Alex Elkin on 27.05.2016.
  */
 class PsalmHolder(cursor: Cursor?, _isFavoritePsalm: Boolean) : PwsHolder {
+  var psalmId: Long = 0
   var psalmNumberId: Long = 0
   var psalmNumber = 0
   var psalmName: String? = null
@@ -45,6 +46,9 @@ class PsalmHolder(cursor: Cursor?, _isFavoritePsalm: Boolean) : PwsHolder {
       var index: Int
       if (cursor.getColumnIndex(Psalm.COLUMN_PSALMNUMBER_ID).also { index = it } != -1) {
         psalmNumberId = cursor.getLong(index)
+      }
+      if (cursor.getColumnIndex(Psalm.COLUMN_PSALMID).also { index = it } != -1) {
+        psalmId = cursor.getLong(index)
       }
       if (cursor.getColumnIndex(Psalm.COLUMN_PSALMNUMBER).also { index = it } != -1) {
         psalmNumber = cursor.getInt(index)
