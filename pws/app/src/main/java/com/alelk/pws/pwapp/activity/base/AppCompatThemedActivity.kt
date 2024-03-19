@@ -17,6 +17,7 @@ package com.alelk.pws.pwapp.activity.base
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import com.alelk.pws.pwapp.theme.AppTheme
 import com.alelk.pws.pwapp.theme.ThemePreferences
@@ -27,7 +28,7 @@ import com.alelk.pws.pwapp.theme.ThemeType
  *
  * Created by Alex Elkin on 24.08.17.
  */
-open class AppCompatThemedActivity : AppCompatActivity() {
+open class AppCompatThemedActivity : AppCompatBackButtonActivity() {
   private var mThemePreferences: ThemePreferences? = null
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -51,4 +52,13 @@ open class AppCompatThemedActivity : AppCompatActivity() {
   private val onThemeChange: (AppTheme) -> Unit = { restartActivity() }
   protected open val themeType: ThemeType?
     get() = ThemeType.NORMAL
+}
+
+open class AppCompatBackButtonActivity : AppCompatActivity() {
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    onBackPressedDispatcher.addCallback(this) {
+      onSupportNavigateUp()
+    }
+  }
 }
