@@ -8,3 +8,6 @@ app/src/uk/assets
 /captures
 *.iml
 local.properties
+
+# build results (apk)
+/app/*/release/
