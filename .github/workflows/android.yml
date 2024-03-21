@@ -19,9 +19,10 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
         cache: gradle
-
     - name: Grant execute permission for gradlew
-      run: cd pws & chmod +x gradlew
+      run: |
+        cd pws
+        chmod +x gradlew
     - name: Build RU
       run: ./gradlew buildRuDebug
     - name: Build UK
