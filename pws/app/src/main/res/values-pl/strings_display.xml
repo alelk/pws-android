@@ -19,6 +19,9 @@
     <string name="action_settings">Ustawienia</string>
     <string name="title_activity_psalm_fullscreen">Pieśń</string>
     <string name="title_activity_main_settings">Ustawienia</string>
+    <string name="title_activity_category">Kategoria:</string>
+    <string name="title_activity_category_psalms">Psalms by category</string>
+    <string name="title_activity_category_edit">Edytuj kategorie</string>
     <string name="title_activity_psalm_edit">Edytuj Psalm</string>
 
     <!-- Main activity display strings. -->
@@ -27,6 +30,7 @@
     <string name="lbl_drawer_main_home">Główna</string>
     <string name="lbl_drawer_main_books">Zbiory piosenek</string>
     <string name="lbl_drawer_main_favorite">Ulubione</string>
+   <string name="lbl_drawer_main_categories">Kategorie</string>
     <string name="lbl_drawer_main_settings">Ustawienia</string>
     <string name="lbl_drawer_main_system_menu"></string>
 
@@ -56,6 +60,7 @@
     <string name="lbl_jump_to_number">Przejdź do numeru</string>
     <string name="lbl_share">Udostępnij</string>
     <string name="lbl_edit">Edytować</string>
+    <string name="lbl_delete">Usuwać</string>
     <string name="lbl_psalm_text_size">Rozmiar tekstu pieśni</string>
     <string name="sort_by_added_date">Sortuj według daty dodania</string>
     <string name="sort_by_number">Sortuj według numeru</string>
@@ -69,6 +74,7 @@
     <string name="label_bible_ref">Odniesienie Biblijne</string>
     <string name="label_psalm_tonalities">Tonacje Psalmu</string>
     <string name="btn_save">Zapisz</string>
+    <string name="btn_edit_categories">Edytuj kategorie</string>
 
     <!-- Psalm fullscreen activity display strings. -->
     <string name="lbl_add_to_favorites">Dodaj do ulubionych</string>
