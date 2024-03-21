@@ -31,11 +31,7 @@ class PwsPsalmHtmlBuilder(private val locale: Locale?) {
   private val verseLabelPattern: Pattern = getPsalmVerseLabelPattern(locale)
   private val chorusNumberPattern: Pattern = getPsalmChorusNumberPattern(locale)
   private val chorusLabelPattern: Pattern = getPsalmChorusLabelPattern(locale)
-  private var psalmPartType: String? = null
-  private var psalmPartNumber = 0
-  private var psalmPartText = StringBuilder()
-  private val choruses = mutableMapOf<Int, String>()
-  private val verses = mutableMapOf<Int, String>()
+
 
   fun forLocale(locale: Locale?): PwsPsalmHtmlBuilder =
     if (this.locale != null && this.locale == locale || locale != null && locale == this.locale) this
@@ -46,59 +42,82 @@ class PwsPsalmHtmlBuilder(private val locale: Locale?) {
     else buildHtml(psalmText)
 
   private fun buildExpandedHtml(psalmText: String): String {
-    psalmPartType = null
-    psalmPartNumber = 0
-    psalmPartText = StringBuilder()
-    choruses.clear()
-    verses.clear()
-    val html = StringBuilder()
-    val tokenizer = StringTokenizer(psalmText, "\n")
-    while (tokenizer.hasMoreTokens()) {
-      val line = tokenizer.nextToken()
-      if (line.matches(verseNumberPattern.pattern().toRegex())) {
-        endPsalmPart()
-        val matcher = verseNumberPattern.matcher(line)
-        if (matcher.find()) startPsalmPart("verse", matcher.group(1))
-        html.append("<font color='#7aaf83'>").append(line.replace('.', ' ')).append("</font><br>")
-      } else if (line.matches(chorusNumberPattern.pattern().toRegex())) {
-        endPsalmPart()
-        val matcher = chorusNumberPattern.matcher(line)
-        if (matcher.find()) startPsalmPart("chorus", matcher.group(2))
-        html.append("<font color='#7aaf83'>").append(line.replace('.', ' ')).append("</font><br>")
-      } else if (line.matches(verseLabelPattern.pattern().toRegex())) {
-        endPsalmPart()
-        val matcher = verseLabelPattern.matcher(line)
-        if (matcher.find()) {
-          html
-            .append("<font color='#999999'>")
-            .append(matcher.group(1))
-            .append(if (TextUtils.isEmpty(matcher.group(2))) "" else " ${matcher.group(2)}").append("</font><br>")
-          html.append(verses[parsePsalmPartNumber(matcher.group(2))])
+
+    var psalmPartType: String? = null
+    var psalmPartNumber = 0
+    val choruses = mutableMapOf<Int, String>()
+    val verses = mutableMapOf<Int, String>()
+    var psalmPartText = StringBuilder()
+
+    fun startPsalmPart(ppt: String, ppn: String?) {
+      psalmPartType = ppt
+      psalmPartNumber = parsePsalmPartNumber(ppn)
+      psalmPartText = StringBuilder()
+    }
+
+    fun endPsalmPart() {
+      if (psalmPartType == null) return
+      if ("verse" == psalmPartType) verses[psalmPartNumber] = psalmPartText.toString()
+      if ("chorus" == psalmPartType) choruses[psalmPartNumber] = psalmPartText.toString()
+      psalmPartType = null
+    }
+
+    return buildString {
+      val tokenizer = StringTokenizer(psalmText, "\n")
+      while (tokenizer.hasMoreTokens()) {
+        val line = tokenizer.nextToken()
+        when {
+          line.matches(verseNumberPattern.pattern().toRegex()) -> {
+            endPsalmPart()
+            val matcher = verseNumberPattern.matcher(line)
+            if (matcher.find()) startPsalmPart("verse", matcher.group(1))
+            append("<font color='#7aaf83'>")
+            append(line.replace('.', ' '))
+            append("</font><br>")
+          }
+
+          line.matches(chorusNumberPattern.pattern().toRegex()) -> {
+            endPsalmPart()
+            val matcher = chorusNumberPattern.matcher(line)
+            if (matcher.find()) startPsalmPart("chorus", matcher.group(2))
+            append("<font color='#7aaf83'>")
+            append(line.replace('.', ' '))
+            append("</font><br>")
+          }
+
+          line.matches(verseLabelPattern.pattern().toRegex()) -> {
+            endPsalmPart()
+            val matcher = verseLabelPattern.matcher(line)
+            if (matcher.find()) {
+              append("<font color='#999999'>")
+              append(matcher.group(1))
+              append(if (TextUtils.isEmpty(matcher.group(2))) "" else " ${matcher.group(2)}").append("</font><br>")
+              append(verses[parsePsalmPartNumber(matcher.group(2))])
+            }
+          }
+
+          line.matches(chorusLabelPattern.pattern().toRegex()) -> {
+            endPsalmPart()
+            val matcher = chorusLabelPattern.matcher(line)
+            if (matcher.find()) {
+              append("<font color='#999999'>")
+              append(matcher.group(1))
+              append(if (matcher.group(2).isNullOrEmpty()) "" else " " + matcher.group(2))
+              append("</font><br>")
+              append(choruses[parsePsalmPartNumber(matcher.group(2))])
+            }
+          }
+
+          else -> {
+            psalmPartText.append(line).append("<br>")
+            append(line)
+            append("<br>")
+          }
         }
-      } else if (line.matches(chorusLabelPattern.pattern().toRegex())) {
-        endPsalmPart()
-        val matcher = chorusLabelPattern.matcher(line)
-        if (matcher.find()) {
-          html
-            .append("<font color='#999999'>")
-            .append(matcher.group(1))
-            .append(if (matcher.group(2).isNullOrEmpty()) "" else " " + matcher.group(2))
-            .append("</font><br>")
-          html.append(choruses[parsePsalmPartNumber(matcher.group(2))])
-        }
-      } else {
-        psalmPartText.append(line).append("<br>")
-        html.append(line).append("<br>")
       }
     }
-    return html.toString()
   }
 
-  private fun startPsalmPart(psalmPartType: String, psalmPartNumber: String?) {
-    this.psalmPartType = psalmPartType
-    this.psalmPartNumber = parsePsalmPartNumber(psalmPartNumber)
-    psalmPartText = StringBuilder()
-  }
 
   private fun parsePsalmPartNumber(str: String?): Int =
     if (str == null) 1
@@ -108,28 +127,31 @@ class PwsPsalmHtmlBuilder(private val locale: Locale?) {
       1
     }
 
-  private fun endPsalmPart() {
-    if (psalmPartType == null) return
-    if ("verse" == psalmPartType) verses.put(psalmPartNumber, psalmPartText.toString())
-    if ("chorus" == psalmPartType) choruses.put(psalmPartNumber, psalmPartText.toString())
-    psalmPartType = null
-  }
+  private fun buildHtml(psalmText: String): String =
+    buildString {
+      val tokenizer = StringTokenizer(psalmText, "\n")
+      while (tokenizer.hasMoreTokens()) {
+        val line = tokenizer.nextToken()
+        when {
+          line.matches(verseLabelPattern.pattern().toRegex()) || line.matches(chorusLabelPattern.pattern().toRegex()) -> {
+            append("<font color='#888888'><i>")
+            append(line)
+            append("</i></font><br>")
+          }
 
-  private fun buildHtml(psalmText: String): String {
-    val tokenizer = StringTokenizer(psalmText, "\n")
-    val html = StringBuilder()
-    while (tokenizer.hasMoreTokens()) {
-      val line = tokenizer.nextToken()
-      if (line.matches(verseLabelPattern.pattern().toRegex()) || line.matches(chorusLabelPattern.pattern().toRegex())) {
-        html.append("<font color='#888888'><i>").append(line).append("</i></font><br>")
-      } else if (line.matches(verseNumberPattern.pattern().toRegex()) || line.matches(chorusNumberPattern.pattern().toRegex())) {
-        html.append("<font color='#7aaf83'>").append(line.replace('.', ' ')).append("</font><br>")
-      } else {
-        html.append(line).append("<br>")
+          line.matches(verseNumberPattern.pattern().toRegex()) || line.matches(chorusNumberPattern.pattern().toRegex()) -> {
+            append("<font color='#7aaf83'>")
+            append(line.replace('.', ' '))
+            append("</font><br>")
+          }
+
+          else -> {
+            append(line)
+            append("<br>")
+          }
+        }
       }
     }
-    return html.toString()
-  }
 
   companion object {
     private val LOG_TAG = PwsPsalmHtmlBuilder::class.java.getSimpleName()
