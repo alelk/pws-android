@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2018 The P&W Songs Open Source Project
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,4 +17,5 @@
 <resources>
     <color name="colorBlackOverlay">#9a333333</color>
     <color name="colorBackgroundDark">#262626</color>
+    <color name="gray">#DCDCDC</color>
 </resources>

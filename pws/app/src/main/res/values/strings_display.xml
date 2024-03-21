@@ -20,6 +20,9 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_psalm_fullscreen">Psalm</string>
     <string name="title_activity_main_settings">Settings</string>
+    <string name="title_activity_category">Categories</string>
+    <string name="title_activity_category_psalms">Category:</string>
+    <string name="title_activity_category_edit">Edit Categories</string>
     <string name="title_activity_psalm_edit">Edit Psalm</string>
 
     <!-- Main activity display strings. -->
@@ -28,6 +31,7 @@
     <string name="lbl_drawer_main_home">Home</string>
     <string name="lbl_drawer_main_books">Hymns</string>
     <string name="lbl_drawer_main_favorite">Favorite</string>
+    <string name="lbl_drawer_main_categories">Categories</string>
     <string name="lbl_drawer_main_settings">Settings</string>
     <string name="lbl_drawer_main_system_menu"></string>
 
@@ -57,6 +61,7 @@
     <string name="lbl_jump_to_number">Jump to the number</string>
     <string name="lbl_share">Share</string>
     <string name="lbl_edit">Edit</string>
+    <string name="lbl_delete">Delete</string>
     <string name="lbl_psalm_text_size">Text size</string>
     <string name="sort_by_added_date">Sort by added date</string>
     <string name="sort_by_number">Sort by number</string>
@@ -70,6 +75,7 @@
     <string name="label_bible_ref">Bible Reference</string>
     <string name="label_psalm_tonalities">Psalm Tonalities</string>
     <string name="btn_save">Save</string>
+    <string name="btn_edit_categories">Edit categories</string>
 
     <!-- Psalm fullscreen activity display strings. -->
     <string name="lbl_add_to_favorites">Add to favorites</string>

@@ -20,6 +20,9 @@
     <string name="action_settings">Налаштування</string>
     <string name="title_activity_psalm_fullscreen">Пісня</string>
     <string name="title_activity_main_settings">Налаштування</string>
+    <string name="title_activity_category">Категорії</string>
+    <string name="title_activity_category_psalms">Категорія:</string>
+    <string name="title_activity_category_edit">Редагувати категорії</string>
     <string name="title_activity_psalm_edit">Редагування псалму</string>
 
     <!-- Main activity display strings. -->
@@ -28,6 +31,7 @@
     <string name="lbl_drawer_main_home">Головна</string>
     <string name="lbl_drawer_main_books">Збірники пісень</string>
     <string name="lbl_drawer_main_favorite">Обране</string>
+    <string name="lbl_drawer_main_categories">Категорії</string>
     <string name="lbl_drawer_main_settings">Налаштування</string>
     <string name="lbl_drawer_main_system_menu"></string>
 
@@ -57,6 +61,7 @@
     <string name="lbl_jump_to_number">Перейти по номеру</string>
     <string name="lbl_share">Поділитися</string>
     <string name="lbl_edit">Редагувати</string>
+    <string name="lbl_delete">Видалити</string>
     <string name="lbl_psalm_text_size">Розмір тексту</string>
     <string name="sort_by_added_date">Сортувати за датою додавання</string>
     <string name="sort_by_number">Сортувати за номером</string>
@@ -70,6 +75,7 @@
     <string name="label_bible_ref">Біблійне посилання</string>
     <string name="label_psalm_tonalities">Тональності псалму</string>
     <string name="btn_save">Зберегти</string>
+    <string name="btn_edit_categories">Редагувати категорії</string>
 
     <!-- Psalm fullscreen activity display strings. -->
     <string name="lbl_add_to_favorites">Додати до обраного</string>
