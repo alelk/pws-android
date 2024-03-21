@@ -13,166 +13,176 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.alelk.pws.database.util
 
-package com.alelk.pws.database.util;
-
-import android.text.TextUtils;
-import android.util.SparseArray;
-
-import java.util.Locale;
-import java.util.StringTokenizer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import android.text.TextUtils
+import android.util.SparseArray
+import com.alelk.pws.database.util.LocalizedStringsProvider.getResource
+import java.util.Locale
+import java.util.StringTokenizer
+import java.util.regex.Pattern
 
 /**
  * Pws Psalm Html Builder
  *
  * Created by Alex Elkin on 13.11.2017.
  */
+class PwsPsalmHtmlBuilder(private val locale: Locale?) {
+  private val verseNumberPattern: Pattern = psalmVerseNumberPattern
+  private val verseLabelPattern: Pattern = getPsalmVerseLabelPattern(locale)
+  private val chorusNumberPattern: Pattern = getPsalmChorusNumberPattern(locale)
+  private val chorusLabelPattern: Pattern = getPsalmChorusLabelPattern(locale)
+  private var psalmPartType: String? = null
+  private var psalmPartNumber = 0
+  private var psalmPartText = StringBuilder()
+  private val choruses = SparseArray<String>()
+  private val verses = SparseArray<String>()
 
-public class PwsPsalmHtmlBuilder {
+  fun forLocale(locale: Locale?): PwsPsalmHtmlBuilder {
+    return if (this.locale != null && this.locale == locale || locale != null && locale == this.locale) this else PwsPsalmHtmlBuilder(
+      locale
+    )
+  }
 
-    private static final String LOG_TAG = PwsPsalmHtmlBuilder.class.getSimpleName();
-    private final static String PSALM_VERSE_NUMBER_REGEX = "^\\s*+(\\d{1,2})\\.\\s*+$";
-    private final static String PSALM_VERSE_LABEL_FORMAT = "^\\s*+\\[(%s)\\s*+(\\d{1,2})\\]\\s*+$";
-    private final static String PSALM_CHORUS_NUMBER_FORMAT = "^\\s*+(%s)\\s*+(\\d{1,2})??:\\s*+$";
-    private final static String PSALM_CHORUS_LABEL_FORMAT = "^\\s*+\\[(%s)\\s*+(\\d{1,2})??\\]\\s*+$";
+  fun buildHtml(psalmText: String, isExpanded: Boolean): String {
+    return if (isExpanded) buildExpandedHtml(psalmText) else buildHtml(psalmText)
+  }
 
-    private Locale locale;
-    private Pattern verseNumberPattern;
-    private Pattern verseLabelPattern;
-    private Pattern chorusNumberPattern;
-    private Pattern chorusLabelPattern;
-    private String psalmPartType = null;
-    private int psalmPartNumber = 0;
-    private StringBuilder psalmPartText = new StringBuilder();
-    private final SparseArray<String> choruses = new SparseArray<>();
-    private final SparseArray<String> verses = new SparseArray<>();
-
-    public PwsPsalmHtmlBuilder(Locale locale) {
-        this.locale = locale;
-        verseNumberPattern = getPsalmVerseNumberPattern();
-        verseLabelPattern = getPsalmVerseLabelPattern(locale);
-        chorusNumberPattern = getPsalmChorusNumberPattern(locale);
-        chorusLabelPattern = getPsalmChorusLabelPattern(locale);
-    }
-
-    public PwsPsalmHtmlBuilder forLocale(Locale locale) {
-        if (this.locale != null && this.locale.equals(locale) || locale != null && locale.equals(this.locale)) return this;
-        return new PwsPsalmHtmlBuilder(locale);
-    }
-
-    public String buildHtml(String psalmText, boolean isExpanded) {
-        if (isExpanded) return buildExpandedHtml(psalmText);
-        return buildHtml(psalmText);
-    }
-
-    private String buildExpandedHtml(String psalmText) {
-
-        psalmPartType = null;
-        psalmPartNumber = 0;
-        psalmPartText = new StringBuilder();
-        choruses.clear();
-        verses.clear();
-
-        final StringBuilder html = new StringBuilder();
-        final StringTokenizer tokenizer = new StringTokenizer(psalmText, "\n");
-
-        while (tokenizer.hasMoreTokens()) {
-            String line = tokenizer.nextToken();
-            if (line.matches(verseNumberPattern.pattern())) {
-                endPsalmPart();
-                Matcher matcher = verseNumberPattern.matcher(line);
-                if (matcher.find())
-                    startPsalmPart("verse", matcher.group(1));
-                html.append("<font color='#7aaf83'>").append(line.replace('.', ' ')).append("</font><br>");
-            } else if (line.matches(chorusNumberPattern.pattern())) {
-                endPsalmPart();
-                Matcher matcher = chorusNumberPattern.matcher(line);
-                if (matcher.find())
-                    startPsalmPart("chorus", matcher.group(2));
-                html.append("<font color='#7aaf83'>").append(line.replace('.', ' ')).append("</font><br>");
-            } else if (line.matches(verseLabelPattern.pattern())) {
-                endPsalmPart();
-                final Matcher matcher = verseLabelPattern.matcher(line);
-                if (matcher.find()) {
-                    html.append("<font color='#999999'>").append(matcher.group(1))
-                            .append(TextUtils.isEmpty(matcher.group(2)) ? "" : " " + matcher.group(2)).append("</font><br>");
-                    html.append(verses.get(parsePsalmPartNumber(matcher.group(2))));
-                }
-            } else if (line.matches(chorusLabelPattern.pattern())) {
-                endPsalmPart();
-                final Matcher matcher = chorusLabelPattern.matcher(line);
-                if (matcher.find()) {
-                    html.append("<font color='#999999'>").append(matcher.group(1))
-                            .append(TextUtils.isEmpty(matcher.group(2)) ? "" : " " + matcher.group(2)).append("</font><br>");
-                    html.append(choruses.get(parsePsalmPartNumber(matcher.group(2))));
-                }
-            } else {
-                psalmPartText.append(line).append("<br>");
-                html.append(line).append("<br>");
-            }
+  private fun buildExpandedHtml(psalmText: String): String {
+    psalmPartType = null
+    psalmPartNumber = 0
+    psalmPartText = StringBuilder()
+    choruses.clear()
+    verses.clear()
+    val html = StringBuilder()
+    val tokenizer = StringTokenizer(psalmText, "\n")
+    while (tokenizer.hasMoreTokens()) {
+      val line = tokenizer.nextToken()
+      if (line.matches(verseNumberPattern.pattern().toRegex())) {
+        endPsalmPart()
+        val matcher = verseNumberPattern.matcher(line)
+        if (matcher.find()) startPsalmPart("verse", matcher.group(1))
+        html.append("<font color='#7aaf83'>").append(line.replace('.', ' '))
+          .append("</font><br>")
+      } else if (line.matches(chorusNumberPattern.pattern().toRegex())) {
+        endPsalmPart()
+        val matcher = chorusNumberPattern.matcher(line)
+        if (matcher.find()) startPsalmPart("chorus", matcher.group(2))
+        html.append("<font color='#7aaf83'>").append(line.replace('.', ' '))
+          .append("</font><br>")
+      } else if (line.matches(verseLabelPattern.pattern().toRegex())) {
+        endPsalmPart()
+        val matcher = verseLabelPattern.matcher(line)
+        if (matcher.find()) {
+          html.append("<font color='#999999'>").append(matcher.group(1))
+            .append(
+              if (TextUtils.isEmpty(matcher.group(2))) "" else " " + matcher.group(
+                2
+              )
+            ).append("</font><br>")
+          html.append(verses[parsePsalmPartNumber(matcher.group(2))])
         }
-        return html.toString();
-    }
-
-    private void startPsalmPart(String psalmPartType, String psalmPartNumber) {
-        this.psalmPartType = psalmPartType;
-        this.psalmPartNumber = parsePsalmPartNumber(psalmPartNumber);
-        psalmPartText = new StringBuilder();
-    }
-
-    private int parsePsalmPartNumber(String str) {
-        if (str == null) return 1;
-        try {
-            return Integer.parseInt(str);
-        } catch (NumberFormatException exc) {
-            return 1;
+      } else if (line.matches(chorusLabelPattern.pattern().toRegex())) {
+        endPsalmPart()
+        val matcher = chorusLabelPattern.matcher(line)
+        if (matcher.find()) {
+          html.append("<font color='#999999'>").append(matcher.group(1))
+            .append(
+              if (TextUtils.isEmpty(matcher.group(2))) "" else " " + matcher.group(
+                2
+              )
+            ).append("</font><br>")
+          html.append(choruses[parsePsalmPartNumber(matcher.group(2))])
         }
+      } else {
+        psalmPartText.append(line).append("<br>")
+        html.append(line).append("<br>")
+      }
+    }
+    return html.toString()
+  }
+
+  private fun startPsalmPart(psalmPartType: String, psalmPartNumber: String) {
+    this.psalmPartType = psalmPartType
+    this.psalmPartNumber = parsePsalmPartNumber(psalmPartNumber)
+    psalmPartText = StringBuilder()
+  }
+
+  private fun parsePsalmPartNumber(str: String?): Int =
+    if (str == null) 1
+    else try {
+      str.toInt()
+    } catch (exc: NumberFormatException) {
+      1
     }
 
-    private void endPsalmPart() {
-        if (psalmPartType == null) return;
-        if ("verse".equals(psalmPartType))
-            verses.put(psalmPartNumber, psalmPartText.toString());
-        if ("chorus".equals(psalmPartType))
-            choruses.put(psalmPartNumber, psalmPartText.toString());
-        psalmPartType = null;
+  private fun endPsalmPart() {
+    if (psalmPartType == null) return
+    if ("verse" == psalmPartType) verses.put(psalmPartNumber, psalmPartText.toString())
+    if ("chorus" == psalmPartType) choruses.put(psalmPartNumber, psalmPartText.toString())
+    psalmPartType = null
+  }
+
+  private fun buildHtml(psalmText: String): String {
+    val tokenizer = StringTokenizer(psalmText, "\n")
+    val html = StringBuilder()
+    while (tokenizer.hasMoreTokens()) {
+      val line = tokenizer.nextToken()
+      if (line.matches(verseLabelPattern.pattern().toRegex()) || line.matches(
+          chorusLabelPattern.pattern().toRegex()
+        )
+      ) {
+        html.append("<font color='#888888'><i>").append(line).append("</i></font><br>")
+      } else if (line.matches(verseNumberPattern.pattern().toRegex()) || line.matches(
+          chorusNumberPattern.pattern().toRegex()
+        )
+      ) {
+        html.append("<font color='#7aaf83'>").append(line.replace('.', ' '))
+          .append("</font><br>")
+      } else {
+        html.append(line).append("<br>")
+      }
+    }
+    return html.toString()
+  }
+
+  companion object {
+    private const val PSALM_VERSE_NUMBER_REGEX = "^\\s*+(\\d{1,2})\\.\\s*+$"
+    private const val PSALM_VERSE_LABEL_FORMAT = "^\\s*+\\[(%s)\\s*+(\\d{1,2})\\]\\s*+$"
+    private const val PSALM_CHORUS_NUMBER_FORMAT = "^\\s*+(%s)\\s*+(\\d{1,2})??:\\s*+$"
+    private const val PSALM_CHORUS_LABEL_FORMAT = "^\\s*+\\[(%s)\\s*+(\\d{1,2})??\\]\\s*+$"
+    private val psalmVerseNumberPattern: Pattern
+      get() = Pattern.compile(PSALM_VERSE_NUMBER_REGEX)
+
+    private fun getPsalmVerseLabelPattern(locale: Locale?): Pattern {
+      return Pattern.compile(
+        String.format(
+          PSALM_VERSE_LABEL_FORMAT,
+          getLocalizedString("lbl_verse", locale)
+        )
+      )
     }
 
-    private String buildHtml(String psalmText) {
-        final StringTokenizer tokenizer = new StringTokenizer(psalmText, "\n");
-        final StringBuilder html = new StringBuilder();
-        while (tokenizer.hasMoreTokens()) {
-            String line = tokenizer.nextToken();
-            if (line.matches(verseLabelPattern.pattern()) || line.matches(chorusLabelPattern.pattern())) {
-                html.append("<font color='#888888'><i>").append(line).append("</i></font><br>");
-            } else if (line.matches(verseNumberPattern.pattern()) || line.matches(chorusNumberPattern.pattern())) {
-                html.append("<font color='#7aaf83'>").append(line.replace('.', ' ')).append("</font><br>");
-            } else {
-                html.append(line).append("<br>");
-            }
-        }
-        return html.toString();
+    private fun getPsalmChorusNumberPattern(locale: Locale?): Pattern {
+      return Pattern.compile(
+        String.format(
+          PSALM_CHORUS_NUMBER_FORMAT,
+          getLocalizedString("lbl_chorus", locale)
+        )
+      )
     }
 
-    private static Pattern getPsalmVerseNumberPattern() {
-        return Pattern.compile(PSALM_VERSE_NUMBER_REGEX);
+    private fun getPsalmChorusLabelPattern(locale: Locale?): Pattern {
+      return Pattern.compile(
+        String.format(
+          PSALM_CHORUS_LABEL_FORMAT,
+          getLocalizedString("lbl_chorus", locale)
+        )
+      )
     }
 
-    private static Pattern getPsalmVerseLabelPattern(Locale locale) {
-        return Pattern.compile(String.format(PSALM_VERSE_LABEL_FORMAT, getLocalizedString("lbl_verse", locale)));
+    private fun getLocalizedString(stringKey: String, locale: Locale?): String? {
+      return getResource(stringKey, locale!!)
     }
-
-    private static Pattern getPsalmChorusNumberPattern(Locale locale) {
-        return Pattern.compile(String.format(PSALM_CHORUS_NUMBER_FORMAT, getLocalizedString("lbl_chorus", locale)));
-    }
-
-    private static Pattern getPsalmChorusLabelPattern(Locale locale) {
-        return Pattern.compile(String.format(PSALM_CHORUS_LABEL_FORMAT, getLocalizedString("lbl_chorus", locale)));
-    }
-
-    private static String getLocalizedString(String stringKey, Locale locale) {
-        return LocalizedStringsProvider.getResource(stringKey, locale);
-    }
+  }
 }

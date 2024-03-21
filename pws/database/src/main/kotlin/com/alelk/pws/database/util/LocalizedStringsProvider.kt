@@ -13,45 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.alelk.pws.database.util
 
-package com.alelk.pws.database.util;
-
-import android.util.Log;
-
-import java.util.LinkedHashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import android.util.Log
+import java.util.Locale
+import java.util.MissingResourceException
+import java.util.ResourceBundle
 
 /**
  * Localized strings provider
  *
  * Created by Alex Elkin on 18.07.17.
  */
+object LocalizedStringsProvider {
+  private const val RESOURCE_BUNDLE_NAME = "strings"
+  private val LOG_TAG = LocalizedStringsProvider::class.java.getSimpleName()
 
-public class LocalizedStringsProvider {
-
-    private static final String RESOURCE_BUNDLE_NAME = "strings";
-    private static final String LOG_TAG = LocalizedStringsProvider.class.getSimpleName();
-
-    public static String getResource(String stringKey, Locale locale) {
-        ResourceBundle rb;
-        try {
-            rb = getBundle(locale);
-        } catch (MissingResourceException exc) {
-            Log.w(LOG_TAG, "Cannot get resource '" + stringKey + "' for the locale " + locale +
-                    ": No resource bundle found. Trying to get resource from default resource bundle..");
-            rb = getBundle();
-        }
-        return rb != null ? rb.getString(stringKey) : null;
+  @JvmStatic
+  fun getResource(stringKey: String, locale: Locale): String? {
+    val rb: ResourceBundle = try {
+      getBundle(locale)
+    } catch (exc: MissingResourceException) {
+      Log.w(
+        LOG_TAG,
+        "Cannot get resource '$stringKey' for the locale $locale: No resource bundle found. Trying to get resource from default resource bundle.."
+      )
+      bundle
     }
+    return rb.getString(stringKey)
+  }
 
-    private static ResourceBundle getBundle() {
-        return ResourceBundle.getBundle(RESOURCE_BUNDLE_NAME);
-    }
+  private val bundle: ResourceBundle
+    get() = ResourceBundle.getBundle(RESOURCE_BUNDLE_NAME)
 
-    private static ResourceBundle getBundle(Locale locale) {
-        return ResourceBundle.getBundle(RESOURCE_BUNDLE_NAME, locale);
-    }
+  private fun getBundle(locale: Locale): ResourceBundle = ResourceBundle.getBundle(RESOURCE_BUNDLE_NAME, locale)
 }
