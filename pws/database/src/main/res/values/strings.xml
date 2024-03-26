@@ -54,4 +54,5 @@
     <string name="d_sharp_minor">D-sharp minor</string>
     <string name="c_sharp_major">C-sharp major</string>
     <string name="a_sharp_minor">A-sharp minor</string>
+    <string name="not_defined" translatable="false">---</string>
 </resources>

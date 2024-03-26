@@ -65,7 +65,7 @@ class PsalmEditActivity : AppCompatThemedActivity() {
       if (mPsalmHolder?.psalmName != name) put(PwsPsalmTable.COLUMN_NAME, name)
       if (mPsalmHolder?.psalmText != text) put(PwsPsalmTable.COLUMN_TEXT, text)
       if (mPsalmHolder?.bibleRef != bibleRef) put(PwsPsalmTable.COLUMN_ANNOTATION, bibleRef)
-      if (mPsalmHolder?.psalmTonalities!![0].split(";")[0].trim() != tonality)
+      if (mPsalmHolder?.psalmTonalities?.getOrNull(0)?.split(";")?.get(0)?.trim() != tonality)
         put(PwsPsalmTable.COLUMN_TONALITIES, tonality)
     }
 
@@ -137,8 +137,8 @@ class PsalmEditActivity : AppCompatThemedActivity() {
       val tonalitiesAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, tonalities)
       tonalitiesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
       psalmTonalitiesSpinner.adapter = tonalitiesAdapter
-      val spinnerPosition = Tonality.getInstanceBySignature(holder.psalmTonalities[0].split(";")[0].trim())!!.ordinal
-      psalmTonalitiesSpinner.setSelection(spinnerPosition)
+      val tonality = Tonality.getInstanceBySignature(holder.psalmTonalities.getOrNull(0)?.split(";")?.get(0)?.trim())
+      psalmTonalitiesSpinner.setSelection(tonality?.ordinal ?: Tonality.NOT_DEFINED.ordinal)
     }
   }
 
