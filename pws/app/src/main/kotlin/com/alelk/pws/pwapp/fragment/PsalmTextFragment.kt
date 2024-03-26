@@ -32,6 +32,7 @@ import androidx.loader.content.CursorLoader
 import androidx.loader.content.Loader
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.alelk.pws.database.data.Tonality
 import com.alelk.pws.database.data.Tonality.Companion.getInstanceBySignature
 import com.alelk.pws.database.provider.PwsDataProviderContract
 import com.alelk.pws.database.table.PwsFavoritesTable
@@ -177,7 +178,7 @@ class PsalmTextFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
       tonalities = (if (tonalities == null) "" else ", ") + tonality.getLabel(activity!!)
       i++
     }
-    if (tonalities == null) {
+    if (tonalities == null || tonalities == Tonality.NOT_DEFINED.signature) {
       cvTonalities!!.visibility = View.GONE
     } else {
       cvTonalities!!.visibility = View.VISIBLE
