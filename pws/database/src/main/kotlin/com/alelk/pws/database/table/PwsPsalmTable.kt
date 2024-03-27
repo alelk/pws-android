@@ -49,7 +49,7 @@ object PwsPsalmTable : PwsTable {
       "$COLUMN_TONALITIES text, " +
       "$COLUMN_YEAR text, " +
       "$COLUMN_ANNOTATION text, " +
-      "$COLUMN_TEXT text not null" +
+      "$COLUMN_TEXT text not null, " +
       "$COLUMN_EDITED boolean DEFAULT 0" +
       ");"
 

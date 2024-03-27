@@ -65,8 +65,11 @@ class PsalmEditActivity : AppCompatThemedActivity() {
       if (mPsalmHolder?.psalmName != name) put(PwsPsalmTable.COLUMN_NAME, name)
       if (mPsalmHolder?.psalmText != text) put(PwsPsalmTable.COLUMN_TEXT, text)
       if (mPsalmHolder?.bibleRef != bibleRef) put(PwsPsalmTable.COLUMN_ANNOTATION, bibleRef)
-      if (mPsalmHolder?.psalmTonalities?.getOrNull(0)?.split(";")?.get(0)?.trim() != tonality)
-        put(PwsPsalmTable.COLUMN_TONALITIES, tonality)
+      val prevTonality = mPsalmHolder?.psalmTonalities?.firstOrNull()?.split(";")?.firstOrNull()?.trim()
+      if (tonality != prevTonality) {
+        // If the tonality is not defined, set it to null
+        put(PwsPsalmTable.COLUMN_TONALITIES, Tonality.getInstanceBySignature(tonality)?.signature)
+      }
     }
 
     if (values.size() > 0)
@@ -133,12 +136,14 @@ class PsalmEditActivity : AppCompatThemedActivity() {
       bibleRefEdit.setText(holder.bibleRef)
 
       // Setup ArrayAdapter for the Spinner with the array of tonalities
-      val tonalities = Tonality.values().map { (it.signature) }
+      val tonalities = Tonality.values().map { (it.signature) } + resources.getString(R.string.tonality_not_defined)
       val tonalitiesAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, tonalities)
       tonalitiesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
       psalmTonalitiesSpinner.adapter = tonalitiesAdapter
-      val tonality = Tonality.getInstanceBySignature(holder.psalmTonalities.getOrNull(0)?.split(";")?.get(0)?.trim())
-      psalmTonalitiesSpinner.setSelection(tonality?.ordinal ?: Tonality.NOT_DEFINED.ordinal)
+      val currentTonality =
+        holder.psalmTonalities.firstOrNull()?.split(';')?.firstOrNull()?.trim()?.let(Tonality::getInstanceBySignature)?.signature
+          ?: resources.getString(R.string.tonality_not_defined)
+      psalmTonalitiesSpinner.setSelection(tonalities.indexOf(currentTonality))
     }
   }
 
