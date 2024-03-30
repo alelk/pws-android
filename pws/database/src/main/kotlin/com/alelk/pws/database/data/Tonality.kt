@@ -53,21 +53,13 @@ enum class Tonality(val signature: String, private val labelId: Int) {
   F_SHARP_MAJOR("F-sharp major", R.string.f_sharp_major),
   D_SHARP_MINOR("D-sharp minor", R.string.d_sharp_minor),
   C_SHARP_MAJOR("C-sharp major", R.string.c_sharp_major),
-  A_SHARP_MINOR("A-sharp minor", R.string.a_sharp_minor),
-  NOT_DEFINED("---", R.string.not_defined);
+  A_SHARP_MINOR("A-sharp minor", R.string.a_sharp_minor);
 
   fun getLabel(context: Context): String {
     return context.applicationContext.getString(labelId)
   }
 
   companion object {
-    fun getInstanceBySignature(signature: String?): Tonality? {
-      for (tonality in values()) {
-        if (tonality.signature.equals(signature, ignoreCase = true)) {
-          return tonality
-        }
-      }
-      return null
-    }
+    fun getInstanceBySignature(signature: String): Tonality? = values().firstOrNull { it.signature.equals(signature, ignoreCase = true) }
   }
 }

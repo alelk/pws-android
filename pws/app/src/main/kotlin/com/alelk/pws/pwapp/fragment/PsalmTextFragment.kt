@@ -15,15 +15,25 @@
  */
 package com.alelk.pws.pwapp.fragment
 
-import android.content.*
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.ContentValues
+import android.content.Context
+import android.content.Intent
 import android.database.Cursor
 import android.os.Build
 import android.os.Bundle
 import android.text.Html
 import android.util.Log
 import android.util.TypedValue
-import android.view.*
+import android.view.ContextMenu
 import android.view.ContextMenu.ContextMenuInfo
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
@@ -32,7 +42,6 @@ import androidx.loader.content.CursorLoader
 import androidx.loader.content.Loader
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.alelk.pws.database.data.Tonality
 import com.alelk.pws.database.data.Tonality.Companion.getInstanceBySignature
 import com.alelk.pws.database.provider.PwsDataProviderContract
 import com.alelk.pws.database.table.PwsFavoritesTable
@@ -44,7 +53,7 @@ import com.alelk.pws.pwapp.activity.PsalmFullscreenActivity
 import com.alelk.pws.pwapp.adapter.ReferredPsalmsRecyclerViewAdapter
 import com.alelk.pws.pwapp.holder.PsalmHolder
 import com.alelk.pws.pwapp.preference.PsalmPreferences
-import java.util.*
+import java.util.Locale
 
 /**
  * Created by Alex Elkin on 18.04.2015.
@@ -175,10 +184,10 @@ class PsalmTextFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
         i++
         continue
       }
-      tonalities = (if (tonalities == null) "" else ", ") + tonality.getLabel(activity!!)
+      tonalities = (if (tonalities == null) "" else ", ") + tonality.getLabel(requireActivity())
       i++
     }
-    if (tonalities == null || tonalities == Tonality.NOT_DEFINED.signature) {
+    if (tonalities.isNullOrEmpty()) {
       cvTonalities!!.visibility = View.GONE
     } else {
       cvTonalities!!.visibility = View.VISIBLE
