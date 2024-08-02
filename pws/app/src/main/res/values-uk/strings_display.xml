@@ -58,6 +58,7 @@
     <string name="lbl_share">Поділитися</string>
     <string name="lbl_edit">Редагувати</string>
     <string name="lbl_psalm_text_size">Розмір тексту</string>
+    <string name="sort_by_added_date">Сортувати за датою додавання</string>
     <string name="sort_by_number">Сортувати за номером</string>
     <string name="sort_by_name">Сортувати за назвою</string>
     <string name="msg_added_to_favorites">Додано до обраного.</string>

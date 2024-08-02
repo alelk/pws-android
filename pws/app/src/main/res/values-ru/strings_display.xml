@@ -57,6 +57,7 @@
     <string name="lbl_jump_to_number">Перейти по номеру</string>
     <string name="lbl_share">Поделиться</string>
     <string name="lbl_edit">Редактировать</string>
+    <string name="sort_by_added_date">Сортировать по дате добавления</string>
     <string name="sort_by_number">Сортировать по номеру</string>
     <string name="sort_by_name">Сортировать по имени</string>
     <string name="lbl_psalm_text_size">Размер текста</string>
