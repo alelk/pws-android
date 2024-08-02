@@ -57,6 +57,8 @@
     <string name="lbl_share">Udostępnij</string>
     <string name="lbl_edit">Edytować</string>
     <string name="lbl_psalm_text_size">Rozmiar tekstu pieśni</string>
+    <string name="sort_by_number">Sortuj według numeru</string>
+    <string name="sort_by_name">Sortuj według nazwy</string>
     <string name="msg_added_to_favorites">Dodano do ulubionych</string>
     <string name="msg_removed_from_favorites">Usunięto z ulubionych</string>
 

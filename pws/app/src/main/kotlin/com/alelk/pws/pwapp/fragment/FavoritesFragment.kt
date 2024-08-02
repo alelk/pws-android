@@ -19,6 +19,9 @@ import android.content.Intent
 import android.database.Cursor
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
@@ -38,7 +41,16 @@ import com.alelk.pws.pwapp.adapter.FavoritesRecyclerViewAdapter
  * Created by Alex Elkin on 18.02.2016.
  */
 class FavoritesFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
+  private var sortOrder: Int? = null
   private var mFavoritesAdapter: FavoritesRecyclerViewAdapter? = null
+  private var menuSortByName: MenuItem? = null
+  private var menuSortByNumber: MenuItem? = null
+
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setHasOptionsMenu(true)
+  }
+
   override fun onCreateView(
     inflater: LayoutInflater,
     container: ViewGroup?,
@@ -69,10 +81,41 @@ class FavoritesFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
         null,
         null,
         null,
-        null
+        when (sortOrder) {
+          SORT_BY_NUMBER -> "${PwsDataProviderContract.Favorites.COLUMN_PSALMNUMBER} ASC"
+          SORT_BY_NAME -> "${PwsDataProviderContract.Favorites.COLUMN_PSALMNAME} ASC"
+          else -> null
+        }
       )
+
       else -> throw java.lang.IllegalStateException("unable to create loader")
     }
+
+  override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+    menuSortByName = menu.add(0, 1, 0, R.string.sort_by_name)
+    menuSortByNumber = menu.add(0, 2, 0, R.string.sort_by_number)
+    super.onCreateOptionsMenu(menu, inflater)
+  }
+
+  override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    return when (item.itemId) {
+      menuSortByNumber!!.itemId -> {
+        this.sortOrder = SORT_BY_NUMBER
+        mFavoritesAdapter?.updateView()
+        loaderManager.restartLoader(PWS_FAVORITES_LOADER, null, this)
+        true
+      }
+
+      menuSortByName!!.itemId -> {
+        this.sortOrder = SORT_BY_NAME
+        mFavoritesAdapter?.updateView()
+        loaderManager.restartLoader(PWS_FAVORITES_LOADER, null, this)
+        true
+      }
+
+      else -> super.onOptionsItemSelected(item)
+    }
+  }
 
   override fun onLoadFinished(loader: Loader<Cursor>, data: Cursor) {
     mFavoritesAdapter!!.swapCursor(data)
@@ -84,5 +127,7 @@ class FavoritesFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
 
   companion object {
     const val PWS_FAVORITES_LOADER = 1
+    const val SORT_BY_NUMBER = 2
+    const val SORT_BY_NAME = 3
   }
 }
