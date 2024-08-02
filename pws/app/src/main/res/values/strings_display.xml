@@ -58,6 +58,8 @@
     <string name="lbl_share">Share</string>
     <string name="lbl_edit">Edit</string>
     <string name="lbl_psalm_text_size">Text size</string>
+    <string name="sort_by_number">Sort by number</string>
+    <string name="sort_by_name">Sort by name</string>
     <string name="msg_added_to_favorites">Added to favorites.</string>
     <string name="msg_removed_from_favorites">Removed from favorites.</string>
 
