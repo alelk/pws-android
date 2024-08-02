@@ -88,6 +88,11 @@ open class MainActivity : AppCompatThemedActivity(), NavigationView.OnNavigation
     outState.putInt(KEY_NAVIGATION_ITEM_ID, mNavigationItemId)
   }
 
+  override fun onResume() {
+    super.onResume()
+    displayFragment()
+  }
+
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
     menuInflater.inflate(R.menu.menu_main, menu)
     return true
