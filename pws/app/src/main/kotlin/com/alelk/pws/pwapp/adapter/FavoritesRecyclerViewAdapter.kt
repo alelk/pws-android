@@ -57,6 +57,10 @@ class FavoritesRecyclerViewAdapter(private val mOnItemClickListener: ((psalmNumb
     return if (mCursor == null || mCursor!!.isClosed) 0 else mCursor!!.count
   }
 
+  fun updateView() {
+    notifyDataSetChanged()
+  }
+
   class FavoriteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     var cardView: CardView
     var psalmName: TextView

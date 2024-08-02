@@ -81,7 +81,7 @@ class PwsDataProvider : ContentProvider(), PwsDataProviderContract {
       Psalms.URI_MATCH_ID -> {}
       Psalms.PsalmNumbers.URI_MATCH -> {}
       Favorites.URI_MATCH -> cursor =
-        queryFavorites(projection, selection, selectionArgs, null, null)
+        queryFavorites(projection, selection, selectionArgs, sortOrder, null)
       Favorites.URI_MATCH_ID -> cursor = queryFavorite(uri.lastPathSegment!!.toLong())
       History.URI_MATCH -> cursor = queryHistory(
         projection,
