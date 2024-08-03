@@ -24,8 +24,8 @@ android {
     compileSdk = rootProject.extra["sdkVersion"] as Int
 
     signingConfigs {
-        create("releaseSignConfig") {
-            keyAlias = project.findProperty("android.release.keyAlias") as String?
+        create("release-ru") {
+            keyAlias = project.findProperty("android.release.keyAliasRu") as String?
             keyPassword = project.findProperty("android.release.keyPassword") as String?
             storeFile =
                 (project.findProperty("android.release.keystorePath") as String?)?.let(::file)
@@ -47,7 +47,7 @@ android {
         getByName("release") {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
-            signingConfig = signingConfigs.getByName("releaseSignConfig")
+            signingConfig = signingConfigs.getByName("release-ru")
             buildConfigField("String", "VERSION_NAME", "\"${defaultConfig.versionName}\"")
         }
         getByName("debug") {
