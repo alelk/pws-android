@@ -209,7 +209,6 @@ class PsalmActivity : AppCompatThemedActivity(), PsalmTextFragment.Callbacks,
         mPsalmNumberId = data.getLongExtra(PsalmFullscreenActivity.KEY_PSALM_NUMBER_ID, -1)
         mPagerPsalmText!!.currentItem = mBookPsalmNumberIds!!.indexOf(mPsalmNumberId)
       }
-
       REQUEST_CODE_EDIT_ACTIVITY -> {
         if (data == null) return
         mPsalmNumberId = data.getLongExtra(KEY_PSALM_NUMBER_ID, -1L)
@@ -230,8 +229,7 @@ class PsalmActivity : AppCompatThemedActivity(), PsalmTextFragment.Callbacks,
   override fun onNegativeButtonClick() {}
   override fun onPreferencesChanged(preferences: PsalmPreferences?) {
     if (preferences != null) {
-      val fragment =
-        mPsalmTextPagerAdapter!!.registeredFragments[mPagerPsalmText!!.currentItem] as PsalmTextFragment
+      val fragment = mPsalmTextPagerAdapter!!.registeredFragments[mPagerPsalmText!!.currentItem] as PsalmTextFragment
       fragment.applyPsalmPreferences(preferences)
     }
   }

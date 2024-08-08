@@ -49,7 +49,6 @@ class PsalmEditActivity : AppCompatThemedActivity() {
     // UI setup
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     val saveButton = findViewById<Button>(R.id.saveButton)
-
     saveButton.setOnClickListener {
       savePsalmDetails()
     }
@@ -66,8 +65,7 @@ class PsalmEditActivity : AppCompatThemedActivity() {
       if (mPsalmHolder?.psalmName != name) put(PwsPsalmTable.COLUMN_NAME, name)
       if (mPsalmHolder?.psalmText != text) put(PwsPsalmTable.COLUMN_TEXT, text)
       if (mPsalmHolder?.bibleRef != bibleRef) put(PwsPsalmTable.COLUMN_ANNOTATION, bibleRef)
-      val prevTonality =
-        mPsalmHolder?.psalmTonalities?.firstOrNull()?.split(";")?.firstOrNull()?.trim()
+      val prevTonality = mPsalmHolder?.psalmTonalities?.firstOrNull()?.split(";")?.firstOrNull()?.trim()
       if (tonality != prevTonality) {
         // If the tonality is not defined, set it to null
         put(PwsPsalmTable.COLUMN_TONALITIES, Tonality.getInstanceBySignature(tonality)?.signature)
@@ -138,14 +136,12 @@ class PsalmEditActivity : AppCompatThemedActivity() {
       bibleRefEdit.setText(holder.bibleRef)
 
       // Setup ArrayAdapter for the Spinner with the array of tonalities
-      val tonalities = Tonality.values()
-        .map { (it.signature) } + resources.getString(R.string.tonality_not_defined)
+      val tonalities = Tonality.values().map { (it.signature) } + resources.getString(R.string.tonality_not_defined)
       val tonalitiesAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, tonalities)
       tonalitiesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
       psalmTonalitiesSpinner.adapter = tonalitiesAdapter
       val currentTonality =
-        holder.psalmTonalities.firstOrNull()?.split(';')?.firstOrNull()?.trim()
-          ?.let(Tonality::getInstanceBySignature)?.signature
+        holder.psalmTonalities.firstOrNull()?.split(';')?.firstOrNull()?.trim()?.let(Tonality::getInstanceBySignature)?.signature
           ?: resources.getString(R.string.tonality_not_defined)
       psalmTonalitiesSpinner.setSelection(tonalities.indexOf(currentTonality))
     }

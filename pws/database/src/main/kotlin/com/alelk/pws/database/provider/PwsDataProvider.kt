@@ -438,17 +438,6 @@ class PwsDataProvider : ContentProvider(), PwsDataProviderContract {
     return queryFavorites(null, Favorites.SELECTION_ID_MATCH, selectionArgs, null, null)
   }
 
-//  private fun queryLastCategory(projection: Array<String>?): Cursor? {
-//    val METHOD_NAME = "queryLastCategory"
-//    val cursor = queryCategories(projection, null, null, Categories.SORT_ORDER_DESC, "1")
-//    Log.v(
-//      LOG_TAG,
-//      METHOD_NAME + ": projection=" + Arrays.toString(projection) + " results: " + (cursor?.count
-//        ?: "cursor=null")
-//    )
-//    return cursor
-//  }
-
   private fun queryLastFavorite(projection: Array<String>?): Cursor? {
     val METHOD_NAME = "queryLastFavorite"
     val cursor = queryFavorites(projection, null, null, null, "1")
