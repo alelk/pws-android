@@ -97,6 +97,7 @@
     <string name="lbl_edit_categories_for_song">Edit categories for song</string>
     <string name="msg_confirm_delete_category">Are you sure you want to delete the category</string>
     <string name="msg_category_name_unique">Category name must be unique</string>
+    <string name="lbl_add_category">Add category</string>
     <string name="lbl_edit_category_name">Edit category name</string>
     <string name="lbl_delete_category">Delete category</string>
     <string name="lbl_edit_categories">Edit Categories</string>

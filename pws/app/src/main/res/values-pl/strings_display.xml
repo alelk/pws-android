@@ -94,6 +94,7 @@
     <string name="title_activity_category_psalms">Psalms by category</string>
     <string name="title_activity_category_edit">Edytuj kategorie</string>
     <string name="hint_category_name">Nazwa kategorii</string>
+    <string name="lbl_add_category">Dodaj kategorię</string>
     <string name="lbl_edit_category_name">Edytuj nazwę kategorii</string>
     <string name="lbl_delete_category">Usuń kategorię</string>
     <string name="lbl_edit_categories">Edytuj kategorie</string>

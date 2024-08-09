@@ -32,7 +32,7 @@ class CategoryDialog(private val activity: CategoriesActivity) {
     }
 
     val dialog = AlertDialog.Builder(activity)
-      .setTitle("Add category")
+      .setTitle(activity.getString(R.string.lbl_add_category))
       .setView(dialogView)
       .setPositiveButton(android.R.string.ok) { dialog, _ ->
         val categoryName = categoryNameInput.text.toString()

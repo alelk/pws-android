@@ -97,6 +97,7 @@
     <string name="lbl_edit_categories_for_song">Редактировать категории для песни</string>
     <string name="msg_confirm_delete_category">Вы уверены, что хотите удалить категорию</string>
     <string name="msg_category_name_unique">Название категории должно быть уникальным</string>
+    <string name="lbl_add_category">Добавить категорию</string>
     <string name="lbl_edit_category_name">Изменить название категории</string>
     <string name="lbl_delete_category">Удалить категорию</string>
     <string name="lbl_edit_categories">Редактировать категории</string>
