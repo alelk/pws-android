@@ -35,7 +35,7 @@ class EditPsalmCategoryDialog(private val activity: Activity) {
     setupDialogView()
 
     val dialog = AlertDialog.Builder(activity)
-      .setTitle("Edit categories for song")
+      .setTitle(activity.getString(R.string.lbl_edit_categories_for_song))
       .setView(dialogView)
       .setPositiveButton(android.R.string.ok) { dialog, _ ->
         onResult(assignedCategories)

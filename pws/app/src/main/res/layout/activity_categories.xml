@@ -18,5 +18,5 @@
       android:id="@+id/button_edit_categories"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:text="Edit categories" />
+      android:text="@string/btn_edit_categories" />
 </LinearLayout>

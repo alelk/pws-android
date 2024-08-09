@@ -9,7 +9,7 @@
         android:id="@+id/category_name_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Category Name"
+        android:hint="@string/hint_category_name"
         android:inputType="text" />
 
     <LinearLayout
@@ -23,7 +23,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
-            android:text="Choose color" />
+            android:text="@string/btn_choose_color" />
 
         <View
             android:layout_width="0dp"
