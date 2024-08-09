@@ -1,70 +1,75 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-  android:layout_width="match_parent"
-  android:layout_height="wrap_content"
-  android:orientation="vertical"
-  android:padding="16dp">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-  <!-- Label for Psalm Name -->
-  <TextView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingBottom="4dp"
-    android:text="@string/label_psalm_name" />
-  <!-- EditText for Psalm Name -->
-  <EditText
-    android:id="@+id/psalmNameEdit"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:inputType="textCapWords"
-    android:paddingBottom="4dp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
 
-  <!-- Label for Psalm Text -->
-  <TextView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingTop="12dp"
-    android:text="@string/label_psalm_text" />
-  <!-- EditText for Psalm Text -->
-  <EditText
-    android:id="@+id/psalmTextEdit"
-    android:layout_width="match_parent"
-    android:layout_height="0dp"
-    android:layout_weight="1"
-    android:gravity="top|start"
-    android:inputType="textMultiLine"
-    android:minLines="10"
-    android:scrollbars="vertical" />
+        <!-- Label for Psalm Name -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="4dp"
+            android:text="@string/label_psalm_name" />
+        <!-- EditText for Psalm Name -->
+        <EditText
+            android:id="@+id/psalmNameEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textCapWords"
+            android:paddingBottom="4dp" />
 
-  <!-- Label for Bible Reference -->
-  <TextView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingTop="12dp"
-    android:text="@string/label_bible_ref" />
-  <!-- EditText for Bible Reference -->
-  <EditText
-    android:id="@+id/bibleRefEdit"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:inputType="text" />
+        <!-- Label for Psalm Text -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="12dp"
+            android:text="@string/label_psalm_text" />
+        <!-- EditText for Psalm Text -->
+        <EditText
+            android:id="@+id/psalmTextEdit"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="top|start"
+            android:inputType="textMultiLine"
+            android:minLines="10"
+            android:scrollbars="vertical" />
 
-  <!-- Label for Psalm Tonalities -->
-  <TextView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingTop="12dp"
-    android:text="@string/label_psalm_tonalities" />
-  <!-- Spinner for Psalm Tonalities -->
-  <Spinner
-    android:id="@+id/psalmTonalitiesSpinner"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content" />
+        <!-- Label for Bible Reference -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="12dp"
+            android:text="@string/label_bible_ref" />
+        <!-- EditText for Bible Reference -->
+        <EditText
+            android:id="@+id/bibleRefEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text" />
 
-  <!-- Button to Save Changes -->
-  <Button
-    android:id="@+id/saveButton"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center_horizontal"
-    android:text="@string/btn_save" />
-</LinearLayout>
+        <!-- Label for Psalm Tonalities -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="12dp"
+            android:text="@string/label_psalm_tonalities" />
+        <!-- Spinner for Psalm Tonalities -->
+        <Spinner
+            android:id="@+id/psalmTonalitiesSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/btn_save" />
+
+    </LinearLayout>
+</ScrollView>

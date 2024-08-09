@@ -43,7 +43,7 @@ class FavoritesRecyclerViewAdapter(private val mOnItemClickListener: ((psalmNumb
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoriteViewHolder {
     val v = LayoutInflater.from(parent.context)
-      .inflate(R.layout.layout_favorites_list_item, parent, false)
+      .inflate(R.layout.layout_psalm_list_item, parent, false)
     return FavoriteViewHolder(v)
   }
 
@@ -69,7 +69,7 @@ class FavoritesRecyclerViewAdapter(private val mOnItemClickListener: ((psalmNumb
     var psalmNumberId: Long = 0
 
     init {
-      cardView = itemView.findViewById(R.id.cv_favorite)
+      cardView = itemView.findViewById(R.id.cv_psalm_item)
       psalmName = itemView.findViewById(R.id.txt_psalm_name)
       psalmNumber = itemView.findViewById(R.id.txt_psalm_number)
       bookDisplayName = itemView.findViewById(R.id.txt_book_name)

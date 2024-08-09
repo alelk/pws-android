@@ -68,6 +68,14 @@
       android:windowSoftInputMode="adjustResize"
       android:theme="@style/Theme.AppTheme.NoActionBar" />
     <activity
+      android:name=".activity.CategoriesActivity"
+      android:label="@string/title_activity_category"
+      android:parentActivityName=".activity.MainActivity" />
+    <activity
+        android:name=".activity.CategoryPsalmsActivity"
+        android:label="@string/title_activity_category_psalms"
+        android:parentActivityName=".activity.CategoriesActivity" />
+    <activity
       android:name=".activity.MainSettingsActivity"
       android:label="@string/title_activity_main_settings"
       android:parentActivityName=".activity.MainActivity" />

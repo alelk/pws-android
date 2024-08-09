@@ -27,6 +27,8 @@ import com.alelk.pws.database.table.PwsPsalmFtsTable
 import com.alelk.pws.database.table.PwsPsalmNumbersTable
 import com.alelk.pws.database.table.PwsPsalmPsalmReferencesTable
 import com.alelk.pws.database.table.PwsPsalmTable
+import com.alelk.pws.database.table.PwsPsalmTagTable
+import com.alelk.pws.database.table.PwsTagTable
 
 /**
  * Pws Data Provider Contract
@@ -51,6 +53,7 @@ interface PwsDataProviderContract {
     const val URI_MATCH = 20
     const val URI_MATCH_ID = 21
     val CONTENT_URI = Uri.Builder().scheme(SCHEME).authority(AUTHORITY).path(PATH).build()
+
     @JvmStatic
     fun getContentUri(psalmId: Long): Uri {
       return Uri.Builder().scheme(SCHEME).authority(AUTHORITY).path("$PATH/$psalmId").build()
@@ -262,8 +265,8 @@ interface PwsDataProviderContract {
         fun getContentUri(psalmNumberId: Long): Uri {
           return Uri.Builder().scheme(SCHEME).authority(AUTHORITY).path(
             PsalmNumbers.PATH + "/" + psalmNumberId + "/" +
-              Book.PATH_SEGMENT + "/" +
-              PATH_SEGMENT
+                    Book.PATH_SEGMENT + "/" +
+                    PATH_SEGMENT
           ).build()
         }
 
@@ -281,8 +284,8 @@ interface PwsDataProviderContract {
             null,
             "1"
           ) + ") as b inner join " +
-            PwsPsalmNumbersTable.TABLE_PSALMNUMBERS + " as pn on " +
-            "pn." + PwsPsalmNumbersTable.COLUMN_BOOKID + " = b._id"
+                  PwsPsalmNumbersTable.TABLE_PSALMNUMBERS + " as pn on " +
+                  "pn." + PwsPsalmNumbersTable.COLUMN_BOOKID + " = b._id"
         }
 
         object Info {
@@ -299,9 +302,9 @@ interface PwsDataProviderContract {
           fun getContentUri(psalmNumberId: Long): Uri {
             return Uri.Builder().scheme(SCHEME).authority(AUTHORITY).path(
               PsalmNumbers.PATH + "/" + psalmNumberId + "/" +
-                Book.PATH_SEGMENT + "/" +
-                BookPsalmNumbers.PATH_SEGMENT + "/" +
-                PATH_SEGMENT
+                      Book.PATH_SEGMENT + "/" +
+                      BookPsalmNumbers.PATH_SEGMENT + "/" +
+                      PATH_SEGMENT
             ).build()
           }
 
@@ -441,6 +444,54 @@ interface PwsDataProviderContract {
     )
   }
 
+  object Categories {
+    const val COLUMN_ID = "_id"
+    const val COLUMN_TAG_ID = "tag_id"
+    const val COLUMN_PSALM_NUMBER_ID = "psalmnumbers_id"
+    const val COLUMN_BOOK_NAME = "book_name"
+    const val COLUMN_PSALM_NUMBER = "psalm_number"
+    const val COLUMN_PSALM_NAME = "psalm_name"
+    const val COLUMN_CATEGORY_NAME = "name"
+    const val COLUMN_CATEGORY_COLOR = "color"
+    const val COLUMN_CATEGORY_PREDEFINED = "predefined"
+    const val TAG_PATH = "${PwsTagTable.TABLE_TAG}"
+    const val TAG_PATH_ID = "$TAG_PATH/#"
+    const val PSALM_TAG_PATH = "${PwsPsalmTagTable.TABLE_PSALM_TAG}"
+    const val TAG_URI_MATCH = 80
+    const val TAG_ID_URI_MATCH = 81
+    const val TAGS_BY_PSALM_NUMBER_URI_MATCH = 83
+
+    @JvmField
+    val TAG_URI = Uri.Builder().scheme(SCHEME).authority(AUTHORITY).path(TAG_PATH).build()
+    val PSALM_TAG_URI =
+      Uri.Builder().scheme(SCHEME).authority(AUTHORITY).path(PSALM_TAG_PATH).build()
+    const val TAG_TABLE = "${PwsTagTable.TABLE_TAG} as t"
+    const val TAGS_BY_PSALM_NUMBERS_TABLE =
+      " ${PwsPsalmTagTable.TABLE_PSALM_TAG} as pt inner join $TAG_TABLE on t._id = pt.${PwsPsalmTagTable.COLUMN_TAG_ID}"
+    const val PSALM_NUMBERS_BY_TAG_TABLE = "${PwsPsalmTagTable.TABLE_PSALM_TAG} as pt " +
+            "inner join ${PwsPsalmNumbersTable.TABLE_PSALMNUMBERS} as pn on pn.${PwsPsalmNumbersTable.COLUMN_ID} = pt.${PwsPsalmTagTable.COLUMN_PSALM_NUMBER_ID} " +
+            "inner join ${PwsBookTable.TABLE_BOOKS} as b on b.${PwsBookTable.COLUMN_ID} = pn.${PwsPsalmNumbersTable.COLUMN_BOOKID} " +
+            "inner join ${PwsPsalmTable.TABLE_PSALMS} as p on p.${PwsPsalmTable.COLUMN_ID}  = pn.${PwsPsalmNumbersTable.COLUMN_PSALMID}"
+    const val SORT_ORDER_ASC = "$COLUMN_ID ASC"
+    const val SORT_ORDER_DESC = "$COLUMN_ID DESC"
+    const val SELECTION_ID_MATCH = "$COLUMN_ID = ?"
+    const val BY_PSALM_NUMBER_SELECTION = "${PwsPsalmTagTable.COLUMN_PSALM_NUMBER_ID} = ?"
+    const val BY_TAG_SELECTION = "${PwsPsalmTagTable.COLUMN_TAG_ID} = ?"
+    val BY_TAG_PROJECTION = arrayOf(
+      "pt.tag_id as $COLUMN_TAG_ID",
+      "pt.psalmnumbers_id as $COLUMN_PSALM_NUMBER_ID",
+      "b.name as $COLUMN_BOOK_NAME",
+      "pn.number as $COLUMN_PSALM_NUMBER",
+      "p.name as $COLUMN_PSALM_NAME"
+    )
+    val PROJECTION = arrayOf(
+      "t." + PwsTagTable.COLUMN_ID + " AS " + COLUMN_ID,
+      "t." + PwsTagTable.COLUMN_NAME + " AS " + COLUMN_CATEGORY_NAME,
+      "t." + PwsTagTable.COLUMN_COLOR + " AS " + COLUMN_CATEGORY_COLOR,
+      "t." + PwsTagTable.COLUMN_PREDEFINED + " AS " + COLUMN_CATEGORY_PREDEFINED
+    )
+  }
+
   object History {
     const val COLUMN_ID = "_id"
     const val COLUMN_PSALMID = Psalms.COLUMN_PSALMID
@@ -556,10 +607,10 @@ interface PwsDataProviderContract {
     const val PSALM_NUMBER_ID = "psalmId"
 
     const val TABLE = "${PwsBookTable.TABLE_BOOKS} as b " +
-      "inner join ${PwsBookStatisticTable.TABLE_BOOKSTATISTIC} as bs " +
-      "on b.${PwsBookTable.COLUMN_ID} = bs.${PwsBookStatisticTable.COLUMN_BOOKID} " +
-      "inner join ${PwsPsalmNumbersTable.TABLE_PSALMNUMBERS} as pn " +
-      "on b.${PwsBookTable.COLUMN_ID} = pn.${PwsPsalmNumbersTable.COLUMN_BOOKID}"
+            "inner join ${PwsBookStatisticTable.TABLE_BOOKSTATISTIC} as bs " +
+            "on b.${PwsBookTable.COLUMN_ID} = bs.${PwsBookStatisticTable.COLUMN_BOOKID} " +
+            "inner join ${PwsPsalmNumbersTable.TABLE_PSALMNUMBERS} as pn " +
+            "on b.${PwsBookTable.COLUMN_ID} = pn.${PwsPsalmNumbersTable.COLUMN_BOOKID}"
     const val ACTIVE = "bs.${PwsBookStatisticTable.COLUMN_USERPREFERENCE} > 0"
     const val FIRST_SONG = "pn.${PwsPsalmNumbersTable.COLUMN_NUMBER} = 1"
     const val SORTED = "bs.${PwsBookStatisticTable.COLUMN_USERPREFERENCE} desc"
@@ -628,72 +679,72 @@ interface PwsDataProviderContract {
     const val QUERY_PARAMETER_LIMIT = "limit"
     const val HISTORY_TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss"
     const val TABLE_BOOKS_JOIN_BOOKSTATISTIC = PwsBookTable.TABLE_BOOKS + " as b " +
-      " INNER JOIN " + PwsBookStatisticTable.TABLE_BOOKSTATISTIC + " as bs " +
-      "ON bs." + PwsBookStatisticTable.COLUMN_BOOKID + "=b." + PwsBookTable.COLUMN_ID
+            " INNER JOIN " + PwsBookStatisticTable.TABLE_BOOKSTATISTIC + " as bs " +
+            "ON bs." + PwsBookStatisticTable.COLUMN_BOOKID + "=b." + PwsBookTable.COLUMN_ID
     const val TABLE_PSALMS_JOIN_PSALMNUMBERS_JOIN_BOOKS =
       PwsPsalmTable.TABLE_PSALMS + " AS p " +
-        "INNER JOIN " + PwsPsalmNumbersTable.TABLE_PSALMNUMBERS + " AS pn " +
-        "ON p." + PwsPsalmTable.COLUMN_ID + "=pn." + PwsPsalmNumbersTable.COLUMN_PSALMID +
-        " INNER JOIN " + PwsBookTable.TABLE_BOOKS + " as b " +
-        "ON pn." + PwsPsalmNumbersTable.COLUMN_BOOKID + "=b." + PwsBookTable.COLUMN_ID
+              "INNER JOIN " + PwsPsalmNumbersTable.TABLE_PSALMNUMBERS + " AS pn " +
+              "ON p." + PwsPsalmTable.COLUMN_ID + "=pn." + PwsPsalmNumbersTable.COLUMN_PSALMID +
+              " INNER JOIN " + PwsBookTable.TABLE_BOOKS + " as b " +
+              "ON pn." + PwsPsalmNumbersTable.COLUMN_BOOKID + "=b." + PwsBookTable.COLUMN_ID
     const val TABLE_PSALMS_JOIN_PSALMNUMBERS_JOIN_BOOKS_JOIN_BOOKSTATISTIC =
       PwsPsalmTable.TABLE_PSALMS + " AS p " +
-        "INNER JOIN " + PwsPsalmNumbersTable.TABLE_PSALMNUMBERS + " AS pn " +
-        "ON p." + PwsPsalmTable.COLUMN_ID + "=pn." + PwsPsalmNumbersTable.COLUMN_PSALMID +
-        " INNER JOIN " + PwsBookTable.TABLE_BOOKS + " as b " +
-        "ON pn." + PwsPsalmNumbersTable.COLUMN_BOOKID + "=b." + PwsBookTable.COLUMN_ID +
-        " INNER JOIN " + PwsBookStatisticTable.TABLE_BOOKSTATISTIC + " as bs " +
-        "ON bs." + PwsBookStatisticTable.COLUMN_BOOKID + "=b." + PwsBookTable.COLUMN_ID
+              "INNER JOIN " + PwsPsalmNumbersTable.TABLE_PSALMNUMBERS + " AS pn " +
+              "ON p." + PwsPsalmTable.COLUMN_ID + "=pn." + PwsPsalmNumbersTable.COLUMN_PSALMID +
+              " INNER JOIN " + PwsBookTable.TABLE_BOOKS + " as b " +
+              "ON pn." + PwsPsalmNumbersTable.COLUMN_BOOKID + "=b." + PwsBookTable.COLUMN_ID +
+              " INNER JOIN " + PwsBookStatisticTable.TABLE_BOOKSTATISTIC + " as bs " +
+              "ON bs." + PwsBookStatisticTable.COLUMN_BOOKID + "=b." + PwsBookTable.COLUMN_ID
     const val TABLE_PSALMS_JOIN_PSALMNUMBERS_JOIN_BOOKS_USERPREFERRED =
       PwsBookTable.TABLE_BOOKS + " AS b " +
-        " INNER JOIN (SELECT " +
-        PwsBookStatisticTable.COLUMN_BOOKID +
-        ", " + PwsBookStatisticTable.COLUMN_USERPREFERENCE +
-        " FROM " + PwsBookStatisticTable.TABLE_BOOKSTATISTIC +
-        " WHERE " + PwsBookStatisticTable.COLUMN_USERPREFERENCE + ">0 " +
-        " ORDER BY " + PwsBookStatisticTable.COLUMN_USERPREFERENCE + ") AS bs " +
-        " ON b." + PwsBookTable.COLUMN_ID + "=bs." + PwsBookStatisticTable.COLUMN_BOOKID +
-        " INNER JOIN " + PwsPsalmNumbersTable.TABLE_PSALMNUMBERS + " AS pn " +
-        "ON pn." + PwsPsalmNumbersTable.COLUMN_BOOKID + "=b." + PwsBookTable.COLUMN_ID +
-        " INNER JOIN " + PwsPsalmTable.TABLE_PSALMS + " AS p " +
-        " ON p." + PwsPsalmTable.COLUMN_ID + "=pn." + PwsPsalmNumbersTable.COLUMN_PSALMID
+              " INNER JOIN (SELECT " +
+              PwsBookStatisticTable.COLUMN_BOOKID +
+              ", " + PwsBookStatisticTable.COLUMN_USERPREFERENCE +
+              " FROM " + PwsBookStatisticTable.TABLE_BOOKSTATISTIC +
+              " WHERE " + PwsBookStatisticTable.COLUMN_USERPREFERENCE + ">0 " +
+              " ORDER BY " + PwsBookStatisticTable.COLUMN_USERPREFERENCE + ") AS bs " +
+              " ON b." + PwsBookTable.COLUMN_ID + "=bs." + PwsBookStatisticTable.COLUMN_BOOKID +
+              " INNER JOIN " + PwsPsalmNumbersTable.TABLE_PSALMNUMBERS + " AS pn " +
+              "ON pn." + PwsPsalmNumbersTable.COLUMN_BOOKID + "=b." + PwsBookTable.COLUMN_ID +
+              " INNER JOIN " + PwsPsalmTable.TABLE_PSALMS + " AS p " +
+              " ON p." + PwsPsalmTable.COLUMN_ID + "=pn." + PwsPsalmNumbersTable.COLUMN_PSALMID
     const val TABLE_PSALMS_JOIN_PSALMNUMBERS_JOIN_BOOKS_USERPREFERRED_JOIN_REFERENCEPSALMS =
       TABLE_PSALMS_JOIN_PSALMNUMBERS_JOIN_BOOKS_USERPREFERRED +
-        " INNER JOIN " + PwsPsalmPsalmReferencesTable.TABLE_PSALMPSALMREFERENCES + " AS ppr " +
-        "ON p." + PwsPsalmTable.COLUMN_ID + " = ppr." + PwsPsalmPsalmReferencesTable.COLUMN_REFPSALMID +
-        " INNER JOIN " + PwsPsalmNumbersTable.TABLE_PSALMNUMBERS + " AS cpn " +
-        "ON cpn." + PwsPsalmNumbersTable.COLUMN_PSALMID + " = ppr." + PwsPsalmPsalmReferencesTable.COLUMN_PSALMID
+              " INNER JOIN " + PwsPsalmPsalmReferencesTable.TABLE_PSALMPSALMREFERENCES + " AS ppr " +
+              "ON p." + PwsPsalmTable.COLUMN_ID + " = ppr." + PwsPsalmPsalmReferencesTable.COLUMN_REFPSALMID +
+              " INNER JOIN " + PwsPsalmNumbersTable.TABLE_PSALMNUMBERS + " AS cpn " +
+              "ON cpn." + PwsPsalmNumbersTable.COLUMN_PSALMID + " = ppr." + PwsPsalmPsalmReferencesTable.COLUMN_PSALMID
     const val TABLE_PSALMS_FTS_JOIN_PSALMNUMBERS_JOIN_BOOKS_USERPREFERRED =
       PwsBookTable.TABLE_BOOKS + " AS b " +
-        " INNER JOIN (SELECT " +
-        PwsBookStatisticTable.COLUMN_BOOKID +
-        " FROM " + PwsBookStatisticTable.TABLE_BOOKSTATISTIC +
-        " WHERE " + PwsBookStatisticTable.COLUMN_USERPREFERENCE + ">0 " +
-        " ORDER BY " + PwsBookStatisticTable.COLUMN_USERPREFERENCE + ") AS bs " +
-        " ON b." + PwsBookTable.COLUMN_ID + "=bs." + PwsBookStatisticTable.COLUMN_BOOKID +
-        " INNER JOIN " + PwsPsalmNumbersTable.TABLE_PSALMNUMBERS + " AS pn " +
-        "ON pn." + PwsPsalmNumbersTable.COLUMN_BOOKID + "=b." + PwsBookTable.COLUMN_ID +
-        " INNER JOIN " + PwsPsalmFtsTable.TABLE_PSALMS_FTS + " AS p " +
-        " ON p.docid=pn." + PwsPsalmNumbersTable.COLUMN_PSALMID
+              " INNER JOIN (SELECT " +
+              PwsBookStatisticTable.COLUMN_BOOKID +
+              " FROM " + PwsBookStatisticTable.TABLE_BOOKSTATISTIC +
+              " WHERE " + PwsBookStatisticTable.COLUMN_USERPREFERENCE + ">0 " +
+              " ORDER BY " + PwsBookStatisticTable.COLUMN_USERPREFERENCE + ") AS bs " +
+              " ON b." + PwsBookTable.COLUMN_ID + "=bs." + PwsBookStatisticTable.COLUMN_BOOKID +
+              " INNER JOIN " + PwsPsalmNumbersTable.TABLE_PSALMNUMBERS + " AS pn " +
+              "ON pn." + PwsPsalmNumbersTable.COLUMN_BOOKID + "=b." + PwsBookTable.COLUMN_ID +
+              " INNER JOIN " + PwsPsalmFtsTable.TABLE_PSALMS_FTS + " AS p " +
+              " ON p.docid=pn." + PwsPsalmNumbersTable.COLUMN_PSALMID
     const val TABLE_PSALMNUMBERS_JOIN_BOOKS =
       PwsPsalmNumbersTable.TABLE_PSALMNUMBERS + " AS pn " +
-        "INNER JOIN " + PwsBookTable.TABLE_BOOKS + " as b " +
-        "ON pn." + PwsPsalmNumbersTable.COLUMN_BOOKID + "=b." + PwsBookTable.COLUMN_ID
+              "INNER JOIN " + PwsBookTable.TABLE_BOOKS + " as b " +
+              "ON pn." + PwsPsalmNumbersTable.COLUMN_BOOKID + "=b." + PwsBookTable.COLUMN_ID
     const val TABLE_HISTORY_JOIN_PSALMNUMBERS_JOIN_BOOKS_JOIN_PSALMS =
       PwsHistoryTable.TABLE_HISTORY + " AS h " +
-        "INNER JOIN " + PwsPsalmNumbersTable.TABLE_PSALMNUMBERS + " AS pn " +
-        "ON h." + PwsHistoryTable.COLUMN_PSALMNUMBERID + "=pn." + PwsPsalmNumbersTable.COLUMN_ID +
-        " INNER JOIN " + PwsBookTable.TABLE_BOOKS + " as b " +
-        "ON pn." + PwsPsalmNumbersTable.COLUMN_BOOKID + "=b." + PwsBookTable.COLUMN_ID +
-        " INNER JOIN " + PwsPsalmTable.TABLE_PSALMS + " as p " +
-        "ON pn." + PwsPsalmNumbersTable.COLUMN_PSALMID + "=p." + PwsPsalmTable.COLUMN_ID
+              "INNER JOIN " + PwsPsalmNumbersTable.TABLE_PSALMNUMBERS + " AS pn " +
+              "ON h." + PwsHistoryTable.COLUMN_PSALMNUMBERID + "=pn." + PwsPsalmNumbersTable.COLUMN_ID +
+              " INNER JOIN " + PwsBookTable.TABLE_BOOKS + " as b " +
+              "ON pn." + PwsPsalmNumbersTable.COLUMN_BOOKID + "=b." + PwsBookTable.COLUMN_ID +
+              " INNER JOIN " + PwsPsalmTable.TABLE_PSALMS + " as p " +
+              "ON pn." + PwsPsalmNumbersTable.COLUMN_PSALMID + "=p." + PwsPsalmTable.COLUMN_ID
     const val TABLE_FAVORITES_JOIN_PSALMNUMBERS_JOIN_BOOKS_JOIN_PSALMS =
       PwsFavoritesTable.TABLE_FAVORITES + " AS f " +
-        "INNER JOIN " + PwsPsalmNumbersTable.TABLE_PSALMNUMBERS + " AS pn " +
-        "ON f." + PwsFavoritesTable.COLUMN_PSALMNUMBERID + "=pn." + PwsPsalmNumbersTable.COLUMN_ID +
-        " INNER JOIN " + PwsBookTable.TABLE_BOOKS + " as b " +
-        "ON pn." + PwsPsalmNumbersTable.COLUMN_BOOKID + "=b." + PwsBookTable.COLUMN_ID +
-        " INNER JOIN " + PwsPsalmTable.TABLE_PSALMS + " as p " +
-        "ON pn." + PwsPsalmNumbersTable.COLUMN_PSALMID + "=p." + PwsPsalmTable.COLUMN_ID
+              "INNER JOIN " + PwsPsalmNumbersTable.TABLE_PSALMNUMBERS + " AS pn " +
+              "ON f." + PwsFavoritesTable.COLUMN_PSALMNUMBERID + "=pn." + PwsPsalmNumbersTable.COLUMN_ID +
+              " INNER JOIN " + PwsBookTable.TABLE_BOOKS + " as b " +
+              "ON pn." + PwsPsalmNumbersTable.COLUMN_BOOKID + "=b." + PwsBookTable.COLUMN_ID +
+              " INNER JOIN " + PwsPsalmTable.TABLE_PSALMS + " as p " +
+              "ON pn." + PwsPsalmNumbersTable.COLUMN_PSALMID + "=p." + PwsPsalmTable.COLUMN_ID
   }
 }
