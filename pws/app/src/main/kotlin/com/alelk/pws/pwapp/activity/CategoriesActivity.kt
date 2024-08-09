@@ -45,7 +45,7 @@ class CategoriesActivity : AppCompatThemedActivity() {
 
   private fun onEditButton() {
     isEditMode = !isEditMode
-    editCategoriesButton.text = if (isEditMode) "Done" else "Edit Categories"
+    editCategoriesButton.text = if (isEditMode) getString(R.string.lbl_done) else getString(R.string.lbl_edit_categories)
     mCategoriesAdapter.switchEditMode(isEditMode)
     invalidateOptionsMenu()
   }

@@ -57,7 +57,7 @@ class CategoryDialog(private val activity: CategoriesActivity) {
     categoryNameInput.setText(category.name)
 
     val dialog = AlertDialog.Builder(activity)
-      .setTitle("Edit category name")
+      .setTitle(activity.getString(R.string.lbl_edit_category_name))
       .setView(dialogView)
       .setPositiveButton(android.R.string.ok) { dialog, _ ->
         val categoryName = categoryNameInput.text.toString()
@@ -73,8 +73,8 @@ class CategoryDialog(private val activity: CategoriesActivity) {
 
   fun showDeleteCategoryDialog(category: Category, onResult: (category: Category) -> Unit) {
     val dialog = AlertDialog.Builder(activity)
-      .setTitle("Delete category")
-      .setMessage("Are you sure you want to delete the category \"${category.name}\"?")
+      .setTitle(activity.getString(R.string.lbl_delete_category))
+      .setMessage(activity.getString(R.string.msg_confirm_delete_category) + " \"${category.name}\"?")
       .setPositiveButton(android.R.string.ok) { dialog, _ ->
         onResult(category)
       }
@@ -85,8 +85,8 @@ class CategoryDialog(private val activity: CategoriesActivity) {
 
   fun showWarningUniqueNameDialog() {
     AlertDialog.Builder(activity)
-      .setTitle("Error")
-      .setMessage("Category name must be unique")
+      .setTitle(activity.getString(R.string.lbl_error))
+      .setMessage(activity.getString(R.string.msg_category_name_unique))
       .setPositiveButton(android.R.string.ok, null)
       .show()
   }

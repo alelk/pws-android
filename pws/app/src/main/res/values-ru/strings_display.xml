@@ -20,9 +20,6 @@
     <string name="action_settings">Настройки</string>
     <string name="title_activity_psalm_fullscreen">Песня</string>
     <string name="title_activity_main_settings">Настройки</string>
-    <string name="title_activity_category">Категории</string>
-    <string name="title_activity_category_psalms">Категория:</string>
-    <string name="title_activity_category_edit">Редактировать категории</string>
     <string name="title_activity_psalm_edit">Редактирование псалма</string>
 
     <!-- Main activity display strings. -->
@@ -31,7 +28,6 @@
     <string name="lbl_drawer_main_home">Главная</string>
     <string name="lbl_drawer_main_books">Сборники песен</string>
     <string name="lbl_drawer_main_favorite">Избранное</string>
-    <string name="lbl_drawer_main_categories">Категории</string>
     <string name="lbl_drawer_main_settings">Настройки</string>
     <string name="lbl_drawer_main_system_menu"></string>
 
@@ -75,7 +71,6 @@
     <string name="label_bible_ref">Библейская ссылка</string>
     <string name="label_psalm_tonalities">Тональности псалма</string>
     <string name="btn_save">Сохранить</string>
-    <string name="btn_edit_categories">Редактировать категории</string>
 
     <!-- Psalm fullscreen activity display strings. -->
     <string name="lbl_add_to_favorites">Добавить в избранное</string>
@@ -86,8 +81,26 @@
     <string name="lbl_cancel">Отмена</string>
     <string name="lbl_enter_psalm_number">Введите номер в данном сборнике, на который желаете перейти: </string>
     <string name="msg_no_psalm_number_found">Номер не найден</string>
+    <string name="lbl_done">Готово</string>
+    <string name="lbl_error">Ошибка</string>
 
     <!-- Psalm preferences dialog display strings. -->
     <string name="lbl_text_size">Размер текста:</string>
     <string name="lbl_expand_psalm_text">Припев после каждого куплета</string>
+
+    <!--    Categories -->
+    <string name="title_activity_category">Категории</string>
+    <string name="title_activity_category_psalms">Категория:</string>
+    <string name="title_activity_category_edit">Редактировать категории</string>
+    <string name="lbl_drawer_main_categories">Категории</string>
+    <string name="hint_category_name">Название категории</string>
+    <string name="lbl_edit_categories_for_song">Редактировать категории для песни</string>
+    <string name="msg_confirm_delete_category">Вы уверены, что хотите удалить категорию</string>
+    <string name="msg_category_name_unique">Название категории должно быть уникальным</string>
+    <string name="lbl_edit_category_name">Изменить название категории</string>
+    <string name="lbl_delete_category">Удалить категорию</string>
+    <string name="lbl_edit_categories">Редактировать категории</string>
+    <string name="btn_edit_categories">Редактировать категории</string>
+
+    <string name="btn_choose_color">Выбрать цвет</string>
 </resources>
