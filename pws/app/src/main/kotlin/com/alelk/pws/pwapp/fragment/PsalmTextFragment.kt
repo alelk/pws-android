@@ -76,7 +76,7 @@ class PsalmTextFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
   private var vPsalmText: TextView? = null
   private var vPsalmInfo: TextView? = null
   private var vPsalmTonalities: TextView? = null
-  private var tHintCategories: TextView? = null
+  private var cvCategories: CardView? = null
   private var vPsalmCategories: FlexboxLayout? = null
   private var mReferredPsalmsAdapter: ReferredPsalmsRecyclerViewAdapter? = null
   private var mPsalmHolder: PsalmHolder? = null
@@ -94,8 +94,8 @@ class PsalmTextFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
     cvTonalities = v.findViewById(R.id.cv_tonalities)
     cvPsalmInfo = v.findViewById(R.id.cv_psalm_info)
     vPsalmText = v.findViewById(R.id.txt_psalm_text)
+    cvCategories = v.findViewById(R.id.cv_categories)
     vPsalmCategories = v.findViewById(R.id.categories)
-    tHintCategories = v.findViewById(R.id.hint_categories)
     vPsalmInfo = v.findViewById(R.id.txt_psalm_info)
     vPsalmTonalities = v.findViewById(R.id.txt_psalm_tonalities)
     val activity = activity ?: return v
@@ -117,7 +117,6 @@ class PsalmTextFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
     setHasOptionsMenu(true)
     registerForContextMenu(vPsalmText!!)
     vPsalmText?.setOnClickListener { callbacks!!.onRequestFullscreenMode() }
-    tHintCategories?.setOnClickListener(onEditCategoriesResult())
     return v
   }
 
@@ -215,10 +214,10 @@ class PsalmTextFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
   private fun addCategoriesToView(categories: SortedSet<Category>) {
     vPsalmCategories!!.removeAllViews()
     if (categories.size == 0) {
-      tHintCategories!!.visibility = View.VISIBLE
+      cvCategories!!.visibility = View.GONE
       return
     } else {
-      tHintCategories!!.visibility = View.INVISIBLE
+      cvCategories!!.visibility = View.VISIBLE
     }
     for (category in categories) {
       val categoryView = CategoryView(requireActivity(), category)
@@ -281,6 +280,10 @@ class PsalmTextFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
     }
     if (item.itemId == R.id.menu_edit) {
       callbacks!!.onEditRequest(mPsalmHolder!!.psalmNumberId)
+    }
+    if (R.id.menu_edit_categories == item.itemId) {
+      onEditCategoriesResult().invoke(requireView())
+      return true
     }
     return super.onOptionsItemSelected(item)
   }
@@ -458,23 +461,25 @@ class PsalmTextFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
     mReferredPsalmsAdapter!!.swapCursor(null)
   }
 
-  private fun onEditCategoriesResult(): (v: View) -> Unit = {
-    val assignedCategoriesOrigin =
-      mCategoryLoader!!.loadCategoriesForPsalm(mPsalmNumberId.toString())
-    val allCategories = mCategoryLoader!!.loadData()
-    EditPsalmCategoryDialog(requireActivity()).showEditCategoryDialog(
-      assignedCategoriesOrigin,
-      allCategories
-    ) { assignedCategories ->
-      val assignedCategoriesToPsalm = assignedCategories - assignedCategoriesOrigin
-      val unAssignedCategoriesFromPsalm = assignedCategoriesOrigin - assignedCategories
-      mCategoryLoader!!.updateCategoriesForPsalm(
-        mPsalmNumberId.toString(),
-        assignedCategoriesToPsalm,
-        unAssignedCategoriesFromPsalm
-      )
-      vPsalmCategories!!.removeAllViews()
-      addCategoriesToView(assignedCategories)
+  private fun onEditCategoriesResult(): (v: View) -> Unit {
+    return {
+      val assignedCategoriesOrigin =
+        mCategoryLoader!!.loadCategoriesForPsalm(mPsalmNumberId.toString())
+      val allCategories = mCategoryLoader!!.loadData()
+      EditPsalmCategoryDialog(requireActivity()).showEditCategoryDialog(
+        assignedCategoriesOrigin,
+        allCategories
+      ) { assignedCategories ->
+        val assignedCategoriesToPsalm = assignedCategories - assignedCategoriesOrigin
+        val unAssignedCategoriesFromPsalm = assignedCategoriesOrigin - assignedCategories
+        mCategoryLoader!!.updateCategoriesForPsalm(
+          mPsalmNumberId.toString(),
+          assignedCategoriesToPsalm,
+          unAssignedCategoriesFromPsalm
+        )
+        vPsalmCategories!!.removeAllViews()
+        addCategoriesToView(assignedCategories)
+      }
     }
   }
 
