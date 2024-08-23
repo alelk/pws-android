@@ -71,6 +71,7 @@
     <string name="label_bible_ref">Bible Reference</string>
     <string name="label_psalm_tonalities">Psalm Tonalities</string>
     <string name="btn_save">Save</string>
+    <string name="lbl_edit_psalm">Edit psalm</string>
 
     <!-- Psalm fullscreen activity display strings. -->
     <string name="lbl_add_to_favorites">Add to favorites</string>

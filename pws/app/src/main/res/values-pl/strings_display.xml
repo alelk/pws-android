@@ -70,6 +70,7 @@
     <string name="label_bible_ref">Odniesienie Biblijne</string>
     <string name="label_psalm_tonalities">Tonacje Psalmu</string>
     <string name="btn_save">Zapisz</string>
+    <string name="lbl_edit_psalm">Edytuj psalm</string>
 
     <!-- Psalm fullscreen activity display strings. -->
     <string name="lbl_add_to_favorites">Dodaj do ulubionych</string>

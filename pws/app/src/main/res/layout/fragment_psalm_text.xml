@@ -44,14 +44,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="4dp"
-            card_view:cardBackgroundColor="?attr/cardBackgroundColor">
-            <TextView
-                android:id="@+id/hint_categories"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="tap here to add category"
-                android:layout_gravity="center"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+            card_view:cardBackgroundColor="?attr/cardBackgroundColor"
+            android:id="@+id/cv_categories">
             <com.google.android.flexbox.FlexboxLayout
                 android:id="@+id/categories"
                 style="@style/CardStyle"

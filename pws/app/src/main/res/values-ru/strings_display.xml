@@ -71,6 +71,7 @@
     <string name="label_bible_ref">Библейская ссылка</string>
     <string name="label_psalm_tonalities">Тональности псалма</string>
     <string name="btn_save">Сохранить</string>
+    <string name="lbl_edit_psalm">Редактировать псалом</string>
 
     <!-- Psalm fullscreen activity display strings. -->
     <string name="lbl_add_to_favorites">Добавить в избранное</string>
