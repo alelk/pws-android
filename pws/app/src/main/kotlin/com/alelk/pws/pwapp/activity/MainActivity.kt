@@ -139,6 +139,11 @@ open class MainActivity : AppCompatThemedActivity(), NavigationView.OnNavigation
         startActivity(intent)
         result = true
       }
+      R.id.drawer_main_categories -> {
+        intent = Intent(this, CategoriesActivity::class.java)
+        startActivity(intent)
+        result = true
+      }
     }
     val drawer = findViewById<DrawerLayout>(R.id.layout_main_drawer)
     drawer.closeDrawer(GravityCompat.START)

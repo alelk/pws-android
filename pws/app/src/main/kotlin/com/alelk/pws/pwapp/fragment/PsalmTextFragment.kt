@@ -51,9 +51,15 @@ import com.alelk.pws.pwapp.R
 import com.alelk.pws.pwapp.activity.PsalmActivity
 import com.alelk.pws.pwapp.activity.PsalmFullscreenActivity
 import com.alelk.pws.pwapp.adapter.ReferredPsalmsRecyclerViewAdapter
+import com.alelk.pws.pwapp.dialog.EditPsalmCategoryDialog
 import com.alelk.pws.pwapp.holder.PsalmHolder
+import com.alelk.pws.pwapp.loader.CategoryLoader
+import com.alelk.pws.pwapp.model.Category
 import com.alelk.pws.pwapp.preference.PsalmPreferences
+import com.alelk.pws.pwapp.view.CategoryView
+import com.google.android.flexbox.FlexboxLayout
 import java.util.Locale
+import java.util.SortedSet
 
 /**
  * Created by Alex Elkin on 18.04.2015.
@@ -70,10 +76,13 @@ class PsalmTextFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
   private var vPsalmText: TextView? = null
   private var vPsalmInfo: TextView? = null
   private var vPsalmTonalities: TextView? = null
+  private var cvCategories: CardView? = null
+  private var vPsalmCategories: FlexboxLayout? = null
   private var mReferredPsalmsAdapter: ReferredPsalmsRecyclerViewAdapter? = null
   private var mPsalmHolder: PsalmHolder? = null
   private var mPsalmNumberId: Long = -1
   private var mPsalmPreferences: PsalmPreferences? = null
+  private var mCategoryLoader: CategoryLoader? = null
   private var isAddedToHistory = false
   override fun onCreateView(
     inflater: LayoutInflater,
@@ -85,6 +94,8 @@ class PsalmTextFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
     cvTonalities = v.findViewById(R.id.cv_tonalities)
     cvPsalmInfo = v.findViewById(R.id.cv_psalm_info)
     vPsalmText = v.findViewById(R.id.txt_psalm_text)
+    cvCategories = v.findViewById(R.id.cv_categories)
+    vPsalmCategories = v.findViewById(R.id.categories)
     vPsalmInfo = v.findViewById(R.id.txt_psalm_info)
     vPsalmTonalities = v.findViewById(R.id.txt_psalm_tonalities)
     val activity = activity ?: return v
@@ -99,6 +110,7 @@ class PsalmTextFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
     rvReferredPsalms.isNestedScrollingEnabled = false
     rvReferredPsalms.layoutManager = LinearLayoutManager(activity.applicationContext)
     psalmTextSize = mPsalmPreferences!!.textSize
+    mCategoryLoader = CategoryLoader(activity)
     updateUi()
     retainInstance = true
     LoaderManager.getInstance(this).initLoader(PWS_REFERRED_PSALMS_LOADER, null, this)
@@ -194,6 +206,25 @@ class PsalmTextFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
       vPsalmTonalities!!.text = tonalities
     }
     callbacks!!.onUpdatePsalmInfo(mPsalmHolder)
+
+    // setup view for categories
+    addCategoriesToView(mCategoryLoader!!.loadCategoriesForPsalm(mPsalmNumberId.toString()))
+  }
+
+  private fun addCategoriesToView(categories: SortedSet<Category>) {
+    vPsalmCategories!!.removeAllViews()
+    if (categories.size == 0) {
+      cvCategories!!.visibility = View.GONE
+      return
+    } else {
+      cvCategories!!.visibility = View.VISIBLE
+    }
+    for (category in categories) {
+      val categoryView = CategoryView(requireActivity(), category)
+      categoryView.addMode()
+      vPsalmCategories!!.addView(categoryView)
+    }
+    vPsalmCategories!!.setOnClickListener(onEditCategoriesResult())
   }
 
   fun reloadUi() {
@@ -247,8 +278,12 @@ class PsalmTextFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
       startActivity(intent)
       return true
     }
-    if (item.itemId == R.id.menu_edit){
+    if (item.itemId == R.id.menu_edit) {
       callbacks!!.onEditRequest(mPsalmHolder!!.psalmNumberId)
+    }
+    if (R.id.menu_edit_categories == item.itemId) {
+      onEditCategoriesResult().invoke(requireView())
+      return true
     }
     return super.onOptionsItemSelected(item)
   }
@@ -274,7 +309,8 @@ class PsalmTextFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
       val sb = StringBuilder()
       sb.append("№").append(mPsalmHolder!!.psalmNumber).append(" - ")
         .append(mPsalmHolder!!.psalmName).append("\n\n")
-      if (mPsalmHolder!!.bibleRef != null) sb.append(mPsalmHolder!!.bibleRef).append("\n\n")
+      if (mPsalmHolder!!.bibleRef != null) sb.append(mPsalmHolder!!.bibleRef)
+        .append("\n\n")
       sb.append(mPsalmHolder!!.psalmText)
       sb.append("\n\n").append("P&W Songs: ").append(mPsalmHolder!!.bookName)
       return sb.toString()
@@ -290,7 +326,7 @@ class PsalmTextFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
       mPsalmHolder!!.psalmTranslator,
       mPsalmHolder!!.psalmComposer,
       "<p><b><i><a href='https://play.google.com/store/apps/details?id=" +
-        "com.alelk.pws.pwapp'>P&W Songs: " + mPsalmHolder!!.bookName + "</a></i></b></p>"
+              "com.alelk.pws.pwapp'>P&W Songs: " + mPsalmHolder!!.bookName + "</a></i></b></p>"
     )
 
   fun addPsalmToHistory() {
@@ -298,7 +334,13 @@ class PsalmTextFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
     if (mPsalmNumberId < 0 || isAddedToHistory || activity == null) return
     val contentResolver = requireActivity().contentResolver ?: return
     val cursor =
-      contentResolver.query(PwsDataProviderContract.History.Last.CONTENT_URI, null, null, null, null)
+      contentResolver.query(
+        PwsDataProviderContract.History.Last.CONTENT_URI,
+        null,
+        null,
+        null,
+        null
+      )
     try {
       if (cursor != null && cursor.moveToFirst()) {
         if (cursor.getLong(cursor.getColumnIndex(PwsDataProviderContract.History.Last.COLUMN_PSALMNUMBER_ID)) == mPsalmNumberId) {
@@ -417,6 +459,28 @@ class PsalmTextFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
 
   override fun onLoaderReset(loader: Loader<Cursor>) {
     mReferredPsalmsAdapter!!.swapCursor(null)
+  }
+
+  private fun onEditCategoriesResult(): (v: View) -> Unit {
+    return {
+      val assignedCategoriesOrigin =
+        mCategoryLoader!!.loadCategoriesForPsalm(mPsalmNumberId.toString())
+      val allCategories = mCategoryLoader!!.loadData()
+      EditPsalmCategoryDialog(requireActivity()).showEditCategoryDialog(
+        assignedCategoriesOrigin,
+        allCategories
+      ) { assignedCategories ->
+        val assignedCategoriesToPsalm = assignedCategories - assignedCategoriesOrigin
+        val unAssignedCategoriesFromPsalm = assignedCategoriesOrigin - assignedCategories
+        mCategoryLoader!!.updateCategoriesForPsalm(
+          mPsalmNumberId.toString(),
+          assignedCategoriesToPsalm,
+          unAssignedCategoriesFromPsalm
+        )
+        vPsalmCategories!!.removeAllViews()
+        addCategoriesToView(assignedCategories)
+      }
+    }
   }
 
   /**

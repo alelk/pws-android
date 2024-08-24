@@ -57,6 +57,7 @@
     <string name="lbl_jump_to_number">Перейти по номеру</string>
     <string name="lbl_share">Поділитися</string>
     <string name="lbl_edit">Редагувати</string>
+    <string name="lbl_delete">Видалити</string>
     <string name="lbl_psalm_text_size">Розмір тексту</string>
     <string name="sort_by_added_date">Сортувати за датою додавання</string>
     <string name="sort_by_number">Сортувати за номером</string>
@@ -70,6 +71,8 @@
     <string name="label_bible_ref">Біблійне посилання</string>
     <string name="label_psalm_tonalities">Тональності псалму</string>
     <string name="btn_save">Зберегти</string>
+    <string name="lbl_edit_psalm">Редагувати псалом</string>
+
 
     <!-- Psalm fullscreen activity display strings. -->
     <string name="lbl_add_to_favorites">Додати до обраного</string>
@@ -80,8 +83,27 @@
     <string name="lbl_cancel">Відміна</string>
     <string name="lbl_enter_psalm_number">Введіть номер в даному збірнику, на який бажаєте перейти: </string>
     <string name="msg_no_psalm_number_found">Номер не знайдено</string>
+    <string name="lbl_done">Готово</string>
+    <string name="lbl_error">Помилка</string>
 
     <!-- Psalm preferences dialog display strings. -->
     <string name="lbl_text_size">Розмір тексту:</string>
     <string name="lbl_expand_psalm_text">Приспів після кожного куплета</string>
+
+    <!--    Categories -->
+    <string name="title_activity_category">Категорії</string>
+    <string name="title_activity_category_psalms">Категорія:</string>
+    <string name="title_activity_category_edit">Редагувати категорії</string>
+    <string name="lbl_drawer_main_categories">Категорії</string>
+    <string name="hint_category_name">Назва категорії</string>
+    <string name="lbl_edit_categories_for_song">Редагувати категорії для пісні</string>
+    <string name="msg_confirm_delete_category">Ви впевнені, що хочете видалити категорію</string>
+    <string name="msg_category_name_unique">Назва категорії має бути унікальною</string>
+    <string name="lbl_add_category">Додати категорію</string>
+    <string name="lbl_edit_category_name">Змінити назву категорії</string>
+    <string name="lbl_delete_category">Видалити категорію</string>
+    <string name="lbl_edit_categories">Редагувати категорії</string>
+    <string name="btn_edit_categories">Редагувати категорії</string>
+
+    <string name="btn_choose_color">Вибрати колір</string>
 </resources>

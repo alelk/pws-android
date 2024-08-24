@@ -34,6 +34,10 @@
             android:id="@+id/drawer_main_favorite"
             android:icon="@drawable/ic_favorite_border_white_24dp"
             android:title="@string/lbl_drawer_main_favorite" />
+        <item
+          android:id="@+id/drawer_main_categories"
+          android:icon="@drawable/ic_category_border_white_24dp"
+          android:title="@string/lbl_drawer_main_categories" />
     </group>
 
     <group android:id="@+id/drawer_main_group2">
