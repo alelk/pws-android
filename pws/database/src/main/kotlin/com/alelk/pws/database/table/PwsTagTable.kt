@@ -24,28 +24,9 @@ import android.database.sqlite.SQLiteDatabase
  */
 object PwsTagTable {
   const val TABLE_TAG = "tags"
-  const val COLUMN_ID = "_id"
+  const val COLUMN_ID = "id"
   const val COLUMN_NAME = "name"
   const val COLUMN_COLOR = "color"
+  const val COLUMN_PRIORITY = "priority"
   const val COLUMN_PREDEFINED = "predefined"
-
-  private const val TABLE_CREATE_SCRIPT =
-    """
-        CREATE TABLE $TABLE_TAG (
-            $COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT,
-            $COLUMN_NAME TEXT NOT NULL,
-            $COLUMN_COLOR TEXT NOT NULL,
-            $COLUMN_PREDEFINED INTEGER NOT NULL DEFAULT 0
-        );
-        """
-
-  private const val TABLE_DROP_SCRIPT = "DROP TABLE IF EXISTS $TABLE_TAG"
-
-  fun createTable(db: SQLiteDatabase) {
-    db.execSQL(TABLE_CREATE_SCRIPT)
-  }
-
-  fun dropTable(db: SQLiteDatabase) {
-    db.execSQL(TABLE_DROP_SCRIPT)
-  }
 }

@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+rootProject.name = "P&W Songs for Android"
+include(":app", ":database")
+
 pluginManagement {
     repositories {
         gradlePluginPortal()
@@ -25,6 +28,10 @@ pluginManagement {
     }
 }
 
-rootProject.name = "P&W Songs for Android"
-include(":app")
-include(":database")
+dependencyResolutionManagement {
+    versionCatalogs {
+        create("libs") {
+            from(files("libs.versions.toml"))
+        }
+    }
+}

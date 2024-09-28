@@ -19,7 +19,7 @@ class CategoryPsalmsActivity : AppCompatThemedActivity() {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_category_psalms)
 
-    val categoryId = intent.getLongExtra(CATEGORY_ID, -1)
+    val categoryId = intent.getStringExtra(CATEGORY_ID)
     val categoryName = intent.getStringExtra(CATEGORY_NAME)
     setTitle(getString(R.string.title_activity_category_psalms) + " $categoryName")
 

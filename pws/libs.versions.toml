@@ -1,0 +1,28 @@
+[versions]
+
+kotlin = "2.0.10"
+ksp = "1.0.24"
+
+android-application = "8.6.1"
+android-material = "1.12.0"
+
+room = "2.6.1"
+
+kotest = "5.9.1"
+
+[libraries]
+# Android
+android-material = { module = "com.google.android.material:material", version.ref = "android-material" }
+
+# Database
+room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" } # https://mvnrepository.com/artifact/androidx.room/room-runtime
+
+# Test
+kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" } # https://search.maven.org/artifact/io.kotest/kotest-runner-junit5
+kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" } # https://search.maven.org/artifact/io.kotest/kotest-assertions-core
+kotest-property = { module = "io.kotest:kotest-property", version.ref = "kotest" } # https://search.maven.org/artifact/io.kotest/kotest-property
+
+[plugins]
+
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+android-application = { id = "com.android.application", version.ref = "android-application" }

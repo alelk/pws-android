@@ -4,7 +4,7 @@ import android.database.Cursor
 import com.alelk.pws.database.provider.PwsDataProviderContract
 
 class PsalmInfo(
-  val tagId: Long,
+  val tagId: String,
   val psalmNumberId: Long,
   val bookName: String,
   val psalmNumber: Int,
@@ -12,7 +12,7 @@ class PsalmInfo(
 )
 
 fun Cursor.toPsalmInfo(): PsalmInfo {
-  val tagId = getLong(getColumnIndexOrThrow(PwsDataProviderContract.Categories.COLUMN_TAG_ID))
+  val tagId = getString(getColumnIndexOrThrow(PwsDataProviderContract.Categories.COLUMN_TAG_ID))
   val psalmNumberId = getLong(getColumnIndexOrThrow(PwsDataProviderContract.Categories.COLUMN_PSALM_NUMBER_ID))
   val bookName = getString(getColumnIndexOrThrow(PwsDataProviderContract.Categories.COLUMN_BOOK_NAME))
   val psalmNumber = getInt(getColumnIndexOrThrow(PwsDataProviderContract.Categories.COLUMN_PSALM_NUMBER))

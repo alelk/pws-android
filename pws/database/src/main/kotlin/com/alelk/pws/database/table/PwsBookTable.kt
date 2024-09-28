@@ -35,21 +35,4 @@ object PwsBookTable : PwsTable {
   const val COLUMN_EDITORS = "editors"
   const val COLUMN_DESCRIPTION = "description"
   const val COLUMN_LOCALE = "locale"
-
-  private const val TABLE_CREATE_SCRIPT =
-    "create table $TABLE_BOOKS(" +
-      "$COLUMN_ID integer primary key autoincrement, " +
-      "$COLUMN_VERSION text not null, " +
-      "$COLUMN_LOCALE text, $COLUMN_NAME text, " +
-      "$COLUMN_DISPLAYSHORTNAME text, " +
-      "$COLUMN_DISPLAYNAME text, " +
-      "$COLUMN_EDITION text not null, " +
-      "$COLUMN_RELEASEDATE text, " +
-      "$COLUMN_AUTHORS text, " +
-      "$COLUMN_CREATORS text, " +
-      "$COLUMN_REVIEWERS text, " +
-      "$COLUMN_EDITORS text, " +
-      "$COLUMN_DESCRIPTION text);"
-
-  private const val TABLE_DROP_SCRIPT = "drop table if exists $TABLE_BOOKS"
 }

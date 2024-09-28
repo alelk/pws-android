@@ -161,7 +161,6 @@ class PwsDatabaseHelper(private val mContext: Context) : SQLiteOpenHelper(
 
   @Throws(IOException::class)
   private fun copyDatabase() {
-    val METHOD_NAME = "copyDatabase"
     val am = mContext.assets
     var outputStream: OutputStream? = null
     var inputStream: InputStream? = null
@@ -170,14 +169,14 @@ class PwsDatabaseHelper(private val mContext: Context) : SQLiteOpenHelper(
       val dbFolder = File(dbFolder)
       if (!dbFolder.exists() || !dbFolder.isDirectory) {
         if (!dbFolder.mkdir()) {
-          Log.e(LOG_TAG, METHOD_NAME + ": Could not create directory: " + this.dbFolder)
+          Log.e(LOG_TAG, "${this::copyDatabase.name}: Could not create directory: " + this.dbFolder)
         }
       }
       val fileList = am.list(ASSETS_DB_FOLDER)
-      if (fileList == null || fileList.isEmpty()) {
+      if (fileList.isNullOrEmpty()) {
         Log.e(
           LOG_TAG,
-          "$METHOD_NAME: No database files found in asset directory $ASSETS_DB_FOLDER"
+          "${this::copyDatabase.name}: No database files found in asset directory $ASSETS_DB_FOLDER"
         )
         return
       }
@@ -192,13 +191,13 @@ class PwsDatabaseHelper(private val mContext: Context) : SQLiteOpenHelper(
           }
           Log.i(
             LOG_TAG,
-            "$METHOD_NAME: Copying success: File $ASSETS_DB_FOLDER/$DATABASE_NAME.$i"
+            "${this::copyDatabase.name}: Copying success: File $ASSETS_DB_FOLDER/$DATABASE_NAME.$i"
           )
         } catch (ex: FileNotFoundException) {
           if (i == 1) {
             Log.w(
               LOG_TAG,
-              METHOD_NAME + ": Could not open asset database file: " + ex.localizedMessage
+              this::copyDatabase.name + ": Could not open asset database file: " + ex.localizedMessage
             )
           }
           return
@@ -208,13 +207,13 @@ class PwsDatabaseHelper(private val mContext: Context) : SQLiteOpenHelper(
           } catch (e: IOException) {
             Log.e(
               LOG_TAG,
-              METHOD_NAME + ": Error closing input stream: " + e.localizedMessage
+              this::copyDatabase.name + ": Error closing input stream: " + e.localizedMessage
             )
           }
         }
       }
     } catch (ex: FileNotFoundException) {
-      Log.w(LOG_TAG, METHOD_NAME + ": Error copying database file: " + ex.localizedMessage)
+      Log.w(LOG_TAG, this::copyDatabase.name + ": Error copying database file: " + ex.localizedMessage)
     } finally {
       if (outputStream != null) {
         try {
@@ -223,7 +222,7 @@ class PwsDatabaseHelper(private val mContext: Context) : SQLiteOpenHelper(
         } catch (e: IOException) {
           Log.e(
             LOG_TAG,
-            METHOD_NAME + ": Error closing output stream: " + e.localizedMessage
+            this::copyDatabase.name + ": Error closing output stream: " + e.localizedMessage
           )
         }
       }
@@ -310,6 +309,7 @@ class PwsDatabaseHelper(private val mContext: Context) : SQLiteOpenHelper(
           insertHistory(database, cursor)
           cursor.close()
         }
+
         else -> Log.e(
           LOG_TAG,
           "$METHOD_NAME: Unexpected database version: ${prevDatabase.version}"
@@ -511,9 +511,9 @@ class PwsDatabaseHelper(private val mContext: Context) : SQLiteOpenHelper(
   }
 
   companion object {
-    private const val DATABASE_VERSION = 5
-    private const val DATABASE_NAME = "pws.1.2.0.db"
-    private val DATABASE_PREVIOUS_NAMES = arrayOf("pws.1.1.0.db", "pws.0.9.1.db")
+    private const val DATABASE_VERSION = 6
+    private const val DATABASE_NAME = "pws.1.3.0.db"
+    private val DATABASE_PREVIOUS_NAMES = arrayOf("pws.1.2.0.db", "pws.1.1.0.db", "pws.0.9.1.db")
     private const val DATABASE_VERSION_091 = 1
     private const val DATABASE_VERSION_110 = 2
     private const val DB_INIT_NOTIFICATION_ID = 1331

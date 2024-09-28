@@ -37,7 +37,8 @@ class CategoryDialog(private val activity: CategoriesActivity) {
       .setPositiveButton(android.R.string.ok) { dialog, _ ->
         val categoryName = categoryNameInput.text.toString()
         if (categoryName.isNotEmpty()) {
-          val category = Category(-1L, categoryName, selectedColor)
+          // fixme: specify category id
+          val category = Category("custom-${Random.nextInt(1, 10_000)}", categoryName, selectedColor, priority = 0)
           onResult(category)
         }
       }
@@ -62,7 +63,7 @@ class CategoryDialog(private val activity: CategoriesActivity) {
       .setPositiveButton(android.R.string.ok) { dialog, _ ->
         val categoryName = categoryNameInput.text.toString()
         if (categoryName.isNotEmpty()) {
-          val updatedCategory = Category(category.id, categoryName, category.color)
+          val updatedCategory = Category(category.id, categoryName, category.color, category.priority)
           onResult(updatedCategory)
         }
       }

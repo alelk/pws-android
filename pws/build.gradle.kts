@@ -25,17 +25,17 @@ val constraintLayoutVersion by extra("2.1.4")
 val versionCode by extra(27)
 val versionName by extra("1.7.0")
 val versionNameSuffix by extra(getDate().lowercase())
-val kotlinVersion by extra("1.7.20")
-
+val kotlinVersion = libs.versions.kotlin.get()
 plugins {
-    id("com.android.application") version "8.5.1" apply false
-    id("org.jetbrains.kotlin.android") version "1.7.20" apply false
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.kotlin.android) apply false
 }
 
 allprojects {
     buildscript {
+
         dependencies {
-            classpath("com.android.tools.build:gradle:8.5.1")
+            classpath("com.android.tools.build:gradle:8.6.1")
             classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
         }
     }

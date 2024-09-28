@@ -253,6 +253,7 @@ class PsalmTextFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
     }
   }
 
+  @Deprecated("Deprecated in Java")
   override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
     super.onCreateOptionsMenu(menu, inflater)
     val activity = activity ?: return
@@ -269,6 +270,7 @@ class PsalmTextFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
     activity.menuInflater.inflate(R.menu.menu_psalm_text_context, menu)
   }
 
+  @Deprecated("Deprecated in Java")
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     if (item.itemId == R.id.menu_share) {
       val intent = Intent(Intent.ACTION_SEND)
@@ -326,7 +328,7 @@ class PsalmTextFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
       mPsalmHolder!!.psalmTranslator,
       mPsalmHolder!!.psalmComposer,
       "<p><b><i><a href='https://play.google.com/store/apps/details?id=" +
-              "com.alelk.pws.pwapp'>P&W Songs: " + mPsalmHolder!!.bookName + "</a></i></b></p>"
+        "com.alelk.pws.pwapp'>P&W Songs: " + mPsalmHolder!!.bookName + "</a></i></b></p>"
     )
 
   fun addPsalmToHistory() {
