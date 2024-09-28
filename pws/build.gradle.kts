@@ -19,11 +19,11 @@ import java.util.Locale
 import java.util.TimeZone
 import java.util.Date
 
-val sdkVersion by extra(34)
+val sdkVersion by extra(35)
 val supportVersion by extra("29.0.2")
 val constraintLayoutVersion by extra("2.1.4")
-val versionCode by extra(27)
-val versionName by extra("1.7.0")
+val versionCode by extra(28)
+val versionName by extra("1.8.0")
 val versionNameSuffix by extra(getDate().lowercase())
 val kotlinVersion = libs.versions.kotlin.get()
 plugins {

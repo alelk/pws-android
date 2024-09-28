@@ -17,7 +17,6 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
-    id("com.google.devtools.ksp") version "${libs.versions.kotlin.get()}-${libs.versions.ksp.get()}"
 }
 
 android {
@@ -86,6 +85,5 @@ android {
 
 dependencies {
     implementation(libs.android.material)
-    implementation(libs.room.runtime)
     testImplementation(libs.kotest.runner.junit5)
 }

@@ -279,125 +279,137 @@ class PwsDatabaseHelper(private val mContext: Context) : SQLiteOpenHelper(
   }
 
   private fun mergePreviousDatabase() {
-    val METHOD_NAME = "mergePreviousDatabase"
-    val prevDatabase = openPreviousDatabaseIfExists() ?: return
-    val database = openDatabase(dbPath, SQLiteDatabase.OPEN_READWRITE)
-    if (database == null) {
-      Log.e(LOG_TAG, "$METHOD_NAME: Could not open database + $dbPath")
-      return
-    }
-    Log.i(
-      LOG_TAG, METHOD_NAME + ": Merge user data from database " +
-        prevDatabase.path + " (version " + prevDatabase.version + ") to " +
-        database.path + " (version " + database.version + ")"
-    )
     try {
-      when (prevDatabase.version) {
-        DATABASE_VERSION_091, DATABASE_VERSION_110 -> {
-          var cursor = queryFavorites091(prevDatabase)
-          Log.v(
-            LOG_TAG,
-            "$METHOD_NAME: Count of favorites will be merged from previous database: ${cursor.count}"
+      openPreviousDatabaseIfExists()?.use { prevDatabase ->
+        openDatabase(dbPath, SQLiteDatabase.OPEN_READWRITE)?.use { database ->
+          Log.i(
+            LOG_TAG, this::mergePreviousDatabase.name +
+              "Merge user data from database ${prevDatabase.path} version ${prevDatabase.version}) to ${database.path} (version ${database.version})"
           )
-          insertFavorites(database, cursor)
-          cursor.close()
-          cursor = queryHistory091(prevDatabase)
-          Log.v(
-            LOG_TAG,
-            "$METHOD_NAME: Count of history items will be merged from previous database: ${cursor.count}"
-          )
-          insertHistory(database, cursor)
-          cursor.close()
-        }
+          fun mergeFavorites() {
+            queryFavorites091(prevDatabase).use { cursor ->
+              Log.v(LOG_TAG, "${this::mergePreviousDatabase.name}: Count of favorites will be merged from previous database: ${cursor.count}")
+              insertFavorites(database, cursor)
+            }
+          }
 
-        else -> Log.e(
-          LOG_TAG,
-          "$METHOD_NAME: Unexpected database version: ${prevDatabase.version}"
-        )
+          fun mergeHistory() {
+            queryHistory091(prevDatabase).use { cursor ->
+              Log.v(LOG_TAG, "${this::mergePreviousDatabase.name}: Count of history items will be merged from previous database: ${cursor.count}")
+              insertHistory(database, cursor)
+            }
+          }
+
+          fun mergeEditedSongs() {
+            prevDatabase.queryEditedSongs120().use { cursor ->
+              Log.v(LOG_TAG, "${this::mergePreviousDatabase.name}: Count of edited songs will be merged from previous database: ${cursor.count}")
+              insertEditedSongs(database, cursor)
+            }
+          }
+
+          when (prevDatabase.version) {
+            DATABASE_VERSION_091, DATABASE_VERSION_110, DATABASE_VERSION_120 -> {
+              mergeFavorites()
+              mergeHistory()
+            }
+
+            4 -> {
+              mergeFavorites()
+              mergeHistory()
+              mergeEditedSongs()
+            }
+
+            else -> Log.e(LOG_TAG, "${this::mergePreviousDatabase.name}: Unexpected database version: ${prevDatabase.version}")
+          }
+        }.also { if (it == null) Log.e(LOG_TAG, "${this::mergePreviousDatabase.name}: Could not open database + $dbPath") }
       }
-    } finally {
-      prevDatabase.close()
-      database.close()
+    } catch (e: Throwable) {
+      Log.e(LOG_TAG, "${this::mergePreviousDatabase.name}: Error merging previous database.")
     }
   }
 
-  private fun queryFavorites091(db: SQLiteDatabase): Cursor {
-    return db.query(
-      false,
-      "favorites as f inner join psalmnumbers as pn on f.psalmnumberid=pn._id inner join books as b on pn.bookid=b._id",
-      arrayOf("f.position as position", "pn.number as number", "b.edition as edition"),
-      null,
-      null,
-      null,
-      null,
-      null,
-      null
-    )
-  }
+  private fun queryFavorites091(db: SQLiteDatabase): Cursor = db.query(
+    false,
+    "favorites as f inner join psalmnumbers as pn on f.psalmnumberid=pn._id inner join books as b on pn.bookid=b._id",
+    arrayOf("f.position as position", "pn.number as number", "b.edition as edition"),
+    null, null, null, null, null, null
+  )
 
-  private fun queryHistory091(db: SQLiteDatabase): Cursor {
-    return db.query(
-      false,
-      "history as h inner join psalmnumbers as pn on h.psalmnumberid=pn._id" +
-        " inner join books as b on pn.bookid=b._id",
-      arrayOf(
-        "h.accesstimestamp as accesstimestamp",
-        "pn.number as number",
-        "b.edition as edition"
-      ),
-      null,
-      null,
-      null,
-      null,
-      null,
-      null
-    )
-  }
+  private fun queryHistory091(db: SQLiteDatabase): Cursor = db.query(
+    false,
+    "history as h inner join psalmnumbers as pn on h.psalmnumberid=pn._id inner join books as b on pn.bookid=b._id",
+    arrayOf("h.accesstimestamp as accesstimestamp", "pn.number as number", "b.edition as edition"),
+    null, null, null, null, null, null
+  )
 
-  private fun insertFavorites(db: SQLiteDatabase, cursor: Cursor) {
-    val METHOD_NAME = "insertFavorites"
+  private fun SQLiteDatabase.queryEditedSongs120(): Cursor =
+    this.query(
+      false,
+      "psalms as p inner join psalmnumbers as pn on pn.psalmid=p._id inner join books b on pn.bookid=b._id",
+      arrayOf("p.text as text", "pn.number as number", "b.edition as edition"),
+      "p.edited=?", arrayOf(true.toString()), null, null, null, null
+    )
+
+  private fun insertEditedSongs(db: SQLiteDatabase, cursor: Cursor) {
     if (!cursor.moveToFirst()) {
-      Log.d(
-        LOG_TAG,
-        "$METHOD_NAME: unable insert favorites: no favorites found in previous db"
-      )
+      Log.d(LOG_TAG, "${this::insertEditedSongs.name}: unable insert edited songs: no edited songs found in previous db")
       return
     }
     do {
-      var current: Cursor? = null
-      try {
-        val edition = cursor.getString(cursor.getColumnIndex("edition"))
-        val number = cursor.getInt(cursor.getColumnIndex("number"))
-        current = db.query(
+      val text = cursor.getString(cursor.getColumnIndex("text"))
+      val number = cursor.getInt(cursor.getColumnIndex("number"))
+      val edition = cursor.getInt(cursor.getColumnIndex("edition"))
+      db
+        .query(
+          false, "psalms as p inner join psalmnumbers as pn on pn.psalmid=p._id inner join books b on pn.bookid=b._id",
+          arrayOf("p._id as _id"),
+          "b.edition= '$edition' and pn.number=$number",
+          null, null, null, null, null
+        )
+        .use { current ->
+          if (!current.moveToFirst()) {
+            Log.w(LOG_TAG, "${this::insertEditedSongs.name}: cannot find psalm with number=$number and edition=$edition in current database.")
+          } else {
+            val contentValues = ContentValues()
+            contentValues.put("text", text)
+            val psalmId = current.getLong(current.getColumnIndex("_id"))
+            db.update("psalms", contentValues, "_id=?", arrayOf(psalmId.toString()))
+            Log.v(LOG_TAG, "${this::insertEditedSongs.name}: Inserted new item to favorites: edition=$edition number=$number")
+          }
+        }
+    } while (cursor.moveToNext())
+  }
+
+  private fun insertFavorites(db: SQLiteDatabase, cursor: Cursor) {
+    if (!cursor.moveToFirst()) {
+      Log.d(LOG_TAG, "${this::insertFavorites.name}: unable insert favorites: no favorites found in previous db")
+      return
+    }
+    do {
+      val edition = cursor.getString(cursor.getColumnIndex("edition"))
+      val number = cursor.getInt(cursor.getColumnIndex("number"))
+      db
+        .query(
           false, PwsDataProviderContract.TABLE_PSALMNUMBERS_JOIN_BOOKS,
           PwsDataProviderContract.PsalmNumbers.PROJECTION,
           "b." + PwsBookTable.COLUMN_EDITION + " like '" + edition +
             "' and pn." + PwsPsalmNumbersTable.COLUMN_NUMBER + "=" + number,
           null, null, null, null, null
         )
-        if (!current.moveToFirst()) {
-          Log.w(
-            LOG_TAG, METHOD_NAME + ": cannot find psalm with number=" + number +
-              " and edition=" + edition + " in current database."
-          )
-          continue
+        .use { current ->
+          if (!current.moveToFirst()) {
+            Log.w(LOG_TAG, "${this::insertFavorites.name}: cannot find psalm with number=$number and edition=$edition in current database.")
+          } else {
+            val contentValues = ContentValues()
+            contentValues.put(PwsFavoritesTable.COLUMN_POSITION, cursor.getLong(cursor.getColumnIndex("position")))
+            contentValues.put(
+              PwsFavoritesTable.COLUMN_PSALMNUMBERID,
+              current.getLong(current.getColumnIndex(PwsDataProviderContract.PsalmNumbers.COLUMN_PSALMNUMBER_ID))
+            )
+            db.insert("favorites", null, contentValues)
+            Log.v(LOG_TAG, "${this::insertFavorites.name}: Inserted new item to favorites: edition=$edition number=$number")
+          }
         }
-        val contentValues = ContentValues()
-        contentValues.put(
-          PwsFavoritesTable.COLUMN_POSITION,
-          cursor.getLong(cursor.getColumnIndex("position"))
-        )
-        contentValues.put(
-          PwsFavoritesTable.COLUMN_PSALMNUMBERID,
-          current.getLong(current.getColumnIndex(PwsDataProviderContract.PsalmNumbers.COLUMN_PSALMNUMBER_ID))
-        )
-        Log.v(
-          LOG_TAG, METHOD_NAME + ": Inserted new item to favorites: edition=" + edition
-            + " number=" + number
-        )
-      } finally {
-        current?.close()
-      }
     } while (cursor.moveToNext())
   }
 
@@ -438,10 +450,8 @@ class PwsDatabaseHelper(private val mContext: Context) : SQLiteOpenHelper(
           PwsHistoryTable.COLUMN_PSALMNUMBERID,
           current.getLong(current.getColumnIndex(PwsDataProviderContract.PsalmNumbers.COLUMN_PSALMNUMBER_ID))
         )
-        Log.v(
-          LOG_TAG, METHOD_NAME + ": Inserted new item to history: edition=" + edition
-            + " number=" + number
-        )
+        db.insert("history", null, contentValues)
+        Log.v(LOG_TAG, METHOD_NAME + ": Inserted new item to history: edition=" + edition + " number=" + number)
       } finally {
         current?.close()
       }
@@ -516,6 +526,7 @@ class PwsDatabaseHelper(private val mContext: Context) : SQLiteOpenHelper(
     private val DATABASE_PREVIOUS_NAMES = arrayOf("pws.1.2.0.db", "pws.1.1.0.db", "pws.0.9.1.db")
     private const val DATABASE_VERSION_091 = 1
     private const val DATABASE_VERSION_110 = 2
+    private const val DATABASE_VERSION_120 = 3
     private const val DB_INIT_NOTIFICATION_ID = 1331
     private val LOG_TAG = PwsDatabaseHelper::class.java.simpleName
     private const val ASSETS_DB_FOLDER = "db"
