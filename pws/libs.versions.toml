@@ -1,6 +1,6 @@
 [versions]
 
-kotlin = "2.0.10"
+kotlin = "2.0.20"
 ksp = "1.0.24"
 
 android-application = "8.6.1"

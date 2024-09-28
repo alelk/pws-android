@@ -41,7 +41,6 @@ android {
         versionCode = rootProject.extra["versionCode"] as Int
         versionName =
             "${rootProject.extra["versionName"]}-${rootProject.extra["versionNameSuffix"]}"
-        buildConfigField("String", "VERSION_NAME", "\"${defaultConfig.versionName}\"")
     }
 
     buildTypes {
@@ -49,13 +48,11 @@ android {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
             signingConfig = signingConfigs.getByName("release-ru")
-            buildConfigField("String", "VERSION_NAME", "\"${defaultConfig.versionName}\"")
         }
         getByName("debug") {
             isDebuggable = true
             isMinifyEnabled = false
             versionNameSuffix = "-debug"
-            buildConfigField("String", "VERSION_NAME", "\"${defaultConfig.versionName}\"")
         }
     }
 
