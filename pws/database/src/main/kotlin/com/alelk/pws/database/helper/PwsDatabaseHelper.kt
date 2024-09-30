@@ -346,7 +346,7 @@ class PwsDatabaseHelper(private val mContext: Context) : SQLiteOpenHelper(
     this.query(
       false,
       "psalms as p inner join psalmnumbers as pn on pn.psalmid=p._id inner join books b on pn.bookid=b._id",
-      arrayOf("p.text as text", "pn.number as number", "b.edition as edition"),
+      arrayOf("p.text as text", "p.bibleref as bibleref", "p.tonalities as tonalities", "pn.number as number", "b.edition as edition"),
       "p.edited=?", arrayOf(true.toString()), null, null, null, null
     )
 
@@ -357,6 +357,8 @@ class PwsDatabaseHelper(private val mContext: Context) : SQLiteOpenHelper(
     }
     do {
       val text = cursor.getString(cursor.getColumnIndex("text"))
+      val bibleRef = cursor.getString(cursor.getColumnIndex("bibleref"))
+      val tonalities = cursor.getString(cursor.getColumnIndex("tonalities"))
       val number = cursor.getInt(cursor.getColumnIndex("number"))
       val edition = cursor.getInt(cursor.getColumnIndex("edition"))
       db
@@ -372,6 +374,8 @@ class PwsDatabaseHelper(private val mContext: Context) : SQLiteOpenHelper(
           } else {
             val contentValues = ContentValues()
             contentValues.put("text", text)
+            contentValues.put("bibleref", bibleRef)
+            contentValues.put("tonalities", tonalities)
             val psalmId = current.getLong(current.getColumnIndex("_id"))
             db.update("psalms", contentValues, "_id=?", arrayOf(psalmId.toString()))
             Log.v(LOG_TAG, "${this::insertEditedSongs.name}: Inserted new item to favorites: edition=$edition number=$number")

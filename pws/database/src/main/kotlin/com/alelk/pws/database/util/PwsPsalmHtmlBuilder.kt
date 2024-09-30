@@ -27,7 +27,7 @@ import java.util.regex.Pattern
  * Created by Alex Elkin on 13.11.2017.
  */
 class PwsPsalmHtmlBuilder(private val locale: Locale?) {
-  private val verseNumberPattern: Pattern = psalmVerseNumberPattern
+  private val verseNumberPattern: Pattern = psalmVerseNumberPattern(locale)
   private val verseLabelPattern: Pattern = getPsalmVerseLabelPattern(locale)
   private val chorusNumberPattern: Pattern = getPsalmChorusNumberPattern(locale)
   private val chorusLabelPattern: Pattern = getPsalmChorusLabelPattern(locale)
@@ -155,12 +155,12 @@ class PwsPsalmHtmlBuilder(private val locale: Locale?) {
 
   companion object {
     private val LOG_TAG = PwsPsalmHtmlBuilder::class.java.getSimpleName()
-    private const val PSALM_VERSE_NUMBER_REGEX = "^\\s*+(\\d{1,2})\\.\\s*+$"
-    private const val PSALM_VERSE_LABEL_FORMAT = "^\\s*+\\[(%s)\\s*+(\\d{1,2})\\]\\s*+$"
-    private const val PSALM_CHORUS_NUMBER_FORMAT = "^\\s*+(%s)\\s*+(\\d{1,2})??:\\s*+$"
-    private const val PSALM_CHORUS_LABEL_FORMAT = "^\\s*+\\[(%s)\\s*+(\\d{1,2})??\\]\\s*+$"
-    private val psalmVerseNumberPattern: Pattern
-      get() = Pattern.compile(PSALM_VERSE_NUMBER_REGEX)
+    private const val PSALM_VERSE_NUMBER_FORMAT = """^\s*(%s)?\s*(\d{1,2})\s*\.\s*$"""
+    private const val PSALM_VERSE_LABEL_FORMAT = """^\s*\[(%s)\s*(\d{1,2})\]\s*$"""
+    private const val PSALM_CHORUS_NUMBER_FORMAT = """^\s*(%s)\s*(\d{1,2})?\s*\.\s*$"""
+    private const val PSALM_CHORUS_LABEL_FORMAT = """^\s*\[(%s)\s*(\d{1,2})?\]\s*$"""
+    private fun psalmVerseNumberPattern(locale: Locale?): Pattern =
+      Pattern.compile(String.format(PSALM_VERSE_NUMBER_FORMAT, getLocalizedString("lbl_verse", locale)))
 
     private fun getPsalmVerseLabelPattern(locale: Locale?): Pattern {
       return Pattern.compile(String.format(PSALM_VERSE_LABEL_FORMAT, getLocalizedString("lbl_verse", locale)))
