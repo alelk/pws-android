@@ -28,6 +28,8 @@ import android.database.sqlite.SQLiteQueryBuilder
 import android.net.Uri
 import android.os.Build
 import android.util.Log
+import androidx.core.database.getShortOrNull
+import androidx.core.database.getStringOrNull
 import com.alelk.pws.database.helper.PwsDatabaseHelper
 import com.alelk.pws.database.provider.PwsDataProviderContract.BookStatistic
 import com.alelk.pws.database.provider.PwsDataProviderContract.Books
@@ -221,10 +223,9 @@ class PwsDataProvider : ContentProvider(), PwsDataProviderContract {
     Log.v(LOG_TAG, "$METHOD_NAME: uri='$uri'")
     mDatabase = mDatabaseHelper!!.writableDatabase
     var itemUri: Uri? = null
-    val id: Long
     when (URI_MATCHER.match(uri)) {
       Psalms.URI_MATCH -> {
-        id = mDatabase!!.insert(PwsPsalmTable.TABLE_PSALMS, null, values)
+        val id = mDatabase!!.insert(PwsPsalmTable.TABLE_PSALMS, null, values)
         if (id == -1L) {
           // TODO: 24.02.2016 throw exception
           Log.w(
@@ -238,17 +239,17 @@ class PwsDataProvider : ContentProvider(), PwsDataProviderContract {
 
       Psalms.URI_MATCH_ID -> {}
       Categories.TAG_URI_MATCH -> {
-        id = insertCategory(values!!)
-        itemUri = ContentUris.withAppendedId(uri, id)
+        val id = insertCategory(values!!)
+        itemUri = ContentUris.withAppendedId(uri, -1)
       }
 
       Categories.TAGS_BY_PSALM_NUMBER_URI_MATCH -> {
-        id = addCategoryToPsalm(values!!)
+        val id = addCategoryToPsalm(values!!)
         itemUri = ContentUris.withAppendedId(uri, id)
       }
 
       Favorites.URI_MATCH -> {
-        id = insertFavorite(values!!)
+        val id = insertFavorite(values!!)
         if (id == -1L) {
           // TODO: 24.02.2016 throw exception
           Log.w(
@@ -262,7 +263,7 @@ class PwsDataProvider : ContentProvider(), PwsDataProviderContract {
       }
 
       History.URI_MATCH -> {
-        id = insertHistory(values!!)
+        val id = insertHistory(values!!)
         if (id == -1L) {
           // TODO: 24.02.2016 throw exception
           Log.w(
@@ -340,9 +341,9 @@ class PwsDataProvider : ContentProvider(), PwsDataProviderContract {
     )
     Log.v(
       LOG_TAG, METHOD_NAME + ": projection=" + Arrays.toString(projection) +
-              " selection='" + selection + "' selectionArgs=" + Arrays.toString(selectionArgs) +
-              " orderBy='" + orderBy + "' limit=" + limit +
-              " results: " + (cursor?.count ?: "cursor=null")
+        " selection='" + selection + "' selectionArgs=" + Arrays.toString(selectionArgs) +
+        " orderBy='" + orderBy + "' limit=" + limit +
+        " results: " + (cursor?.count ?: "cursor=null")
     )
     return cursor
   }
@@ -380,9 +381,9 @@ class PwsDataProvider : ContentProvider(), PwsDataProviderContract {
     }
     Log.v(
       LOG_TAG, methodName + ": projection=" + Arrays.toString(projection) +
-              " selection='" + selection + "' selectionArgs=" + Arrays.toString(selectionArgs) +
-              " orderBy='" + orderBy + "' limit=" + limit +
-              " results: " + (cursor?.count ?: "cursor=null")
+        " selection='" + selection + "' selectionArgs=" + Arrays.toString(selectionArgs) +
+        " orderBy='" + orderBy + "' limit=" + limit +
+        " results: " + (cursor?.count ?: "cursor=null")
     )
     return cursor
   }
@@ -407,9 +408,9 @@ class PwsDataProvider : ContentProvider(), PwsDataProviderContract {
     )
     Log.v(
       LOG_TAG, METHOD_NAME + ": projection=" + Arrays.toString(projection) +
-              " selection='" + selection + "' selectionArgs=" + Arrays.toString(selectionArgs) +
-              " orderBy='" + orderBy + "' limit=" + limit +
-              " results: " + (cursor?.count ?: "cursor=null")
+        " selection='" + selection + "' selectionArgs=" + Arrays.toString(selectionArgs) +
+        " orderBy='" + orderBy + "' limit=" + limit +
+        " results: " + (cursor?.count ?: "cursor=null")
     )
     return cursor
   }
@@ -572,7 +573,7 @@ class PwsDataProvider : ContentProvider(), PwsDataProviderContract {
     val cursor = mDatabase!!.rawQuery(rawQuery, selectionArgs)
     Log.v(
       LOG_TAG, METHOD_NAME + ": rawQuery='" + rawQuery + "' selectionArgs=" +
-              Arrays.toString(selectionArgs) + " results:" + (cursor?.count ?: 0)
+        Arrays.toString(selectionArgs) + " results:" + (cursor?.count ?: 0)
     )
     return cursor
   }
@@ -635,16 +636,33 @@ class PwsDataProvider : ContentProvider(), PwsDataProviderContract {
       return queryPsalmNumbers(psalmId, null, orderBy, "1");
   } */
 
-  private fun insertCategory(values: ContentValues): Long {
+  private fun insertCategory(values: ContentValues): String? {
     val METHOD_NAME = "insertCategory"
-    var id: Long = -1
-    id = try {
-      mDatabase!!.insert(PwsTagTable.TABLE_TAG, null, values)
+    var id: String? = null
+    try {
+      val lastCustomId = mDatabase!!.query(
+        PwsTagTable.TABLE_TAG,
+        arrayOf(PwsTagTable.COLUMN_ID),
+        "${PwsTagTable.COLUMN_PREDEFINED} =? ", arrayOf("false"),
+        null, null, "${PwsTagTable.COLUMN_ID} DESC"
+      )
+        .let {
+          if (!it.moveToNext()) null
+          else it.getStringOrNull(0)
+        }
+      val lastCustomIdNumber = lastCustomId?.removePrefix("custom-")?.dropWhile { it == '0' }?.toInt() ?: 0
+      val nextCustomIdNumber = lastCustomIdNumber + 1
+      val nextCustomId = "custom-${nextCustomIdNumber.toString().padStart(5, '0')}"
+      values.put("id", nextCustomId)
+      values.put("priority", 0)
+      values.put("predefined", false)
+      mDatabase!!.insert(PwsTagTable.TABLE_TAG, null, values).toString()
+      id = nextCustomId
     } finally {
       Log.v(
         LOG_TAG, METHOD_NAME + ": resultId=" + id + " " +
-                "values=[keySet=${values.keySet().joinToString(",")} " +
-                "valueSet=${values.valueSet().joinToString(",")}]"
+          "values=[keySet=${values.keySet().joinToString(",")} " +
+          "valueSet=${values.valueSet().joinToString(",")}]"
       )
     }
     return id
@@ -658,8 +676,8 @@ class PwsDataProvider : ContentProvider(), PwsDataProviderContract {
     } finally {
       Log.v(
         LOG_TAG, METHOD_NAME + ": resultId=" + id + " " +
-                "values=[keySet=${values.keySet().joinToString(",")} " +
-                "valueSet=${values.valueSet().joinToString(",")}]"
+          "values=[keySet=${values.keySet().joinToString(",")} " +
+          "valueSet=${values.valueSet().joinToString(",")}]"
       )
     }
     return id
@@ -679,7 +697,7 @@ class PwsDataProvider : ContentProvider(), PwsDataProviderContract {
         // TODO: 29.02.2016 shift favorites list
         Log.w(
           LOG_TAG, METHOD_NAME + ": Try to insert favorite with position='" +
-                  valuePosition + "'. Error inserting: unable to shift favorites list. "
+            valuePosition + "'. Error inserting: unable to shift favorites list. "
         )
       }
     }
@@ -690,8 +708,8 @@ class PwsDataProvider : ContentProvider(), PwsDataProviderContract {
     } finally {
       Log.v(
         LOG_TAG, METHOD_NAME + ": resultId=" + id + " " +
-                "values=[keySet=${values.keySet().joinToString(",")} " +
-                "valueSet=${values.valueSet().joinToString(",")}]"
+          "values=[keySet=${values.keySet().joinToString(",")} " +
+          "valueSet=${values.valueSet().joinToString(",")}]"
       )
     }
     return id
@@ -710,7 +728,7 @@ class PwsDataProvider : ContentProvider(), PwsDataProviderContract {
       Log.v(
         LOG_TAG,
         "$METHOD_NAME: resultId=$id values=[keySet=${values.keySet().joinToString(",")}" +
-                " valueSet=${values.valueSet().joinToString(",")}]"
+          " valueSet=${values.valueSet().joinToString(",")}]"
       )
     }
     return id

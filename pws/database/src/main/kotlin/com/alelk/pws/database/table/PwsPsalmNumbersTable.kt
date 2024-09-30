@@ -15,8 +15,6 @@
  */
 package com.alelk.pws.database.table
 
-import android.database.sqlite.SQLiteDatabase
-
 /**
  * Pws Psalm Number Table
  *
@@ -28,17 +26,4 @@ object PwsPsalmNumbersTable : PwsTable {
   const val COLUMN_PSALMID = "psalmid"
   const val COLUMN_BOOKID = "bookid"
   const val COLUMN_NUMBER = "number"
-
-  private const val TABLE_CREATE_SCRIPT =
-    "create table $TABLE_PSALMNUMBERS($COLUMN_ID integer primary key autoincrement, $COLUMN_NUMBER integer not null, $COLUMN_PSALMID integer not null, $COLUMN_BOOKID integer not null, FOREIGN KEY ($COLUMN_PSALMID) REFERENCES ${PwsPsalmTable.TABLE_PSALMS} (${PwsPsalmTable.COLUMN_ID}), FOREIGN KEY ($COLUMN_BOOKID) REFERENCES ${PwsBookTable.TABLE_BOOKS} (${PwsBookTable.COLUMN_ID}));"
-
-  private const val TABLE_DROP_SCRIPT = "drop table if exists $TABLE_PSALMNUMBERS"
-
-  fun createTable(db: SQLiteDatabase) {
-    db.execSQL(TABLE_CREATE_SCRIPT)
-  }
-
-  fun dropTable(db: SQLiteDatabase) {
-    db.execSQL(TABLE_DROP_SCRIPT)
-  }
 }

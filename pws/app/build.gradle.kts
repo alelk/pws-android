@@ -39,8 +39,8 @@ android {
         minSdk = 21
         targetSdk = rootProject.extra["sdkVersion"] as Int
         versionCode = rootProject.extra["versionCode"] as Int
-        versionName = "${rootProject.extra["versionName"]}-${rootProject.extra["versionNameSuffix"]}"
-        buildConfigField("String", "VERSION_NAME", "\"${defaultConfig.versionName}\"")
+        versionName =
+            "${rootProject.extra["versionName"]}-${rootProject.extra["versionNameSuffix"]}"
     }
 
     buildTypes {
@@ -48,13 +48,11 @@ android {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
             signingConfig = signingConfigs.getByName("release-ru")
-            buildConfigField("String", "VERSION_NAME", "\"${defaultConfig.versionName}\"")
         }
         getByName("debug") {
             isDebuggable = true
             isMinifyEnabled = false
             versionNameSuffix = "-debug"
-            buildConfigField("String", "VERSION_NAME", "\"${defaultConfig.versionName}\"")
         }
     }
 
@@ -101,7 +99,7 @@ dependencies {
 
     // support libraries
     implementation("androidx.preference:preference-ktx:1.2.1")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.4")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.6")
     implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.github.yukuku:ambilwarna:2.0.1")

@@ -97,7 +97,7 @@ class CategoriesActivity : AppCompatThemedActivity() {
 
   fun editCategoryColor(category: Category) {
     mCategoryDialog.showSelectColorDialog(category.color) {
-      val categories = mCategoryLoader.updateData(Category(category.id, category.name, it))
+      val categories = mCategoryLoader.updateData(Category(category.id, category.name, color = it, category.priority))
       reloadActvivity(categories.toList())
     }
   }

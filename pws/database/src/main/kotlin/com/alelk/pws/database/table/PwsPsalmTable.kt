@@ -15,8 +15,6 @@
  */
 package com.alelk.pws.database.table
 
-import android.database.sqlite.SQLiteDatabase
-
 /**
  * Pws Psalm Table
  *
@@ -36,30 +34,4 @@ object PwsPsalmTable : PwsTable {
   const val COLUMN_ANNOTATION = "bibleref"
   const val COLUMN_TEXT = "text"
   const val COLUMN_EDITED = "edited"
-
-  private const val TABLE_CREATE_SCRIPT =
-    "create table $TABLE_PSALMS(" +
-      "$COLUMN_ID integer primary key autoincrement, " +
-      "$COLUMN_VERSION text not null, " +
-      "$COLUMN_LOCALE text, " +
-      "$COLUMN_NAME text, " +
-      "$COLUMN_AUTHOR text, " +
-      "$COLUMN_TRANSLATOR text, " +
-      "$COLUMN_COMPOSER text, " +
-      "$COLUMN_TONALITIES text, " +
-      "$COLUMN_YEAR text, " +
-      "$COLUMN_ANNOTATION text, " +
-      "$COLUMN_TEXT text not null, " +
-      "$COLUMN_EDITED boolean DEFAULT 0" +
-      ");"
-
-  private const val TABLE_DROP_SCRIPT = "drop table if exists $TABLE_PSALMS"
-
-  fun createTable(db: SQLiteDatabase) {
-    db.execSQL(TABLE_CREATE_SCRIPT)
-  }
-
-  fun dropTable(db: SQLiteDatabase) {
-    db.execSQL(TABLE_DROP_SCRIPT)
-  }
 }

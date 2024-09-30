@@ -2,7 +2,6 @@ package com.alelk.pws.pwapp.loader
 
 import android.app.Activity
 import android.content.ContentValues
-import com.alelk.pws.database.provider.PwsDataProviderContract
 import com.alelk.pws.database.provider.PwsDataProviderContract.Categories
 import com.alelk.pws.database.provider.PwsDataProviderContract.Categories.BY_PSALM_NUMBER_SELECTION
 import com.alelk.pws.database.provider.PwsDataProviderContract.Categories.BY_TAG_SELECTION
@@ -19,7 +18,7 @@ class CategoryLoader(
   private lateinit var categoriesList: SortedSet<Category>
 
   fun loadData(): SortedSet<Category> {
-    categoriesList = sortedSetOf(compareBy<Category> { it.predefined }.thenBy { it.id })
+    categoriesList = sortedSetOf(compareBy<Category> { it.predefined }.thenBy { it.priority }.thenBy { it.id })
     val cursor = activity.contentResolver.query(
       Categories.TAG_URI, null, null, null, null
     )
@@ -29,7 +28,7 @@ class CategoryLoader(
   }
 
   fun loadCategoriesForPsalm(psalmNumberId: String): SortedSet<Category> {
-    categoriesList = sortedSetOf(compareBy<Category> { it.predefined }.thenBy { it.id })
+    categoriesList = sortedSetOf(compareBy<Category> { it.predefined }.thenBy { it.priority }.thenBy { it.id })
     val cursor = activity.contentResolver.query(
       Categories.PSALM_TAG_URI, null, BY_PSALM_NUMBER_SELECTION, arrayOf(psalmNumberId), null
     )
@@ -62,7 +61,7 @@ class CategoryLoader(
       put(Categories.COLUMN_CATEGORY_COLOR, category.color)
     }
     activity.contentResolver.update(
-      Categories.TAG_URI, values, Categories.SELECTION_ID_MATCH, arrayOf(category.id.toString())
+      Categories.TAG_URI, values, Categories.SELECTION_ID_MATCH, arrayOf(category.id)
     )
     return reloadData()
   }

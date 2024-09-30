@@ -27,17 +27,4 @@ object PwsHistoryTable {
   const val COLUMN_ID = "_id"
   const val COLUMN_PSALMNUMBERID = "psalmnumberid"
   const val COLUMN_ACCESSTIMESTAMP = "accesstimestamp"
-
-  private const val TABLE_CREATE_SCRIPT =
-    "create table $TABLE_HISTORY($COLUMN_ID integer primary key autoincrement, $COLUMN_PSALMNUMBERID integer not null, $COLUMN_ACCESSTIMESTAMP string not null, FOREIGN KEY ($COLUMN_PSALMNUMBERID) REFERENCES ${PwsPsalmNumbersTable.TABLE_PSALMNUMBERS} (${PwsPsalmNumbersTable.COLUMN_ID}));"
-
-  private const val TABLE_DROP_SCRIPT = "drop table if exists " + TABLE_HISTORY
-
-  fun createTable(db: SQLiteDatabase) {
-    db.execSQL(TABLE_CREATE_SCRIPT)
-  }
-
-  fun dropTable(db: SQLiteDatabase) {
-    db.execSQL(TABLE_DROP_SCRIPT)
-  }
 }

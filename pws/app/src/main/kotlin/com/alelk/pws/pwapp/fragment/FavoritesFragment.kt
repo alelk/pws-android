@@ -106,6 +106,7 @@ class FavoritesFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
       else -> throw java.lang.IllegalStateException("unable to create loader")
     }
 
+  @Deprecated("Deprecated in Java")
   override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
     menuSortByAddedDate = menu.add(0, 1, 0, R.string.sort_by_added_date)
     menuSortByName = menu.add(0, 2, 0, R.string.sort_by_name)
@@ -113,6 +114,7 @@ class FavoritesFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
     super.onCreateOptionsMenu(menu, inflater)
   }
 
+  @Deprecated("Deprecated in Java")
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     val result = when (item.itemId) {
       menuSortByNumber!!.itemId -> {

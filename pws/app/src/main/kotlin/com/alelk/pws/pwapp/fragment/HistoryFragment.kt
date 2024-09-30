@@ -69,12 +69,14 @@ class HistoryFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
     return v
   }
 
+  @Deprecated("Deprecated in Java")
   override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
     menuClearHistory = menu.add(R.string.menu_clear_history)
     menuClearHistory?.setIcon(R.drawable.ic_delete_black_24dp)
     super.onCreateOptionsMenu(menu, inflater)
   }
 
+  @Deprecated("Deprecated in Java")
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     if (item.itemId == menuClearHistory!!.itemId) {
       val deleted =
