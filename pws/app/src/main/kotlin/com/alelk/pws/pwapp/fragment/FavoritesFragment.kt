@@ -17,7 +17,6 @@ package com.alelk.pws.pwapp.fragment
 
 import android.content.Context
 import android.content.Intent
-import android.database.Cursor
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -26,23 +25,26 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.loader.app.LoaderManager
-import androidx.loader.content.CursorLoader
-import androidx.loader.content.Loader
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.alelk.pws.database.provider.PwsDataProviderContract
+import com.alelk.pws.database.DatabaseProvider
+import com.alelk.pws.database.dao.Favorite
+import com.alelk.pws.database.dao.FavoriteDao
 import com.alelk.pws.pwapp.R
 import com.alelk.pws.pwapp.activity.PsalmActivity
 import com.alelk.pws.pwapp.adapter.FavoritesRecyclerViewAdapter
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 
 /**
  * Favorites Fragment
  *
  * Created by Alex Elkin on 18.02.2016.
  */
-class FavoritesFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
-  private var sortOrder = SORT_BY_ADDED_DATE // by default
+class FavoritesFragment : Fragment() {
+  private var sortOrder = SORT_BY_ADDED_DATE // default
   private val sharedPrefs by lazy {
     requireActivity().getSharedPreferences("favorites_prefs", Context.MODE_PRIVATE)
   }
@@ -51,10 +53,18 @@ class FavoritesFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
   private var menuSortByName: MenuItem? = null
   private var menuSortByNumber: MenuItem? = null
 
+  private lateinit var favoritesDao: FavoriteDao
+  private lateinit var favoritesViewModel: FavoritesViewModel
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     sortOrder = sharedPrefs.getInt(KEY_SORTED_BY, SORT_BY_ADDED_DATE)
     setHasOptionsMenu(true)
+
+    val db = DatabaseProvider.getDatabase(requireContext())
+    favoritesDao = db.favoriteDao()
+
+    favoritesViewModel = FavoritesViewModel(favoritesDao)
   }
 
   override fun onCreateView(
@@ -62,21 +72,35 @@ class FavoritesFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
     container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View? {
-    val v = inflater.inflate(R.layout.fragment_favorite, null)
+    val v = inflater.inflate(R.layout.fragment_favorite, container, false)
     val recyclerView = v.findViewById<RecyclerView>(R.id.rv_favorites)
-    val layoutManager = LinearLayoutManager(
-      requireActivity().applicationContext
-    )
-    recyclerView.layoutManager = layoutManager
-    mFavoritesAdapter =
-      FavoritesRecyclerViewAdapter { psalmNumberId: Long ->
-        val intentPsalmView = Intent(requireActivity().baseContext, PsalmActivity::class.java)
-        intentPsalmView.putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, psalmNumberId)
-        startActivity(intentPsalmView)
-      }
+    recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+    mFavoritesAdapter = FavoritesRecyclerViewAdapter { psalmNumberId: Long ->
+      val intentPsalmView = Intent(requireActivity(), PsalmActivity::class.java)
+      intentPsalmView.putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, psalmNumberId)
+      startActivity(intentPsalmView)
+    }
     recyclerView.adapter = mFavoritesAdapter
-    loaderManager.initLoader(PWS_FAVORITES_LOADER, null, this)
+
+    observeFavorites()
+
     return v
+  }
+
+  private fun observeFavorites() {
+    // Observe favorites based on the sort order using Flow
+    viewLifecycleOwner.lifecycleScope.launch {
+      when (sortOrder) {
+        SORT_BY_NUMBER -> favoritesViewModel.getFavoritesSortedByNumber().collect { updateUI(it) }
+        SORT_BY_NAME -> favoritesViewModel.getFavoritesSortedByName().collect { updateUI(it) }
+        SORT_BY_ADDED_DATE -> favoritesViewModel.getFavoritesSortedByDate().collect { updateUI(it) }
+      }
+    }
+  }
+
+  private fun updateUI(favorites: List<Favorite>) {
+    mFavoritesAdapter?.submitList(favorites)
   }
 
   override fun onSaveInstanceState(outState: Bundle) {
@@ -87,26 +111,6 @@ class FavoritesFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
     }
   }
 
-  override fun onCreateLoader(loaderId: Int, args: Bundle?): Loader<Cursor> =
-    when (loaderId) {
-      PWS_FAVORITES_LOADER -> CursorLoader(
-        requireActivity().baseContext,
-        PwsDataProviderContract.Favorites.CONTENT_URI,
-        null,
-        null,
-        null,
-        when (sortOrder) {
-          SORT_BY_NUMBER -> "${PwsDataProviderContract.Favorites.COLUMN_PSALMNUMBER} ASC"
-          SORT_BY_NAME -> "${PwsDataProviderContract.Favorites.COLUMN_PSALMNAME} ASC"
-          SORT_BY_ADDED_DATE -> PwsDataProviderContract.Favorites.SORT_ORDER
-          else -> null
-        }
-      )
-
-      else -> throw java.lang.IllegalStateException("unable to create loader")
-    }
-
-  @Deprecated("Deprecated in Java")
   override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
     menuSortByAddedDate = menu.add(0, 1, 0, R.string.sort_by_added_date)
     menuSortByName = menu.add(0, 2, 0, R.string.sort_by_name)
@@ -114,27 +118,23 @@ class FavoritesFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
     super.onCreateOptionsMenu(menu, inflater)
   }
 
-  @Deprecated("Deprecated in Java")
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     val result = when (item.itemId) {
       menuSortByNumber!!.itemId -> {
         this.sortOrder = SORT_BY_NUMBER
-        mFavoritesAdapter?.updateView()
-        loaderManager.restartLoader(PWS_FAVORITES_LOADER, null, this)
+        observeFavorites()
         true
       }
 
       menuSortByName!!.itemId -> {
         this.sortOrder = SORT_BY_NAME
-        mFavoritesAdapter?.updateView()
-        loaderManager.restartLoader(PWS_FAVORITES_LOADER, null, this)
+        observeFavorites()
         true
       }
 
-      menuSortByName!!.itemId -> {
+      menuSortByAddedDate!!.itemId -> {
         this.sortOrder = SORT_BY_ADDED_DATE
-        mFavoritesAdapter?.updateView()
-        loaderManager.restartLoader(PWS_FAVORITES_LOADER, null, this)
+        observeFavorites()
         true
       }
 
@@ -147,19 +147,16 @@ class FavoritesFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
     return result
   }
 
-  override fun onLoadFinished(loader: Loader<Cursor>, data: Cursor) {
-    mFavoritesAdapter!!.swapCursor(data)
-  }
-
-  override fun onLoaderReset(loader: Loader<Cursor>) {
-    mFavoritesAdapter!!.swapCursor(null)
-  }
-
   companion object {
-    const val PWS_FAVORITES_LOADER = 1
     const val SORT_BY_ADDED_DATE = 2
     const val SORT_BY_NUMBER = 3
     const val SORT_BY_NAME = 4
     private const val KEY_SORTED_BY = "favorites-sorted-by"
   }
+}
+
+class FavoritesViewModel(private val favoritesDao: FavoriteDao) : ViewModel() {
+  fun getFavoritesSortedByDate(): Flow<List<Favorite>> = favoritesDao.getAll()
+  fun getFavoritesSortedByName(): Flow<List<Favorite>> = favoritesDao.getAll(sort = "songName")
+  fun getFavoritesSortedByNumber(): Flow<List<Favorite>> = favoritesDao.getAll(sort = "songNumber")
 }

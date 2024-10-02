@@ -15,14 +15,15 @@
  */
 package com.alelk.pws.pwapp.adapter
 
-import android.database.Cursor
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.alelk.pws.database.provider.PwsDataProviderContract
+import com.alelk.pws.database.dao.Favorite
 import com.alelk.pws.pwapp.R
 import com.alelk.pws.pwapp.adapter.FavoritesRecyclerViewAdapter.FavoriteViewHolder
 
@@ -31,60 +32,41 @@ import com.alelk.pws.pwapp.adapter.FavoritesRecyclerViewAdapter.FavoriteViewHold
  *
  * Created by Alex Elkin on 19.05.2016.
  */
-class FavoritesRecyclerViewAdapter(private val mOnItemClickListener: ((psalmNumberId: Long) -> Unit)) :
-  RecyclerView.Adapter<FavoriteViewHolder>() {
-
-  private var mCursor: Cursor? = null
-  fun swapCursor(cursor: Cursor?) {
-    if (mCursor != null) mCursor!!.close()
-    mCursor = cursor
-    notifyDataSetChanged()
-  }
+class FavoritesRecyclerViewAdapter(
+  private val onItemClickListener: (psalmNumberId: Long) -> Unit
+) : ListAdapter<Favorite, FavoriteViewHolder>(FavoriteDiffCallback()) {
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoriteViewHolder {
-    val v = LayoutInflater.from(parent.context)
+    val view = LayoutInflater.from(parent.context)
       .inflate(R.layout.layout_psalm_list_item, parent, false)
-    return FavoriteViewHolder(v)
+    return FavoriteViewHolder(view)
   }
 
   override fun onBindViewHolder(holder: FavoriteViewHolder, position: Int) {
-    if (mCursor != null && mCursor!!.moveToPosition(position)) {
-      holder.bind(mCursor!!, mOnItemClickListener)
-    }
-  }
-
-  override fun getItemCount(): Int {
-    return if (mCursor == null || mCursor!!.isClosed) 0 else mCursor!!.count
-  }
-
-  fun updateView() {
-    notifyDataSetChanged()
+    val favorite = getItem(position)
+    holder.bind(favorite, onItemClickListener)
   }
 
   class FavoriteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    var cardView: CardView
-    var psalmName: TextView
-    var psalmNumber: TextView
-    var bookDisplayName: TextView
-    var psalmNumberId: Long = 0
+    private val psalmName: TextView = itemView.findViewById(R.id.txt_psalm_name)
+    private val psalmNumber: TextView = itemView.findViewById(R.id.txt_psalm_number)
+    private val bookDisplayName: TextView = itemView.findViewById(R.id.txt_book_name)
+    private var psalmNumberId: Long = 0
 
-    init {
-      cardView = itemView.findViewById(R.id.cv_psalm_item)
-      psalmName = itemView.findViewById(R.id.txt_psalm_name)
-      psalmNumber = itemView.findViewById(R.id.txt_psalm_number)
-      bookDisplayName = itemView.findViewById(R.id.txt_book_name)
-    }
+    fun bind(favorite: Favorite, onItemClickListener: (psalmNumberId: Long) -> Unit) {
+      psalmNumber.text = favorite.songNumber.toString()
+      psalmName.text = favorite.songName
+      bookDisplayName.text = favorite.bookDisplayName
+      psalmNumberId = favorite.songNumberId
 
-    fun bind(cursor: Cursor, onItemClickListener: (psalmNumberId: Long) -> Unit) {
-      psalmNumber.text =
-        cursor.getString(cursor.getColumnIndex(PwsDataProviderContract.Favorites.COLUMN_PSALMNUMBER))
-      psalmName.text =
-        cursor.getString(cursor.getColumnIndex(PwsDataProviderContract.Favorites.COLUMN_PSALMNAME))
-      bookDisplayName.text =
-        cursor.getString(cursor.getColumnIndex(PwsDataProviderContract.Favorites.COLUMN_BOOKDISPLAYNAME))
-      psalmNumberId =
-        cursor.getLong(cursor.getColumnIndex(PwsDataProviderContract.Favorites.COLUMN_PSALMNUMBER_ID))
-      itemView.setOnClickListener { onItemClickListener(psalmNumberId) }
+      itemView.setOnClickListener {
+        onItemClickListener(psalmNumberId)
+      }
     }
+  }
+
+  class FavoriteDiffCallback : DiffUtil.ItemCallback<Favorite>() {
+    override fun areItemsTheSame(oldItem: Favorite, newItem: Favorite): Boolean = oldItem.id == newItem.id
+    override fun areContentsTheSame(oldItem: Favorite, newItem: Favorite): Boolean = oldItem == newItem
   }
 }

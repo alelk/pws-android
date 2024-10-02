@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 The P&W Songs Open Source Project
+ * Copyright (C) 2018-2024 The P&W Songs Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,14 @@
 package com.alelk.pws.pwapp.fragment
 
 import android.content.Intent
-import android.database.Cursor
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.loader.app.LoaderManager
-import androidx.loader.content.CursorLoader
-import androidx.loader.content.Loader
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.alelk.pws.database.provider.PwsDataProviderContract
 import com.alelk.pws.pwapp.R
 import com.alelk.pws.pwapp.activity.PsalmActivity
 import com.alelk.pws.pwapp.adapter.HistoryRecyclerViewAdapter
@@ -37,22 +33,24 @@ import com.alelk.pws.pwapp.adapter.HistoryRecyclerViewAdapter
  *
  * Created by Alex Elkin on 17.02.2016.
  */
-class ReadNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
-  private var rvRecentPsalms: RecyclerView? = null
-  private var mRecentPsalmsAdapter: HistoryRecyclerViewAdapter? = null
+class ReadNowFragment : Fragment() {
+
+  private lateinit var rvRecentPsalms: RecyclerView
+  private lateinit var recentPsalmsAdapter: HistoryRecyclerViewAdapter
+  private val historyViewModel: HistoryViewModel by viewModels()
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    mRecentPsalmsAdapter = HistoryRecyclerViewAdapter { psalmNumberId: Long? ->
-      val intentPsalmView = Intent(requireActivity().baseContext, PsalmActivity::class.java)
+    recentPsalmsAdapter = HistoryRecyclerViewAdapter { psalmNumberId: Long ->
+      val intentPsalmView = Intent(requireActivity(), PsalmActivity::class.java)
       intentPsalmView.putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, psalmNumberId)
       startActivity(intentPsalmView)
     }
-    loaderManager.initLoader(PWS_RECENT_PSALM_LOADER, null, this)
   }
 
   override fun onResume() {
     super.onResume()
-    mRecentPsalmsAdapter!!.notifyDataSetChanged()
+    recentPsalmsAdapter.notifyDataSetChanged()
   }
 
   override fun onCreateView(
@@ -60,40 +58,25 @@ class ReadNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
     container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View? {
-    val v = inflater.inflate(R.layout.fragment_readnow, null)
-    rvRecentPsalms = v.findViewById(R.id.rv_recent)
-    val layoutManager = LinearLayoutManager(
-      requireActivity().applicationContext
-    )
-    rvRecentPsalms?.layoutManager = layoutManager
-    rvRecentPsalms?.adapter = mRecentPsalmsAdapter
-    rvRecentPsalms?.isNestedScrollingEnabled = true
-    return v
-  }
+    val view = inflater.inflate(R.layout.fragment_readnow, container, false)
 
-  override fun onCreateLoader(loaderId: Int, args: Bundle?): Loader<Cursor> =
-    when (loaderId) {
-      PWS_RECENT_PSALM_LOADER -> CursorLoader(
-        requireActivity().baseContext,
-        PwsDataProviderContract.History.getContentUri(DEFAULT_RECENT_LIMIT),
-        null,
-        null,
-        null,
-        null
-      )
-      else -> throw java.lang.IllegalStateException("unable to create cursor loader")
+    rvRecentPsalms = view.findViewById(R.id.rv_recent)
+    rvRecentPsalms.layoutManager = LinearLayoutManager(requireContext())
+    rvRecentPsalms.adapter = recentPsalmsAdapter
+    rvRecentPsalms.isNestedScrollingEnabled = true
+
+    historyViewModel.historyItems.observe(viewLifecycleOwner) { recentPsalms ->
+      val limitedRecentPsalms = recentPsalms.take(DEFAULT_RECENT_LIMIT)
+      recentPsalmsAdapter.submitList(limitedRecentPsalms)
     }
 
-  override fun onLoadFinished(loader: Loader<Cursor>, data: Cursor) {
-    mRecentPsalmsAdapter!!.swapCursor(data)
-  }
-
-  override fun onLoaderReset(loader: Loader<Cursor>) {
-    mRecentPsalmsAdapter!!.swapCursor(null)
+    return view
   }
 
   companion object {
-    const val PWS_RECENT_PSALM_LOADER = 30
-    const val DEFAULT_RECENT_LIMIT = 10
+    private const val DEFAULT_RECENT_LIMIT = 10
+
+    @JvmStatic
+    fun newInstance() = ReadNowFragment()
   }
 }

@@ -8,6 +8,7 @@ app/src/uk/assets
 /captures
 *.iml
 local.properties
+.kotlin/errors*
 
 # build results (apk)
 /app/*/release/

@@ -481,8 +481,8 @@ class PwsDatabaseHelper(private val mContext: Context) : SQLiteOpenHelper(
   }
 
   companion object {
-    private const val DATABASE_VERSION = 6
-    private const val DATABASE_NAME = "pws.1.8.0.db"
+    const val DATABASE_VERSION = 6
+    const val DATABASE_NAME = "pws.1.8.0.db"
     private val DATABASE_PREVIOUS_NAMES = arrayOf("pws.1.2.0.db", "pws.1.1.0.db", "pws.0.9.1.db")
     private const val DATABASE_VERSION_091 = 1
     private const val DATABASE_VERSION_110 = 2

@@ -17,6 +17,8 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    id("com.google.devtools.ksp") version "${libs.versions.kotlin.get()}-${libs.versions.ksp.get()}"
+    //id("kotlin-kapt")
 }
 
 android {
@@ -84,9 +86,17 @@ android {
     buildFeatures {
         buildConfig = true
     }
+    ksp {
+        arg("room.generateKotlin", "true")
+    }
 }
 
 dependencies {
     implementation(libs.android.material)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    ksp(libs.room.compiler)
     testImplementation(libs.kotest.runner.junit5)
 }

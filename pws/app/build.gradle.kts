@@ -104,4 +104,5 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.github.yukuku:ambilwarna:2.0.1")
     implementation("com.google.android.flexbox:flexbox:3.0.0")
+    implementation(libs.room.runtime)
 }
