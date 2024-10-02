@@ -1,6 +1,7 @@
 [versions]
 
 kotlin = "2.0.20"
+kotlinx-coroutines = "1.9.0"
 ksp = "1.0.24"
 
 android-application = "8.6.1"
@@ -11,11 +12,18 @@ room = "2.6.1"
 kotest = "5.9.1"
 
 [libraries]
+
 # Android
 android-material = { module = "com.google.android.material:material", version.ref = "android-material" }
 
+# Kotlin Coroutines
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
+
 # Database
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" } # https://mvnrepository.com/artifact/androidx.room/room-runtime
+room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" } # https://mvnrepository.com/artifact/androidx.room/room-compiler
+room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" } # https://mvnrepository.com/artifact/androidx.room/room-ktx
 
 # Test
 kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" } # https://search.maven.org/artifact/io.kotest/kotest-runner-junit5
