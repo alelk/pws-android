@@ -15,19 +15,22 @@
  */
 package com.alelk.pws.pwapp.fragment
 
+import android.app.Application
 import android.content.Intent
-import android.database.Cursor
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.loader.app.LoaderManager
-import androidx.loader.content.CursorLoader
-import androidx.loader.content.Loader
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.alelk.pws.database.provider.PwsDataProviderContract
+import com.alelk.pws.database.DatabaseProvider
+import com.alelk.pws.database.dao.Book
+import com.alelk.pws.database.dao.BookDao
 import com.alelk.pws.pwapp.R
 import com.alelk.pws.pwapp.activity.PsalmActivity
 import com.alelk.pws.pwapp.adapter.BooksRecyclerViewAdapter
@@ -37,52 +40,34 @@ import com.alelk.pws.pwapp.adapter.BooksRecyclerViewAdapter
  *
  * Created by Mykhailo Dmytriakha on 05.03.2024
  */
-class BooksFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
-  private var mBooksAdapter: BooksRecyclerViewAdapter? = null
+class BooksFragment : Fragment() {
+
+  private lateinit var booksAdapter: BooksRecyclerViewAdapter
+  private val bookViewModel: BookViewModel by viewModels()
+
   override fun onCreateView(
     inflater: LayoutInflater,
     container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View? {
-    val v = inflater.inflate(R.layout.fragment_books, null)
-    val recyclerView = v.findViewById<RecyclerView>(R.id.rv_books)
-    val layoutManager = LinearLayoutManager(
-      requireActivity().applicationContext
-    )
+    val view = inflater.inflate(R.layout.fragment_books, container, false)
+    val recyclerView = view.findViewById<RecyclerView>(R.id.rv_books)
+    val layoutManager = LinearLayoutManager(requireContext())
     recyclerView.layoutManager = layoutManager
-    mBooksAdapter =
-      BooksRecyclerViewAdapter { psalmNumberId: Long ->
-        val intentBooksView = Intent(requireActivity().baseContext, PsalmActivity::class.java)
-        intentBooksView.putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, psalmNumberId)
-        startActivity(intentBooksView)
-      }
-    recyclerView.adapter = mBooksAdapter
-    loaderManager.initLoader(PWS_BOOKS_LOADER, null, this)
-    return v
-  }
-
-  override fun onCreateLoader(loaderId: Int, args: Bundle?): Loader<Cursor> =
-    when (loaderId) {
-      PWS_BOOKS_LOADER -> CursorLoader(
-        requireActivity().baseContext,
-        PwsDataProviderContract.Books.CONTENT_URI,
-        null,
-        null,
-        null,
-        null
-      )
-      else -> throw java.lang.IllegalStateException("unable to create loader")
+    booksAdapter = BooksRecyclerViewAdapter { psalmNumberId: Long ->
+      val intent = Intent(requireActivity(), PsalmActivity::class.java)
+      intent.putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, psalmNumberId)
+      startActivity(intent)
     }
-
-  override fun onLoadFinished(loader: Loader<Cursor>, data: Cursor) {
-    mBooksAdapter!!.swapCursor(data)
+    recyclerView.adapter = booksAdapter
+    bookViewModel.allActiveBooks.observe(viewLifecycleOwner) { books ->
+      booksAdapter.submitList(books)
+    }
+    return view
   }
+}
 
-  override fun onLoaderReset(loader: Loader<Cursor>) {
-    mBooksAdapter!!.swapCursor(null)
-  }
-
-  companion object {
-    const val PWS_BOOKS_LOADER = 70
-  }
+class BookViewModel(application: Application) : AndroidViewModel(application) {
+  private val bookDao: BookDao = DatabaseProvider.getDatabase(application).bookDao()
+  val allActiveBooks: LiveData<List<Book>> = bookDao.getAllActive().asLiveData()
 }

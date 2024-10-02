@@ -43,8 +43,9 @@ import com.alelk.pws.database.helper.PwsDatabaseHelper
 )
 @TypeConverters(DbTypeConverters::class)
 abstract class PwsDatabase : RoomDatabase() {
-  //  abstract fun bookDao(): BookDao
-//  abstract fun bookStatisticDao(): BookStatisticDao
+  abstract fun bookDao(): BookDao
+
+  //  abstract fun bookStatisticDao(): BookStatisticDao
   abstract fun favoriteDao(): FavoriteDao
   abstract fun historyDao(): HistoryDao
   abstract fun songDao(): SongDao
