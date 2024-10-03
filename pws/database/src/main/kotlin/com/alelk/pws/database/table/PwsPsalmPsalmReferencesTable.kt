@@ -22,6 +22,7 @@ import android.database.sqlite.SQLiteDatabase
  *
  * Created by alelk on 04.01.2017.
  */
+@Deprecated("use room db")
 object PwsPsalmPsalmReferencesTable : PwsTable {
   const val TABLE_PSALMPSALMREFERENCES = "psalmpsalmreferences"
   const val COLUMN_ID = "_id"

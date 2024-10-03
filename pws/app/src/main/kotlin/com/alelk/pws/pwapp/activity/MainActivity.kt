@@ -140,7 +140,7 @@ open class MainActivity : AppCompatThemedActivity(), NavigationView.OnNavigation
         result = true
       }
       R.id.drawer_main_categories -> {
-        intent = Intent(this, CategoriesActivity::class.java)
+        intent = Intent(this, TagsActivity::class.java)
         startActivity(intent)
         result = true
       }

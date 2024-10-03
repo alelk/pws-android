@@ -20,6 +20,7 @@ package com.alelk.pws.database.table
  *
  * Created by Alex Elkin on 21.04.2015.
  */
+@Deprecated("use room db")
 object PwsPsalmTable : PwsTable {
   const val TABLE_PSALMS = "psalms"
   const val COLUMN_ID = "_id"

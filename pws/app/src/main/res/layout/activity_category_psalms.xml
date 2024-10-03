@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".activity.CategoryPsalmsActivity">
+    tools:context=".activity.TagSongsActivity">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/category_psalms_recycler_view"

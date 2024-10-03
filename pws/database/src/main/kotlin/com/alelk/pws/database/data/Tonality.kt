@@ -23,6 +23,7 @@ import com.alelk.pws.database.R
  *
  * Created by Alex Elkin on 12.05.2016.
  */
+@Deprecated("")
 enum class Tonality(val signature: String, private val labelId: Int) {
   A_MAJOR("A major", R.string.a_major),
   A_MINOR("A minor", R.string.a_minor),

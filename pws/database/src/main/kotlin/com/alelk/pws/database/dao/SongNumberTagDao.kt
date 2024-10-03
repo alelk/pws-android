@@ -9,6 +9,9 @@ import com.alelk.pws.database.entity.SongNumberEntity
 import com.alelk.pws.database.entity.SongNumberTagEntity
 import com.alelk.pws.database.model.BookExternalId
 import com.alelk.pws.database.model.TagId
+import kotlinx.coroutines.flow.Flow
+
+
 
 @Dao
 interface SongNumberTagDao : Pageable<SongNumberTagEntity> {
@@ -20,9 +23,6 @@ interface SongNumberTagDao : Pageable<SongNumberTagEntity> {
 
   @Query("SELECT * FROM song_number_tags WHERE song_number_id = :songNumberId and tag_id = :tagId")
   suspend fun getById(songNumberId: Long, tagId: TagId): SongNumberTagEntity?
-
-  @Query("SELECT * FROM song_number_tags WHERE song_number_id = :songNumberId")
-  suspend fun getBySongNumberId(songNumberId: Long): List<SongNumberTagEntity>
 
   @Query(
     """

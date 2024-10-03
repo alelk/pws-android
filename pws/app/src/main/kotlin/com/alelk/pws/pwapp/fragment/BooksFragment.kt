@@ -15,7 +15,6 @@
  */
 package com.alelk.pws.pwapp.fragment
 
-import android.app.Application
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -23,17 +22,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.asLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.alelk.pws.database.DatabaseProvider
-import com.alelk.pws.database.dao.Book
-import com.alelk.pws.database.dao.BookDao
 import com.alelk.pws.pwapp.R
 import com.alelk.pws.pwapp.activity.PsalmActivity
 import com.alelk.pws.pwapp.adapter.BooksRecyclerViewAdapter
+import com.alelk.pws.pwapp.model.BookViewModel
 
 /**
  * Books Fragment
@@ -67,7 +61,3 @@ class BooksFragment : Fragment() {
   }
 }
 
-class BookViewModel(application: Application) : AndroidViewModel(application) {
-  private val bookDao: BookDao = DatabaseProvider.getDatabase(application).bookDao()
-  val allActiveBooks: LiveData<List<Book>> = bookDao.getAllActive().asLiveData()
-}

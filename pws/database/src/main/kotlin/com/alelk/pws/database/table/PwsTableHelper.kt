@@ -22,6 +22,7 @@ import android.database.sqlite.SQLiteDatabase
  *
  * Created by Alex Elkin on 16.03.2016.
  */
+@Deprecated("use room db")
 internal abstract class PwsTableHelper {
   companion object {
     private const val CHECK_EXISTENCE_SCRIPT = "select count (*) from sqlite_master where type=? and name=?"

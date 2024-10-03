@@ -22,6 +22,7 @@ import android.database.sqlite.SQLiteDatabase
  *
  * Created by Mykhailo Dmytriakha on 20.03.2024.
  */
+@Deprecated("use room db")
 object PwsTagTable {
   const val TABLE_TAG = "tags"
   const val COLUMN_ID = "id"

@@ -20,4 +20,5 @@ package com.alelk.pws.database.table
  *
  * Created by Alex Elkin on 21.04.2015.
  */
+@Deprecated("use room db")
 interface PwsTable 
