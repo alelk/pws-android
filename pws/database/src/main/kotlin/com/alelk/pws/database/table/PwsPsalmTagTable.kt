@@ -20,6 +20,7 @@ package com.alelk.pws.database.table
  *
  * Created by Mykhailo Dmytriakha on 20.03.2024.
  */
+@Deprecated("use room db")
 object PwsPsalmTagTable {
   const val TABLE_PSALM_TAG = "song_number_tags"
   const val COLUMN_PSALM_NUMBER_ID = "song_number_id"

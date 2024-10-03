@@ -51,7 +51,7 @@ import com.alelk.pws.pwapp.R
 import com.alelk.pws.pwapp.activity.PsalmActivity
 import com.alelk.pws.pwapp.activity.PsalmFullscreenActivity
 import com.alelk.pws.pwapp.adapter.ReferredPsalmsRecyclerViewAdapter
-import com.alelk.pws.pwapp.dialog.EditPsalmCategoryDialog
+import com.alelk.pws.pwapp.dialog.EditSongTagsDialog
 import com.alelk.pws.pwapp.holder.PsalmHolder
 import com.alelk.pws.pwapp.loader.CategoryLoader
 import com.alelk.pws.pwapp.model.Category
@@ -468,7 +468,7 @@ class PsalmTextFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
       val assignedCategoriesOrigin =
         mCategoryLoader!!.loadCategoriesForPsalm(mPsalmNumberId.toString())
       val allCategories = mCategoryLoader!!.loadData()
-      EditPsalmCategoryDialog(requireActivity()).showEditCategoryDialog(
+      EditSongTagsDialog(requireActivity()).showEditCategoryDialog(
         assignedCategoriesOrigin,
         allCategories
       ) { assignedCategories ->

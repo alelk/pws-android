@@ -1,24 +1,20 @@
 package com.alelk.pws.pwapp.activity
 
-import android.app.Application
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
 import androidx.activity.viewModels
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.alelk.pws.database.DatabaseProvider
 import com.alelk.pws.database.entity.TagEntity
-import com.alelk.pws.database.model.TagId
 import com.alelk.pws.pwapp.R
 import com.alelk.pws.pwapp.activity.base.AppCompatThemedActivity
 import com.alelk.pws.pwapp.adapter.TagsAdapter
 import com.alelk.pws.pwapp.dialog.TagDialog
-import kotlinx.coroutines.flow.Flow
+import com.alelk.pws.pwapp.model.TagViewModel
 import kotlinx.coroutines.launch
 
 class TagsActivity : AppCompatThemedActivity() {
@@ -49,10 +45,8 @@ class TagsActivity : AppCompatThemedActivity() {
     editTagsButton = findViewById(R.id.button_edit_categories)
     editTagsButton.setOnClickListener { onEditButton() }
 
-    lifecycleScope.launch {
-      tagViewModel.tagsFlow.collect { tags ->
-        tagsAdapter.swapData(tags)
-      }
+    tagViewModel.allTags.observe(this) { tags ->
+      tagsAdapter.swapData(tags)
     }
   }
 
@@ -94,8 +88,7 @@ class TagsActivity : AppCompatThemedActivity() {
 
   private fun addTag() {
     lifecycleScope.launch {
-      val lastCustomTag = tagViewModel.getLastCustomTag()
-      val nextTagId = TagId.createCustomTag(lastCustomTag?.id?.customTagNumber()?.plus(1) ?: 1)
+      val nextTagId = tagViewModel.getNextCustomTagId()
       tagDialog.showAddTagDialog(nextTagId) {
         lifecycleScope.launch {
           if (tagViewModel.findByName(it.name).isEmpty())
@@ -134,25 +127,3 @@ class TagsActivity : AppCompatThemedActivity() {
     }
   }
 }
-
-class TagViewModel(application: Application) : AndroidViewModel(application) {
-  private val tagDao = DatabaseProvider.getDatabase(application).tagDao()
-
-  val tagsFlow: Flow<List<TagEntity>> = tagDao.getAll()
-
-  suspend fun addTag(tag: TagEntity) = tagDao.insert(tag)
-  suspend fun updateTag(tag: TagEntity) = tagDao.update(tag)
-  suspend fun findByName(name: String) = tagDao.getAllByName(name)
-  suspend fun deleteTag(tag: TagEntity) = tagDao.delete(tag)
-  suspend fun getLastCustomTag() =
-    tagDao.getAllNotPredefined()
-      .filter { it.isCustomTag() }
-      .sortedByDescending { it.id.customTagNumber() }
-      .lastOrNull()
-}
-
-private const val customTagPrefix = "custom-"
-
-fun TagId.customTagNumber(): Int? = this.toString().takeIf { it.startsWith(customTagPrefix) }?.removePrefix(customTagPrefix)?.dropWhile { it == '0' }?.toInt()
-fun TagId.Companion.createCustomTag(number: Int) = parse("$customTagPrefix${number.toString().padStart(5, '0')}")
-fun TagEntity.isCustomTag(): Boolean = this.id.customTagNumber() != null

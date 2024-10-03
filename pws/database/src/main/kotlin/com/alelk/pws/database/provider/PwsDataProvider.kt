@@ -62,6 +62,7 @@ import java.util.Locale
  *
  * TODO 2022.10.20: too legacy and ugly code :(
  */
+@Deprecated("use room")
 class PwsDataProvider : ContentProvider(), PwsDataProviderContract {
   private var mContext: Context? = null
   private var mDatabase: SQLiteDatabase? = null

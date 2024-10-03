@@ -35,6 +35,7 @@ import com.alelk.pws.database.table.PwsTagTable
  *
  * Created by Alex Elkin on 21.05.2015.
  */
+@Deprecated("use room db")
 interface PwsDataProviderContract {
   object Psalms {
     const val COLUMN_ID = "_id"
@@ -675,6 +676,7 @@ interface PwsDataProviderContract {
     }
   }
 
+  @Deprecated("use room")
   companion object : PwsDataProviderContract {
     const val SCHEME = "content"
     const val AUTHORITY = BuildConfig.DB_AUTHORITY

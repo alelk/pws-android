@@ -10,7 +10,7 @@ import com.alelk.pws.pwapp.view.CategoryView
 import com.google.android.flexbox.FlexboxLayout
 import java.util.SortedSet
 
-class EditPsalmCategoryDialog(private val activity: Activity) {
+class EditSongTagsDialog(private val activity: Activity) {
 
   private lateinit var dialogView: View
   private lateinit var assignedCategoriesFlexbox: FlexboxLayout
