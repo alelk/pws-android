@@ -4,12 +4,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.alelk.pws.pwapp.R
-import com.alelk.pws.pwapp.activity.CategoryPsalmsActivity
+import com.alelk.pws.pwapp.activity.TagSongsActivity
 import com.alelk.pws.pwapp.holder.PsalmInfoHolder
 import com.alelk.pws.pwapp.model.PsalmInfo
 
 class PsalmInfoAdapter(
-  private val activity: CategoryPsalmsActivity
+  private val activity: TagSongsActivity
 ) : RecyclerView.Adapter<PsalmInfoHolder>() {
 
   private var psalmInfoList: List<PsalmInfo> = emptyList()

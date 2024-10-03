@@ -50,8 +50,9 @@ abstract class PwsDatabase : RoomDatabase() {
   abstract fun historyDao(): HistoryDao
   abstract fun songDao(): SongDao
   abstract fun songNumberDao(): SongNumberDao
-//  abstract fun songSongReferenceDao(): SongSongReferenceDao
-//  abstract fun tagDao(): TagDao
+
+  //  abstract fun songSongReferenceDao(): SongSongReferenceDao
+  abstract fun tagDao(): TagDao
 //  abstract fun songNumberTagDao(): SongNumberTagDao
 }
 

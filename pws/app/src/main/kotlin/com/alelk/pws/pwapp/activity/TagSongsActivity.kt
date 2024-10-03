@@ -10,7 +10,7 @@ import com.alelk.pws.pwapp.adapter.PsalmInfoAdapter
 import com.alelk.pws.pwapp.loader.CategoryLoader
 import com.alelk.pws.pwapp.model.PsalmInfo
 
-class CategoryPsalmsActivity : AppCompatThemedActivity() {
+class TagSongsActivity : AppCompatThemedActivity() {
   private lateinit var recyclerView: RecyclerView
   private lateinit var categoryLoader: CategoryLoader
   private lateinit var psalmInfoAdapter: PsalmInfoAdapter
@@ -19,8 +19,8 @@ class CategoryPsalmsActivity : AppCompatThemedActivity() {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_category_psalms)
 
-    val categoryId = intent.getStringExtra(CATEGORY_ID)
-    val categoryName = intent.getStringExtra(CATEGORY_NAME)
+    val categoryId = intent.getStringExtra(TAG_ID)
+    val categoryName = intent.getStringExtra(TAG_NAME)
     setTitle(getString(R.string.title_activity_category_psalms) + " $categoryName")
 
     categoryLoader = CategoryLoader(this)
@@ -41,7 +41,7 @@ class CategoryPsalmsActivity : AppCompatThemedActivity() {
   }
 
   companion object {
-    const val CATEGORY_NAME = "category_name"
-    const val CATEGORY_ID = "category_id"
+    const val TAG_NAME = "category_name"
+    const val TAG_ID = "category_id"
   }
 }

@@ -2,13 +2,24 @@ package com.alelk.pws.database.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
+import androidx.room.Embedded
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Relation
 import com.alelk.pws.database.entity.SongNumberEntity
 import com.alelk.pws.database.entity.SongNumberTagEntity
+import com.alelk.pws.database.entity.TagEntity
 import com.alelk.pws.database.model.BookExternalId
 import com.alelk.pws.database.model.TagId
+import kotlinx.coroutines.flow.Flow
+
+data class Tag(
+  @Embedded
+  val songNumberTag: SongNumberTagEntity,
+  @Relation(parentColumn = "tag_id", entityColumn = "id")
+  val tag: TagEntity
+)
 
 @Dao
 interface SongNumberTagDao : Pageable<SongNumberTagEntity> {
@@ -22,7 +33,7 @@ interface SongNumberTagDao : Pageable<SongNumberTagEntity> {
   suspend fun getById(songNumberId: Long, tagId: TagId): SongNumberTagEntity?
 
   @Query("SELECT * FROM song_number_tags WHERE song_number_id = :songNumberId")
-  suspend fun getBySongNumberId(songNumberId: Long): List<SongNumberTagEntity>
+  suspend fun getBySongNumberId(songNumberId: Long): Flow<List<Tag>>
 
   @Query(
     """
