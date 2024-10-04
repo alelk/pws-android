@@ -21,6 +21,9 @@ interface HistoryDao {
   @Query("SELECT * FROM history WHERE _id = :id")
   suspend fun getById(id: Long): HistoryEntity?
 
+  @Query("SELECT * FROM history ORDER by accesstimestamp DESC LIMIT :countItems")
+  suspend fun getLast(countItems: Int = 1): List<HistoryEntity>
+
   @Transaction
   @Query(
     """

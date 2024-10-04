@@ -14,7 +14,7 @@ import com.alelk.pws.pwapp.R
 import com.alelk.pws.pwapp.activity.base.AppCompatThemedActivity
 import com.alelk.pws.pwapp.adapter.TagsAdapter
 import com.alelk.pws.pwapp.dialog.TagDialog
-import com.alelk.pws.pwapp.model.TagViewModel
+import com.alelk.pws.pwapp.model.TagsViewModel
 import kotlinx.coroutines.launch
 
 class TagsActivity : AppCompatThemedActivity() {
@@ -24,7 +24,7 @@ class TagsActivity : AppCompatThemedActivity() {
   private lateinit var tagsAdapter: TagsAdapter
   private lateinit var editTagsButton: Button
   private lateinit var recyclerView: RecyclerView
-  private val tagViewModel: TagViewModel by viewModels()
+  private val tagsViewModel: TagsViewModel by viewModels()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -45,7 +45,7 @@ class TagsActivity : AppCompatThemedActivity() {
     editTagsButton = findViewById(R.id.button_edit_categories)
     editTagsButton.setOnClickListener { onEditButton() }
 
-    tagViewModel.allTags.observe(this) { tags ->
+    tagsViewModel.allTags.observe(this) { tags ->
       tagsAdapter.swapData(tags)
     }
   }
@@ -88,11 +88,11 @@ class TagsActivity : AppCompatThemedActivity() {
 
   private fun addTag() {
     lifecycleScope.launch {
-      val nextTagId = tagViewModel.getNextCustomTagId()
+      val nextTagId = tagsViewModel.getNextCustomTagId()
       tagDialog.showAddTagDialog(nextTagId) {
         lifecycleScope.launch {
-          if (tagViewModel.findByName(it.name).isEmpty())
-            tagViewModel.addTag(it)
+          if (tagsViewModel.findByName(it.name).isEmpty())
+            tagsViewModel.addTag(it)
           else
             tagDialog.showWarningUniqueNameDialog()
         }
@@ -103,8 +103,8 @@ class TagsActivity : AppCompatThemedActivity() {
   private fun editTag(tag: TagEntity) {
     tagDialog.showEditTagDialog(tag) {
       lifecycleScope.launch {
-        if (tagViewModel.findByName(it.name).filterNot { it.id == tag.id }.isEmpty())
-          tagViewModel.updateTag(it)
+        if (tagsViewModel.findByName(it.name).filterNot { it.id == tag.id }.isEmpty())
+          tagsViewModel.updateTag(it)
         else
           tagDialog.showWarningUniqueNameDialog()
       }
@@ -114,7 +114,7 @@ class TagsActivity : AppCompatThemedActivity() {
   private fun editTagColor(tag: TagEntity) {
     tagDialog.showSelectColorDialog(tag.color) {
       lifecycleScope.launch {
-        tagViewModel.updateTag(tag.copy(color = it))
+        tagsViewModel.updateTag(tag.copy(color = it))
       }
     }
   }
@@ -122,7 +122,7 @@ class TagsActivity : AppCompatThemedActivity() {
   private fun deleteTag(tag: TagEntity) {
     tagDialog.showDeleteTagDialog(tag) {
       lifecycleScope.launch {
-        tagViewModel.deleteTag(tag)
+        tagsViewModel.deleteTag(tag)
       }
     }
   }

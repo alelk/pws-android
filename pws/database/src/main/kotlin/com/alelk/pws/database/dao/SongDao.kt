@@ -3,6 +3,13 @@ package com.alelk.pws.database.dao
 import androidx.room.*
 import com.alelk.pws.database.entity.SongEntity
 
+data class SongWithSongNumbers(
+  @Embedded
+  val song: SongEntity,
+  @Relation(parentColumn = "_id", entityColumn = "psalmid")
+  val songNumbers: List<SongNumberWithBook>
+)
+
 @Dao
 interface SongDao : Pageable<SongEntity> {
 

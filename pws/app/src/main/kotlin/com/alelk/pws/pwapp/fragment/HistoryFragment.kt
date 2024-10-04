@@ -35,7 +35,7 @@ import com.alelk.pws.database.DatabaseProvider
 import com.alelk.pws.database.dao.HistoryDao
 import com.alelk.pws.database.dao.HistoryItem
 import com.alelk.pws.pwapp.R
-import com.alelk.pws.pwapp.activity.PsalmActivity
+import com.alelk.pws.pwapp.activity.SongActivity
 import com.alelk.pws.pwapp.adapter.HistoryRecyclerViewAdapter
 import kotlinx.coroutines.launch
 
@@ -60,8 +60,8 @@ class HistoryFragment : Fragment() {
     recyclerView.layoutManager = LinearLayoutManager(activity)
 
     historyAdapter = HistoryRecyclerViewAdapter { psalmNumberId: Long ->
-      val intentPsalmView = Intent(activity, PsalmActivity::class.java)
-      intentPsalmView.putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, psalmNumberId)
+      val intentPsalmView = Intent(activity, SongActivity::class.java)
+      intentPsalmView.putExtra(SongActivity.KEY_SONG_NUMBER_ID, psalmNumberId)
       startActivity(intentPsalmView)
     }
 

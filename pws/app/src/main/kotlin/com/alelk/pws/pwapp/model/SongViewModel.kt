@@ -1,0 +1,117 @@
+package com.alelk.pws.pwapp.model
+
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import com.alelk.pws.database.DatabaseProvider
+import com.alelk.pws.database.dao.SongSongReference
+import com.alelk.pws.database.entity.BookEntity
+import com.alelk.pws.database.entity.FavoriteEntity
+import com.alelk.pws.database.entity.HistoryEntity
+import com.alelk.pws.database.entity.SongEntity
+import com.alelk.pws.database.entity.SongNumberEntity
+import com.alelk.pws.database.entity.TagEntity
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
+import timber.log.Timber
+import java.util.Date
+
+data class SongInfo(
+  val song: SongEntity,
+  val songNumber: SongNumberEntity,
+  val tags: List<TagEntity>,
+  val favorite: FavoriteEntity?,
+  val book: BookEntity,
+  val references: List<SongSongReference>,
+  val allBookNumbers: List<SongNumberEntity>,
+) {
+  val isFavorite: Boolean get() = favorite != null
+  val songNumberId: Long get() = checkNotNull(songNumber.id) { "song number id cannot be null" }
+}
+
+@OptIn(ExperimentalCoroutinesApi::class)
+class SongViewModel(application: Application) : AndroidViewModel(application) {
+  private val db = DatabaseProvider.getDatabase(application)
+  private val songNumberDao = db.songNumberDao()
+  private val favoriteDao = db.favoriteDao()
+  private val historyDao = db.historyDao()
+  private val bookDao = db.bookDao()
+  private val songNumberTagDao = db.songNumberTagDao()
+  private val songReferenceDao = db.songSongReferenceDao()
+
+  private val _songNumberId = MutableStateFlow<Long?>(null)
+  val songNumberId: StateFlow<Long?> get() = _songNumberId.asStateFlow()
+
+  fun setSongNumberId(songNumberId: Long?) {
+    if (_songNumberId.value != songNumberId) {
+      _songNumberId.value = songNumberId
+      Timber.d("song number id is changed: $songNumberId")
+    }
+  }
+
+  val song: StateFlow<SongInfo?> = _songNumberId.filterNotNull()
+    .flatMapLatest { songNumberId ->
+      val songFlow = songNumberDao.getSongOfBookById(songNumberId)
+      val bookNumbersFlow = bookDao.getBookSongNumbersBySongNumberId(songNumberId)
+      val tagsFlow = songNumberTagDao.getSongTags(songNumberId)
+      val referencesFlow = songReferenceDao.getBySongNumberId(songNumberId)
+
+      combine(songFlow, bookNumbersFlow, tagsFlow, referencesFlow) { songOfBook, bookNumbers, tags, references ->
+        SongInfo(
+          song = songOfBook.song,
+          book = songOfBook.book,
+          songNumber = songOfBook.songNumber,
+          tags = tags,
+          favorite = songOfBook.favorite.firstOrNull(),
+          allBookNumbers = bookNumbers,
+          references = references
+        )
+      }
+    }
+    .distinctUntilChanged()
+    .onEach { s ->
+      Timber.d(
+        "fetched new data by song number ${s.songNumberId}: song #${s.song.id}, book ${s.book.id}, " +
+          "all book song numbers (count = ${s.allBookNumbers.size}), tags (count = ${s.tags.size}), references (count = ${s.references.size})"
+      )
+    }
+    .catch { e -> Timber.e(e, "error fetching song data by song number id ${songNumberId.value}: ${e.message}") }
+    .stateIn(viewModelScope, SharingStarted.Lazily, null)
+
+  val isFavorite = song.mapLatest { it?.isFavorite == true }.distinctUntilChanged()
+  val number = song.mapLatest { it?.songNumber?.number }.distinctUntilChanged()
+  val tags: Flow<List<TagEntity>?> = song.mapLatest { it?.tags }.distinctUntilChanged()
+  val allBookNumbers: Flow<List<SongNumberEntity>?> = song.mapLatest { it?.allBookNumbers }.distinctUntilChanged()
+  val references: Flow<List<SongSongReference>?> = song.mapLatest { it?.references?.distinctBy { r -> r.refSongId } }.distinctUntilChanged()
+
+  suspend fun toggleFavorite() {
+    _songNumberId.value?.let { songNumberId ->
+      favoriteDao.toggleFavorite(songNumberId)
+      Timber.d("toggled favorite song: song number id = $songNumberId")
+    }
+  }
+
+  suspend fun addToHistory() {
+    song.value?.let { song ->
+      val lastHistoryItem = historyDao.getLast().firstOrNull()
+      if (lastHistoryItem == null || lastHistoryItem.songNumberId != song.songNumberId) {
+        Timber.d("song #${song.song.id} (book ${song.book.externalId}, number ${song.songNumber.number}) added to history.")
+        historyDao.insert(HistoryEntity(songNumberId = song.songNumberId, accessTimestamp = Date()))
+      } else {
+        Timber.d("song #${song.song.id} (book ${song.book.externalId}, number ${song.songNumber.number}) already last in history.")
+      }
+    }
+  }
+}

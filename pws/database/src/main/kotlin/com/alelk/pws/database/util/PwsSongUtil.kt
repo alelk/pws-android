@@ -24,11 +24,11 @@ import java.util.Locale
  *
  * Created by Alex Elkin on 14.03.2016.
  */
-object PwsPsalmUtil {
+object PwsSongUtil {
   private var builder = PwsPsalmHtmlBuilder(Locale.getDefault())
 
   @JvmOverloads
-  fun psalmTextToHtml(locale: Locale?, psalmText: String?, isExpanded: Boolean = true): String {
+  fun songTextToHtml(locale: Locale?, psalmText: String?, isExpanded: Boolean = true): String {
     builder = builder.forLocale(locale)
     return builder.buildHtml(psalmText!!, isExpanded)
   }
@@ -50,16 +50,16 @@ object PwsPsalmUtil {
       .append(if (psalmNumber != null) "№ $psalmNumber " else null).append(psalmName)
       .append("</h1>")
     if (bibleRef != null) sb.append("<p>").append(bibleRef).append("</p>")
-    sb.append("<p>").append(psalmTextToHtml(locale, psalmText)).append("</p>")
+    sb.append("<p>").append(songTextToHtml(locale, psalmText)).append("</p>")
     if (author != null || translator != null || composer != null) sb.append("<p>").append(
-      buildPsalmInfoHtml(locale, author, translator, composer)
+      buildSongInfoHtml(locale, author, translator, composer)
     ).append("</p>")
     if (footerHtml != null) sb.append("<p>").append(footerHtml).append("</p>")
     sb.append("</div>")
     return sb.toString()
   }
 
-  fun buildPsalmInfoHtml(
+  fun buildSongInfoHtml(
     locale: Locale,
     psalmAuthor: String?,
     psalmTranslator: String?,

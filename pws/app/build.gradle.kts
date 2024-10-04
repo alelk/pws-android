@@ -97,7 +97,6 @@ dependencies {
     // project modules
     implementation(project(":database"))
 
-    // support libraries
     implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.6")
     implementation("com.google.android.material:material:1.12.0")
@@ -105,4 +104,6 @@ dependencies {
     implementation("com.github.yukuku:ambilwarna:2.0.1")
     implementation("com.google.android.flexbox:flexbox:3.0.0")
     implementation(libs.room.runtime)
+    implementation(libs.timber)
+    implementation(libs.datastore.preferences)
 }

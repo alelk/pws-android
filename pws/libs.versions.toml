@@ -25,6 +25,12 @@ room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" } #
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" } # https://mvnrepository.com/artifact/androidx.room/room-compiler
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" } # https://mvnrepository.com/artifact/androidx.room/room-ktx
 
+# Logging
+timber = { module = "com.jakewharton.timber:timber", version = "5.0.1" }
+
+# Preferences
+datastore-preferences = { module = "androidx.datastore:datastore-preferences", version = "1.1.1" } # https://mvnrepository.com/artifact/androidx.datastore/datastore-preferences
+
 # Test
 kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" } # https://search.maven.org/artifact/io.kotest/kotest-runner-junit5
 kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" } # https://search.maven.org/artifact/io.kotest/kotest-assertions-core

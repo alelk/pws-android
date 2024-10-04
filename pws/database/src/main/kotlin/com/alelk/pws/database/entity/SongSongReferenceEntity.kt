@@ -15,6 +15,7 @@ enum class SongRefReason(val identifier: String) {
   }
 }
 
+/** Reference between two songs. */
 @Entity(
   tableName = "psalmpsalmreferences",
   foreignKeys = [

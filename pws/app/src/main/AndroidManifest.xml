@@ -47,7 +47,7 @@
         android:resource="@xml/searchable" />
     </activity>
     <activity
-      android:name=".activity.PsalmActivity"
+      android:name=".activity.SongActivity"
       android:label=""
       android:parentActivityName=".activity.MainActivity"
       android:theme="@style/Theme.AppTheme.NoActionBar">
@@ -56,14 +56,14 @@
         android:value="com.alelk.pws.pwapp.activity.SearchActivity" />
     </activity>
     <activity
-      android:name=".activity.PsalmFullscreenActivity"
+      android:name=".activity.SongFullscreenActivity"
       android:configChanges="orientation|keyboardHidden|screenSize"
       android:label="@string/title_activity_psalm_fullscreen"
       android:theme="@style/Theme.AppTheme.NoActionBar" />
     <activity
-      android:name=".activity.PsalmEditActivity"
+      android:name=".activity.SongEditActivity"
       android:configChanges="orientation|keyboardHidden|screenSize"
-      android:parentActivityName=".activity.PsalmActivity"
+      android:parentActivityName=".activity.SongActivity"
       android:label="@string/title_activity_psalm_edit"
       android:windowSoftInputMode="adjustResize"
       android:theme="@style/Theme.AppTheme.NoActionBar" />

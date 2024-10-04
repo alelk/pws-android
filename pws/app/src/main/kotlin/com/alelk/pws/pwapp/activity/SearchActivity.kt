@@ -24,7 +24,6 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.widget.SearchView
 import com.alelk.pws.pwapp.R
-import com.alelk.pws.pwapp.activity.PsalmActivity
 import com.alelk.pws.pwapp.activity.base.AppCompatThemedActivity
 import com.alelk.pws.pwapp.fragment.SearchResultsFragment
 
@@ -62,8 +61,8 @@ class SearchActivity : AppCompatThemedActivity() {
       val n = data.lastPathSegment ?: return
       val psalmNumberId = n.toLong()
       if (psalmNumberId != -1L) {
-        val intentPsalmView = Intent(applicationContext, PsalmActivity::class.java)
-        intentPsalmView.putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, psalmNumberId)
+        val intentPsalmView = Intent(applicationContext, SongActivity::class.java)
+        intentPsalmView.putExtra(SongActivity.KEY_SONG_NUMBER_ID, psalmNumberId)
         startActivity(intentPsalmView)
       }
     }

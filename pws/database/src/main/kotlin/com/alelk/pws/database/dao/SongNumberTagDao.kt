@@ -5,13 +5,13 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import com.alelk.pws.database.entity.SongNumberEntity
 import com.alelk.pws.database.entity.SongNumberTagEntity
+import com.alelk.pws.database.entity.TagEntity
 import com.alelk.pws.database.model.BookExternalId
 import com.alelk.pws.database.model.TagId
 import kotlinx.coroutines.flow.Flow
-
-
 
 @Dao
 interface SongNumberTagDao : Pageable<SongNumberTagEntity> {
@@ -23,6 +23,11 @@ interface SongNumberTagDao : Pageable<SongNumberTagEntity> {
 
   @Query("SELECT * FROM song_number_tags WHERE song_number_id = :songNumberId and tag_id = :tagId")
   suspend fun getById(songNumberId: Long, tagId: TagId): SongNumberTagEntity?
+
+  @Transaction
+  @Query("SELECT t.* FROM tags t INNER JOIN song_number_tags snt ON t.id = snt.tag_id WHERE snt.song_number_id = :songNumberId ORDER BY t.predefined, t.priority")
+  fun getSongTags(songNumberId: Long): Flow<List<TagEntity>>
+
 
   @Query(
     """

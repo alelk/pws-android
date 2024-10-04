@@ -5,17 +5,17 @@ import android.content.ContentValues
 import com.alelk.pws.database.provider.PwsDataProviderContract.Categories
 import com.alelk.pws.database.provider.PwsDataProviderContract.Categories.BY_PSALM_NUMBER_SELECTION
 import com.alelk.pws.database.table.PwsPsalmTagTable
-import com.alelk.pws.pwapp.model.Category
+import com.alelk.pws.pwapp.model.TagEntity
 import com.alelk.pws.pwapp.util.CursorUtils
 import java.util.SortedSet
 
 class CategoryLoader(
   private val activity: Activity
 ) {
-  private lateinit var categoriesList: SortedSet<Category>
+  private lateinit var categoriesList: SortedSet<TagEntity>
 
-  fun loadData(): SortedSet<Category> {
-    categoriesList = sortedSetOf(compareBy<Category> { it.predefined }.thenBy { it.priority }.thenBy { it.id })
+  fun loadData(): SortedSet<TagEntity> {
+    categoriesList = sortedSetOf(compareBy<TagEntity> { it.predefined }.thenBy { it.priority }.thenBy { it.id })
     val cursor = activity.contentResolver.query(
       Categories.TAG_URI, null, null, null, null
     )
@@ -24,8 +24,8 @@ class CategoryLoader(
     return categoriesList
   }
 
-  fun loadCategoriesForPsalm(psalmNumberId: String): SortedSet<Category> {
-    categoriesList = sortedSetOf(compareBy<Category> { it.predefined }.thenBy { it.priority }.thenBy { it.id })
+  fun loadCategoriesForPsalm(psalmNumberId: String): SortedSet<TagEntity> {
+    categoriesList = sortedSetOf(compareBy<TagEntity> { it.predefined }.thenBy { it.priority }.thenBy { it.id })
     val cursor = activity.contentResolver.query(
       Categories.PSALM_TAG_URI, null, BY_PSALM_NUMBER_SELECTION, arrayOf(psalmNumberId), null
     )
@@ -36,9 +36,9 @@ class CategoryLoader(
 
 
   fun updateCategoriesForPsalm(
-    psalmNumberId: String,
-    categoriesToAdd: Set<Category>,
-    categoriesToRemove: Set<Category>
+      psalmNumberId: String,
+      categoriesToAdd: Set<TagEntity>,
+      categoriesToRemove: Set<TagEntity>
   ) {
     // Add new categories
     for (category in categoriesToAdd) {
@@ -59,7 +59,7 @@ class CategoryLoader(
   }
 
 
-  private fun reloadData(): SortedSet<Category> {
+  private fun reloadData(): SortedSet<TagEntity> {
     return loadData()
   }
 

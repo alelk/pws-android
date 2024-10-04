@@ -1,14 +1,14 @@
 package com.alelk.pws.pwapp.util
 
 import android.database.Cursor
-import com.alelk.pws.pwapp.model.Category
+import com.alelk.pws.pwapp.model.TagEntity
 import com.alelk.pws.pwapp.model.PsalmInfo
 import com.alelk.pws.pwapp.model.toCategory
 import com.alelk.pws.pwapp.model.toPsalmInfo
 import java.util.SortedSet
 
 object CursorUtils {
-  fun getCategoriesFromCursor(cursor: Cursor, categoriesList: SortedSet<Category>) {
+  fun getCategoriesFromCursor(cursor: Cursor, categoriesList: SortedSet<TagEntity>) {
     cursor.use {
       while (it.moveToNext()) {
         categoriesList.add(it.toCategory())

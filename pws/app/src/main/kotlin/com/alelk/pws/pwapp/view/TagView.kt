@@ -5,15 +5,13 @@ import android.graphics.Color
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
-import com.alelk.pws.pwapp.model.Category
-import com.google.android.flexbox.FlexboxLayout
+import com.alelk.pws.database.entity.TagEntity
 
-class CategoryView(
+class TagView(
   context: Context,
-  private val category: Category,
+  private val tag: TagEntity,
   attrs: AttributeSet? = null,
   defStyleAttr: Int = 0
 ) : CardView(context, attrs, defStyleAttr) {
@@ -46,9 +44,9 @@ class CategoryView(
       setMargins(8, 8, 8, 8) // Add left and right margins of 8dp
     }
 
-    textView.text = category.name
+    textView.text = tag.name
 
-    val backgroundColor = Color.parseColor(category.color)
+    val backgroundColor = Color.parseColor(tag.color.toString())
     val textColor = getAdaptiveTextColorForBackground(backgroundColor)
     setBackgroundColor(backgroundColor)
     setTextColor(textColor)

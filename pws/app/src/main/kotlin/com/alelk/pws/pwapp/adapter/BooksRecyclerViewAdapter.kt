@@ -31,8 +31,7 @@ import com.alelk.pws.pwapp.adapter.BooksRecyclerViewAdapter.BooksViewHolder
  *
  * Created by Mykhailo Dmytriakha on 05.03.2024.
  */
-class BooksRecyclerViewAdapter(private val onItemClickListener: (bookNumberId: Long) -> Unit) :
-  ListAdapter<Book, BooksViewHolder>(BookDiffCallback()) {
+class BooksRecyclerViewAdapter(private val onItemClickListener: (bookNumberId: Long) -> Unit) : ListAdapter<Book, BooksViewHolder>(BookDiffCallback()) {
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BooksViewHolder {
     val view = LayoutInflater.from(parent.context)
@@ -53,7 +52,7 @@ class BooksRecyclerViewAdapter(private val onItemClickListener: (bookNumberId: L
     fun bind(book: Book, onItemClickListener: (bookNumberId: Long) -> Unit) {
       bookName.text = book.displayName
       bookShortName.text = book.name
-      bookNumber.text = book.id.toString()  // Or any number-related info
+      bookNumber.text = book.id.toString()
       itemView.setOnClickListener { onItemClickListener(book.firstSongNumberId) }
     }
   }

@@ -25,9 +25,9 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.alelk.pws.pwapp.R
-import com.alelk.pws.pwapp.activity.PsalmActivity
+import com.alelk.pws.pwapp.activity.SongActivity
 import com.alelk.pws.pwapp.adapter.BooksRecyclerViewAdapter
-import com.alelk.pws.pwapp.model.BookViewModel
+import com.alelk.pws.pwapp.model.BooksViewModel
 
 /**
  * Books Fragment
@@ -37,7 +37,7 @@ import com.alelk.pws.pwapp.model.BookViewModel
 class BooksFragment : Fragment() {
 
   private lateinit var booksAdapter: BooksRecyclerViewAdapter
-  private val bookViewModel: BookViewModel by viewModels()
+  private val bookViewModel: BooksViewModel by viewModels()
 
   override fun onCreateView(
     inflater: LayoutInflater,
@@ -49,8 +49,8 @@ class BooksFragment : Fragment() {
     val layoutManager = LinearLayoutManager(requireContext())
     recyclerView.layoutManager = layoutManager
     booksAdapter = BooksRecyclerViewAdapter { psalmNumberId: Long ->
-      val intent = Intent(requireActivity(), PsalmActivity::class.java)
-      intent.putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, psalmNumberId)
+      val intent = Intent(requireActivity(), SongActivity::class.java)
+      intent.putExtra(SongActivity.KEY_SONG_NUMBER_ID, psalmNumberId)
       startActivity(intent)
     }
     recyclerView.adapter = booksAdapter

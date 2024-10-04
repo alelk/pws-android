@@ -11,12 +11,12 @@ import com.alelk.pws.database.model.TagId
 import com.alelk.pws.pwapp.R
 import com.alelk.pws.pwapp.activity.base.AppCompatThemedActivity
 import com.alelk.pws.pwapp.adapter.SongsInfoAdapter
-import com.alelk.pws.pwapp.model.TagViewModel
+import com.alelk.pws.pwapp.model.TagsViewModel
 
 class TagSongsActivity : AppCompatThemedActivity() {
   private lateinit var recyclerView: RecyclerView
   private lateinit var songsInfoAdapter: SongsInfoAdapter
-  private val tagViewModel: TagViewModel by viewModels()
+  private val tagsViewModel: TagsViewModel by viewModels()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -34,14 +34,14 @@ class TagSongsActivity : AppCompatThemedActivity() {
       layoutManager = LinearLayoutManager(this@TagSongsActivity)
     }
 
-    tagViewModel.getTagSongs(TagId.parse(tagId)).asLiveData().observe(this) { songInfoList ->
+    tagsViewModel.getTagSongs(TagId.parse(tagId)).asLiveData().observe(this) { songInfoList ->
       songsInfoAdapter.swapData(songInfoList)
     }
   }
 
   private fun onSongSelected(data: SongInfo) {
-    val intentSongView = Intent(this, PsalmActivity::class.java).apply {
-      putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, data.songNumberId)
+    val intentSongView = Intent(this, SongActivity::class.java).apply {
+      putExtra(SongActivity.KEY_SONG_NUMBER_ID, data.songNumberId)
     }
     startActivity(intentSongView)
   }

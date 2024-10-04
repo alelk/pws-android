@@ -10,7 +10,7 @@ import com.alelk.pws.database.entity.TagEntity
 import com.alelk.pws.database.model.TagId
 import kotlinx.coroutines.flow.Flow
 
-class TagViewModel(application: Application) : AndroidViewModel(application) {
+class TagsViewModel(application: Application) : AndroidViewModel(application) {
   private val tagDao = DatabaseProvider.getDatabase(application).tagDao()
 
   val allTags: LiveData<List<TagEntity>> = tagDao.getAll().asLiveData()

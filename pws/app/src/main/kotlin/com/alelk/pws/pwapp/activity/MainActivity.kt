@@ -15,28 +15,36 @@
  */
 package com.alelk.pws.pwapp.activity
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import com.alelk.pws.database.BuildConfig
 import com.alelk.pws.pwapp.R
 import com.alelk.pws.pwapp.activity.base.AppCompatThemedActivity
 import com.alelk.pws.pwapp.fragment.BooksFragment
 import com.alelk.pws.pwapp.fragment.FavoritesFragment
 import com.alelk.pws.pwapp.fragment.HistoryFragment
 import com.alelk.pws.pwapp.fragment.ReadNowFragment
+import com.alelk.pws.pwapp.model.SongsViewModel
 import com.alelk.pws.pwapp.theme.ThemeType
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
+import timber.log.Timber
 
 open class MainActivity : AppCompatThemedActivity(), NavigationView.OnNavigationItemSelectedListener {
   private var mDrawerLayout: DrawerLayout? = null
@@ -44,6 +52,8 @@ open class MainActivity : AppCompatThemedActivity(), NavigationView.OnNavigation
   private var mFabSearchText: FloatingActionButton? = null
   private var mFabSearchNumber: FloatingActionButton? = null
   private var mAppBar: AppBarLayout? = null
+
+  private val songViewModel: SongsViewModel by viewModels()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -81,6 +91,10 @@ open class MainActivity : AppCompatThemedActivity(), NavigationView.OnNavigation
     toggle.syncState()
     (findViewById<View>(R.id.nav_view) as NavigationView).setNavigationItemSelectedListener(this)
     displayFragment()
+
+    if (BuildConfig.DEBUG) {
+      Timber.plant(Timber.DebugTree())
+    }
   }
 
   override fun onSaveInstanceState(outState: Bundle) {
@@ -128,17 +142,20 @@ open class MainActivity : AppCompatThemedActivity(), NavigationView.OnNavigation
         displayFragment()
         result = true
       }
+
       R.id.drawer_main_home -> {
         mAppBar!!.setExpanded(true, true)
         mNavigationItemId = id
         displayFragment()
         result = true
       }
+
       R.id.drawer_main_settings -> {
         intent = Intent(this, MainSettingsActivity::class.java)
         startActivity(intent)
         result = true
       }
+
       R.id.drawer_main_categories -> {
         intent = Intent(this, TagsActivity::class.java)
         startActivity(intent)
@@ -159,14 +176,17 @@ open class MainActivity : AppCompatThemedActivity(), NavigationView.OnNavigation
         fragment = ReadNowFragment()
         titleResId = R.string.lbl_drawer_main_home
       }
+
       R.id.drawer_main_books -> {
         fragment = BooksFragment()
         titleResId = R.string.lbl_drawer_main_books
       }
+
       R.id.drawer_main_history -> {
         fragment = HistoryFragment()
         titleResId = R.string.lbl_drawer_main_history
       }
+
       R.id.drawer_main_favorite -> {
         fragment = FavoritesFragment()
         titleResId = R.string.lbl_drawer_main_favorite
@@ -191,6 +211,7 @@ open class MainActivity : AppCompatThemedActivity(), NavigationView.OnNavigation
         )
         startActivity(intentSearchNumber)
       }
+
       R.id.btn_search_psalm_text, R.id.fab_search_text -> {
         val intentSearchText = Intent(baseContext, SearchActivity::class.java)
         intentSearchText.putExtra(

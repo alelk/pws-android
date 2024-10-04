@@ -5,8 +5,8 @@ import android.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import com.alelk.pws.pwapp.R
-import com.alelk.pws.pwapp.model.Category
-import com.alelk.pws.pwapp.view.CategoryView
+import com.alelk.pws.pwapp.model.TagEntity
+import com.alelk.pws.pwapp.view.TagView
 import com.google.android.flexbox.FlexboxLayout
 import java.util.SortedSet
 
@@ -16,16 +16,16 @@ class EditSongTagsDialog(private val activity: Activity) {
   private lateinit var assignedCategoriesFlexbox: FlexboxLayout
   private lateinit var unassignedCategoriesFlexbox: FlexboxLayout
   private var assignedCategories = sortedSetOf(
-    compareBy<Category> { it.predefined }.thenBy { it.id }
+    compareBy<TagEntity> { it.predefined }.thenBy { it.id }
   )
   private var unassignedCategories = sortedSetOf(
-    compareBy<Category> { it.predefined }.thenBy { it.id }
+    compareBy<TagEntity> { it.predefined }.thenBy { it.id }
   )
 
   fun showEditCategoryDialog(
-    initialAssignedCategories: SortedSet<Category>,
-    allCategories: SortedSet<Category>,
-    onResult: (SortedSet<Category>) -> Unit
+    initialAssignedCategories: SortedSet<TagEntity>,
+    allCategories: SortedSet<TagEntity>,
+    onResult: (SortedSet<TagEntity>) -> Unit
   ) {
     assignedCategories.addAll(initialAssignedCategories)
     unassignedCategories.addAll(
@@ -72,31 +72,31 @@ class EditSongTagsDialog(private val activity: Activity) {
 
   private fun assignedCategoriesView(
     assignedCategoriesFlexBox: FlexboxLayout,
-    assignedCategories: SortedSet<Category>,
-    unAssignCategoryListener: (category: Category) -> Unit
+    assignedCategories: SortedSet<TagEntity>,
+    unAssignCategoryListener: (category: TagEntity) -> Unit
   ) {
-    for (category in assignedCategories) {
-      val categoryView = CategoryView(activity, category)
-      categoryView.setOnClickListener {
-        unAssignCategoryListener(category)
-      }
-      categoryView.deleteMode()
-      assignedCategoriesFlexBox.addView(categoryView)
-    }
+//    for (category in assignedCategories) {
+//      val categoryView = TagView(activity, category)
+//      categoryView.setOnClickListener {
+//        unAssignCategoryListener(category)
+//      }
+//      categoryView.deleteMode()
+//      assignedCategoriesFlexBox.addView(categoryView)
+//    }
   }
 
   private fun unassignedCategoriesView(
     unassignedCategoriesFlexbox: FlexboxLayout,
-    unassignedCategories: SortedSet<Category>,
-    assignCategoryListener: (category: Category) -> Unit
+    unassignedCategories: SortedSet<TagEntity>,
+    assignCategoryListener: (category: TagEntity) -> Unit
   ) {
-    for (category in unassignedCategories) {
-      val categoryView = CategoryView(activity, category)
-      categoryView.setOnClickListener {
-        assignCategoryListener(category)
-      }
-      categoryView.addMode()
-      unassignedCategoriesFlexbox.addView(categoryView)
-    }
+//    for (category in unassignedCategories) {
+//      val categoryView = TagView(activity, category)
+//      categoryView.setOnClickListener {
+//        assignCategoryListener(category)
+//      }
+//      categoryView.addMode()
+//      unassignedCategoriesFlexbox.addView(categoryView)
+//    }
   }
 }
