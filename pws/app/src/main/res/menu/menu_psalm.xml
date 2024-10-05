@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2018 The P&W Songs Open Source Project
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,33 +15,54 @@
   -->
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.alelk.pws.pwapp.activity.SongActivity">
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  tools:context="com.alelk.pws.pwapp.activity.SongActivity">
 
-    <item android:id="@+id/menu_search"
-        android:orderInCategory="1"
-        android:title="@string/lbl_search_psalm"
-        app:showAsAction="ifRoom"
-        android:icon="@drawable/ic_search_black_24dp"
-        app:actionViewClass="androidx.appcompat.widget.SearchView"
-        />
+  <item
+    android:id="@+id/menu_search"
+    android:icon="@drawable/ic_search_black_24dp"
+    android:orderInCategory="1"
+    android:title="@string/lbl_search_psalm"
+    app:actionViewClass="androidx.appcompat.widget.SearchView"
+    app:showAsAction="ifRoom" />
 
-    <item android:id="@+id/menu_jump"
-        android:orderInCategory="2"
-        android:title="@string/lbl_jump_to_number"
-        android:icon="?attr/toolbarSearchByNumberIcon"
-        app:showAsAction="ifRoom"
-        />
+  <item
+    android:id="@+id/menu_jump"
+    android:icon="?attr/toolbarSearchByNumberIcon"
+    android:orderInCategory="2"
+    android:title="@string/lbl_jump_to_number"
+    app:showAsAction="ifRoom" />
 
-    <item android:id="@+id/menu_text_size"
-        android:title="@string/lbl_psalm_text_size"
-        app:showAsAction="never"
-        />
-    <item android:id="@+id/action_settings"
-        android:title="@string/action_settings"
-        android:icon="@drawable/ic_settings_black_24dp"
-        app:showAsAction="never"
-        android:orderInCategory="100"
-        />
+  <item
+    android:id="@+id/menu_share"
+    android:icon="@drawable/ic_share_black_24dp"
+    android:orderInCategory="3"
+    android:title="@string/lbl_share"
+    app:showAsAction="ifRoom" />
+
+  <item
+    android:id="@+id/menu_edit"
+    android:orderInCategory="4"
+    android:title="@string/lbl_edit_psalm"
+    app:showAsAction="never" />
+
+  <item android:id="@+id/menu_edit_categories"
+    android:orderInCategory="5"
+    android:title="@string/lbl_edit_categories"
+    app:showAsAction="never"
+    />
+
+  <item
+    android:id="@+id/menu_text_size"
+    android:title="@string/lbl_psalm_text_size"
+    android:orderInCategory="6"
+    app:showAsAction="never" />
+
+  <item
+    android:id="@+id/action_settings"
+    android:icon="@drawable/ic_settings_black_24dp"
+    android:orderInCategory="100"
+    android:title="@string/action_settings"
+    app:showAsAction="never" />
 </menu>

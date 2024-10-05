@@ -22,12 +22,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.alelk.pws.pwapp.R
 import com.alelk.pws.pwapp.activity.SongActivity
 import com.alelk.pws.pwapp.adapter.BooksRecyclerViewAdapter
 import com.alelk.pws.pwapp.model.BooksViewModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.launch
 
 /**
  * Books Fragment
@@ -54,8 +60,12 @@ class BooksFragment : Fragment() {
       startActivity(intent)
     }
     recyclerView.adapter = booksAdapter
-    bookViewModel.allActiveBooks.observe(viewLifecycleOwner) { books ->
-      booksAdapter.submitList(books)
+    viewLifecycleOwner.lifecycleScope.launch {
+      repeatOnLifecycle(Lifecycle.State.STARTED) {
+        bookViewModel.allActiveBooks.filterNotNull().collectLatest { books ->
+          booksAdapter.submitList(books)
+        }
+      }
     }
     return view
   }

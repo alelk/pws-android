@@ -18,4 +18,6 @@ data class Version(
       return Version(parts[0].toInt(), parts[1].toInt())
     }
   }
+
+  fun nextMinor() = copy(minor = minor + 1)
 }

@@ -6,7 +6,9 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
 import androidx.activity.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.alelk.pws.database.entity.TagEntity
@@ -15,6 +17,8 @@ import com.alelk.pws.pwapp.activity.base.AppCompatThemedActivity
 import com.alelk.pws.pwapp.adapter.TagsAdapter
 import com.alelk.pws.pwapp.dialog.TagDialog
 import com.alelk.pws.pwapp.model.TagsViewModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 
 class TagsActivity : AppCompatThemedActivity() {
@@ -45,8 +49,12 @@ class TagsActivity : AppCompatThemedActivity() {
     editTagsButton = findViewById(R.id.button_edit_categories)
     editTagsButton.setOnClickListener { onEditButton() }
 
-    tagsViewModel.allTags.observe(this) { tags ->
-      tagsAdapter.swapData(tags)
+    lifecycleScope.launch {
+      repeatOnLifecycle(Lifecycle.State.STARTED) {
+        tagsViewModel.allTags.filterNotNull().collectLatest { tags ->
+          tagsAdapter.swapData(tags)
+        }
+      }
     }
   }
 

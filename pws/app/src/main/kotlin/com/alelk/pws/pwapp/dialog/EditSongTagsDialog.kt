@@ -4,8 +4,8 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
+import com.alelk.pws.database.entity.TagEntity
 import com.alelk.pws.pwapp.R
-import com.alelk.pws.pwapp.model.TagEntity
 import com.alelk.pws.pwapp.view.TagView
 import com.google.android.flexbox.FlexboxLayout
 import java.util.SortedSet
@@ -15,30 +15,24 @@ class EditSongTagsDialog(private val activity: Activity) {
   private lateinit var dialogView: View
   private lateinit var assignedCategoriesFlexbox: FlexboxLayout
   private lateinit var unassignedCategoriesFlexbox: FlexboxLayout
-  private var assignedCategories = sortedSetOf(
-    compareBy<TagEntity> { it.predefined }.thenBy { it.id }
-  )
-  private var unassignedCategories = sortedSetOf(
-    compareBy<TagEntity> { it.predefined }.thenBy { it.id }
-  )
+  private var assignedCategories = sortedSetOf(compareBy<TagEntity> { it.predefined }.thenBy { it.id.toString() })
+  private var unassignedCategories = sortedSetOf(compareBy<TagEntity> { it.predefined }.thenBy { it.id.toString() })
 
-  fun showEditCategoryDialog(
-    initialAssignedCategories: SortedSet<TagEntity>,
-    allCategories: SortedSet<TagEntity>,
-    onResult: (SortedSet<TagEntity>) -> Unit
+  fun show(
+    initialAssignedCategories: List<TagEntity>,
+    allCategories: List<TagEntity>,
+    onResult: (assigned: List<TagEntity>) -> Unit
   ) {
     assignedCategories.addAll(initialAssignedCategories)
-    unassignedCategories.addAll(
-      allCategories.filterNot { category -> assignedCategories.any { it.name == category.name } }
-    )
+    unassignedCategories.addAll(allCategories.toSet() - initialAssignedCategories.toSet())
 
     setupDialogView()
 
     val dialog = AlertDialog.Builder(activity)
       .setTitle(activity.getString(R.string.lbl_edit_categories_for_song))
       .setView(dialogView)
-      .setPositiveButton(android.R.string.ok) { dialog, _ ->
-        onResult(assignedCategories)
+      .setPositiveButton(android.R.string.ok) { _, _ ->
+        onResult(assignedCategories.toList())
       }
       .setNegativeButton(android.R.string.cancel, null)
       .create()
@@ -75,14 +69,14 @@ class EditSongTagsDialog(private val activity: Activity) {
     assignedCategories: SortedSet<TagEntity>,
     unAssignCategoryListener: (category: TagEntity) -> Unit
   ) {
-//    for (category in assignedCategories) {
-//      val categoryView = TagView(activity, category)
-//      categoryView.setOnClickListener {
-//        unAssignCategoryListener(category)
-//      }
-//      categoryView.deleteMode()
-//      assignedCategoriesFlexBox.addView(categoryView)
-//    }
+    for (category in assignedCategories) {
+      val categoryView = TagView(activity, category)
+      categoryView.setOnClickListener {
+        unAssignCategoryListener(category)
+      }
+      categoryView.deleteMode()
+      assignedCategoriesFlexBox.addView(categoryView)
+    }
   }
 
   private fun unassignedCategoriesView(
@@ -90,13 +84,13 @@ class EditSongTagsDialog(private val activity: Activity) {
     unassignedCategories: SortedSet<TagEntity>,
     assignCategoryListener: (category: TagEntity) -> Unit
   ) {
-//    for (category in unassignedCategories) {
-//      val categoryView = TagView(activity, category)
-//      categoryView.setOnClickListener {
-//        assignCategoryListener(category)
-//      }
-//      categoryView.addMode()
-//      unassignedCategoriesFlexbox.addView(categoryView)
-//    }
+    for (category in unassignedCategories) {
+      val categoryView = TagView(activity, category)
+      categoryView.setOnClickListener {
+        assignCategoryListener(category)
+      }
+      categoryView.addMode()
+      unassignedCategoriesFlexbox.addView(categoryView)
+    }
   }
 }

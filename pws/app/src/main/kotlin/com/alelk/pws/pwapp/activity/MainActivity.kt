@@ -15,20 +15,15 @@
  */
 package com.alelk.pws.pwapp.activity
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.alelk.pws.database.BuildConfig
@@ -38,7 +33,6 @@ import com.alelk.pws.pwapp.fragment.BooksFragment
 import com.alelk.pws.pwapp.fragment.FavoritesFragment
 import com.alelk.pws.pwapp.fragment.HistoryFragment
 import com.alelk.pws.pwapp.fragment.ReadNowFragment
-import com.alelk.pws.pwapp.model.SongsViewModel
 import com.alelk.pws.pwapp.theme.ThemeType
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
@@ -52,8 +46,6 @@ open class MainActivity : AppCompatThemedActivity(), NavigationView.OnNavigation
   private var mFabSearchText: FloatingActionButton? = null
   private var mFabSearchNumber: FloatingActionButton? = null
   private var mAppBar: AppBarLayout? = null
-
-  private val songViewModel: SongsViewModel by viewModels()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)

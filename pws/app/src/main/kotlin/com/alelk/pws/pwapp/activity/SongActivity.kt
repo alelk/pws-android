@@ -33,16 +33,19 @@ import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.alelk.pws.pwapp.R
 import com.alelk.pws.pwapp.activity.base.AppCompatThemedActivity
 import com.alelk.pws.pwapp.adapter.SongTextFragmentPagerAdapter
+import com.alelk.pws.pwapp.dialog.EditSongTagsDialog
 import com.alelk.pws.pwapp.dialog.JumpToSongByNumberDialogFragment
 import com.alelk.pws.pwapp.dialog.SongPreferencesDialogFragment
 import com.alelk.pws.pwapp.fragment.SongHeaderFragment
 import com.alelk.pws.pwapp.model.SongViewModel
+import com.alelk.pws.pwapp.model.TagsViewModel
 import com.alelk.pws.pwapp.model.textDocument
 import com.alelk.pws.pwapp.model.textDocumentHtml
 import com.alelk.pws.pwapp.theme.ThemeType
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -52,9 +55,8 @@ import timber.log.Timber
  * Created by Alex Elkin on 25.03.2016.
  */
 class SongActivity : AppCompatThemedActivity() {
-  private val songNumberIdState = MutableStateFlow(-1L)
-
   private val songViewModel: SongViewModel by viewModels()
+  private val tagsViewModel: TagsViewModel by viewModels()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -139,89 +141,45 @@ class SongActivity : AppCompatThemedActivity() {
         true
       }
 
+      R.id.menu_edit -> {
+        songViewModel.songNumberId.value?.let { songNumberId ->
+          startActivity(Intent(this, SongEditActivity::class.java).putExtra(SongEditActivity.KEY_SONG_NUMBER_ID, songNumberId))
+        }
+        true
+      }
+
+      R.id.menu_edit_categories -> {
+        lifecycleScope.launch {
+          val songTags = songViewModel.tags.filterNotNull().firstOrNull()
+          val allTags = tagsViewModel.allTags.filterNotNull().firstOrNull()
+          if (songTags != null && allTags != null) {
+            EditSongTagsDialog(this@SongActivity).show(songTags, allTags) { assignedTags ->
+              lifecycleScope.launch {
+                songViewModel.setTags(assignedTags)
+              }
+            }
+          }
+        }
+
+        true
+      }
+
+      R.id.menu_share -> {
+        songViewModel.song.value?.let { song ->
+          val shareIntent = ShareCompat.IntentBuilder(this).setType("text/plain").setText(song.textDocument).setHtmlText(song.textDocumentHtml).intent
+          startActivity(Intent.createChooser(shareIntent, getString(R.string.lbl_share)))
+        }
+        true
+      }
+
       else -> {
         super.onOptionsItemSelected(item)
       }
     }
 
-  // todo:
-  private fun shareSong() {
-    songViewModel.song.value?.let { song ->
-      val shareIntent = ShareCompat.IntentBuilder(this).setType("text/plain").setText(song.textDocument).setHtmlText(song.textDocumentHtml).intent
-      startActivity(Intent.createChooser(shareIntent, getString(R.string.lbl_share)))
-    }
-  }
-
-//  override fun onUpdateSongInfo(songHolder: SongHolder?) {
-//    if (songHolder == null ||
-//      mBookPsalmNumberIds!![mPagerPsalmText!!.currentItem] != songHolder.psalmNumberId
-//    ) return
-//    val collapsingToolbarLayout =
-//      findViewById<CollapsingToolbarLayout>(R.id.collapsing_toolbar_psalm)
-//    collapsingToolbarLayout.title = "№ " + songHolder.psalmNumber
-//    mPsalmHeaderFragment!!.updateUi(
-//      songHolder.psalmName,
-//      songHolder.bookName,
-//      songHolder.bibleRef
-//    )
-//  }
-//
-//  override fun onRequestFullscreenMode() {
-//    val intent = Intent(this, SongFullscreenActivity::class.java)
-//    intent.putExtra(
-//      SongFullscreenActivity.KEY_PSALM_NUMBER_ID,
-//      mBookPsalmNumberIds!![mPagerPsalmText!!.currentItem]
-//    )
-//    startActivityForResult(intent, REQUEST_CODE_FULLSCREEN_ACTIVITY)
-//  }
-//
-//  override fun onEditRequest(psalmNumberId: Long) {
-//    val intent = Intent(this, SongEditActivity::class.java)
-//    intent.putExtra(SongEditActivity.KEY_SONG_NUMBER_ID, psalmNumberId)
-//    startActivityForResult(intent, REQUEST_CODE_EDIT_ACTIVITY)
-//  }
-
-//  @Deprecated("Deprecated in Java")
-//  override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//    super.onActivityResult(requestCode, resultCode, data)
-//    when (requestCode) {
-//      REQUEST_CODE_FULLSCREEN_ACTIVITY -> {
-//        if (resultCode != RESULT_OK || data == null) return
-//        songNumberId = data.getLongExtra(SongFullscreenActivity.KEY_PSALM_NUMBER_ID, -1)
-//        mPagerPsalmText!!.currentItem = mBookPsalmNumberIds!!.indexOf(songNumberId)
-//      }
-//      REQUEST_CODE_EDIT_ACTIVITY -> {
-//        if (data == null) return
-//        songNumberId = data.getLongExtra(KEY_SONG_NUMBER_ID, -1L)
-//        mPagerPsalmText!!.currentItem = mBookPsalmNumberIds!!.indexOf(songNumberId)
-//        if (resultCode == RESULT_OK) {
-//          val fragment =
-//            mPsalmTextPagerAdapter!!.registeredFragments[mPagerPsalmText!!.currentItem] as SongTextFragment
-//          fragment.reloadUi()
-//        }
-//      }
-//    }
-//  }
-
-//  override fun onPositiveButtonClick(psalmNumberId: Long) {
-//    mPagerPsalmText!!.currentItem = mBookPsalmNumberIds!!.indexOf(psalmNumberId)
-//  }
-//
-//  override fun onNegativeButtonClick() {}
-//  override fun onPreferencesChanged(preferences: PsalmPreferences?) {
-//    if (preferences != null) {
-//      val fragment = mPsalmTextPagerAdapter!!.registeredFragments[mPagerPsalmText!!.currentItem] as SongTextFragment
-//      fragment.applyPsalmPreferences(preferences)
-//    }
-//  }
-
-
-  override val themeType: ThemeType
-    get() = ThemeType.NO_ACTION_BAR
+  override val themeType: ThemeType get() = ThemeType.NO_ACTION_BAR
 
   companion object {
     const val KEY_SONG_NUMBER_ID = "psalmNumberId"
-    private const val REQUEST_CODE_FULLSCREEN_ACTIVITY = 1
-    private const val REQUEST_CODE_EDIT_ACTIVITY = 2
   }
 }

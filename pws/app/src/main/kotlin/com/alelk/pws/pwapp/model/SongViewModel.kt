@@ -10,6 +10,7 @@ import com.alelk.pws.database.entity.FavoriteEntity
 import com.alelk.pws.database.entity.HistoryEntity
 import com.alelk.pws.database.entity.SongEntity
 import com.alelk.pws.database.entity.SongNumberEntity
+import com.alelk.pws.database.entity.SongNumberTagEntity
 import com.alelk.pws.database.entity.TagEntity
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -44,6 +45,7 @@ data class SongInfo(
 @OptIn(ExperimentalCoroutinesApi::class)
 class SongViewModel(application: Application) : AndroidViewModel(application) {
   private val db = DatabaseProvider.getDatabase(application)
+  private val songDao = db.songDao()
   private val songNumberDao = db.songNumberDao()
   private val favoriteDao = db.favoriteDao()
   private val historyDao = db.historyDao()
@@ -65,7 +67,7 @@ class SongViewModel(application: Application) : AndroidViewModel(application) {
     .flatMapLatest { songNumberId ->
       val songFlow = songNumberDao.getSongOfBookById(songNumberId)
       val bookNumbersFlow = bookDao.getBookSongNumbersBySongNumberId(songNumberId)
-      val tagsFlow = songNumberTagDao.getSongTags(songNumberId)
+      val tagsFlow = songNumberTagDao.flowTagsBySongNumberId(songNumberId)
       val referencesFlow = songReferenceDao.getBySongNumberId(songNumberId)
 
       combine(songFlow, bookNumbersFlow, tagsFlow, referencesFlow) { songOfBook, bookNumbers, tags, references ->
@@ -95,6 +97,33 @@ class SongViewModel(application: Application) : AndroidViewModel(application) {
   val tags: Flow<List<TagEntity>?> = song.mapLatest { it?.tags }.distinctUntilChanged()
   val allBookNumbers: Flow<List<SongNumberEntity>?> = song.mapLatest { it?.allBookNumbers }.distinctUntilChanged()
   val references: Flow<List<SongSongReference>?> = song.mapLatest { it?.references?.distinctBy { r -> r.refSongId } }.distinctUntilChanged()
+
+  suspend fun update(updateFn: suspend (existing: SongEntity) -> SongEntity) {
+    val nextSong = song.value?.song?.let { song ->
+      val nextSong = updateFn(song)
+      require(song.id == nextSong.id) { "unable to change song id" }
+      nextSong.copy(version = song.version.nextMinor(), edited = true)
+    }
+    if (nextSong != null) {
+      songDao.update(nextSong)
+      Timber.i("song #${nextSong.id} updated")
+    }
+  }
+
+  suspend fun setTags(newSongTags: List<TagEntity>) {
+    val songNumberId = songNumberId.value ?: return
+    val existing = songNumberTagDao.getBySongNumberId(songNumberId).toSet()
+    val target = newSongTags.map { SongNumberTagEntity(songNumberId, it.id) }.toSet()
+    val tagsToRemove = existing - target
+    val tagsToAdd = target - existing
+    songNumberTagDao.delete(tagsToRemove.toList())
+    songNumberTagDao.insert(tagsToAdd.toList())
+    Timber.d(
+      "tags updated for song number id $songNumberId: " +
+        "removed: ${tagsToRemove.joinToString(",") { it.tagId.toString() }}; " +
+        "added: ${tagsToAdd.joinToString(",") { it.tagId.toString() }}"
+    )
+  }
 
   suspend fun toggleFavorite() {
     _songNumberId.value?.let { songNumberId ->

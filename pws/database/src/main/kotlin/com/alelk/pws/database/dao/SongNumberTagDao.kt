@@ -24,9 +24,12 @@ interface SongNumberTagDao : Pageable<SongNumberTagEntity> {
   @Query("SELECT * FROM song_number_tags WHERE song_number_id = :songNumberId and tag_id = :tagId")
   suspend fun getById(songNumberId: Long, tagId: TagId): SongNumberTagEntity?
 
+  @Query("SELECT * FROM song_number_tags WHERE song_number_id = :songNumberId")
+  suspend fun getBySongNumberId(songNumberId: Long): List<SongNumberTagEntity>
+
   @Transaction
   @Query("SELECT t.* FROM tags t INNER JOIN song_number_tags snt ON t.id = snt.tag_id WHERE snt.song_number_id = :songNumberId ORDER BY t.predefined, t.priority")
-  fun getSongTags(songNumberId: Long): Flow<List<TagEntity>>
+  fun flowTagsBySongNumberId(songNumberId: Long): Flow<List<TagEntity>>
 
 
   @Query(
