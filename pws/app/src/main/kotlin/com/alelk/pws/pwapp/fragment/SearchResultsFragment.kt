@@ -29,10 +29,9 @@ import androidx.loader.content.CursorLoader
 import androidx.loader.content.Loader
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.alelk.pws.database.provider.PwsDataProvider
 import com.alelk.pws.database.provider.PwsDataProviderContract
 import com.alelk.pws.pwapp.R
-import com.alelk.pws.pwapp.activity.PsalmActivity
+import com.alelk.pws.pwapp.activity.SongActivity
 import com.alelk.pws.pwapp.adapter.SearchRecyclerViewAdapter
 
 /**
@@ -66,8 +65,8 @@ class SearchResultsFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> 
     mRecyclerView?.layoutManager = layoutManager
     mSearchResultsAdapter =
       SearchRecyclerViewAdapter { psalmNumberId: Long ->
-        val intentPsalmView = Intent(requireActivity().baseContext, PsalmActivity::class.java)
-        intentPsalmView.putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, psalmNumberId)
+        val intentPsalmView = Intent(requireActivity().baseContext, SongActivity::class.java)
+        intentPsalmView.putExtra(SongActivity.KEY_SONG_NUMBER_ID, psalmNumberId)
         startActivity(intentPsalmView)
       }
     mRecyclerView?.adapter = mSearchResultsAdapter

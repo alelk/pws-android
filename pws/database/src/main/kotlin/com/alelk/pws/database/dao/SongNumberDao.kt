@@ -2,14 +2,50 @@ package com.alelk.pws.database.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
+import androidx.room.Embedded
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Relation
 import androidx.room.Transaction
 import androidx.room.Update
 import com.alelk.pws.database.entity.BookEntity
+import com.alelk.pws.database.entity.FavoriteEntity
+import com.alelk.pws.database.entity.SongEntity
 import com.alelk.pws.database.entity.SongNumberEntity
 import com.alelk.pws.database.model.BookExternalId
+import kotlinx.coroutines.flow.Flow
+
+data class SongNumberWithSongWithBookWithFavorites(
+  @Embedded
+  val songNumber: SongNumberEntity,
+  @Relation(parentColumn = "psalmid", entityColumn = "_id")
+  val song: SongEntity,
+  @Relation(parentColumn = "bookid", entityColumn = "_id")
+  val book: BookEntity,
+  @Relation(parentColumn = "_id", entityColumn = "psalmnumberid")
+  val favorite: List<FavoriteEntity>
+) {
+  val bookId: Long get() = checkNotNull(book.id) { "book id cannot be null" }
+  val songNumberId: Long get() = checkNotNull(songNumber.id) { "song number id cannot be null" }
+}
+
+data class SongNumberWithBook(
+  @Embedded
+  val songNumber: SongNumberEntity,
+  @Relation(
+    parentColumn = "bookid",
+    entityColumn = "_id"
+  )
+  val book: BookEntity
+)
+
+data class SongNumberWithSong(
+  @Embedded
+  val songNumber: SongNumberEntity,
+  @Relation(parentColumn = "psalmid", entityColumn = "_id")
+  val song: SongEntity,
+)
 
 @Dao
 interface SongNumberDao {
@@ -22,8 +58,17 @@ interface SongNumberDao {
   @Update(onConflict = OnConflictStrategy.REPLACE)
   suspend fun update(number: SongNumberEntity): Int
 
+  @Transaction
   @Query("SELECT * FROM psalmnumbers WHERE _id = :id")
-  suspend fun getById(id: Long): SongNumberEntity?
+  fun getSongOfBookById(id: Long): Flow<SongNumberWithSongWithBookWithFavorites>
+
+  @Transaction
+  @Query("SELECT pn.* FROM psalmnumbers pn INNER JOIN books b ON pn.bookid = b._id WHERE b.edition = :bookExternalId ORDER BY pn.number")
+  fun getBookSongsByBookId(bookExternalId: BookExternalId): Flow<List<SongNumberWithSong>>
+
+  @Transaction
+  @Query("SELECT * FROM psalmnumbers WHERE _id = :id")
+  fun getById(id: Long): Flow<SongNumberEntity>
 
   @Query("SELECT * FROM psalmnumbers WHERE _id IN (:ids)")
   suspend fun getByIds(ids: List<Long>): List<SongNumberEntity>

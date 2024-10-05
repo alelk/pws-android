@@ -25,17 +25,16 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModel
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.alelk.pws.database.DatabaseProvider
 import com.alelk.pws.database.dao.Favorite
-import com.alelk.pws.database.dao.FavoriteDao
 import com.alelk.pws.pwapp.R
-import com.alelk.pws.pwapp.activity.PsalmActivity
+import com.alelk.pws.pwapp.activity.SongActivity
 import com.alelk.pws.pwapp.adapter.FavoritesRecyclerViewAdapter
-import kotlinx.coroutines.flow.Flow
+import com.alelk.pws.pwapp.model.FavoritesViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 /**
@@ -53,18 +52,12 @@ class FavoritesFragment : Fragment() {
   private var menuSortByName: MenuItem? = null
   private var menuSortByNumber: MenuItem? = null
 
-  private lateinit var favoritesDao: FavoriteDao
-  private lateinit var favoritesViewModel: FavoritesViewModel
+  private val favoritesViewModel: FavoritesViewModel by viewModels()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     sortOrder = sharedPrefs.getInt(KEY_SORTED_BY, SORT_BY_ADDED_DATE)
     setHasOptionsMenu(true)
-
-    val db = DatabaseProvider.getDatabase(requireContext())
-    favoritesDao = db.favoriteDao()
-
-    favoritesViewModel = FavoritesViewModel(favoritesDao)
   }
 
   override fun onCreateView(
@@ -77,8 +70,8 @@ class FavoritesFragment : Fragment() {
     recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
     mFavoritesAdapter = FavoritesRecyclerViewAdapter { psalmNumberId: Long ->
-      val intentPsalmView = Intent(requireActivity(), PsalmActivity::class.java)
-      intentPsalmView.putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, psalmNumberId)
+      val intentPsalmView = Intent(requireActivity(), SongActivity::class.java)
+      intentPsalmView.putExtra(SongActivity.KEY_SONG_NUMBER_ID, psalmNumberId)
       startActivity(intentPsalmView)
     }
     recyclerView.adapter = mFavoritesAdapter
@@ -88,13 +81,17 @@ class FavoritesFragment : Fragment() {
     return v
   }
 
+  private var observeFavoritesJob: Job? = null
+
   private fun observeFavorites() {
-    // Observe favorites based on the sort order using Flow
-    viewLifecycleOwner.lifecycleScope.launch {
-      when (sortOrder) {
-        SORT_BY_NUMBER -> favoritesViewModel.getFavoritesSortedByNumber().collect { updateUI(it) }
-        SORT_BY_NAME -> favoritesViewModel.getFavoritesSortedByName().collect { updateUI(it) }
-        SORT_BY_ADDED_DATE -> favoritesViewModel.getFavoritesSortedByDate().collect { updateUI(it) }
+    synchronized(this) {
+      observeFavoritesJob?.cancel()
+      observeFavoritesJob = viewLifecycleOwner.lifecycleScope.launch {
+        when (sortOrder) {
+          SORT_BY_NUMBER -> favoritesViewModel.getFavoritesSortedByNumber().collect { updateUI(it) }
+          SORT_BY_NAME -> favoritesViewModel.getFavoritesSortedByName().collect { updateUI(it) }
+          SORT_BY_ADDED_DATE -> favoritesViewModel.getFavoritesSortedByDate().collect { updateUI(it) }
+        }
       }
     }
   }
@@ -153,10 +150,4 @@ class FavoritesFragment : Fragment() {
     const val SORT_BY_NAME = 4
     private const val KEY_SORTED_BY = "favorites-sorted-by"
   }
-}
-
-class FavoritesViewModel(private val favoritesDao: FavoriteDao) : ViewModel() {
-  fun getFavoritesSortedByDate(): Flow<List<Favorite>> = favoritesDao.getAll()
-  fun getFavoritesSortedByName(): Flow<List<Favorite>> = favoritesDao.getAll(sort = "songName")
-  fun getFavoritesSortedByNumber(): Flow<List<Favorite>> = favoritesDao.getAll(sort = "songNumber")
 }

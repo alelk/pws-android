@@ -6,7 +6,7 @@
     android:id="@+id/scrollview_psalm_text"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context=".activity.PsalmActivity">
+    tools:context=".activity.SongActivity">
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
@@ -16,7 +16,7 @@
         android:padding="4dp"
         android:id="@+id/ll_psalm_text_content"
         android:orientation="vertical"
-        tools:context=".fragment.PsalmTextFragment">
+        tools:context=".fragment.SongTextFragment">
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"

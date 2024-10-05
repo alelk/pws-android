@@ -2,18 +2,24 @@ package com.alelk.pws.pwapp.model
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import com.alelk.pws.database.DatabaseProvider
 import com.alelk.pws.database.dao.SongInfo
 import com.alelk.pws.database.entity.TagEntity
 import com.alelk.pws.database.model.TagId
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.stateIn
 
-class TagViewModel(application: Application) : AndroidViewModel(application) {
+class TagsViewModel(application: Application) : AndroidViewModel(application) {
   private val tagDao = DatabaseProvider.getDatabase(application).tagDao()
 
-  val allTags: LiveData<List<TagEntity>> = tagDao.getAll().asLiveData()
+  val allTags: StateFlow<List<TagEntity>?> =
+    tagDao.getAll()
+      .distinctUntilChanged()
+      .stateIn(viewModelScope, SharingStarted.Lazily, null)
 
   suspend fun addTag(tag: TagEntity) = tagDao.insert(tag)
   suspend fun updateTag(tag: TagEntity) = tagDao.update(tag)

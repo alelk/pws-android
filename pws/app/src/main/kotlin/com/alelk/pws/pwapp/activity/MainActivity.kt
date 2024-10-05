@@ -26,6 +26,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import com.alelk.pws.database.BuildConfig
 import com.alelk.pws.pwapp.R
 import com.alelk.pws.pwapp.activity.base.AppCompatThemedActivity
 import com.alelk.pws.pwapp.fragment.BooksFragment
@@ -37,6 +38,7 @@ import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
+import timber.log.Timber
 
 open class MainActivity : AppCompatThemedActivity(), NavigationView.OnNavigationItemSelectedListener {
   private var mDrawerLayout: DrawerLayout? = null
@@ -81,6 +83,10 @@ open class MainActivity : AppCompatThemedActivity(), NavigationView.OnNavigation
     toggle.syncState()
     (findViewById<View>(R.id.nav_view) as NavigationView).setNavigationItemSelectedListener(this)
     displayFragment()
+
+    if (BuildConfig.DEBUG) {
+      Timber.plant(Timber.DebugTree())
+    }
   }
 
   override fun onSaveInstanceState(outState: Bundle) {
@@ -128,17 +134,20 @@ open class MainActivity : AppCompatThemedActivity(), NavigationView.OnNavigation
         displayFragment()
         result = true
       }
+
       R.id.drawer_main_home -> {
         mAppBar!!.setExpanded(true, true)
         mNavigationItemId = id
         displayFragment()
         result = true
       }
+
       R.id.drawer_main_settings -> {
         intent = Intent(this, MainSettingsActivity::class.java)
         startActivity(intent)
         result = true
       }
+
       R.id.drawer_main_categories -> {
         intent = Intent(this, TagsActivity::class.java)
         startActivity(intent)
@@ -159,14 +168,17 @@ open class MainActivity : AppCompatThemedActivity(), NavigationView.OnNavigation
         fragment = ReadNowFragment()
         titleResId = R.string.lbl_drawer_main_home
       }
+
       R.id.drawer_main_books -> {
         fragment = BooksFragment()
         titleResId = R.string.lbl_drawer_main_books
       }
+
       R.id.drawer_main_history -> {
         fragment = HistoryFragment()
         titleResId = R.string.lbl_drawer_main_history
       }
+
       R.id.drawer_main_favorite -> {
         fragment = FavoritesFragment()
         titleResId = R.string.lbl_drawer_main_favorite
@@ -191,6 +203,7 @@ open class MainActivity : AppCompatThemedActivity(), NavigationView.OnNavigation
         )
         startActivity(intentSearchNumber)
       }
+
       R.id.btn_search_psalm_text, R.id.fab_search_text -> {
         val intentSearchText = Intent(baseContext, SearchActivity::class.java)
         intentSearchText.putExtra(

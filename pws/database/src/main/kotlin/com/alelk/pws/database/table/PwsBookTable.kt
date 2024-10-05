@@ -24,16 +24,7 @@ package com.alelk.pws.database.table
 object PwsBookTable : PwsTable {
   const val TABLE_BOOKS = "books"
   const val COLUMN_ID = "_id"
-  const val COLUMN_VERSION = "version"
-  const val COLUMN_NAME = "name"
   const val COLUMN_DISPLAYSHORTNAME = "displayshortname"
   const val COLUMN_DISPLAYNAME = "displayname"
   const val COLUMN_EDITION = "edition"
-  const val COLUMN_RELEASEDATE = "releasedate"
-  const val COLUMN_AUTHORS = "authors"
-  const val COLUMN_CREATORS = "creators"
-  const val COLUMN_REVIEWERS = "reviewers"
-  const val COLUMN_EDITORS = "editors"
-  const val COLUMN_DESCRIPTION = "description"
-  const val COLUMN_LOCALE = "locale"
 }

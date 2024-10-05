@@ -2,15 +2,25 @@ package com.alelk.pws.database.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
+import androidx.room.Embedded
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Relation
 import androidx.room.Transaction
 import com.alelk.pws.database.entity.BookEntity
+import com.alelk.pws.database.entity.SongNumberEntity
 import com.alelk.pws.database.model.BookExternalId
 import kotlinx.coroutines.flow.Flow
 
 data class Book(val id: Long, val externalId: BookExternalId, val name: String, val displayName: String, val firstSongNumberId: Long)
+
+data class BookWithSongs(
+  @Embedded
+  val book: BookEntity,
+  @Relation(parentColumn = "_id", entityColumn = "bookid")
+  val songs: List<SongNumberWithSong>
+)
 
 @Dao
 interface BookDao : Pageable<BookEntity> {
@@ -29,6 +39,19 @@ interface BookDao : Pageable<BookEntity> {
   @Query("SELECT * FROM books WHERE _id = :id")
   suspend fun getById(id: Long): BookEntity?
 
+  @Query("SELECT * FROM books b INNER JOIN psalmnumbers pn ON pn.bookid = b._id WHERE b._id = :bookId ORDER BY pn.number")
+  fun getBookSongNumbers(bookId: Long): Flow<List<SongNumberEntity>>
+
+  @Query(
+    """
+    SELECT pn.* 
+    FROM books b INNER JOIN psalmnumbers pn ON pn.bookid = b._id 
+    WHERE b._id IN (SELECT bookid FROM psalmnumbers WHERE _id = :songNumberId) 
+    ORDER BY pn.number
+    """
+  )
+  fun getBookSongNumbersBySongNumberId(songNumberId: Long): Flow<List<SongNumberEntity>>
+
   @Query("SELECT * FROM books WHERE _id in (:ids)")
   suspend fun getByIds(ids: List<Long>): List<BookEntity>
 
@@ -36,7 +59,10 @@ interface BookDao : Pageable<BookEntity> {
   override suspend fun getAll(limit: Int, offset: Int): List<BookEntity>
 
   @Query("SELECT * FROM books WHERE edition = :externalId")
-  suspend fun getByExternalId(externalId: BookExternalId): BookEntity?
+  fun getByExternalId(externalId: BookExternalId): Flow<BookEntity?>
+
+//  @Query("SELECT * FROM books WHERE edition = :externalId")
+//  fun getBookWithSongsByExternalId(externalId: BookExternalId): Flow<BookWithSongs?>
 
   @Query("SELECT * FROM books WHERE edition in (:externalIds)")
   suspend fun getByExternalIds(externalIds: List<BookExternalId>): List<BookEntity>

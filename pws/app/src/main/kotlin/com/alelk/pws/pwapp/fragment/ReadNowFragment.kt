@@ -22,11 +22,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.alelk.pws.pwapp.R
-import com.alelk.pws.pwapp.activity.PsalmActivity
+import com.alelk.pws.pwapp.activity.SongActivity
 import com.alelk.pws.pwapp.adapter.HistoryRecyclerViewAdapter
+import com.alelk.pws.pwapp.model.HistoryViewModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 /**
  * Read Now Fragment
@@ -35,48 +41,39 @@ import com.alelk.pws.pwapp.adapter.HistoryRecyclerViewAdapter
  */
 class ReadNowFragment : Fragment() {
 
-  private lateinit var rvRecentPsalms: RecyclerView
-  private lateinit var recentPsalmsAdapter: HistoryRecyclerViewAdapter
   private val historyViewModel: HistoryViewModel by viewModels()
-
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    recentPsalmsAdapter = HistoryRecyclerViewAdapter { psalmNumberId: Long ->
-      val intentPsalmView = Intent(requireActivity(), PsalmActivity::class.java)
-      intentPsalmView.putExtra(PsalmActivity.KEY_PSALM_NUMBER_ID, psalmNumberId)
-      startActivity(intentPsalmView)
-    }
-  }
-
-  override fun onResume() {
-    super.onResume()
-    recentPsalmsAdapter.notifyDataSetChanged()
-  }
 
   override fun onCreateView(
     inflater: LayoutInflater,
     container: ViewGroup?,
     savedInstanceState: Bundle?
-  ): View? {
-    val view = inflater.inflate(R.layout.fragment_readnow, container, false)
+  ): View? = inflater.inflate(R.layout.fragment_readnow, container, false)
 
-    rvRecentPsalms = view.findViewById(R.id.rv_recent)
-    rvRecentPsalms.layoutManager = LinearLayoutManager(requireContext())
-    rvRecentPsalms.adapter = recentPsalmsAdapter
-    rvRecentPsalms.isNestedScrollingEnabled = true
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
 
-    historyViewModel.historyItems.observe(viewLifecycleOwner) { recentPsalms ->
-      val limitedRecentPsalms = recentPsalms.take(DEFAULT_RECENT_LIMIT)
-      recentPsalmsAdapter.submitList(limitedRecentPsalms)
+    val historyAdapter = HistoryRecyclerViewAdapter { psalmNumberId: Long ->
+      val intentPsalmView = Intent(activity, SongActivity::class.java)
+      intentPsalmView.putExtra(SongActivity.KEY_SONG_NUMBER_ID, psalmNumberId)
+      startActivity(intentPsalmView)
     }
 
-    return view
+    view.findViewById<RecyclerView>(R.id.rv_recent).apply {
+      layoutManager = LinearLayoutManager(requireContext())
+      adapter = historyAdapter
+
+    }
+
+    viewLifecycleOwner.lifecycleScope.launch {
+      repeatOnLifecycle(Lifecycle.State.STARTED) {
+        historyViewModel.historyItems.collectLatest { historyItems ->
+          historyAdapter.submitList(historyItems.take(DEFAULT_RECENT_LIMIT))
+        }
+      }
+    }
   }
 
   companion object {
     private const val DEFAULT_RECENT_LIMIT = 10
-
-    @JvmStatic
-    fun newInstance() = ReadNowFragment()
   }
 }
