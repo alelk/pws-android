@@ -1,0 +1,14 @@
+.gradle
+app/src/ru/assets
+app/src/uk/assets
+/local.properties
+/.idea
+.DS_Store
+/build
+/captures
+*.iml
+local.properties
+.kotlin/errors*
+
+# build results (apk)
+/app/*/release/

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2018 The P&W Songs Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<resources>
+
+    <!-- Headers -->
+    <string name="pref_header_general">Общие</string>
+    <string name="pref_header_donate">Пожертвовать</string>
+    <string name="pref_header_about">Обратная связь</string>
+
+    <!-- General screen -->
+    <!-- Display -->
+    <string name="pref_display_title">Настройки отображения</string>
+    <string name="pref_display_theme_title">Тема</string>
+    <string name="pref_display_theme_light_title">Светлая</string>
+    <string name="pref_display_theme_dark_title">Тёмная</string>
+    <string name="pref_display_theme_black_title">Чёрная (AMOLED)</string>
+    <!-- Books -->
+    <string name="pref_books_title">Сборники</string>
+
+    <!-- Donate screen -->
+    <string name="pref_donate_title">Помочь разработчику P&amp;W Songs</string>
+    <string name="pref_donate_summary">Если вы желаете оказать материальную помощь разработчику приложения, вы можете перевести деньги одним из следующих способов:</string>
+    <!-- Yandex Money -->
+    <string name="pref_donate_yandexmoney_title">Яндекс.Деньги</string>
+    <string name="pref_donate_yandexmoney_wallet_number_summary">Номер нашего кошелька Яндекс.Деньги</string>
+    <string name="pref_donate_yandexmoney_web_form_title">Открыть страницу в браузере</string>
+    <string name="pref_donate_yandexmoney_web_form_summary">Способы оплаты: кошелек Яндекс.Деньги, карта Visa или MasterCard</string>
+    <!-- PayPal -->
+    <string name="pref_donate_paypal_title">PayPal</string>
+    <string name="pref_donate_paypal_web_form_title">Открыть страницу в браузере</string>
+    <string name="pref_donate_paypal_web_form_summary" />
+
+    <!-- About screen -->
+    <!-- App -->
+    <string name="pref_about_app_title">О приложении</string>
+    <string name="pref_about_app_version_prefix" formatted="true">Версия: %1$s</string>
+    <string name="pref_about_app_page_title">Посетить страницу приложения P&amp;WSongs</string>
+    <!-- Developer -->
+    <string name="pref_about_developer_title">Разработчики</string>
+    <string name="pref_about_developer_alex_title">Александр Елькин</string>
+    <string name="pref_about_developer_alex_summary">Разработчик приложения</string>
+    <string name="pref_about_developer_vera_title">Вера Елькина</string>
+    <string name="pref_about_developer_vera_summary">Редактор контента</string>
+    <!-- Contact us -->
+    <string name="pref_about_contact_title">Напишите нам</string>
+    <string name="pref_about_contact_email_title">E-mail</string>
+</resources>

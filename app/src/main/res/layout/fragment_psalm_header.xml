@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="?attr/toolbarBackground"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:background="?attr/toolbarBackgroundFilter"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginTop="30dp">
+
+        <TextView
+            style="@style/PsalmHeaderStyle.PsalmName"
+            android:id="@+id/txt_psalm_name" />
+
+        <TextView
+            style="@style/PsalmHeaderStyle.BibleRef"
+            android:id="@+id/txt_bible_ref"/>
+
+        <TextView
+            style="@style/PsalmHeaderStyle.BookName"
+            android:id="@+id/txt_book_name"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

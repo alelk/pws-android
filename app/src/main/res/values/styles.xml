@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2018 The P&W Songs Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<resources>
+
+    <style name="ToolbarStyle">
+        <item name="android:theme">?attr/toolbarTheme</item>
+    </style>
+
+    <style name="NavigationHeaderTheme">
+        <item name="android:theme">?attr/navigationHeaderTheme</item>
+    </style>
+
+    <style name="TitleStyle">
+        <item name="android:textAppearance">?attr/textAppearanceTitle</item>
+        <item name="android:paddingLeft">@dimen/padding_horizontal</item>
+    </style>
+
+    <style name="BodyStyle">
+        <item name="android:textAppearance">?attr/textAppearanceBody</item>
+        <item name="android:paddingLeft">@dimen/padding_horizontal</item>
+    </style>
+
+    <style name="CardStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">2dp</item>
+        <item name="android:layout_marginBottom">2dp</item>
+    </style>
+
+    <style name="CardStyle.PsalmNumber">
+        <item name="android:textAppearance">?attr/textAppearanceTitle</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:minWidth">@dimen/txt_min_width_psalm_number</item>
+        <item name="android:paddingLeft">@dimen/txt_padding_horizontal_card</item>
+        <item name="android:paddingRight">@dimen/txt_padding_horizontal_card</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="CardStyle.PsalmName">
+        <item name="android:textAppearance">?attr/textAppearanceTitle</item>
+    </style>
+
+    <style name="CardStyle.BookName"/>
+
+    <style name="CardStyle.PsalmText"/>
+
+    <style name="CardStyle.Timestamp">
+        <item name="android:paddingRight">@dimen/txt_padding_horizontal_card</item>
+        <item name="android:layout_gravity">end</item>
+    </style>
+
+    <style name="PsalmHeaderStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:textAppearance">?attr/textAppearanceTitle</item>
+    </style>
+
+    <style name="PsalmHeaderStyle.PsalmName">
+        <item name="android:paddingLeft">@dimen/txt_padding_horizontal</item>
+        <item name="android:paddingRight">@dimen/txt_padding_horizontal</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center_horizontal|bottom</item>
+        <item name="android:textSize">@dimen/txt_size_psalm_header_name</item>
+    </style>
+
+    <style name="PsalmHeaderStyle.BibleRef">
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textAppearance">?attr/textAppearanceBody</item>
+        <item name="android:paddingLeft">@dimen/padding_horizontal</item>
+        <item name="android:paddingRight">@dimen/padding_horizontal</item>
+        <item name="android:textSize">@dimen/txt_size_psalm_header_bible_ref</item>
+    </style>
+
+    <style name="PsalmHeaderStyle.BookName">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAppearance">?attr/textAppearanceBody</item>
+        <item name="android:layout_gravity">left</item>
+        <item name="android:lines">1</item>
+        <item name="android:layout_marginBottom">5dp</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:layout_marginLeft">50dp</item>
+    </style>
+
+    <style name="PsalmContent">
+        <item name="android:textAppearance">?attr/textAppearanceBody</item>
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:layout_marginBottom">4dp</item>
+    </style>
+
+    <style name="PsalmContent.PsalmBody">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:paddingLeft">@dimen/padding_horizontal</item>
+        <item name="android:paddingRight">@dimen/padding_horizontal</item>
+        <item name="android:textSize">@dimen/txt_size_psalm_text</item>
+    </style>
+
+    <style name="PsalmContent.PsalmBody.Tonalities">
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:paddingBottom">6dp</item>
+        <item name="android:textSize">@dimen/txt_size_psalm_tonalities</item>
+    </style>
+
+    <style name="PsalmContent.PsalmBody.PsalmText">
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:paddingTop">20dp</item>
+        <item name="android:paddingBottom">20dp</item>
+    </style>
+
+    <style name="PsalmContent.PsalmBody.Info">
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:paddingBottom">6dp</item>
+        <item name="android:textSize">@dimen/txt_size_psalm_info</item>
+    </style>
+
+    <style name="PsalmContent.ReferredPsalms">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_marginTop">2dp</item>
+        <item name="android:layout_marginBottom">2dp</item>
+    </style>
+
+    <style name="PsalmContent.ReferredPsalms.Header">
+        <item name="android:textAppearance">?attr/textAppearanceTitle</item>
+        <item name="android:gravity">center</item>
+    </style>
+    <style name="PsalmContent.ReferredPsalms.Item">
+        <item name="android:textAppearance">?attr/textAppearanceBody</item>
+    </style>
+    <style name="PsalmContent.ReferredPsalms.Item.PsalmNumber">
+        <item name="android:textAppearance">?attr/textAppearanceTitle</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:minWidth">@dimen/txt_min_width_psalm_number</item>
+        <item name="android:paddingLeft">@dimen/txt_padding_horizontal_card</item>
+        <item name="android:paddingRight">@dimen/txt_padding_horizontal_card</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="PsalmContent.ReferredPsalms.Item.PsalmName">
+        <item name="android:textAppearance">?attr/textAppearanceTitle</item>
+    </style>
+
+    <style name="PsalmContent.ReferredPsalms.Item.BookName"/>
+</resources>

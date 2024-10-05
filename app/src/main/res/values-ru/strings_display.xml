@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2018 The P&W Songs Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<resources>
+
+    <string name="action_settings">Настройки</string>
+    <string name="title_activity_psalm_fullscreen">Песня</string>
+    <string name="title_activity_main_settings">Настройки</string>
+    <string name="title_activity_psalm_edit">Редактирование псалма</string>
+
+    <!-- Main activity display strings. -->
+    <string name="txt_main_navigation_header_comment">Библиотека христианских песен.</string>
+    <string name="lbl_drawer_main_history">История</string>
+    <string name="lbl_drawer_main_home">Главная</string>
+    <string name="lbl_drawer_main_books">Сборники песен</string>
+    <string name="lbl_drawer_main_favorite">Избранное</string>
+    <string name="lbl_drawer_main_settings">Настройки</string>
+    <string name="lbl_drawer_main_system_menu"></string>
+
+    <string name="lbl_recent">Последние</string>
+    <string name="lbl_search">Поиск текста песни</string>
+    <string name="lbl_search_by_number">Найти по номеру</string>
+    <string name="lbl_search_by_text">Поиск по тексту</string>
+
+    <!-- History fragment display strings. -->
+    <string name="menu_clear_history">Очистить историю</string>
+
+    <!-- Search activity display strings. -->
+    <string name="title_activity_search">Поиск</string>
+    <string name="lbl_search_widget">Поиск&#8230;</string>
+    <string name="hint_enter_text">Введите любой текст для поиска песни&#8230;</string>
+    <string name="hint_enter_psalm_number">Введите номер песни&#8230;</string>
+    <string name="lbl_fts_search_progress">Выполняется полнотекстовый поиск&#8230;\n</string>
+
+    <!-- Psalm activity display strings. -->
+    <string name="lbl_chorus">Припев</string>
+    <string name="lbl_author">Слова</string>
+    <string name="lbl_translator">Перевод</string>
+    <string name="lbl_music">Музыка</string>
+    <string name="lbl_references">Ссылки</string>
+    <string name="lbl_another_variant" formatted="true">Другая версия песни.\nСходство текстов: %1$d%%</string>
+    <string name="lbl_search_psalm">Найти</string>
+    <string name="lbl_jump_to_number">Перейти по номеру</string>
+    <string name="lbl_share">Поделиться</string>
+    <string name="lbl_edit">Редактировать</string>
+    <string name="lbl_delete">Удалить</string>
+    <string name="sort_by_added_date">Сортировать по дате добавления</string>
+    <string name="sort_by_number">Сортировать по номеру</string>
+    <string name="sort_by_name">Сортировать по имени</string>
+    <string name="lbl_psalm_text_size">Размер текста</string>
+    <string name="msg_added_to_favorites">Добавлено в избранное.</string>
+    <string name="msg_removed_from_favorites">Удалено из избранного.</string>
+
+    <!-- Edit psalm activity -->
+    <string name="label_psalm_name">Название псалма</string>
+    <string name="label_psalm_text">Текст псалма</string>
+    <string name="label_bible_ref">Библейская ссылка</string>
+    <string name="label_psalm_tonalities">Тональности псалма</string>
+    <string name="btn_save">Сохранить</string>
+    <string name="lbl_edit_psalm">Редактировать псалом</string>
+
+    <!-- Psalm fullscreen activity display strings. -->
+    <string name="lbl_add_to_favorites">Добавить в избранное</string>
+    <string name="lbl_remove_from_favorites">Удалить из избранного</string>
+
+    <!-- Search psalm number dialog display strings. -->
+    <string name="lbl_ok">OK</string>
+    <string name="lbl_cancel">Отмена</string>
+    <string name="lbl_enter_psalm_number">Введите номер в данном сборнике, на который желаете перейти: </string>
+    <string name="msg_no_psalm_number_found">Номер не найден</string>
+    <string name="lbl_done">Готово</string>
+    <string name="lbl_error">Ошибка</string>
+
+    <!-- Psalm preferences dialog display strings. -->
+    <string name="lbl_text_size">Размер текста:</string>
+    <string name="lbl_expand_psalm_text">Припев после каждого куплета</string>
+
+    <!--    Categories -->
+    <string name="title_activity_category">Категории</string>
+    <string name="title_activity_category_psalms">Категория:</string>
+    <string name="title_activity_category_edit">Редактировать категории</string>
+    <string name="lbl_drawer_main_categories">Категории</string>
+    <string name="hint_category_name">Название категории</string>
+    <string name="lbl_edit_categories_for_song">Редактировать категории для песни</string>
+    <string name="msg_confirm_delete_category">Вы уверены, что хотите удалить категорию</string>
+    <string name="msg_category_name_unique">Название категории должно быть уникальным</string>
+    <string name="lbl_add_category">Добавить категорию</string>
+    <string name="lbl_edit_category_name">Изменить название категории</string>
+    <string name="lbl_delete_category">Удалить категорию</string>
+    <string name="lbl_edit_categories">Редактировать категории</string>
+    <string name="btn_edit_categories">Редактировать категории</string>
+
+    <string name="btn_choose_color">Выбрать цвет</string>
+</resources>
