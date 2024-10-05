@@ -34,8 +34,8 @@ import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.alelk.pws.pwapp.R
 import com.alelk.pws.pwapp.activity.base.AppCompatThemedActivity
 import com.alelk.pws.pwapp.adapter.SongTextFragmentPagerAdapter
-import com.alelk.pws.pwapp.dialog.PsalmPreferencesDialogFragment
 import com.alelk.pws.pwapp.dialog.SearchPsalmNumberDialogFragment
+import com.alelk.pws.pwapp.dialog.SongPreferencesDialogFragment
 import com.alelk.pws.pwapp.fragment.SongHeaderFragment
 import com.alelk.pws.pwapp.model.SongViewModel
 import com.alelk.pws.pwapp.model.textDocument
@@ -118,38 +118,31 @@ class SongActivity : AppCompatThemedActivity() {
 
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
     menuInflater.inflate(R.menu.menu_psalm, menu)
-    val searchManager = getSystemService(SEARCH_SERVICE) as SearchManager?
+    val searchManager = getSystemService(SEARCH_SERVICE) as? SearchManager
     val searchView = menu.findItem(R.id.menu_search).actionView as SearchView
-    if (searchManager != null) searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName))
+    if (searchManager != null) {
+      searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName))
+    }
     return true
   }
 
-  override fun onOptionsItemSelected(item: MenuItem): Boolean {
-    val id = item.itemId
-    if (id == R.id.menu_jump) {
-      val searchNumberDialog: DialogFragment =
+  override fun onOptionsItemSelected(item: MenuItem): Boolean =
+    when (item.itemId) {
+      R.id.menu_jump -> {
         SearchPsalmNumberDialogFragment.newInstance(songNumberIdState.value)
-      searchNumberDialog.show(
-        supportFragmentManager,
-        SearchPsalmNumberDialogFragment::class.java.simpleName
-      )
-      return true
-    } else if (id == R.id.action_settings || id == R.id.menu_text_size) {
-//      if (mPsalmPreferences!!.textSize < 0) {
-//        val fragment =
-//          mPsalmTextPagerAdapter!!.registeredFragments[mPagerPsalmText!!.currentItem] as SongTextFragment
-//        mPsalmPreferences!!.textSize = fragment.psalmTextSize
-//      }
-      val psalmPreferencesDialog: DialogFragment =
-        PsalmPreferencesDialogFragment.newInstance(mPsalmPreferences!!)
-      psalmPreferencesDialog.show(
-        supportFragmentManager,
-        PsalmPreferencesDialogFragment::class.java.simpleName
-      )
-      return true
+          .show(supportFragmentManager, SearchPsalmNumberDialogFragment::class.java.simpleName)
+        true
+      }
+
+      R.id.action_settings, R.id.menu_text_size -> {
+        SongPreferencesDialogFragment().show(supportFragmentManager, SongPreferencesDialogFragment::class.java.simpleName)
+        true
+      }
+
+      else -> {
+        super.onOptionsItemSelected(item)
+      }
     }
-    return super.onOptionsItemSelected(item)
-  }
 
   private fun shareSong() {
     songViewModel.song.value?.let { song ->

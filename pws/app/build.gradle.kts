@@ -91,6 +91,10 @@ android {
     applicationVariants.forEach { variant ->
         variant.resValue("string", "versionName", variant.versionName)
     }
+
+    viewBinding {
+        enable = true
+    }
 }
 
 dependencies {

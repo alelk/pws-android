@@ -30,7 +30,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.cardview.widget.CardView
-import androidx.core.app.ShareCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -46,7 +45,6 @@ import com.alelk.pws.pwapp.R
 import com.alelk.pws.pwapp.activity.SongActivity
 import com.alelk.pws.pwapp.adapter.SongReferencesRecyclerViewAdapter
 import com.alelk.pws.pwapp.model.AppPreferencesViewModel
-import com.alelk.pws.pwapp.model.SongInfo
 import com.alelk.pws.pwapp.model.SongViewModel
 import com.alelk.pws.pwapp.model.textDocument
 import com.alelk.pws.pwapp.model.textDocumentHtml
