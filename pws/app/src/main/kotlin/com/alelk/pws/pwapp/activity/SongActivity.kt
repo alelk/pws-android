@@ -24,7 +24,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ShareCompat
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.commit
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -34,7 +33,7 @@ import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.alelk.pws.pwapp.R
 import com.alelk.pws.pwapp.activity.base.AppCompatThemedActivity
 import com.alelk.pws.pwapp.adapter.SongTextFragmentPagerAdapter
-import com.alelk.pws.pwapp.dialog.SearchPsalmNumberDialogFragment
+import com.alelk.pws.pwapp.dialog.JumpToSongByNumberDialogFragment
 import com.alelk.pws.pwapp.dialog.SongPreferencesDialogFragment
 import com.alelk.pws.pwapp.fragment.SongHeaderFragment
 import com.alelk.pws.pwapp.model.SongViewModel
@@ -129,8 +128,9 @@ class SongActivity : AppCompatThemedActivity() {
   override fun onOptionsItemSelected(item: MenuItem): Boolean =
     when (item.itemId) {
       R.id.menu_jump -> {
-        SearchPsalmNumberDialogFragment.newInstance(songNumberIdState.value)
-          .show(supportFragmentManager, SearchPsalmNumberDialogFragment::class.java.simpleName)
+        val bookId = songViewModel.song.value?.book?.externalId
+        if (bookId != null)
+          JumpToSongByNumberDialogFragment.newInstance(bookId).show(supportFragmentManager, JumpToSongByNumberDialogFragment::class.java.simpleName)
         true
       }
 
@@ -144,6 +144,7 @@ class SongActivity : AppCompatThemedActivity() {
       }
     }
 
+  // todo:
   private fun shareSong() {
     songViewModel.song.value?.let { song ->
       val shareIntent = ShareCompat.IntentBuilder(this).setType("text/plain").setText(song.textDocument).setHtmlText(song.textDocumentHtml).intent
@@ -211,42 +212,6 @@ class SongActivity : AppCompatThemedActivity() {
 //    if (preferences != null) {
 //      val fragment = mPsalmTextPagerAdapter!!.registeredFragments[mPagerPsalmText!!.currentItem] as SongTextFragment
 //      fragment.applyPsalmPreferences(preferences)
-//    }
-//  }
-
-//  override fun onApplyPreferences(preferences: PsalmPreferences?) {
-//    mPsalmPreferences = preferences
-//    PreferenceManager.getDefaultSharedPreferences(baseContext)
-//      .edit()
-//      .putFloat(SongTextFragment.KEY_PSALM_TEXT_SIZE, preferences!!.textSize)
-//      .putBoolean(SongTextFragment.KEY_PSALM_TEXT_EXPANDED, preferences.isExpandPsalmText)
-//      .apply()
-//    val fragment =
-//      mPsalmTextPagerAdapter!!.registeredFragments[mPagerPsalmText!!.currentItem] as SongTextFragment
-//    fragment.applyPsalmPreferences(preferences)
-//    mPsalmTextPagerAdapter?.applyPsalmPreferences(preferences)
-//  }
-//
-//  override fun onCancelPreferences(previousPreferences: PsalmPreferences?) {
-//    mPsalmPreferences = previousPreferences
-//    val fragment =
-//      mPsalmTextPagerAdapter!!.registeredFragments[mPagerPsalmText!!.currentItem] as SongTextFragment
-//    fragment.applyPsalmPreferences(previousPreferences!!)
-//  }
-
-//  private inner class FabFavoritesOnClick : View.OnClickListener {
-//    override fun onClick(v: View) {
-//      val fragment =
-//        mPsalmTextPagerAdapter!!.registeredFragments[mPagerPsalmText!!.currentItem] as SongTextFragment
-//      if (fragment.isFavoritePsalm) {
-//        fragment.removeSongFromFavorites()
-//        Snackbar.make(v, R.string.msg_removed_from_favorites, Snackbar.LENGTH_SHORT)
-//          .setAction("Action", null).show()
-//      } else {
-//        fragment.addSongToFavorites()
-//        Snackbar.make(v, R.string.msg_added_to_favorites, Snackbar.LENGTH_SHORT)
-//          .setAction("Action", null).show()
-//      }
 //    }
 //  }
 

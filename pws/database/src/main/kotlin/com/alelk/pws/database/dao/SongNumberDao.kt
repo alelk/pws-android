@@ -40,6 +40,13 @@ data class SongNumberWithBook(
   val book: BookEntity
 )
 
+data class SongNumberWithSong(
+  @Embedded
+  val songNumber: SongNumberEntity,
+  @Relation(parentColumn = "psalmid", entityColumn = "_id")
+  val song: SongEntity,
+)
+
 @Dao
 interface SongNumberDao {
   @Insert(onConflict = OnConflictStrategy.ABORT)
@@ -54,6 +61,10 @@ interface SongNumberDao {
   @Transaction
   @Query("SELECT * FROM psalmnumbers WHERE _id = :id")
   fun getSongOfBookById(id: Long): Flow<SongNumberWithSongWithBookWithFavorites>
+
+  @Transaction
+  @Query("SELECT pn.* FROM psalmnumbers pn INNER JOIN books b ON pn.bookid = b._id WHERE b.edition = :bookExternalId ORDER BY pn.number")
+  fun getBookSongsByBookId(bookExternalId: BookExternalId): Flow<List<SongNumberWithSong>>
 
   @Transaction
   @Query("SELECT * FROM psalmnumbers WHERE _id = :id")
