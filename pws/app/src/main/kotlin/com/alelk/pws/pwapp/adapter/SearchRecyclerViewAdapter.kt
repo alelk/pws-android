@@ -37,6 +37,8 @@ import com.alelk.pws.database.provider.PwsDataProviderContract.Psalms.Search.COL
  *
  * Created by Alex Elkin on 23.05.2016.
  */
+// todo: reimplement
+@Deprecated("reimplement using room")
 class SearchRecyclerViewAdapter(private val mClickListener: (psalmNumberId: Long) -> Unit) :
   RecyclerView.Adapter<SearchViewHolder>() {
 

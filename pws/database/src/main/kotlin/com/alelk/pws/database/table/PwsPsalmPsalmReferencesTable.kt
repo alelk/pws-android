@@ -15,8 +15,6 @@
  */
 package com.alelk.pws.database.table
 
-import android.database.sqlite.SQLiteDatabase
-
 /**
  * PWS Psalm Psalm Reference Table
  *
@@ -24,10 +22,5 @@ import android.database.sqlite.SQLiteDatabase
  */
 @Deprecated("use room db")
 object PwsPsalmPsalmReferencesTable : PwsTable {
-  const val TABLE_PSALMPSALMREFERENCES = "psalmpsalmreferences"
   const val COLUMN_ID = "_id"
-  const val COLUMN_PSALMID = "psalmid"
-  const val COLUMN_REFPSALMID = "refpsalmid"
-  const val COLUMN_REASON = "reason"
-  const val COLUMN_VOLUME = "volume"
 }

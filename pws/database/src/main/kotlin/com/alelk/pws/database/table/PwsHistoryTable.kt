@@ -24,7 +24,6 @@ import android.database.sqlite.SQLiteDatabase
  */
 @Deprecated("use room db")
 object PwsHistoryTable {
-  const val TABLE_HISTORY = "history"
   const val COLUMN_ID = "_id"
   const val COLUMN_PSALMNUMBERID = "psalmnumberid"
   const val COLUMN_ACCESSTIMESTAMP = "accesstimestamp"

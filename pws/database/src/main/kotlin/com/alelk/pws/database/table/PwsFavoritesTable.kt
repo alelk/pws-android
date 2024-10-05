@@ -15,8 +15,6 @@
  */
 package com.alelk.pws.database.table
 
-import android.database.sqlite.SQLiteDatabase
-
 /**
  * PWS Favorites Table
  *
@@ -24,7 +22,6 @@ import android.database.sqlite.SQLiteDatabase
  */
 @Deprecated("use room db")
 object PwsFavoritesTable : PwsTable {
-  const val TABLE_FAVORITES = "favorites"
   const val COLUMN_ID = "_id"
   const val COLUMN_POSITION = "position"
   const val COLUMN_PSALMNUMBERID = "psalmnumberid"

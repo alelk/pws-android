@@ -39,6 +39,7 @@ import java.util.*
  *
  * Created by Alex Elkin on 15.03.2016.
  */
+@Deprecated("migrate to room")
 object PwsPsalmFtsTable : PwsTable {
   private val LOG_TAG = PwsPsalmFtsTable::class.java.simpleName
   const val TABLE_PSALMS_FTS = "psalms_fts"

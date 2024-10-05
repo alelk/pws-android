@@ -24,15 +24,10 @@ package com.alelk.pws.database.table
 object PwsPsalmTable : PwsTable {
   const val TABLE_PSALMS = "psalms"
   const val COLUMN_ID = "_id"
-  const val COLUMN_VERSION = "version"
-  const val COLUMN_LOCALE = "locale"
   const val COLUMN_NAME = "name"
   const val COLUMN_AUTHOR = "author"
   const val COLUMN_TRANSLATOR = "translator"
   const val COLUMN_COMPOSER = "composer"
-  const val COLUMN_TONALITIES = "tonalities"
-  const val COLUMN_YEAR = "year"
   const val COLUMN_ANNOTATION = "bibleref"
   const val COLUMN_TEXT = "text"
-  const val COLUMN_EDITED = "edited"
 }

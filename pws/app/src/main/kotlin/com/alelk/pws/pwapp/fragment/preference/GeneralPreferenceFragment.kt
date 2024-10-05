@@ -23,7 +23,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
-import android.widget.Switch
 import androidx.loader.app.LoaderManager
 import androidx.loader.content.CursorLoader
 import androidx.loader.content.Loader
@@ -33,7 +32,6 @@ import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import androidx.preference.SwitchPreference
-import androidx.preference.SwitchPreferenceCompat
 import com.alelk.pws.database.provider.PwsDataProviderContract
 import com.alelk.pws.database.provider.PwsDataProviderContract.BookStatistic.getBookStatisticBookEditionUri
 import com.alelk.pws.database.table.PwsBookStatisticTable
@@ -42,6 +40,7 @@ import com.alelk.pws.pwapp.activity.MainSettingsActivity
 import com.alelk.pws.pwapp.theme.AppTheme
 import com.alelk.pws.pwapp.theme.ThemePreferences
 
+// fixme: reimplement this fragment
 /**
  * General Preference Fragment
  *

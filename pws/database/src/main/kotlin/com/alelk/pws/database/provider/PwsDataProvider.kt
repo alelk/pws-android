@@ -18,7 +18,6 @@ package com.alelk.pws.database.provider
 
 import android.app.SearchManager
 import android.content.ContentProvider
-import android.content.ContentUris
 import android.content.ContentValues
 import android.content.Context
 import android.content.UriMatcher
@@ -28,31 +27,12 @@ import android.database.sqlite.SQLiteQueryBuilder
 import android.net.Uri
 import android.os.Build
 import android.util.Log
-import androidx.core.database.getShortOrNull
-import androidx.core.database.getStringOrNull
 import com.alelk.pws.database.helper.PwsDatabaseHelper
 import com.alelk.pws.database.provider.PwsDataProviderContract.BookStatistic
 import com.alelk.pws.database.provider.PwsDataProviderContract.Books
-import com.alelk.pws.database.provider.PwsDataProviderContract.Categories
-import com.alelk.pws.database.provider.PwsDataProviderContract.Categories.BY_PSALM_NUMBER_SELECTION
-import com.alelk.pws.database.provider.PwsDataProviderContract.Categories.BY_TAG_PROJECTION
-import com.alelk.pws.database.provider.PwsDataProviderContract.Categories.BY_TAG_SELECTION
 import com.alelk.pws.database.provider.PwsDataProviderContract.Companion.AUTHORITY
-import com.alelk.pws.database.provider.PwsDataProviderContract.Companion.HISTORY_TIMESTAMP_FORMAT
-import com.alelk.pws.database.provider.PwsDataProviderContract.Companion.QUERY_PARAMETER_LIMIT
-import com.alelk.pws.database.provider.PwsDataProviderContract.Favorites
-import com.alelk.pws.database.provider.PwsDataProviderContract.History
-import com.alelk.pws.database.provider.PwsDataProviderContract.PsalmNumbers
 import com.alelk.pws.database.provider.PwsDataProviderContract.Psalms
 import com.alelk.pws.database.table.PwsBookStatisticTable
-import com.alelk.pws.database.table.PwsFavoritesTable
-import com.alelk.pws.database.table.PwsHistoryTable
-import com.alelk.pws.database.table.PwsPsalmTable
-import com.alelk.pws.database.table.PwsPsalmTagTable
-import com.alelk.pws.database.table.PwsTagTable
-import java.text.SimpleDateFormat
-import java.util.Arrays
-import java.util.Date
 import java.util.Locale
 
 /**
@@ -62,12 +42,12 @@ import java.util.Locale
  *
  * TODO 2022.10.20: too legacy and ugly code :(
  */
+// todo: migrate to room
 @Deprecated("use room")
 class PwsDataProvider : ContentProvider(), PwsDataProviderContract {
   private var mContext: Context? = null
   private var mDatabase: SQLiteDatabase? = null
   private var mDatabaseHelper: PwsDatabaseHelper? = null
-  var mDateFormat = SimpleDateFormat(HISTORY_TIMESTAMP_FORMAT, Locale.ENGLISH)
   override fun onCreate(): Boolean {
     mContext = context
     if (mContext == null) return false
@@ -85,45 +65,8 @@ class PwsDataProvider : ContentProvider(), PwsDataProviderContract {
     val METHOD_NAME = "query"
     mDatabase = mDatabaseHelper!!.readableDatabase
     var cursor: Cursor? = null
-    val psalmNumberId: Long
     when (URI_MATCHER.match(uri)) {
-      Psalms.URI_MATCH -> cursor = mDatabase!!.query(
-        PwsPsalmTable.TABLE_PSALMS,
-        projection,
-        selection,
-        selectionArgs,
-        null,
-        null,
-        sortOrder
-      )
 
-      Psalms.URI_MATCH_ID -> {}
-      Psalms.PsalmNumbers.URI_MATCH -> {}
-      Categories.TAG_URI_MATCH -> cursor =
-        queryCategories(projection, selection, selectionArgs, sortOrder, null)
-
-      Categories.TAGS_BY_PSALM_NUMBER_URI_MATCH -> cursor = queryPsalmTagTable(
-        projection,
-        selection,
-        selectionArgs,
-        sortOrder,
-        null
-      )
-
-      Favorites.URI_MATCH -> cursor =
-        queryFavorites(projection, selection, selectionArgs, sortOrder, null)
-
-      Favorites.URI_MATCH_ID -> cursor = queryFavorite(uri.lastPathSegment!!.toLong())
-      History.URI_MATCH -> cursor = queryHistory(
-        projection,
-        selection,
-        selectionArgs,
-        null,
-        uri.getQueryParameter(QUERY_PARAMETER_LIMIT)
-      )
-
-      History.Last.URI_MATCH -> cursor =
-        queryHistory(projection, null, null, History.Last.SORT_ORDER, History.Last.LIMIT)
 
       Psalms.Suggestions.URI_MATCH_NUMBER -> cursor = querySuggestionsPsalmNumber(
         uri.lastPathSegment!!,
@@ -162,32 +105,10 @@ class PwsDataProvider : ContentProvider(), PwsDataProviderContract {
         }
       }
 
-      PsalmNumbers.Psalm.URI_MATCH -> {
-        psalmNumberId = uri.pathSegments[1].toLong()
-        cursor = queryPsalmNumberPsalm(psalmNumberId, projection, selection, selectionArgs)
-      }
-
-      PsalmNumbers.Book.BookPsalmNumbers.URI_MATCH -> {
-        psalmNumberId = uri.pathSegments[1].toLong()
-        cursor = queryPsalmNumberBookPsalmNumbers(psalmNumberId, projection)
-      }
-
-      PsalmNumbers.Book.BookPsalmNumbers.Info.URI_MATCH -> {
-        psalmNumberId = uri.pathSegments[1].toLong()
-        cursor = queryPsalmNumberBookPsalmNumberInfo(psalmNumberId, projection)
-      }
-
-      PsalmNumbers.ReferencePsalms.URI_MATCH -> {
-        psalmNumberId = uri.pathSegments[1].toLong()
-        cursor = queryPsalmNumberReferredPsalms(psalmNumberId)
-      }
-
       BookStatistic.URI_MATCH -> cursor = queryBookStatistic(null, null, null, null)
 
       Books.URI_MATCH -> cursor = mDatabase!!.query(
-        Books.TABLE,
-        Books.PROJECTION,
-        Books.ACTIVE + " and " + Books.FIRST_SONG,
+        Books.TABLE, Books.PROJECTION, Books.ACTIVE + " and " + Books.FIRST_SONG,
         selectionArgs,
         null,
         null,
@@ -220,86 +141,11 @@ class PwsDataProvider : ContentProvider(), PwsDataProviderContract {
     }
 
   override fun insert(uri: Uri, values: ContentValues?): Uri? {
-    val METHOD_NAME = "insert"
-    Log.v(LOG_TAG, "$METHOD_NAME: uri='$uri'")
-    mDatabase = mDatabaseHelper!!.writableDatabase
-    var itemUri: Uri? = null
-    when (URI_MATCHER.match(uri)) {
-      Psalms.URI_MATCH -> {
-        val id = mDatabase!!.insert(PwsPsalmTable.TABLE_PSALMS, null, values)
-        if (id == -1L) {
-          // TODO: 24.02.2016 throw exception
-          Log.w(
-            LOG_TAG,
-            METHOD_NAME + ": Error inserting into '" + PwsPsalmTable.TABLE_PSALMS + "' table. Uri='" + uri + "'"
-          )
-          return null
-        }
-        itemUri = ContentUris.withAppendedId(uri, id)
-      }
-
-      Psalms.URI_MATCH_ID -> {}
-      Categories.TAG_URI_MATCH -> {
-        val id = insertCategory(values!!)
-        itemUri = ContentUris.withAppendedId(uri, -1)
-      }
-
-      Categories.TAGS_BY_PSALM_NUMBER_URI_MATCH -> {
-        val id = addCategoryToPsalm(values!!)
-        itemUri = ContentUris.withAppendedId(uri, id)
-      }
-
-      Favorites.URI_MATCH -> {
-        val id = insertFavorite(values!!)
-        if (id == -1L) {
-          // TODO: 24.02.2016 throw exception
-          Log.w(
-            LOG_TAG,
-            METHOD_NAME + ": Error inserting into '" + PwsFavoritesTable.TABLE_FAVORITES + "' table. Uri='" + uri + "'"
-          )
-          return null
-        }
-        itemUri = ContentUris.withAppendedId(uri, id)
-        mContext!!.contentResolver.notifyChange(uri, null)
-      }
-
-      History.URI_MATCH -> {
-        val id = insertHistory(values!!)
-        if (id == -1L) {
-          // TODO: 24.02.2016 throw exception
-          Log.w(
-            LOG_TAG,
-            METHOD_NAME + ": Error inserting into '" + PwsHistoryTable.TABLE_HISTORY + "' table. Uri='" + uri + "'"
-          )
-          return null
-        }
-        itemUri = ContentUris.withAppendedId(uri, id)
-        mContext!!.contentResolver.notifyChange(uri, null)
-      }
-
-      else ->                 // TODO: 24.02.2016 throw exception incorrect uri
-        Log.w(LOG_TAG, "$METHOD_NAME: Incorrect uri. Uri='$uri'")
-    }
-    return itemUri!!
+    TODO("Not yet implemented")
   }
 
-  override fun delete(uri: Uri, selection: String?, selectionArgs: Array<String>?): Int {
-    val METHOD_NAME = "delete"
-    Log.v(LOG_TAG, "$METHOD_NAME: uri='$uri'")
-    mDatabase = mDatabaseHelper!!.writableDatabase
-    var n = 0
-    if (selection != null)
-      when (URI_MATCHER.match(uri)) {
-        Favorites.URI_MATCH -> n = deleteFavorites(selection, selectionArgs ?: emptyArray())
-        Categories.TAG_URI_MATCH -> n = deleteCategories(selection, selectionArgs ?: emptyArray())
-        Categories.TAGS_BY_PSALM_NUMBER_URI_MATCH -> n =
-          deleteCategoryFromPsalm(selection, selectionArgs ?: emptyArray())
-
-        History.URI_MATCH -> n = deleteHistory(selection, selectionArgs ?: emptyArray())
-        else -> {}
-      }
-    mContext!!.contentResolver.notifyChange(uri, null)
-    return n
+  override fun delete(uri: Uri, selection: String?, selectionArgs: Array<out String>?): Int {
+    TODO("Not yet implemented")
   }
 
   override fun update(
@@ -315,141 +161,11 @@ class PwsDataProvider : ContentProvider(), PwsDataProviderContract {
     if (values != null) {
       when (URI_MATCHER.match(uri)) {
         BookStatistic.URI_MATCH_TEXT -> m = updateBookStatistic(values, uri.lastPathSegment!!)
-        Psalms.URI_MATCH_ID -> updatePsalm(values, uri.lastPathSegment!!.toLong())
-        Categories.TAG_URI_MATCH -> updateCategory(values, selection, selectionArgs)
       }
     }
     return m
   }
 
-  private fun queryCategories(
-    projection: Array<String>?,
-    selection: String?,
-    selectionArgs: Array<String>?,
-    orderBy: String?,
-    limit: String?
-  ): Cursor? {
-    var projection = projection
-    var orderBy = orderBy
-    val METHOD_NAME = "queryCategories"
-    if (projection == null) projection = Categories.PROJECTION
-    if (orderBy == null) orderBy = Categories.SORT_ORDER_ASC
-    val cursor = mDatabase!!.query(
-      Categories.TAG_TABLE,
-      projection, selection, selectionArgs,
-      null, null,
-      orderBy, limit
-    )
-    Log.v(
-      LOG_TAG, METHOD_NAME + ": projection=" + Arrays.toString(projection) +
-        " selection='" + selection + "' selectionArgs=" + Arrays.toString(selectionArgs) +
-        " orderBy='" + orderBy + "' limit=" + limit +
-        " results: " + (cursor?.count ?: "cursor=null")
-    )
-    return cursor
-  }
-
-  private fun queryPsalmTagTable(
-    projection: Array<String>?,
-    selection: String?,
-    selectionArgs: Array<String>?,
-    orderBy: String?,
-    limit: String?
-  ): Cursor? {
-
-    var methodName = "queryPsalmTagTable"
-    var cursor: Cursor? = null
-    when (selection) {
-      BY_PSALM_NUMBER_SELECTION -> {
-        methodName = "queryCategoriesForPsalmNumber"
-        cursor = mDatabase!!.query(
-          Categories.TAGS_BY_PSALM_NUMBERS_TABLE,
-          projection, selection, selectionArgs,
-          null, null,
-          orderBy, limit
-        )
-      }
-
-      BY_TAG_SELECTION -> {
-        methodName = "queryPsalmNumbersByCategory"
-        cursor = mDatabase!!.query(
-          Categories.PSALM_NUMBERS_BY_TAG_TABLE,
-          BY_TAG_PROJECTION, selection, selectionArgs,
-          null, null,
-          orderBy, limit
-        )
-      }
-    }
-    Log.v(
-      LOG_TAG, methodName + ": projection=" + Arrays.toString(projection) +
-        " selection='" + selection + "' selectionArgs=" + Arrays.toString(selectionArgs) +
-        " orderBy='" + orderBy + "' limit=" + limit +
-        " results: " + (cursor?.count ?: "cursor=null")
-    )
-    return cursor
-  }
-
-  private fun queryFavorites(
-    projection: Array<String>?,
-    selection: String?,
-    selectionArgs: Array<String>?,
-    orderBy: String?,
-    limit: String?
-  ): Cursor? {
-    var projection = projection
-    var orderBy = orderBy
-    val METHOD_NAME = "queryFavorites"
-    if (projection == null) projection = Favorites.PROJECTION
-    if (orderBy == null) orderBy = Favorites.SORT_ORDER
-    val cursor = mDatabase!!.query(
-      Favorites.TABLES,
-      projection, selection, selectionArgs,
-      Favorites.GROUP_BY, null,
-      orderBy, limit
-    )
-    Log.v(
-      LOG_TAG, METHOD_NAME + ": projection=" + Arrays.toString(projection) +
-        " selection='" + selection + "' selectionArgs=" + Arrays.toString(selectionArgs) +
-        " orderBy='" + orderBy + "' limit=" + limit +
-        " results: " + (cursor?.count ?: "cursor=null")
-    )
-    return cursor
-  }
-
-  private fun queryHistory(
-    projection: Array<String>?,
-    selection: String?,
-    selectionArgs: Array<String>?,
-    orderBy: String?,
-    limit: String?
-  ): Cursor {
-    var projection = projection
-    var orderBy = orderBy
-    if (projection == null) projection = History.PROJECTION
-    if (orderBy == null) orderBy = History.SORT_ORDER
-    return mDatabase!!.query(
-      History.TABLES,
-      projection, selection, selectionArgs,
-      History.GROUP_BY, null,
-      orderBy, limit
-    )
-  }
-
-  private fun queryFavorite(id: Long): Cursor? {
-    val selectionArgs = arrayOf(id.toString())
-    return queryFavorites(null, Favorites.SELECTION_ID_MATCH, selectionArgs, null, null)
-  }
-
-  private fun queryLastFavorite(projection: Array<String>?): Cursor? {
-    val METHOD_NAME = "queryLastFavorite"
-    val cursor = queryFavorites(projection, null, null, null, "1")
-    Log.v(
-      LOG_TAG,
-      METHOD_NAME + ": projection=" + Arrays.toString(projection) + " results: " + (cursor?.count
-        ?: "cursor=null")
-    )
-    return cursor
-  }
 
   private fun querySuggestionsPsalmNumber(
     psalmNumber: String,
@@ -525,92 +241,6 @@ class PwsDataProvider : ContentProvider(), PwsDataProviderContract {
     return cursor
   }
 
-  private fun queryPsalmNumberPsalm(
-    psalmNumberId: Long,
-    projection: Array<String>?,
-    selection: String?,
-    selectionArgs: Array<String>?
-  ): Cursor {
-    var projection = projection
-    var selection = selection
-    var selectionArgs = selectionArgs
-    if (projection == null) projection = PsalmNumbers.Psalm.PROJECTION
-    if (selection == null) {
-      selection = PsalmNumbers.Psalm.DEFAULT_SELECTION
-      selectionArgs = arrayOf(java.lang.Long.toString(psalmNumberId))
-    }
-    return mDatabase!!.query(
-      PsalmNumbers.Psalm.TABLES,
-      projection,
-      selection, selectionArgs, null, null,
-      null
-    )
-  }
-
-  private fun queryPsalmNumberBookPsalmNumbers(
-    psalmNumberId: Long,
-    projection: Array<String>?
-  ): Cursor? {
-    return queryPsalmNumberBookPsalmNumber(psalmNumberId, projection, null, null)
-  }
-
-  private fun queryPsalmNumberBookPsalmNumber(
-    psalmNumberId: Long,
-    projection: Array<String>?,
-    selection: String?,
-    selectionArgs: Array<String?>?
-  ): Cursor? {
-    var projection = projection
-    var selectionArgs = selectionArgs
-    val METHOD_NAME = "queryPsalmNumberBookPsalmNumber"
-    if (projection == null) projection = PsalmNumbers.Book.BookPsalmNumbers.PROJECTION
-    if (selection == null) selectionArgs = null
-    val rawQuery = SQLiteQueryBuilder.buildQueryString(
-      false,
-      PsalmNumbers.Book.BookPsalmNumbers.buildRawTables(psalmNumberId),
-      projection, null, null, null,
-      PsalmNumbers.Book.BookPsalmNumbers.ORDER_BY, null
-    )
-    val cursor = mDatabase!!.rawQuery(rawQuery, selectionArgs)
-    Log.v(
-      LOG_TAG, METHOD_NAME + ": rawQuery='" + rawQuery + "' selectionArgs=" +
-        Arrays.toString(selectionArgs) + " results:" + (cursor?.count ?: 0)
-    )
-    return cursor
-  }
-
-  private fun queryPsalmNumberBookPsalmNumberInfo(
-    psalmNumberId: Long,
-    projection: Array<String>?
-  ): Cursor? {
-    var projection = projection
-    val METHOD_NAME = "queryPsalmNumberBookPsalmNumberInfo"
-    if (projection == null) projection =
-      PsalmNumbers.Book.BookPsalmNumbers.Info.PROJECTION_PSALMNUMBER_ID
-    val rawQuery = SQLiteQueryBuilder.buildQueryString(
-      false,
-      PsalmNumbers.Book.BookPsalmNumbers.Info.buildRawTables(psalmNumberId),
-      projection, null, null, null,
-      null, null
-    )
-    val cursor = mDatabase!!.rawQuery(rawQuery, null)
-    Log.v(LOG_TAG, METHOD_NAME + ": rawQuery='" + rawQuery + " results:" + (cursor?.count ?: 0))
-    return cursor
-  }
-
-  private fun queryPsalmNumberReferredPsalms(currentPsalmNumberId: Long): Cursor? {
-    val METHOD_NAME = "queryPsalmNumberReferredPsalms"
-    val rawQuery = SQLiteQueryBuilder.buildQueryString(
-      false,
-      PsalmNumbers.ReferencePsalms.buildRawTables(currentPsalmNumberId),
-      PsalmNumbers.ReferencePsalms.PROJECTION, null,
-      PsalmNumbers.ReferencePsalms.COLUMN_PSALM_ID, null,
-      null, null
-    )
-    val cursor = mDatabase!!.rawQuery(rawQuery, null)
-    Log.v(LOG_TAG, METHOD_NAME + ": rawQuery='" + rawQuery + " results:" + (cursor?.count ?: 0))
-    return cursor
-  }
 
   private fun queryBookStatistic(
     projection: Array<String>?,
@@ -630,127 +260,6 @@ class PwsDataProvider : ContentProvider(), PwsDataProviderContract {
     )
   }
 
-  /*
-  private Cursor queryPsalmNumberMorePreferred(long psalmId) {
-      final String orderBy = "pn." + PwsPsalmNumbersTable.COLUMN_BOOKID;
-      // TODO: 01.03.2016 add preferred book selection logic
-      return queryPsalmNumbers(psalmId, null, orderBy, "1");
-  } */
-
-  private fun insertCategory(values: ContentValues): String? {
-    val METHOD_NAME = "insertCategory"
-    var id: String? = null
-    try {
-      val lastCustomId = mDatabase!!.query(
-        PwsTagTable.TABLE_TAG,
-        arrayOf(PwsTagTable.COLUMN_ID),
-        "${PwsTagTable.COLUMN_PREDEFINED} =? ", arrayOf("false"),
-        null, null, "${PwsTagTable.COLUMN_ID} DESC"
-      )
-        .let {
-          if (!it.moveToNext()) null
-          else it.getStringOrNull(0)
-        }
-      val lastCustomIdNumber = lastCustomId?.removePrefix("custom-")?.dropWhile { it == '0' }?.toInt() ?: 0
-      val nextCustomIdNumber = lastCustomIdNumber + 1
-      val nextCustomId = "custom-${nextCustomIdNumber.toString().padStart(5, '0')}"
-      values.put("id", nextCustomId)
-      values.put("priority", 0)
-      values.put("predefined", false)
-      mDatabase!!.insert(PwsTagTable.TABLE_TAG, null, values).toString()
-      id = nextCustomId
-    } finally {
-      Log.v(
-        LOG_TAG, METHOD_NAME + ": resultId=" + id + " " +
-          "values=[keySet=${values.keySet().joinToString(",")} " +
-          "valueSet=${values.valueSet().joinToString(",")}]"
-      )
-    }
-    return id
-  }
-
-  private fun addCategoryToPsalm(values: ContentValues): Long {
-    val METHOD_NAME = "addCategoryToPsalm"
-    var id: Long = -1
-    id = try {
-      mDatabase!!.insert(PwsPsalmTagTable.TABLE_PSALM_TAG, null, values)
-    } finally {
-      Log.v(
-        LOG_TAG, METHOD_NAME + ": resultId=" + id + " " +
-          "values=[keySet=${values.keySet().joinToString(",")} " +
-          "valueSet=${values.valueSet().joinToString(",")}]"
-      )
-    }
-    return id
-  }
-
-  private fun insertFavorite(values: ContentValues): Long {
-    val METHOD_NAME = "insertFavorite"
-    val lastFavorite = queryLastFavorite(null)
-    var favoritePosition: Long = 2
-    if (lastFavorite != null && lastFavorite.moveToFirst()) {
-      favoritePosition =
-        1 + lastFavorite.getLong(lastFavorite.getColumnIndex(Favorites.COLUMN_FAVORITEPOSITION))
-    }
-    if (values.containsKey(Favorites.COLUMN_FAVORITEPOSITION)) {
-      val valuePosition = values.getAsLong(Favorites.COLUMN_FAVORITEPOSITION)
-      if (valuePosition < favoritePosition) {
-        // TODO: 29.02.2016 shift favorites list
-        Log.w(
-          LOG_TAG, METHOD_NAME + ": Try to insert favorite with position='" +
-            valuePosition + "'. Error inserting: unable to shift favorites list. "
-        )
-      }
-    }
-    values.put(PwsFavoritesTable.COLUMN_POSITION, favoritePosition)
-    var id: Long = 0
-    id = try {
-      mDatabase!!.insert(PwsFavoritesTable.TABLE_FAVORITES, null, values)
-    } finally {
-      Log.v(
-        LOG_TAG, METHOD_NAME + ": resultId=" + id + " " +
-          "values=[keySet=${values.keySet().joinToString(",")} " +
-          "valueSet=${values.valueSet().joinToString(",")}]"
-      )
-    }
-    return id
-  }
-
-  private fun insertHistory(values: ContentValues): Long {
-    val METHOD_NAME = "insertHistory"
-    if (!values.containsKey(History.COLUMN_HISTORYTIMESTAMP)) {
-      val timestamp = mDateFormat.format(Date())
-      values.put(PwsHistoryTable.COLUMN_ACCESSTIMESTAMP, timestamp)
-    }
-    var id: Long = 0
-    id = try {
-      mDatabase!!.insert(PwsHistoryTable.TABLE_HISTORY, null, values)
-    } finally {
-      Log.v(
-        LOG_TAG,
-        "$METHOD_NAME: resultId=$id values=[keySet=${values.keySet().joinToString(",")}" +
-          " valueSet=${values.valueSet().joinToString(",")}]"
-      )
-    }
-    return id
-  }
-
-  private fun deleteCategories(whereClause: String, whereArgs: Array<String>): Int {
-    return mDatabase!!.delete(PwsTagTable.TABLE_TAG, whereClause, whereArgs)
-  }
-
-  private fun deleteCategoryFromPsalm(whereClause: String, whereArgs: Array<String>): Int {
-    return mDatabase!!.delete(PwsPsalmTagTable.TABLE_PSALM_TAG, whereClause, whereArgs)
-  }
-
-  private fun deleteFavorites(whereClause: String, whereArgs: Array<String>): Int {
-    return mDatabase!!.delete(PwsFavoritesTable.TABLE_FAVORITES, whereClause, whereArgs)
-  }
-
-  private fun deleteHistory(whereClause: String, whereArgs: Array<String>): Int {
-    return mDatabase!!.delete(PwsHistoryTable.TABLE_HISTORY, whereClause, whereArgs)
-  }
-
   private fun updateBookStatistic(values: ContentValues, bookEdition: String): Int {
     val rawSelection = SQLiteQueryBuilder.buildQueryString(
       false,
@@ -765,80 +274,18 @@ class PwsDataProvider : ContentProvider(), PwsDataProviderContract {
     )
   }
 
-  private fun updatePsalm(values: ContentValues, psalmId: Long): Int {
-    return mDatabase!!.update(
-      PwsPsalmTable.TABLE_PSALMS,
-      values, "_id=($psalmId)",
-      null
-    )
-  }
-
-  private fun updateCategory(
-    values: ContentValues,
-    selection: String?,
-    selectionArgs: Array<String>?
-  ): Int {
-    return mDatabase!!.update(PwsTagTable.TABLE_TAG, values, selection, selectionArgs)
-  }
 
   companion object {
     private val LOG_TAG = PwsDataProvider::class.java.simpleName
     private val URI_MATCHER = UriMatcher(UriMatcher.NO_MATCH)
 
     init {
-      URI_MATCHER.addURI(AUTHORITY, Psalms.PATH, Psalms.URI_MATCH)
-      URI_MATCHER.addURI(AUTHORITY, Psalms.PATH_ID, Psalms.URI_MATCH_ID)
-      URI_MATCHER.addURI(AUTHORITY, Psalms.PsalmNumbers.PATH, Psalms.PsalmNumbers.URI_MATCH)
-      URI_MATCHER.addURI(
-        AUTHORITY,
-        Psalms.PsalmNumbers.PATH_ID,
-        Psalms.PsalmNumbers.URI_MATCH_ID
-      )
-      URI_MATCHER.addURI(
-        AUTHORITY,
-        Psalms.Suggestions.PATH_NUMBER,
-        Psalms.Suggestions.URI_MATCH_NUMBER
-      )
-      URI_MATCHER.addURI(
-        AUTHORITY,
-        Psalms.Suggestions.PATH_NAME,
-        Psalms.Suggestions.URI_MATCH_NAME
-      )
+      URI_MATCHER.addURI(AUTHORITY, Psalms.Suggestions.PATH_NUMBER, Psalms.Suggestions.URI_MATCH_NUMBER)
+      URI_MATCHER.addURI(AUTHORITY, Psalms.Suggestions.PATH_NAME, Psalms.Suggestions.URI_MATCH_NAME)
       URI_MATCHER.addURI(AUTHORITY, Psalms.Search.PATH, Psalms.Search.URI_MATCH)
-      URI_MATCHER.addURI(AUTHORITY, Categories.TAG_PATH, Categories.TAG_URI_MATCH)
-      URI_MATCHER.addURI(AUTHORITY, Categories.TAG_PATH_ID, Categories.TAG_ID_URI_MATCH)
-      URI_MATCHER.addURI(
-        AUTHORITY,
-        Categories.PSALM_TAG_PATH,
-        Categories.TAGS_BY_PSALM_NUMBER_URI_MATCH
-      )
-      URI_MATCHER.addURI(AUTHORITY, Favorites.PATH, Favorites.URI_MATCH)
-      URI_MATCHER.addURI(AUTHORITY, Favorites.PATH_ID, Favorites.URI_MATCH_ID)
-      URI_MATCHER.addURI(AUTHORITY, History.PATH, History.URI_MATCH)
-      URI_MATCHER.addURI(AUTHORITY, History.PATH_ID, History.URI_MATCH_ID)
-      URI_MATCHER.addURI(AUTHORITY, History.Last.PATH, History.Last.URI_MATCH)
-      URI_MATCHER.addURI(AUTHORITY, PsalmNumbers.PATH, PsalmNumbers.URI_MATCH)
-      URI_MATCHER.addURI(AUTHORITY, PsalmNumbers.PATH_ID, PsalmNumbers.URI_MATCH_ID)
-      URI_MATCHER.addURI(AUTHORITY, PsalmNumbers.Psalm.PATH, PsalmNumbers.Psalm.URI_MATCH)
-      URI_MATCHER.addURI(
-        AUTHORITY,
-        PsalmNumbers.Book.BookPsalmNumbers.PATH,
-        PsalmNumbers.Book.BookPsalmNumbers.URI_MATCH
-      )
-      URI_MATCHER.addURI(
-        AUTHORITY,
-        PsalmNumbers.Book.BookPsalmNumbers.Info.PATH,
-        PsalmNumbers.Book.BookPsalmNumbers.Info.URI_MATCH
-      )
-      URI_MATCHER.addURI(
-        AUTHORITY,
-        PsalmNumbers.ReferencePsalms.PATH,
-        PsalmNumbers.ReferencePsalms.URI_MATCH
-      )
       URI_MATCHER.addURI(AUTHORITY, BookStatistic.PATH, BookStatistic.URI_MATCH)
       URI_MATCHER.addURI(AUTHORITY, BookStatistic.PATH_ID, BookStatistic.URI_MATCH_ID)
       URI_MATCHER.addURI(AUTHORITY, BookStatistic.PATH_TEXT, BookStatistic.URI_MATCH_TEXT)
-      URI_MATCHER.addURI(AUTHORITY, Books.PATH, Books.URI_MATCH)
     }
   }
 }

@@ -27,6 +27,7 @@ import com.alelk.pws.pwapp.R
 import com.alelk.pws.pwapp.activity.base.AppCompatThemedActivity
 import com.alelk.pws.pwapp.fragment.SearchResultsFragment
 
+// todo: reimplement using room
 class SearchActivity : AppCompatThemedActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)

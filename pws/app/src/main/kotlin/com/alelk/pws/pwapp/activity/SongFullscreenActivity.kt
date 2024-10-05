@@ -31,6 +31,8 @@ import com.alelk.pws.pwapp.model.FavoritesViewModel
 import com.alelk.pws.pwapp.model.SongsViewModel
 import kotlinx.coroutines.launch
 
+// todo: reimplement or remove
+@Deprecated("reimplement or remove")
 class SongFullscreenActivity : AppCompatThemedActivity() {
   private var songNumberId: Long = -1
 
