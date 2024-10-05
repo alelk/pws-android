@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2018 The P&W Songs Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<resources>
+
+    <!-- General -->
+    <dimen name="padding_horizontal">8dp</dimen>
+    <dimen name="txt_size_title">16sp</dimen>
+    <dimen name="txt_size_body">12sp</dimen>
+    <dimen name="txt_padding_horizontal">6dp</dimen>
+
+    <!-- Cards -->
+    <dimen name="txt_padding_horizontal_card">6dp</dimen>
+    <dimen name="txt_sise_psalm_number">20sp</dimen>
+    <dimen name="txt_min_width_psalm_number">72dp</dimen>
+
+    <!-- Psalm Activity -->
+    <dimen name="txt_size_psalm_header_name">22sp</dimen>
+    <dimen name="txt_size_psalm_header_bible_ref">15sp</dimen>
+    <dimen name="txt_size_psalm_text">22sp</dimen>
+    <dimen name="txt_size_psalm_tonalities">15sp</dimen>
+    <dimen name="txt_size_psalm_info">15sp</dimen>
+    <dimen name="padding_psalm_body_horizontal">16dp</dimen>
+    <dimen name="app_bar_psalm_height">310dp</dimen>
+
+    <!--  -->
+    <dimen name="nav_header_vertical_spacing">16dp</dimen>
+    <dimen name="nav_header_height">160dp</dimen>
+    <dimen name="activity_horizontal_margin">0dp</dimen>
+    <dimen name="activity_vertical_margin">0dp</dimen>
+    <dimen name="fab_margin">12dp</dimen>
+
+</resources>

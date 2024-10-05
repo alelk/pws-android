@@ -1,8 +1,0 @@
-/build
-/src/main/assets/db
-/src/ruRelease/assets/db
-/src/ukRelease/assets/db
-hs_err_pid*.log
-replay_pid*.log
-pws*.apk
-app.iml

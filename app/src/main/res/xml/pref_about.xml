@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (C) 2018 The P&W Songs Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+  <PreferenceCategory app:title="@string/pref_about_app_title">
+    <Preference
+      app:icon="@mipmap/ic_launcher"
+      app:key="@string/pref_about_app_key"
+      app:selectable="false"
+      app:title="@string/app_name" />
+    <Preference
+      app:icon="@drawable/ic_public_blue_24dp"
+      app:title="@string/pref_about_app_page_title">
+      <intent
+        android:action="android.intent.action.VIEW"
+        android:data="@string/pref_about_app_page_link" />
+    </Preference>
+  </PreferenceCategory>
+  <PreferenceCategory app:title="@string/pref_about_developer_title">
+    <Preference
+      app:icon="@drawable/ic_account_circle_blue_24dp"
+      app:summary="@string/pref_about_developer_alex_summary"
+      app:title="@string/pref_about_developer_alex_title">
+      <intent
+        android:action="android.intent.action.VIEW"
+        android:data="@string/pref_about_developer_alex_link" />
+    </Preference>
+    <Preference
+      app:icon="@drawable/ic_contact_mail_blue_24dp"
+      app:summary="@string/pref_about_developer_vera_summary"
+      app:title="@string/pref_about_developer_vera_title">
+      <intent
+        android:action="android.intent.action.SENDTO"
+        android:data="@string/pref_about_developer_vera_intent_data" />
+    </Preference>
+  </PreferenceCategory>
+  <PreferenceCategory app:title="@string/pref_about_contact_title">
+    <Preference
+      app:icon="@drawable/ic_email_blue_24dp"
+      app:summary="@string/pref_about_contact_email_summary"
+      app:title="@string/pref_about_contact_email_title">
+      <intent
+        android:action="android.intent.action.SENDTO"
+        android:data="@string/pref_about_contact_email_intent_data" />
+    </Preference>
+  </PreferenceCategory>
+</PreferenceScreen>

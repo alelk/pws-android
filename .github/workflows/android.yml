@@ -21,6 +21,5 @@ jobs:
         cache: gradle
     - name: Build ruDebug & ukDebug
       run: |
-        cd pws
         chmod +x gradlew
         ./gradlew buildRuDebug buildUkDebug testRuDebug
