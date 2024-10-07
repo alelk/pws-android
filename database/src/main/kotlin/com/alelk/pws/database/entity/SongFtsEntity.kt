@@ -2,8 +2,7 @@ package com.alelk.pws.database.entity
 
 import androidx.room.*
 
-// fixme: not working icu tokenizer
-@Fts4(contentEntity = SongEntity::class, tokenizer = "icu")
+@Fts4(contentEntity = SongEntity::class, tokenizer = FtsOptions.TOKENIZER_PORTER)
 @Entity(tableName = "psalms_fts")
 data class SongFtsEntity(
   @PrimaryKey @ColumnInfo(name = "rowid") val id: Long,

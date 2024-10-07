@@ -41,6 +41,7 @@ import com.google.android.material.navigation.NavigationView
 import timber.log.Timber
 
 open class MainActivity : AppCompatThemedActivity(), NavigationView.OnNavigationItemSelectedListener {
+
   private var mDrawerLayout: DrawerLayout? = null
   private var mNavigationItemId = R.id.drawer_main_home
   private var mFabSearchText: FloatingActionButton? = null
@@ -72,13 +73,7 @@ open class MainActivity : AppCompatThemedActivity(), NavigationView.OnNavigation
     }
     val toolbar = findViewById<Toolbar>(R.id.toolbar_main)
     setSupportActionBar(toolbar)
-    val toggle = ActionBarDrawerToggle(
-      this,
-      mDrawerLayout,
-      toolbar,
-      R.string.open_drawer,
-      R.string.close_drawer
-    )
+    val toggle = ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.open_drawer, R.string.close_drawer)
     mDrawerLayout!!.addDrawerListener(toggle)
     toggle.syncState()
     (findViewById<View>(R.id.nav_view) as NavigationView).setNavigationItemSelectedListener(this)

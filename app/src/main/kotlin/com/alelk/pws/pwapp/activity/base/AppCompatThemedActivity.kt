@@ -15,12 +15,11 @@
  */
 package com.alelk.pws.pwapp.activity.base
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.addCallback
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.alelk.pws.pwapp.theme.AppTheme
-import com.alelk.pws.pwapp.theme.ThemePreferences
+import com.alelk.pws.pwapp.model.AppPreferencesViewModel
 import com.alelk.pws.pwapp.theme.ThemeType
 
 /**
@@ -29,29 +28,16 @@ import com.alelk.pws.pwapp.theme.ThemeType
  * Created by Alex Elkin on 24.08.17.
  */
 open class AppCompatThemedActivity : AppCompatBackButtonActivity() {
-  private var mThemePreferences: ThemePreferences? = null
+
+  private val appPreferences: AppPreferencesViewModel by viewModels()
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    mThemePreferences = ThemePreferences(this)
-    setTheme(mThemePreferences!!.appTheme.getThemeResId(themeType!!))
-    mThemePreferences!!.registerThemeChangeListener(onThemeChange)
+
+    setTheme(appPreferences.appTheme.value.getThemeResId(themeType))
   }
 
-  override fun onDestroy() {
-    super.onDestroy()
-    mThemePreferences!!.unregisterThemeChangeListener(onThemeChange)
-  }
-
-  private fun restartActivity() {
-    val intent = intent
-    intent.removeCategory(Intent.CATEGORY_LAUNCHER)
-    startActivity(intent)
-    finish()
-  }
-
-  private val onThemeChange: (AppTheme) -> Unit = { restartActivity() }
-  protected open val themeType: ThemeType?
-    get() = ThemeType.NORMAL
+  protected open val themeType: ThemeType get() = ThemeType.NORMAL
 }
 
 open class AppCompatBackButtonActivity : AppCompatActivity() {

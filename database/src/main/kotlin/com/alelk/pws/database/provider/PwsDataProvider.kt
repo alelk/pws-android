@@ -48,6 +48,7 @@ class PwsDataProvider : ContentProvider(), PwsDataProviderContract {
   private var mContext: Context? = null
   private var mDatabase: SQLiteDatabase? = null
   private var mDatabaseHelper: PwsDatabaseHelper? = null
+
   override fun onCreate(): Boolean {
     mContext = context
     if (mContext == null) return false
@@ -105,8 +106,6 @@ class PwsDataProvider : ContentProvider(), PwsDataProviderContract {
         }
       }
 
-      BookStatistic.URI_MATCH -> cursor = queryBookStatistic(null, null, null, null)
-
       Books.URI_MATCH -> cursor = mDatabase!!.query(
         Books.TABLE, Books.PROJECTION, Books.ACTIVE + " and " + Books.FIRST_SONG,
         selectionArgs,
@@ -131,12 +130,8 @@ class PwsDataProvider : ContentProvider(), PwsDataProviderContract {
 
   override fun getType(uri: Uri): String? =
     when (URI_MATCHER.match(uri)) {
-      Psalms.URI_MATCH ->
-        "vnd.android.cursor.dir/" + AUTHORITY + "." + Psalms.PATH
-
-      Psalms.URI_MATCH_ID ->
-        "vnd.android.cursor.item/" + AUTHORITY + "." + Psalms.PATH
-
+      Psalms.URI_MATCH -> "vnd.android.cursor.dir/" + AUTHORITY + "." + Psalms.PATH
+      Psalms.URI_MATCH_ID -> "vnd.android.cursor.item/" + AUTHORITY + "." + Psalms.PATH
       else -> null
     }
 
@@ -148,22 +143,8 @@ class PwsDataProvider : ContentProvider(), PwsDataProviderContract {
     TODO("Not yet implemented")
   }
 
-  override fun update(
-    uri: Uri,
-    values: ContentValues?,
-    selection: String?,
-    selectionArgs: Array<String>?
-  ): Int {
-    val METHOD_NAME = "update"
-    Log.v(LOG_TAG, "$METHOD_NAME: uri='$uri'")
-    mDatabase = mDatabaseHelper!!.writableDatabase
-    var m = 0
-    if (values != null) {
-      when (URI_MATCHER.match(uri)) {
-        BookStatistic.URI_MATCH_TEXT -> m = updateBookStatistic(values, uri.lastPathSegment!!)
-      }
-    }
-    return m
+  override fun update(uri: Uri, values: ContentValues?, selection: String?, selectionArgs: Array<String>?): Int {
+    TODO()
   }
 
 
@@ -242,39 +223,6 @@ class PwsDataProvider : ContentProvider(), PwsDataProviderContract {
   }
 
 
-  private fun queryBookStatistic(
-    projection: Array<String>?,
-    selection: String?,
-    selectionArgs: Array<String>?,
-    orderBy: String?
-  ): Cursor {
-    var projection = projection
-    var orderBy = orderBy
-    if (projection == null) projection = BookStatistic.PROJECTION
-    if (orderBy == null) orderBy = BookStatistic.SORT_ORDER
-    return mDatabase!!.query(
-      BookStatistic.TABLES,
-      projection, selection, selectionArgs,
-      null, null,
-      orderBy, null
-    )
-  }
-
-  private fun updateBookStatistic(values: ContentValues, bookEdition: String): Int {
-    val rawSelection = SQLiteQueryBuilder.buildQueryString(
-      false,
-      BookStatistic.RAW_TABLES,
-      BookStatistic.RAW_PROJECTION,
-      BookStatistic.getRawSelection(bookEdition), null, null, null, null
-    )
-    return mDatabase!!.update(
-      PwsBookStatisticTable.TABLE_BOOKSTATISTIC,
-      values, "_id=($rawSelection)",
-      null
-    )
-  }
-
-
   companion object {
     private val LOG_TAG = PwsDataProvider::class.java.simpleName
     private val URI_MATCHER = UriMatcher(UriMatcher.NO_MATCH)
@@ -283,9 +231,6 @@ class PwsDataProvider : ContentProvider(), PwsDataProviderContract {
       URI_MATCHER.addURI(AUTHORITY, Psalms.Suggestions.PATH_NUMBER, Psalms.Suggestions.URI_MATCH_NUMBER)
       URI_MATCHER.addURI(AUTHORITY, Psalms.Suggestions.PATH_NAME, Psalms.Suggestions.URI_MATCH_NAME)
       URI_MATCHER.addURI(AUTHORITY, Psalms.Search.PATH, Psalms.Search.URI_MATCH)
-      URI_MATCHER.addURI(AUTHORITY, BookStatistic.PATH, BookStatistic.URI_MATCH)
-      URI_MATCHER.addURI(AUTHORITY, BookStatistic.PATH_ID, BookStatistic.URI_MATCH_ID)
-      URI_MATCHER.addURI(AUTHORITY, BookStatistic.PATH_TEXT, BookStatistic.URI_MATCH_TEXT)
     }
   }
 }

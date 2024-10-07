@@ -13,19 +13,23 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+  <!-- Display Preferences -->
+  <PreferenceCategory android:title="@string/pref_display_title">
 
-  <PreferenceCategory app:title="@string/pref_display_title">
+    <!-- Theme List Preference -->
     <ListPreference
-      app:entries="@array/pref_display_theme_entries"
-      app:entryValues="@array/pref_display_theme_values"
-      app:key="@string/pref_themes_key"
-      app:title="@string/pref_display_theme_title" />
+      android:entries="@array/pref_display_theme_entries"
+      android:entryValues="@array/pref_display_theme_values"
+      android:key="@string/pref_themes_key"
+      android:title="@string/pref_display_theme_title" />
+
   </PreferenceCategory>
 
+  <!-- Book Preferences -->
   <PreferenceCategory
-    app:key="@string/pref_books_key"
-    app:title="@string/pref_books_title" />
+    android:key="@string/pref_books_key"
+    android:title="@string/pref_books_title" />
 
 </PreferenceScreen>
