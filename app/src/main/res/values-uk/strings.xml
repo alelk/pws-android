@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- History -->
+  <string name="clear_history_title">Очистити недавні пісні</string>
+  <string name="clear_history_message">Ви впевнені, що хочете очистити список недавніх пісень?</string>
+  <string name="clear">Очистити</string>
+  <string name="cancel">Скасувати</string>
+</resources>

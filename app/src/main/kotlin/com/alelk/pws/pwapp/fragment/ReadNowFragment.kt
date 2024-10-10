@@ -15,9 +15,12 @@
  */
 package com.alelk.pws.pwapp.fragment
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
@@ -71,9 +74,35 @@ class ReadNowFragment : Fragment() {
         }
       }
     }
+
+    setHasOptionsMenu(true)
+  }
+
+  override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+    val menuClearHistory = menu.add(R.string.menu_clear_history)
+    menuClearHistory.setIcon(R.drawable.ic_delete_black_24dp)
+    menuClearHistory.setOnMenuItemClickListener {
+      showClearHistoryConfirmationDialog()
+      true
+    }
+    return super.onCreateOptionsMenu(menu, inflater)
+  }
+
+  private fun showClearHistoryConfirmationDialog() {
+    AlertDialog.Builder(requireContext())
+      .setTitle(R.string.clear_history_title)
+      .setMessage(R.string.clear_history_message)
+      .setPositiveButton(R.string.clear) { _, _ ->
+        viewLifecycleOwner.lifecycleScope.launch {
+          historyViewModel.clearHistory()
+        }
+      }
+      .setNegativeButton(R.string.cancel, null)
+      .show()
   }
 
   companion object {
     private const val DEFAULT_RECENT_LIMIT = 10
+    private const val MENU_CLEAR_HISTORY = Menu.FIRST
   }
 }
