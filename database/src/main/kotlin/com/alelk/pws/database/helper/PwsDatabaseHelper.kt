@@ -27,8 +27,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.alelk.pws.database.R
-import com.alelk.pws.database.provider.PwsDataProviderContract
-import com.alelk.pws.database.table.*
+import timber.log.Timber
 import java.io.*
 
 /**
@@ -36,6 +35,7 @@ import java.io.*
  *
  * Created by Alex Elkin on 29.04.2015.
  */
+@Deprecated("use room migrations")
 class PwsDatabaseHelper(private val mContext: Context) : SQLiteOpenHelper(
   mContext, DATABASE_NAME, null, DATABASE_VERSION
 ) {
@@ -65,7 +65,6 @@ class PwsDatabaseHelper(private val mContext: Context) : SQLiteOpenHelper(
             "PwsDatabaseHelper: Database was not be copied from asset folder: Database does not exists: $dbPath"
           )
         } else {
-          setUpPsalmFts()
           mergePreviousDatabase()
           removePreviousDatabaseIfExists()
         }
@@ -353,10 +352,10 @@ class PwsDatabaseHelper(private val mContext: Context) : SQLiteOpenHelper(
       val number = cursor.getInt(cursor.getColumnIndex("number"))
       db
         .query(
-          false, PwsDataProviderContract.TABLE_PSALMNUMBERS_JOIN_BOOKS,
-          PwsDataProviderContract.PsalmNumbers.PROJECTION,
-          "b." + PwsBookTable.COLUMN_EDITION + " like '" + edition +
-            "' and pn." + PwsPsalmNumbersTable.COLUMN_NUMBER + "=" + number,
+          false,
+          "psalmnumbers AS pn INNER JOIN books as b ON pn.bookid=b._id",
+          arrayOf("pn._id as _id", "pn._id as psalmnumberid", "pn.number as psalm_number", "pn.bookid as book_id"),
+          "b.edition like '$edition' and pn.number=$number",
           null, null, null, null, null
         )
         .use { current ->
@@ -364,10 +363,10 @@ class PwsDatabaseHelper(private val mContext: Context) : SQLiteOpenHelper(
             Log.w(LOG_TAG, "${this::insertFavorites.name}: cannot find psalm with number=$number and edition=$edition in current database.")
           } else {
             val contentValues = ContentValues()
-            contentValues.put(PwsFavoritesTable.COLUMN_POSITION, cursor.getLong(cursor.getColumnIndex("position")))
+            contentValues.put("position", cursor.getLong(cursor.getColumnIndex("position")))
             contentValues.put(
-              PwsFavoritesTable.COLUMN_PSALMNUMBERID,
-              current.getLong(current.getColumnIndex(PwsDataProviderContract.PsalmNumbers.COLUMN_PSALMNUMBER_ID))
+              "psalmnumberid",
+              current.getLong(current.getColumnIndex("psalmnumberid"))
             )
             db.insert("favorites", null, contentValues)
             Log.v(LOG_TAG, "${this::insertFavorites.name}: Inserted new item to favorites: edition=$edition number=$number")
@@ -380,10 +379,7 @@ class PwsDatabaseHelper(private val mContext: Context) : SQLiteOpenHelper(
   private fun insertHistory(db: SQLiteDatabase, cursor: Cursor) {
     val METHOD_NAME = "insertHistory"
     if (!cursor.moveToFirst()) {
-      Log.d(
-        LOG_TAG,
-        "$METHOD_NAME: unable insert history: no history items found in previous db"
-      )
+      Timber.d("unable insert history: no history items found in previous db")
       return
     }
     do {
@@ -392,10 +388,10 @@ class PwsDatabaseHelper(private val mContext: Context) : SQLiteOpenHelper(
         val edition = cursor.getString(cursor.getColumnIndex("edition"))
         val number = cursor.getInt(cursor.getColumnIndex("number"))
         current = db.query(
-          false, PwsDataProviderContract.TABLE_PSALMNUMBERS_JOIN_BOOKS,
-          PwsDataProviderContract.PsalmNumbers.PROJECTION,
-          "b." + PwsBookTable.COLUMN_EDITION + " like '" + edition +
-            "' and pn." + PwsPsalmNumbersTable.COLUMN_NUMBER + "=" + number,
+          false,
+          "psalmnumbers AS pn INNER JOIN books as b ON pn.bookid=b._id",
+          arrayOf("pn._id as _id", "pn._id as psalmnumberid", "pn.number as psalm_number", "pn.bookid as book_id"),
+          "b.edition like '$edition' and pn.number=$number",
           null, null, null, null, null
         )
         if (!current.moveToFirst()) {
@@ -406,14 +402,8 @@ class PwsDatabaseHelper(private val mContext: Context) : SQLiteOpenHelper(
           continue
         }
         val contentValues = ContentValues()
-        contentValues.put(
-          PwsHistoryTable.COLUMN_ACCESSTIMESTAMP,
-          cursor.getString(cursor.getColumnIndex("accesstimestamp"))
-        )
-        contentValues.put(
-          PwsHistoryTable.COLUMN_PSALMNUMBERID,
-          current.getLong(current.getColumnIndex(PwsDataProviderContract.PsalmNumbers.COLUMN_PSALMNUMBER_ID))
-        )
+        contentValues.put("accesstimestamp", cursor.getString(cursor.getColumnIndex("accesstimestamp")))
+        contentValues.put("psalmnumberid", current.getLong(current.getColumnIndex("psalmnumberid")))
         db.insert("history", null, contentValues)
         Log.v(LOG_TAG, METHOD_NAME + ": Inserted new item to history: edition=" + edition + " number=" + number)
       } finally {
@@ -436,34 +426,6 @@ class PwsDatabaseHelper(private val mContext: Context) : SQLiteOpenHelper(
     return null
   }
 
-  private fun setUpPsalmFts() {
-    val METHOD_NAME = "setUpPsalmFts"
-    val db = SQLiteDatabase.openDatabase(dbPath.toString(), null, SQLiteDatabase.OPEN_READWRITE)
-    if (PwsPsalmFtsTable.isTableExists(db) && PwsPsalmFtsTable.isAllTriggersExists(db)) {
-      Log.d(
-        LOG_TAG,
-        "$METHOD_NAME: The PWS Psalm FTS table and it's triggers are exist. No need to recreate."
-      )
-      return
-    }
-    PwsPsalmFtsTable.dropAllTriggers(db)
-    PwsPsalmFtsTable.dropTable(db)
-    PwsPsalmFtsTable.createTable(db)
-    PwsPsalmFtsTable.populateTable(db) { max: Int, current: Int ->
-      publishProgress(
-        R.string.txt_fts_setup,
-        max,
-        current
-      )
-    }
-    PwsPsalmFtsTable.setUpAllTriggers(db)
-    Log.i(
-      LOG_TAG,
-      "$METHOD_NAME: The PWS Psalm FTS table has been created and populated. All needed triggers are setting up."
-    )
-    db.close()
-  }
-
   private fun publishProgress(resourceId: Int, max: Int, current: Int) {
     if (mNotificationBuilder == null || mNotificationManager == null) {
       Log.w(LOG_TAG, "publishProgress: cannot show notification")
@@ -481,7 +443,7 @@ class PwsDatabaseHelper(private val mContext: Context) : SQLiteOpenHelper(
   }
 
   companion object {
-    const val DATABASE_VERSION = 6
+    const val DATABASE_VERSION = 7
     const val DATABASE_NAME = "pws.1.8.0.db"
     private val DATABASE_PREVIOUS_NAMES = arrayOf("pws.1.2.0.db", "pws.1.1.0.db", "pws.0.9.1.db")
     private const val DATABASE_VERSION_091 = 1

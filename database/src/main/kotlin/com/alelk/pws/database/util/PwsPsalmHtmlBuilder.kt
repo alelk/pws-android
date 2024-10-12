@@ -154,7 +154,6 @@ class PwsPsalmHtmlBuilder(private val locale: Locale?) {
     }
 
   companion object {
-    private val LOG_TAG = PwsPsalmHtmlBuilder::class.java.getSimpleName()
     private const val PSALM_VERSE_NUMBER_FORMAT = """^\s*(%s)?\s*(\d{1,2})\s*\.\s*$"""
     private const val PSALM_VERSE_LABEL_FORMAT = """^\s*\[(%s)\s*(\d{1,2})\]\s*$"""
     private const val PSALM_CHORUS_NUMBER_FORMAT = """^\s*(%s)\s*(\d{1,2})?\s*\.\s*$"""

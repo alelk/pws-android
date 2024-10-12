@@ -99,4 +99,5 @@ dependencies {
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
     testImplementation(libs.kotest.runner.junit5)
+    implementation(libs.timber)
 }
