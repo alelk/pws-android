@@ -15,88 +15,73 @@
  */
 package com.alelk.pws.pwapp.adapter
 
-import android.database.Cursor
-import com.alelk.pws.pwapp.adapter.SearchRecyclerViewAdapter.SearchViewHolder
-import android.view.ViewGroup
-import android.view.LayoutInflater
-import com.alelk.pws.pwapp.R
-import androidx.cardview.widget.CardView
-import android.widget.TextView
 import android.os.Build
 import android.text.Html
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.alelk.pws.database.provider.PwsDataProviderContract.Psalms.Search.COLUMN_BOOKDISPLAYNAME
-import com.alelk.pws.database.provider.PwsDataProviderContract.Psalms.Search.COLUMN_PSALMNAME
-import com.alelk.pws.database.provider.PwsDataProviderContract.Psalms.Search.COLUMN_PSALMNUMBER
-import com.alelk.pws.database.provider.PwsDataProviderContract.Psalms.Search.COLUMN_PSALMNUMBER_ID
-import com.alelk.pws.database.provider.PwsDataProviderContract.Psalms.Search.COLUMN_SNIPPET
+import com.alelk.pws.database.dao.SongSearchResult
+import com.alelk.pws.pwapp.R
 
 /**
  * Search Recycler View Adapter
  *
  * Created by Alex Elkin on 23.05.2016.
  */
-// todo: reimplement
-@Deprecated("reimplement using room")
-class SearchRecyclerViewAdapter(private val mClickListener: (psalmNumberId: Long) -> Unit) :
-  RecyclerView.Adapter<SearchViewHolder>() {
 
-  private var mCursor: Cursor? = null
-  fun swapCursor(cursor: Cursor?) {
-    if (mCursor != null) mCursor!!.close()
-    mCursor = cursor
-    notifyDataSetChanged()
-  }
+class SearchRecyclerViewAdapter(
+  private val mClickListener: (psalmNumberId: Long) -> Unit
+) : ListAdapter<SongSearchResult, SearchRecyclerViewAdapter.SearchViewHolder>(DiffCallback()) {
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchViewHolder {
-    val v = LayoutInflater.from(parent.context)
+    val view = LayoutInflater.from(parent.context)
       .inflate(R.layout.layout_search_list_item, parent, false)
-    return SearchViewHolder(v)
+    return SearchViewHolder(view)
   }
 
   override fun onBindViewHolder(holder: SearchViewHolder, position: Int) {
-    if (mCursor != null && !mCursor!!.isClosed && mCursor!!.moveToPosition(position)) {
-      holder.bind(mCursor!!, mClickListener)
-    }
-  }
-
-  override fun getItemCount(): Int {
-    return if (mCursor == null || mCursor!!.isClosed) 0 else mCursor!!.count
+    val psalmSearchResult = getItem(position)
+    holder.bind(psalmSearchResult, mClickListener)
   }
 
   class SearchViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    var cardView: CardView
-    var psalmName: TextView
-    var psalmNumber: TextView
-    var bookDisplayName: TextView
-    var text: TextView
-    var psalmNumberId: Long = 0
+    private val songName: TextView = itemView.findViewById(R.id.txt_psalm_name)
+    private val songNumber: TextView = itemView.findViewById(R.id.txt_psalm_number)
+    private val bookDisplayName: TextView = itemView.findViewById(R.id.txt_book_name)
+    private val text: TextView = itemView.findViewById(R.id.txt_text)
 
-    init {
-      cardView = itemView.findViewById(R.id.cv_search)
-      psalmName = itemView.findViewById(R.id.txt_psalm_name)
-      psalmNumber = itemView.findViewById(R.id.txt_psalm_number)
-      bookDisplayName = itemView.findViewById(R.id.txt_book_name)
-      text = itemView.findViewById(R.id.txt_text)
-    }
-
-    fun bind(cursor: Cursor, onItemClickListener: (psalmNumberId: Long) -> Unit) {
-      psalmNumber.text = cursor.getString(cursor.getColumnIndex(COLUMN_PSALMNUMBER))
-      psalmName.text = cursor.getString(cursor.getColumnIndex(COLUMN_PSALMNAME))
-      bookDisplayName.text = cursor.getString(cursor.getColumnIndex(COLUMN_BOOKDISPLAYNAME))
-      val snippet = cursor.getString(cursor.getColumnIndex(COLUMN_SNIPPET))
-      if (snippet != null) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-          text.text = Html.fromHtml(snippet, Html.FROM_HTML_MODE_LEGACY)
+    fun bind(
+      psalmSearchResult: SongSearchResult,
+      onItemClickListener: (psalmNumberId: Long) -> Unit
+    ) {
+      songNumber.text = psalmSearchResult.songNumber.toString()
+      songName.text = psalmSearchResult.songName
+      bookDisplayName.text = psalmSearchResult.bookDisplayName
+      val snippet = psalmSearchResult.snippet
+      if (snippet.isNotEmpty()) {
+        text.text = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+          Html.fromHtml(snippet, Html.FROM_HTML_MODE_LEGACY)
         } else {
-          text.text = Html.fromHtml(snippet)
+          Html.fromHtml(snippet)
         }
       }
-      psalmNumberId = cursor.getLong(cursor.getColumnIndex(COLUMN_PSALMNUMBER_ID))
       itemView.setOnClickListener {
-        onItemClickListener(psalmNumberId)
+        onItemClickListener(psalmSearchResult.songNumberId)
       }
+    }
+  }
+
+  class DiffCallback : DiffUtil.ItemCallback<SongSearchResult>() {
+    override fun areItemsTheSame(oldItem: SongSearchResult, newItem: SongSearchResult): Boolean {
+      return oldItem.songNumberId == newItem.songNumberId
+    }
+
+    override fun areContentsTheSame(oldItem: SongSearchResult, newItem: SongSearchResult): Boolean {
+      return oldItem == newItem
     }
   }
 }

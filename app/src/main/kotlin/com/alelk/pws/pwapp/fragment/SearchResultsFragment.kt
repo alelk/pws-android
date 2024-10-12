@@ -17,38 +17,36 @@ package com.alelk.pws.pwapp.fragment
 
 import android.content.Context
 import android.content.Intent
-import android.database.Cursor
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.loader.app.LoaderManager
-import androidx.loader.content.CursorLoader
-import androidx.loader.content.Loader
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.alelk.pws.database.provider.PwsDataProviderContract
 import com.alelk.pws.pwapp.R
 import com.alelk.pws.pwapp.activity.SongActivity
 import com.alelk.pws.pwapp.adapter.SearchRecyclerViewAdapter
+import com.alelk.pws.pwapp.model.SearchSongViewModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
-/**
- * Search Result Fragment
+/** Search Result Fragment
  *
  * Created by Alex Elkin on 23.05.2016.
  */
-class SearchResultsFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
-  private var mQuery: String? = null
-  private var mRecyclerView: RecyclerView? = null
-  private var mSearchResultsAdapter: SearchRecyclerViewAdapter? = null
-  private var mLayoutSearchProgress: View? = null
+class SearchResultsFragment : Fragment() {
+
+  private val searchViewModel: SearchSongViewModel by activityViewModels()
+
   override fun onAttach(context: Context) {
     super.onAttach(context)
-    if (arguments != null) {
-      mQuery = requireArguments().getString(KEY_QUERY)
-    }
+    searchViewModel.setSearchQuery(requireArguments().getString(KEY_QUERY))
   }
 
   override fun onCreateView(
@@ -57,64 +55,37 @@ class SearchResultsFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> 
     savedInstanceState: Bundle?
   ): View? {
     val v = inflater.inflate(R.layout.fragment_search_results, null)
-    mRecyclerView = v.findViewById(R.id.rv_search_results)
-    mLayoutSearchProgress = v.findViewById(R.id.layout_search_progress)
-    val layoutManager = LinearLayoutManager(
-      requireActivity().applicationContext
-    )
-    mRecyclerView?.layoutManager = layoutManager
-    mSearchResultsAdapter =
-      SearchRecyclerViewAdapter { psalmNumberId: Long ->
-        val intentPsalmView = Intent(requireActivity().baseContext, SongActivity::class.java)
-        intentPsalmView.putExtra(SongActivity.KEY_SONG_NUMBER_ID, psalmNumberId)
-        startActivity(intentPsalmView)
-      }
-    mRecyclerView?.adapter = mSearchResultsAdapter
-    mLayoutSearchProgress?.visibility = View.VISIBLE
-    loaderManager.initLoader(PWS_SEARCH_RESULTS_LOADER, null, this)
-    return v
-  }
+    val recyclerView = v.findViewById<RecyclerView>(R.id.rv_search_results)
+    val layoutSearchProgress = v.findViewById<View>(R.id.layout_search_progress)
 
-  override fun onCreateLoader(loaderId: Int, args: Bundle?): Loader<Cursor> {
-    if (TextUtils.isEmpty(mQuery)) throw java.lang.IllegalStateException("unable to create cursor loader")
-    when (loaderId) {
-      PWS_SEARCH_RESULTS_LOADER -> return CursorLoader(
-        requireActivity().baseContext,
-        PwsDataProviderContract.Psalms.Search.CONTENT_URI,
-        null,
-        null, arrayOf(mQuery),
-        null
-      )
-      else -> throw java.lang.IllegalStateException("unable to create cursor loader")
+    recyclerView.layoutManager = LinearLayoutManager(requireContext())
+    val adapter = SearchRecyclerViewAdapter { songNumberId: Long ->
+      val intent = Intent(requireContext(), SongActivity::class.java)
+      intent.putExtra(SongActivity.KEY_SONG_NUMBER_ID, songNumberId)
+      startActivity(intent)
     }
-  }
+    recyclerView.adapter = adapter
 
-  override fun onLoadFinished(loader: Loader<Cursor>, data: Cursor) {
-    mSearchResultsAdapter!!.swapCursor(data)
-    mLayoutSearchProgress!!.visibility = View.GONE
-    mRecyclerView!!.visibility = View.VISIBLE
-  }
-
-  override fun onLoaderReset(loader: Loader<Cursor>) {
-    mSearchResultsAdapter!!.swapCursor(null)
-  }
-
-  fun updateQuery(query: String?) {
-    mQuery = query
-    loaderManager.restartLoader(PWS_SEARCH_RESULTS_LOADER, null, this)
-    if (mLayoutSearchProgress != null) mLayoutSearchProgress!!.visibility = View.VISIBLE
-    if (mRecyclerView != null) mRecyclerView!!.visibility = View.INVISIBLE
+    viewLifecycleOwner.lifecycleScope.launch {
+      repeatOnLifecycle(Lifecycle.State.STARTED) {
+        searchViewModel.searchResults.collectLatest { searchResults ->
+          adapter.submitList(searchResults)
+          layoutSearchProgress?.visibility = View.GONE
+        }
+      }
+    }
+    return v
   }
 
   companion object {
     const val KEY_QUERY = "com.alelk.pws.pwapp.query"
-    const val PWS_SEARCH_RESULTS_LOADER = 4
+
     fun newInstance(query: String?): SearchResultsFragment {
-      val args = Bundle()
-      args.putString(KEY_QUERY, query)
-      val fragment = SearchResultsFragment()
-      fragment.arguments = args
-      return fragment
+      return SearchResultsFragment().apply {
+        arguments = Bundle().apply {
+          putString(KEY_QUERY, query)
+        }
+      }
     }
   }
 }

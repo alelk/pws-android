@@ -22,13 +22,18 @@ import android.text.InputType
 import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
+import androidx.fragment.app.commit
 import com.alelk.pws.pwapp.R
 import com.alelk.pws.pwapp.activity.base.AppCompatThemedActivity
 import com.alelk.pws.pwapp.fragment.SearchResultsFragment
+import com.alelk.pws.pwapp.model.SearchSongViewModel
 
-// todo: reimplement using room
 class SearchActivity : AppCompatThemedActivity() {
+
+  private val searchViewModel: SearchSongViewModel by viewModels()
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_search)
@@ -46,25 +51,26 @@ class SearchActivity : AppCompatThemedActivity() {
   }
 
   private fun handleIntent() {
-    var resultsFragment =
-      supportFragmentManager.findFragmentById(R.id.fragment_search_results) as SearchResultsFragment?
+    var resultsFragment = supportFragmentManager.findFragmentById(R.id.fragment_search_results) as? SearchResultsFragment
     if (Intent.ACTION_SEARCH == intent.action) {
       val query = intent.getStringExtra(SearchManager.QUERY)
       if (resultsFragment != null) {
-        resultsFragment.updateQuery(query)
+        searchViewModel.setSearchQuery(query)
       } else {
         resultsFragment = SearchResultsFragment.newInstance(query)
-        supportFragmentManager.beginTransaction()
-          .add(R.id.fragment_search_results, resultsFragment).commit()
+        supportFragmentManager.commit {
+          add(R.id.fragment_search_results, resultsFragment)
+        }
       }
     } else if (Intent.ACTION_VIEW == intent.action) {
       val data = intent.data ?: return
       val n = data.lastPathSegment ?: return
-      val psalmNumberId = n.toLong()
-      if (psalmNumberId != -1L) {
-        val intentPsalmView = Intent(applicationContext, SongActivity::class.java)
-        intentPsalmView.putExtra(SongActivity.KEY_SONG_NUMBER_ID, psalmNumberId)
-        startActivity(intentPsalmView)
+      val songNumberId = n.toLong()
+      if (songNumberId != -1L) {
+        val intentSongView = Intent(applicationContext, SongActivity::class.java).apply {
+          putExtra(SongActivity.KEY_SONG_NUMBER_ID, songNumberId)
+        }
+        startActivity(intentSongView)
       }
     }
   }
@@ -73,11 +79,7 @@ class SearchActivity : AppCompatThemedActivity() {
     menuInflater.inflate(R.menu.menu_search, menu)
     val searchManager = getSystemService(SEARCH_SERVICE) as SearchManager?
     val searchView = menu.findItem(R.id.menu_search).actionView as SearchView?
-    if (searchManager != null) searchView!!.setSearchableInfo(
-      searchManager.getSearchableInfo(
-        componentName
-      )
-    )
+    if (searchManager != null) searchView!!.setSearchableInfo(searchManager.getSearchableInfo(componentName))
     val query = intent.getStringExtra(SearchManager.QUERY)
     if (TextUtils.isEmpty(query)) {
       searchView!!.isIconified = false
