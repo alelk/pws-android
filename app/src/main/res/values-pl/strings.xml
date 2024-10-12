@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- History -->
+  <string name="clear_history_title">Wyczyść ostatnie pieśni</string>
+  <string name="clear_history_message">Czy na pewno chcesz wyczyścić listę ostatnich pieśni?</string>
+  <string name="clear">Wyczyść</string>
+  <string name="cancel">Anuluj</string>
+</resources>
