@@ -5,7 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import com.alelk.pws.database.DatabaseProvider
 import com.alelk.pws.database.dao.Book
 import com.alelk.pws.database.dao.BookDao
-import com.alelk.pws.database.entity.SongNumberEntity
+import io.github.alelk.pws.database.common.entity.SongNumberEntity
 import kotlinx.coroutines.flow.Flow
 
 class BooksViewModel(application: Application) : AndroidViewModel(application) {

@@ -5,9 +5,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.alelk.pws.database.DatabaseProvider
 import com.alelk.pws.database.dao.SongNumberWithSong
-import com.alelk.pws.database.entity.BookEntity
-import com.alelk.pws.database.entity.SongNumberEntity
-import com.alelk.pws.database.model.BookExternalId
+import io.github.alelk.pws.database.common.entity.BookEntity
+import io.github.alelk.pws.database.common.entity.SongNumberEntity
+import io.github.alelk.pws.database.common.model.BookExternalId
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

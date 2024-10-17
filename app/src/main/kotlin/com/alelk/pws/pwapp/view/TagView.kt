@@ -7,7 +7,7 @@ import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.cardview.widget.CardView
-import com.alelk.pws.database.entity.TagEntity
+import io.github.alelk.pws.database.common.entity.TagEntity
 
 class TagView(
   context: Context,

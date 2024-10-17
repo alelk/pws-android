@@ -5,8 +5,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.alelk.pws.database.DatabaseProvider
 import com.alelk.pws.database.dao.SongInfo
-import com.alelk.pws.database.entity.TagEntity
-import com.alelk.pws.database.model.TagId
+import io.github.alelk.pws.database.common.entity.TagEntity
+import io.github.alelk.pws.database.common.model.TagId
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow

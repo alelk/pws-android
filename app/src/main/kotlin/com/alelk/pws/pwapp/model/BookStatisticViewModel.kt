@@ -4,8 +4,8 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import com.alelk.pws.database.DatabaseProvider
 import com.alelk.pws.database.dao.BookStatisticWithBook
-import com.alelk.pws.database.entity.BookStatisticEntity
-import com.alelk.pws.database.model.BookExternalId
+import io.github.alelk.pws.database.common.entity.BookStatisticEntity
+import io.github.alelk.pws.database.common.model.BookExternalId
 import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
 
