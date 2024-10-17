@@ -140,22 +140,27 @@ android {
 }
 
 publishing {
+  val versionName by lazy { rootProject.extra["versionName"] as String }
+  val isSnapshot by lazy { versionName.endsWith("SNAPSHOT") }
+
   publications {
     create<MavenPublication>("gpr") {
       from(components["kotlin"])
       groupId = "io.github.alelk.pws"
-      artifactId = "pws-database"
-      version = "1.0.0" // todo
-      artifact(tasks.getByName("jvmJar")) // todo: common jar?
+      artifactId = if (!isSnapshot) "pws-database" else "pws-database-snapshot"
+      version = versionName
+      artifact(tasks.getByName("jvmJar")) {
+        classifier = "jvm"
+      }
     }
   }
 
   repositories {
     maven {
-      name = "GitHubPackages"
+      name = if (isSnapshot) "GitHubPackages-Snapshots" else "GitHubPackages"
       url = uri("https://maven.pkg.github.com/alelk/pws-android")
       credentials {
-        username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_USER")
+        username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_USER") ?: "alelk"
         password = project.findProperty("gpr.token") as String? ?: System.getenv("GITHUB_TOKEN")
       }
     }
