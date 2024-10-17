@@ -25,7 +25,7 @@ val sdkVersion by extra(35)
 val supportVersion by extra("29.0.2")
 val constraintLayoutVersion by extra("2.1.4")
 val versionCode by extra(28)
-val versionName by extra("1.9.0")
+val versionName by extra(checkNotNull(File("app.version").readText().lines().firstOrNull()?.trim()?.takeIf { it.isNotBlank() }) { "app.version empty" })
 val versionNameSuffix by extra(getDate().lowercase())
 val kotlinVersion = libs.versions.kotlin.get()
 plugins {

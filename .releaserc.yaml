@@ -1,0 +1,37 @@
+branches:
+  # release branch
+  - master
+
+  # maintenance branch
+  - name: '+([0-9])?(.{+([0-9]),x}).x'
+
+  # prerelease branch
+  - name: next
+    prerelease: rc
+    channel: '${name}'
+
+tagFormat: v${version}
+
+plugins:
+  - '@semantic-release/commit-analyzer'
+  - '@semantic-release/release-notes-generator'
+  - - '@semantic-release/changelog'
+    - changelogFile: CHANGELOG.md
+      changelogTitle: '# PWS Android'
+  - - '@semantic-release/exec'
+    - analyzeCommitsCmd: |
+        echo "${lastRelease.version}" > .lastRelease.txt
+      verifyReleaseCmd: |
+        echo "${nextRelease.version}" > .nextRelease.txt
+      publishCmd: ./publish.sh
+  - - '@semantic-release/git'
+    - assets:
+        - CHANGELOG.md
+        - app.version
+      message: "chore(release): ${nextRelease.version} [skip ci]\n\nRelease notes:\n${nextRelease.notes}"
+      conditionCmd: |
+        if [[ "${BRANCH_NAME}" == "master" || "${BRANCH_NAME}" == "next" ]]; then
+          echo "true";
+        else
+          echo "false";
+        fi
