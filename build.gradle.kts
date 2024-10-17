@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
@@ -23,34 +25,40 @@ val sdkVersion by extra(35)
 val supportVersion by extra("29.0.2")
 val constraintLayoutVersion by extra("2.1.4")
 val versionCode by extra(28)
-val versionName by extra("1.8.0")
+val versionName by extra("1.9.0")
 val versionNameSuffix by extra(getDate().lowercase())
 val kotlinVersion = libs.versions.kotlin.get()
 plugins {
-    alias(libs.plugins.android.application) apply false
-    alias(libs.plugins.kotlin.android) apply false
+  alias(libs.plugins.android.application) apply false
+  alias(libs.plugins.kotlin.android) apply false
 }
 
 allprojects {
-    buildscript {
+  buildscript {
 
-        dependencies {
-            classpath("com.android.tools.build:gradle:8.6.1")
-            classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-        }
+    dependencies {
+      classpath("com.android.tools.build:gradle:8.6.1")
+      classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     }
-    repositories {
-        google()
-        mavenCentral()
+  }
+  repositories {
+    google()
+    mavenCentral()
+  }
+
+  tasks.withType<KotlinCompile> {
+    compilerOptions {
+      jvmTarget.set(JvmTarget.JVM_21)
     }
+  }
 }
 
 tasks.register<Delete>("clean") {
-    delete(rootProject.layout.buildDirectory)
+  delete(rootProject.layout.buildDirectory)
 }
 
 fun getDate(): String {
-    val df = SimpleDateFormat("MMM-d-yyyy", Locale("en_EN"))
-    df.timeZone = TimeZone.getTimeZone("UTC")
-    return df.format(Date())
+  val df = SimpleDateFormat("MMM-d-yyyy", Locale("en_EN"))
+  df.timeZone = TimeZone.getTimeZone("UTC")
+  return df.format(Date())
 }

@@ -1,11 +1,11 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 
 plugins {
-  id("org.jetbrains.kotlin.multiplatform")
   id("com.google.devtools.ksp") version "${libs.versions.kotlin.get()}-${libs.versions.ksp.get()}"
   id("com.android.library")
+  id("org.jetbrains.kotlin.multiplatform")
+  alias(libs.plugins.kotest.multiplatform)
   id("maven-publish")
-  //id("kotlin-kapt")
 }
 
 kotlin {
@@ -17,6 +17,15 @@ kotlin {
       dependencies {
         implementation(libs.room.runtime)
         implementation(libs.kotlinx.coroutines.core)
+      }
+    }
+    val commonTest by getting {
+      dependencies {
+        implementation(libs.kotest.assertions.core)
+        implementation(libs.kotest.framework.engine)
+        implementation(libs.kotest.property)
+        implementation(kotlin("test-common"))
+        implementation(kotlin("test-annotations-common"))
       }
     }
     val androidMain by getting {
@@ -41,6 +50,9 @@ kotlin {
         implementation(libs.kotest.runner.junit5)
         implementation(libs.kotest.property)
         implementation(libs.kotest.assertions.core)
+        implementation(libs.androidx.test.core)
+        implementation(libs.kotest.runner.android)
+        implementation(libs.kotest.extensions.android)
       }
     }
   }
@@ -78,6 +90,7 @@ android {
     resValue("string", "db_authority", "com.alelk.pws.database")
     buildConfigField("String", "DB_AUTHORITY", "\"com.alelk.pws.database\"")
     minSdk = 21
+    testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
 
   lint {
@@ -96,8 +109,8 @@ android {
   }
 
   compileOptions {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
   }
 
   flavorDimensions.add("contentLevel")
