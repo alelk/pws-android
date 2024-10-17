@@ -87,7 +87,8 @@ class SongEditActivity : AppCompatThemedActivity() {
     val bibleRef = findViewById<EditText>(R.id.bibleRefEdit).text.toString()
     val tonality = findViewById<Spinner>(R.id.psalmTonalitiesSpinner).selectedItem.toString()
 
-    val nextTonality = if (tonality != getString(R.string.tonality_not_defined)) com.alelk.pws.database.model.Tonality.fromIdentifier(tonality) else null
+    val nextTonality =
+      if (tonality != getString(R.string.tonality_not_defined)) io.github.alelk.pws.database.common.model.Tonality.fromIdentifier(tonality) else null
 
     songViewModel.update { it.copy(name = name, lyric = lyric, bibleRef = bibleRef, tonalities = listOfNotNull(nextTonality)) }
 

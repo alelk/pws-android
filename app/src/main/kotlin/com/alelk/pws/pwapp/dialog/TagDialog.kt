@@ -8,10 +8,10 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
-import com.alelk.pws.database.entity.TagEntity
-import com.alelk.pws.database.model.TagId
-import com.alelk.pws.database.model.Color as DbColor
+import io.github.alelk.pws.database.common.model.Color as DbColor
 import com.alelk.pws.pwapp.R
+import io.github.alelk.pws.database.common.entity.TagEntity
+import io.github.alelk.pws.database.common.model.TagId
 import kotlin.random.Random
 import yuku.ambilwarna.AmbilWarnaDialog as ColorDialog
 

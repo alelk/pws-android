@@ -38,8 +38,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.alelk.pws.database.data.Tonality.Companion.getInstanceBySignature
-import com.alelk.pws.database.entity.SongEntity
-import com.alelk.pws.database.entity.TagEntity
 import com.alelk.pws.database.util.PwsSongUtil
 import com.alelk.pws.pwapp.R
 import com.alelk.pws.pwapp.activity.SongActivity
@@ -50,6 +48,8 @@ import com.alelk.pws.pwapp.model.textDocument
 import com.alelk.pws.pwapp.model.textDocumentHtml
 import com.alelk.pws.pwapp.view.TagView
 import com.google.android.flexbox.FlexboxLayout
+import io.github.alelk.pws.database.common.entity.SongEntity
+import io.github.alelk.pws.database.common.entity.TagEntity
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay

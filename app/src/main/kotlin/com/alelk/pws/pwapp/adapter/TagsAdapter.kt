@@ -8,8 +8,8 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.alelk.pws.database.entity.TagEntity
 import com.alelk.pws.pwapp.R
+import io.github.alelk.pws.database.common.entity.TagEntity
 
 class TagsAdapter(
   private val onTagSelect: (TagEntity) -> Unit,

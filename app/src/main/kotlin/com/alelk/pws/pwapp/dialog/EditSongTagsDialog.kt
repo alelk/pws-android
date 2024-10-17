@@ -4,10 +4,10 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
-import com.alelk.pws.database.entity.TagEntity
 import com.alelk.pws.pwapp.R
 import com.alelk.pws.pwapp.view.TagView
 import com.google.android.flexbox.FlexboxLayout
+import io.github.alelk.pws.database.common.entity.TagEntity
 import java.util.SortedSet
 
 class EditSongTagsDialog(private val activity: Activity) {

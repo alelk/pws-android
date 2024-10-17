@@ -1,4 +1,4 @@
-[*.kt]
+[{*.kt,*.kts}]
 
 charset = utf-8
 indent_size = 2
