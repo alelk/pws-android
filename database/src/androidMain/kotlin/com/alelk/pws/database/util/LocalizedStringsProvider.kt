@@ -13,7 +13,7 @@ import java.util.ResourceBundle
 // todo: refactor; move to app module?
 object LocalizedStringsProvider {
   private const val RESOURCE_BUNDLE_NAME = "strings"
-  private val LOG_TAG = LocalizedStringsProvider::class.java.getSimpleName()
+  private val LOG_TAG = LocalizedStringsProvider::class.java.simpleName
 
   @JvmStatic
   fun getResource(stringKey: String, locale: Locale): String? {

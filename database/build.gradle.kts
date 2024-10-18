@@ -1,6 +1,4 @@
-import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   id("com.google.devtools.ksp") version "${libs.versions.kotlin.get()}-${libs.versions.ksp.get()}"
@@ -81,11 +79,6 @@ dependencies {
 
 tasks.withType<Test> {
   useJUnitPlatform()
-}
-
-tasks.withType<JavaCompile> {
-  sourceCompatibility = JavaVersion.VERSION_21.majorVersion
-  targetCompatibility = JavaVersion.VERSION_21.majorVersion
 }
 
 android {
