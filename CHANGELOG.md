@@ -1,5 +1,12 @@
 # PWS Android
 
+# [1.10.0](https://github.com/alelk/pws-android/compare/v1.9.1...v1.10.0) (2024-10-18)
+
+
+### Features
+
+* **database:** implement jvm database ([48c073c](https://github.com/alelk/pws-android/commit/48c073c737c4b5e6fe389611bcb94d0f7952f4ff))
+
 ## [1.9.1](https://github.com/alelk/pws-android/compare/v1.9.0...v1.9.1) (2024-10-17)
 
 
