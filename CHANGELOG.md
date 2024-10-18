@@ -1,5 +1,12 @@
 # PWS Android
 
+## [1.10.4](https://github.com/alelk/pws-android/compare/v1.10.3...v1.10.4) (2024-10-18)
+
+
+### Bug Fixes
+
+* **database:** optimize build scripts ([de2694a](https://github.com/alelk/pws-android/commit/de2694a38ff7da9446912b691e087a0159c19357))
+
 ## [1.10.3](https://github.com/alelk/pws-android/compare/v1.10.2...v1.10.3) (2024-10-18)
 
 
