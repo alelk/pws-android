@@ -9,8 +9,11 @@ plugins {
 }
 
 kotlin {
-  androidTarget()
-  jvm()
+  androidTarget {
+    publishLibraryVariants("ruRelease")
+  }
+  jvm {
+  }
 
   sourceSets {
     val commonMain by getting {
@@ -151,13 +154,9 @@ publishing {
 
   publications {
     create<MavenPublication>("gpr") {
-      from(components["kotlin"])
       groupId = "io.github.alelk.pws"
       artifactId = if (!isSnapshot) "pws-database" else "pws-database-snapshot"
       version = versionName
-      artifact(tasks.getByName("jvmJar")) {
-        classifier = "jvm"
-      }
     }
   }
 

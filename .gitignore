@@ -12,3 +12,5 @@ local.properties
 
 # build results (apk)
 /app/*/release/
+
+/database/test-data
