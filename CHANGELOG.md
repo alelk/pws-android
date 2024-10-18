@@ -1,5 +1,12 @@
 # PWS Android
 
+## [1.10.3](https://github.com/alelk/pws-android/compare/v1.10.2...v1.10.3) (2024-10-18)
+
+
+### Bug Fixes
+
+* **database:** database refactoring: remove redundant dao methods ([7a078ad](https://github.com/alelk/pws-android/commit/7a078ade9ffa7a62715653fa461d587c5d30c31e))
+
 ## [1.10.2](https://github.com/alelk/pws-android/compare/v1.10.1...v1.10.2) (2024-10-18)
 
 
