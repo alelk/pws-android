@@ -149,7 +149,7 @@ android {
 }
 
 publishing {
-  val versionName by lazy { rootProject.extra["versionName"] as String }
+  val versionName = rootProject.extra["versionName"] as String
   val isSnapshot by lazy { versionName.endsWith("SNAPSHOT") }
 
   publications {
@@ -157,6 +157,8 @@ publishing {
       groupId = "io.github.alelk.pws"
       artifactId = if (!isSnapshot) "pws-database" else "pws-database-snapshot"
       version = versionName
+      //from(components["kotlin"])
+      artifact(tasks.named("jvmJar"))
     }
   }
 
