@@ -38,13 +38,6 @@ kotlin {
         implementation(libs.timber)
       }
     }
-    val jvmMain by getting {
-      dependencies {
-        implementation(libs.kotlinx.coroutines.core)
-        implementation(libs.room.runtime)
-        implementation(libs.room.ktx)
-      }
-    }
     val androidUnitTest by getting {
       dependencies {
         implementation(libs.kotest.runner.junit5)
@@ -53,6 +46,19 @@ kotlin {
         implementation(libs.androidx.test.core)
         implementation(libs.kotest.runner.android)
         implementation(libs.kotest.extensions.android)
+      }
+    }
+    val jvmMain by getting {
+      dependencies {
+        implementation(libs.kotlinx.coroutines.core)
+        implementation(libs.room.runtime.jvm)
+        implementation(libs.room.ktx)
+      }
+    }
+    val jvmTest by getting {
+      dependencies {
+        implementation(libs.kotest.runner.junit5)
+        implementation(libs.sqlite.bundled)
       }
     }
   }
