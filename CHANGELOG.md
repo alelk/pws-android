@@ -1,5 +1,12 @@
 # PWS Android
 
+## [1.10.2](https://github.com/alelk/pws-android/compare/v1.10.1...v1.10.2) (2024-10-18)
+
+
+### Bug Fixes
+
+* **publishing:** fix maven publishing (include jvmJar artifact) ([d509d85](https://github.com/alelk/pws-android/commit/d509d858a7c540de140255706e06ace1e7a511f8))
+
 ## [1.10.1](https://github.com/alelk/pws-android/compare/v1.10.0...v1.10.1) (2024-10-18)
 
 
