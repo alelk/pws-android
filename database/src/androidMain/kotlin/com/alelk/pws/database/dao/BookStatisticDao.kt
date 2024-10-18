@@ -25,14 +25,8 @@ interface BookStatisticDao {
   @Insert(onConflict = OnConflictStrategy.ABORT)
   suspend fun insert(bookStatistic: BookStatisticEntity): Long
 
-  @Insert(onConflict = OnConflictStrategy.ABORT)
-  suspend fun insert(bookStatistics: List<BookStatisticEntity>): List<Long>
-
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   suspend fun update(bookStatistic: BookStatisticEntity): Long
-
-  @Insert(onConflict = OnConflictStrategy.REPLACE)
-  suspend fun update(bookStatistics: List<BookStatisticEntity>): List<Long>
 
   @Transaction
   @Query("SELECT * FROM bookstatistic ORDER BY _id")
@@ -43,9 +37,6 @@ interface BookStatisticDao {
 
   @Query("SELECT * FROM bookstatistic WHERE bookid = :bookId")
   suspend fun getByBookId(bookId: Long): BookStatisticEntity?
-
-  @Query("SELECT * FROM bookstatistic WHERE bookid IN (:bookIds)")
-  suspend fun getByBookIds(bookIds: List<Long>): List<BookStatisticEntity>
 
   @Query("SELECT * FROM bookstatistic bs INNER JOIN books b on bs.bookid = b._id WHERE b.edition = :bookExternalId")
   suspend fun getByBookExternalId(bookExternalId: BookExternalId): BookStatisticWithBook?

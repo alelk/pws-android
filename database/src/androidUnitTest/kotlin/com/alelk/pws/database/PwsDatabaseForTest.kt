@@ -25,21 +25,6 @@ import kotlinx.coroutines.flow.toList
 fun pwsDbForTest(context: Context = ApplicationProvider.getApplicationContext()): PwsDatabase =
   Room.inMemoryDatabaseBuilder(context, PwsDatabase::class.java).build()
 
-suspend fun PwsDatabase.clean() {
-  val db = this
-  db.withTransaction {
-    db.songSongReferenceDao().deleteAll()
-    db.historyDao().deleteAll()
-    db.favoriteDao().deleteAll()
-    db.bookStatisticDao().deleteAll()
-    db.songNumberDao().deleteAll()
-    db.songDao().deleteAll()
-    db.bookDao().deleteAll()
-  }
-}
-
-suspend fun PwsDatabase.withBookEntities(books: List<BookEntity>): List<BookEntity> = this.withBookEntities(books) { it }
-
 suspend fun <T> PwsDatabase.withBookEntities(books: List<BookEntity>, body: suspend (books: List<BookEntity>) -> T): T {
   val db = this
   val bookIds = db.bookDao().insert(books)
@@ -54,8 +39,6 @@ suspend fun <T> PwsDatabase.withBookEntities(
 ): T =
   this.withBookEntities(booksArb.take(countBooks).toList(), body)
 
-suspend fun PwsDatabase.withSongEntities(songs: List<SongEntity>): List<SongEntity> = this.withSongEntities(songs) { it }
-
 suspend fun <T> PwsDatabase.withSongEntities(songs: List<SongEntity>, body: suspend (songs: List<SongEntity>) -> T): T {
   val db = this
   val songIds = db.songDao().insert(songs)
@@ -69,8 +52,6 @@ suspend fun <T> PwsDatabase.withSongEntities(
   body: suspend (songs: List<SongEntity>) -> T
 ): T =
   this.withSongEntities(songsArb.take(countSongs).toList(), body)
-
-suspend fun PwsDatabase.withSongNumberEntities(songNumbers: List<SongNumberEntity>): List<SongNumberEntity> = this.withSongNumberEntities(songNumbers) { it }
 
 suspend fun <T> PwsDatabase.withSongNumberEntities(songNumbers: List<SongNumberEntity>, body: suspend (songs: List<SongNumberEntity>) -> T): T {
   val db = this

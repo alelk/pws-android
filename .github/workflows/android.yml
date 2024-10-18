@@ -28,7 +28,6 @@ jobs:
 
     - name: Build ruDebug & ukDebug
       run: |
-        chmod +x gradlew
         ./gradlew buildRuDebug buildUkDebug testRuDebug :database:jvmTest
 
     - name: Set up Node 20

@@ -1,4 +1,6 @@
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   id("com.google.devtools.ksp") version "${libs.versions.kotlin.get()}-${libs.versions.ksp.get()}"
@@ -12,8 +14,7 @@ kotlin {
   androidTarget {
     publishLibraryVariants("ruRelease")
   }
-  jvm {
-  }
+  jvm()
 
   sourceSets {
     val commonMain by getting {
@@ -80,6 +81,11 @@ dependencies {
 
 tasks.withType<Test> {
   useJUnitPlatform()
+}
+
+tasks.withType<JavaCompile> {
+  sourceCompatibility = JavaVersion.VERSION_21.majorVersion
+  targetCompatibility = JavaVersion.VERSION_21.majorVersion
 }
 
 android {
@@ -157,8 +163,8 @@ publishing {
       groupId = "io.github.alelk.pws"
       artifactId = if (!isSnapshot) "pws-database" else "pws-database-snapshot"
       version = versionName
-      //from(components["kotlin"])
       artifact(tasks.named("jvmJar"))
+      artifact(tasks.named("jvmSourcesJar"))
     }
   }
 

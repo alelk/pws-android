@@ -2,11 +2,9 @@ package com.alelk.pws.database.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
-import androidx.room.Embedded
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Relation
 import androidx.room.Transaction
 import io.github.alelk.pws.database.common.entity.BookEntity
 import io.github.alelk.pws.database.common.entity.SongNumberEntity
@@ -15,13 +13,6 @@ import kotlinx.coroutines.flow.Flow
 
 data class Book(val id: Long, val externalId: BookExternalId, val name: String, val displayName: String, val firstSongNumberId: Long)
 
-data class BookWithSongs(
-  @Embedded
-  val book: BookEntity,
-  @Relation(parentColumn = "_id", entityColumn = "bookid")
-  val songs: List<SongNumberWithSong>
-)
-
 @Dao
 interface BookDao : Pageable<BookEntity> {
   @Insert(onConflict = OnConflictStrategy.ABORT)
@@ -29,12 +20,6 @@ interface BookDao : Pageable<BookEntity> {
 
   @Insert(onConflict = OnConflictStrategy.ABORT)
   suspend fun insert(books: List<BookEntity>): List<Long>
-
-  @Insert(onConflict = OnConflictStrategy.REPLACE)
-  suspend fun update(book: BookEntity): Long
-
-  @Insert(onConflict = OnConflictStrategy.REPLACE)
-  suspend fun update(books: List<BookEntity>): List<Long>
 
   @Query("SELECT * FROM books WHERE _id = :id")
   suspend fun getById(id: Long): BookEntity?
@@ -60,9 +45,6 @@ interface BookDao : Pageable<BookEntity> {
 
   @Query("SELECT * FROM books WHERE edition = :externalId")
   fun getByExternalId(externalId: BookExternalId): Flow<BookEntity?>
-
-//  @Query("SELECT * FROM books WHERE edition = :externalId")
-//  fun getBookWithSongsByExternalId(externalId: BookExternalId): Flow<BookWithSongs?>
 
   @Query("SELECT * FROM books WHERE edition in (:externalIds)")
   suspend fun getByExternalIds(externalIds: List<BookExternalId>): List<BookEntity>

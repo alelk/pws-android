@@ -31,17 +31,6 @@ interface SongNumberTagDao : Pageable<SongNumberTagEntity> {
   @Query("SELECT t.* FROM tags t INNER JOIN song_number_tags snt ON t.id = snt.tag_id WHERE snt.song_number_id = :songNumberId ORDER BY t.predefined, t.priority")
   fun flowTagsBySongNumberId(songNumberId: Long): Flow<List<TagEntity>>
 
-
-  @Query(
-    """
-    SELECT snt.*, pn.* FROM song_number_tags snt 
-    INNER JOIN psalmnumbers pn ON pn._id = snt.song_number_id
-    INNER JOIN books b on b._id = pn.bookid
-    WHERE b.edition = :bookExternalId AND snt.tag_id = :tagId
-    """
-  )
-  suspend fun getByBookExternalIdAndTagId(bookExternalId: BookExternalId, tagId: TagId): Map<SongNumberTagEntity, SongNumberEntity>
-
   @Query(
     """
     SELECT snt.*, pn.* FROM song_number_tags snt 
@@ -63,7 +52,4 @@ interface SongNumberTagDao : Pageable<SongNumberTagEntity> {
 
   @Delete
   suspend fun delete(tags: List<SongNumberTagEntity>)
-
-  @Query("DELETE FROM song_number_tags")
-  suspend fun deleteAll()
 }

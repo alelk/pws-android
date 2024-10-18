@@ -1,28 +1,20 @@
 package com.alelk.pws.database.dao
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import io.github.alelk.pws.database.common.entity.FavoriteEntity
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 
 data class Favorite(val id: Long, val songNumber: Int, val songName: String, val bookDisplayName: String, val songNumberId: Long)
 
 @Dao
 interface FavoriteDao {
-  @Insert
-  suspend fun insert(favorite: FavoriteEntity): Long
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   suspend fun upsert(favorite: FavoriteEntity): Long
-
-  @Transaction
-  @Query("SELECT * FROM favorites WHERE _id = :id")
-  suspend fun getById(id: Long): FavoriteEntity?
 
   @Transaction
   @Query("DELETE FROM favorites WHERE psalmnumberid = :songNumberId")
@@ -31,12 +23,6 @@ interface FavoriteDao {
   @Transaction
   @Query("SELECT * FROM favorites WHERE psalmnumberid = :songNumberId LIMIT 1")
   suspend fun getBySongNumberId(songNumberId: Long): FavoriteEntity?
-
-  @Transaction
-  @Query("SELECT * FROM favorites WHERE psalmnumberid = :songNumberId LIMIT 1")
-  fun getBySongNumberIdFlow(songNumberId: Long): Flow<List<FavoriteEntity>>
-
-  fun isFavoriteFlow(songNumberId: Long): Flow<Boolean> = getBySongNumberIdFlow(songNumberId).map { it.isNotEmpty() }
 
   suspend fun isFavorite(songNumberId: Long) = getBySongNumberId(songNumberId) != null
 
@@ -76,10 +62,4 @@ interface FavoriteDao {
     if (isFavorite(songNumberId)) deleteBySongNumberId(songNumberId)
     else addToFavorites(songNumberId)
   }
-
-  @Delete
-  suspend fun delete(favorite: FavoriteEntity)
-
-  @Query("DELETE FROM favorites")
-  suspend fun deleteAll()
 }

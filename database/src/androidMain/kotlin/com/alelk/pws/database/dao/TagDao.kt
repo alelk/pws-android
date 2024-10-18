@@ -46,9 +46,6 @@ interface TagDao {
   @Query("SELECT * FROM tags WHERE predefined = 0 ORDER BY priority, id")
   suspend fun getAllNotPredefined(): List<TagEntity>
 
-  @Query("SELECT COUNT(*) FROM tags WHERE name = :name")
-  suspend fun isTagNameExists(name: String): Boolean
-
   @Query(
     """
     SELECT snt.song_number_id as songNumberId, pn.number as songNumber, b.displayname as bookDisplayName, p._id as songId, p.name as songName

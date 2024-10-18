@@ -23,12 +23,14 @@ plugins:
         echo "${lastRelease.version}" > .lastRelease.txt
       verifyReleaseCmd: |
         echo "${nextRelease.version}" > .nextRelease.txt
+        ./prepare.sh
       publishCmd: ./publish.sh
   - - '@semantic-release/git'
     - assets:
         - CHANGELOG.md
         - app.version
       message: "chore(release): ${nextRelease.version} [skip ci]\n\nRelease notes:\n${nextRelease.notes}"
+      success: true
       conditionCmd: |
         if [[ "${BRANCH_NAME}" == "master" || "${BRANCH_NAME}" == "next" ]]; then
           echo "true";

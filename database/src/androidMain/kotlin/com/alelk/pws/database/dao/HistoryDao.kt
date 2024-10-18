@@ -12,15 +12,6 @@ interface HistoryDao {
   @Insert
   suspend fun insert(history: HistoryEntity): Long
 
-  @Update
-  suspend fun update(history: HistoryEntity)
-
-  @Delete
-  suspend fun delete(history: HistoryEntity)
-
-  @Query("SELECT * FROM history WHERE _id = :id")
-  suspend fun getById(id: Long): HistoryEntity?
-
   @Query("SELECT * FROM history ORDER by accesstimestamp DESC LIMIT :countItems")
   suspend fun getLast(countItems: Int = 1): List<HistoryEntity>
 
