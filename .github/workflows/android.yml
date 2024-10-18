@@ -29,7 +29,7 @@ jobs:
     - name: Build ruDebug & ukDebug
       run: |
         chmod +x gradlew
-        ./gradlew buildRuDebug buildUkDebug testRuDebug
+        ./gradlew buildRuDebug buildUkDebug testRuDebug :database:jvmTest
 
     - name: Set up Node 20
       uses: actions/setup-node@v4
