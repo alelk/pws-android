@@ -14,3 +14,5 @@ local.properties
 /app/*/release/
 
 /database/test-data
+
+.kotlin

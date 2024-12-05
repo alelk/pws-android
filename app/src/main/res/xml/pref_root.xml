@@ -7,6 +7,14 @@
     android:title="@string/pref_header_general"
     android:fragment="com.alelk.pws.pwapp.fragment.preference.GeneralPreferenceFragment" />
 
+  <!-- Import/Export -->
+  <Preference
+    android:key="pref_import_export_data"
+    android:icon="@drawable/ic_import_export_black_24dp"
+    android:title="@string/pref_header_import_export"
+    android:summary="@string/pref_import_export_data_summary" 
+    android:fragment="com.alelk.pws.pwapp.fragment.preference.ImportExportPreferenceFragment"/>
+
   <!-- About section -->
   <Preference
     android:icon="@drawable/ic_info_black_24dp"

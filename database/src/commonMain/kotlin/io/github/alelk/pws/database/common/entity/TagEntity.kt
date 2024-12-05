@@ -10,7 +10,8 @@ import io.github.alelk.pws.database.common.model.TagId
 @Entity(
   tableName = "tags",
   indices = [
-    Index(name = "idx_tags_priority", value = ["priority"])
+    Index(name = "idx_tags_priority", value = ["priority"]),
+    Index(value = ["name"], unique = true)
   ]
 )
 data class TagEntity(
