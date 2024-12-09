@@ -72,7 +72,8 @@ object DatabaseProvider {
         PwsDatabase::class.java,
         PwsDatabaseHelper.DATABASE_NAME
       )
-        .addMigrations(MIGRATION_6_7)
+        .createFromAsset("db/pws.1.8.0-prod.db")
+        .addMigrations(MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9)
         .addCallback(databaseCallbacks)
         .build()
       INSTANCE = instance
@@ -130,6 +131,55 @@ private val MIGRATION_6_7 = object : Migration(6, 7) {
     }
     Timber.i("migration 6 -> 7 completed, time: $migrationTime")
   }
+}
+
+private val MIGRATION_7_8 = object : Migration(7, 8) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        val migrationTime = measureTime {
+            // Create new table with correct constraints and foreign key
+            db.execSQL("""
+                CREATE TABLE favorites_new (
+                    _id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                    position INTEGER NOT NULL,
+                    psalmnumberid INTEGER NOT NULL,
+                    FOREIGN KEY (psalmnumberid) 
+                        REFERENCES psalmnumbers(_id) 
+                        ON DELETE CASCADE 
+                        ON UPDATE NO ACTION
+                )
+            """)
+            
+            // Copy existing data
+            db.execSQL("""
+                INSERT INTO favorites_new (position, psalmnumberid)
+                SELECT position, psalmnumberid FROM favorites
+            """)
+            
+            // Drop old table
+            db.execSQL("DROP TABLE favorites")
+            
+            // Rename new table
+            db.execSQL("ALTER TABLE favorites_new RENAME TO favorites")
+            
+            // Create all required indices
+            db.execSQL("CREATE INDEX idx_favorites_position ON favorites(position)")
+            db.execSQL("CREATE INDEX idx_favorites_psalmnumberid ON favorites(psalmnumberid)")
+            db.execSQL("CREATE INDEX index_favorites_psalmnumberid ON favorites(psalmnumberid)")
+        }
+        Timber.i("migration 7 -> 8 completed, time: $migrationTime")
+    }
+}
+
+private val MIGRATION_8_9 = object : Migration(8, 9) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        val migrationTime = measureTime {
+            db.withTransaction {
+                // Create the unique index
+                db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS index_tags_name ON tags(name)")
+            }
+        }
+        Timber.i("migration 8 -> 9 completed, time: $migrationTime")
+    }
 }
 
 private fun <T> SupportSQLiteDatabase.withTransaction(body: SupportSQLiteDatabase.() -> T): T =
