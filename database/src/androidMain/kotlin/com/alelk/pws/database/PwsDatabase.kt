@@ -72,7 +72,6 @@ object DatabaseProvider {
         PwsDatabase::class.java,
         PwsDatabaseHelper.DATABASE_NAME
       )
-        .createFromAsset("db/pws.1.8.0-prod.db")
         .addMigrations(MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9)
         .addCallback(databaseCallbacks)
         .build()
