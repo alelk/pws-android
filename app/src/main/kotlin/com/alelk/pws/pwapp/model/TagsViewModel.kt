@@ -29,7 +29,7 @@ class TagsViewModel(application: Application) : AndroidViewModel(application) {
   suspend fun getLastCustomTag() =
     tagDao.getAllNotPredefined()
       .filter { it.isCustomTag() }
-      .sortedByDescending { it.id.customTagNumber() }
+      .sortedBy { it.id.customTagNumber() }
       .lastOrNull()
 
   suspend fun getNextCustomTagId(): TagId {
