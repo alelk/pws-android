@@ -1,5 +1,12 @@
 # PWS Android
 
+## [1.10.5](https://github.com/alelk/pws-android/compare/v1.10.4...v1.10.5) (2024-12-18)
+
+
+### Bug Fixes
+
+* **share:** fix issue: copying wrong song from context menu ([#43](https://github.com/alelk/pws-android/issues/43)) ([af1114b](https://github.com/alelk/pws-android/commit/af1114b84bde242b7bb8cd26bf40f31a9b7afb2b))
+
 ## [1.10.4](https://github.com/alelk/pws-android/compare/v1.10.3...v1.10.4) (2024-10-18)
 
 
