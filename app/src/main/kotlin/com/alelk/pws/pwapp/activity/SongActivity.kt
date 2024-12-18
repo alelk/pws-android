@@ -101,7 +101,7 @@ class SongActivity : AppCompatThemedActivity() {
           Timber.d("book ${songViewModel.song.value?.book?.externalId} has ${songNumberIds?.size} song numbers")
           if (songNumberIds != null) {
             (songTextPager.adapter as? SongTextFragmentPagerAdapter)
-              ?.setSongNumberIds(songNumberIds)
+              ?.let { it.allSongNumberIds = songNumberIds }
               ?: run {
                 songTextPager.adapter = SongTextFragmentPagerAdapter(this@SongActivity, songNumberIds)
                 songTextPager.currentItem = songNumberIds.indexOf(songNumberId)

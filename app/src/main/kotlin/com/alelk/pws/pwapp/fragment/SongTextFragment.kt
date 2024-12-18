@@ -37,11 +37,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import com.alelk.pws.database.data.Tonality.Companion.getInstanceBySignature
 import com.alelk.pws.database.util.PwsSongUtil
 import com.alelk.pws.pwapp.R
 import com.alelk.pws.pwapp.activity.SongActivity
 import com.alelk.pws.pwapp.adapter.SongReferencesRecyclerViewAdapter
+import com.alelk.pws.pwapp.adapter.SongTextFragmentPagerAdapter
 import com.alelk.pws.pwapp.model.AppPreferencesViewModel
 import com.alelk.pws.pwapp.model.SongViewModel
 import com.alelk.pws.pwapp.model.textDocument
@@ -200,8 +202,18 @@ class SongTextFragment : Fragment() {
 
   override fun onContextItemSelected(item: MenuItem): Boolean {
     if (R.id.menu_copy == item.itemId) {
+      val viewPager = requireActivity().findViewById<ViewPager2>(R.id.pager_psalm_text)
+      val adapter = viewPager.adapter as? SongTextFragmentPagerAdapter
+      val currentSongNumberId = adapter?.allSongNumberIds?.getOrNull(viewPager.currentItem)
+      
+      if (currentSongNumberId != arguments?.getLong(KEY_SONG_NUMBER_ID)) {
+        Timber.v("Ignoring context menu in non-visible fragment (songId=${arguments?.getLong(KEY_SONG_NUMBER_ID)})")
+        return false
+      }
+
       val clipboardManager = activity?.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager ?: return false
       val song = songViewModel.song.value ?: return false
+      Timber.d("copying song# ${song.songNumber.number} from book ${song.book.externalId} with name ${song.song.name}")
       val clip = ClipData.newHtmlText(getString(R.string.app_name), song.textDocument, song.textDocumentHtml)
       clipboardManager.setPrimaryClip(clip)
       return true

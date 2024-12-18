@@ -27,12 +27,8 @@ import com.alelk.pws.pwapp.fragment.SongTextFragment
  */
 class SongTextFragmentPagerAdapter(
   fragmentActivity: FragmentActivity,
-  private var allSongNumberIds: List<Long>
+  var allSongNumberIds: List<Long>
 ) : FragmentStateAdapter(fragmentActivity) {
-
-  fun setSongNumberIds(data: List<Long>) {
-    allSongNumberIds = data
-  }
 
   override fun getItemCount(): Int = allSongNumberIds.size
   override fun createFragment(position: Int): Fragment = SongTextFragment.newInstance(allSongNumberIds[position])
