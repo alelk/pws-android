@@ -14,6 +14,16 @@ data class SongSearchResult(
   val snippet: String
 )
 
+data class SongDetails(
+  val bookName: String,
+  val bookShortName: String,
+  val songNumber: Int,
+  val songName: String,
+  val songText: String?,
+  val songTonality: String?,
+  val bibleReferences: String?
+)
+
 @Dao
 interface SongDao : Pageable<SongEntity> {
 
@@ -31,6 +41,22 @@ interface SongDao : Pageable<SongEntity> {
 
   @Query("SELECT * FROM psalms ORDER BY _id LIMIT :limit OFFSET :offset")
   override suspend fun getAll(limit: Int, offset: Int): List<SongEntity>
+
+  @Query(
+    "SELECT " +
+      "b.displayname as bookName, " +
+      "b.displayshortname as bookShortName, " +
+      "pn.number as songNumber, " +
+      "p.name as songName, " +
+      "p.text as songText, " +
+      "p.tonalities as songTonality, " +
+      "p.bibleref as bibleReferences " +
+    "FROM psalms p " +
+    "INNER JOIN psalmnumbers pn ON p._id = pn.psalmid " +
+    "INNER JOIN books b ON pn.bookid = b._id " +
+    "INNER JOIN bookstatistic bs ON bs.bookid = b._id " +
+    "WHERE p.edited > 0 AND bs.userpref > 0")
+  suspend fun getAllEdited(): List<SongDetails>
 
   @Query("SELECT count(_id) FROM psalms")
   suspend fun count(): Int

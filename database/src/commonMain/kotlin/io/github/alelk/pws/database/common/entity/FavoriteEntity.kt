@@ -13,7 +13,7 @@ import androidx.room.*
   ],
 )
 data class FavoriteEntity(
-  @PrimaryKey @ColumnInfo(name = "_id") val id: Long = 0,
+  @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "_id") val id: Long = 0,
   @ColumnInfo(name = "position") val position: Int,
   @ColumnInfo(name = "psalmnumberid", index = true) val songNumberId: Long
 )

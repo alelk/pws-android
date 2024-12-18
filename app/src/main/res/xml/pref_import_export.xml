@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <Preference
+        android:key="@string/pref_export_data_key"
+        android:icon="@drawable/ic_file_upload_black_24dp"
+        android:title="@string/export_data"/>
+
+    <Preference
+        android:key="@string/pref_import_data_key"
+        android:icon="@drawable/ic_file_download_black_24dp"
+        android:title="@string/import_data"/>
+</PreferenceScreen> 

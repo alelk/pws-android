@@ -93,4 +93,6 @@ dependencies {
   implementation(libs.room.runtime)
   implementation(libs.timber)
   implementation(libs.datastore.preferences)
+  implementation(libs.jackson.kotlin)
+  implementation(libs.jackson.databind)
 }

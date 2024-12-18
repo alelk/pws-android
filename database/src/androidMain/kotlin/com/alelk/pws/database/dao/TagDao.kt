@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import io.github.alelk.pws.database.common.entity.TagEntity
 import io.github.alelk.pws.database.common.model.TagId
 import kotlinx.coroutines.flow.Flow
@@ -25,7 +26,7 @@ interface TagDao {
   @Insert(onConflict = OnConflictStrategy.ABORT)
   suspend fun insert(tags: List<TagEntity>)
 
-  @Insert(onConflict = OnConflictStrategy.REPLACE)
+  @Update(onConflict = OnConflictStrategy.REPLACE)
   suspend fun update(tag: TagEntity)
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
