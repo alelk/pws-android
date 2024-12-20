@@ -53,10 +53,11 @@ class ImportExportViewModel(application: Application) : AndroidViewModel(applica
 
       // Create export data structure
       val exportData = ExportData(
-        preferences = Preferences(songTextSize,songTextExpanded,appTheme, bookPreferences),
-        favorites,
-        categoryDetails,
-        editedSongs
+        version = 1,
+        preferences = Preferences(songTextSize, songTextExpanded, appTheme, bookPreferences),
+        favorites = favorites,
+        categories = categoryDetails,
+        editedSongs = editedSongs
       )
 
       // Serialize exportData to outputFile JSON
@@ -170,10 +171,11 @@ class ImportExportViewModel(application: Application) : AndroidViewModel(applica
 }
 
 data class ExportData(
+  val version: Int = 1,
   val preferences: Preferences,
-  val favorites: List<Favorite>?,
-  val categories: List<CategoryDetails>?,
-  val editedSongs: List<SongDetails>?
+  val favorites: List<Favorite>? = null,
+  val categories: List<CategoryDetails>? = null,
+  val editedSongs: List<SongDetails>? = null
 )
 
 data class Preferences(
