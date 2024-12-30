@@ -67,6 +67,7 @@ object DatabaseProvider {
 
   fun getDatabase(context: Context): PwsDatabase {
     return INSTANCE ?: synchronized(this) {
+      PwsDatabaseHelper(context)
       val instance = Room.databaseBuilder(
         context.applicationContext,
         PwsDatabase::class.java,
