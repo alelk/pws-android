@@ -1,5 +1,12 @@
 # PWS Android
 
+## [1.10.7](https://github.com/alelk/pws-android/compare/v1.10.6...v1.10.7) (2024-12-30)
+
+
+### Bug Fixes
+
+* **database:** fix app starting with empty database ([#45](https://github.com/alelk/pws-android/issues/45)) ([02c1d70](https://github.com/alelk/pws-android/commit/02c1d706ee744ee11f92f70fefcb1c48fe994daf))
+
 ## [1.10.6](https://github.com/alelk/pws-android/compare/v1.10.5...v1.10.6) (2024-12-30)
 
 
