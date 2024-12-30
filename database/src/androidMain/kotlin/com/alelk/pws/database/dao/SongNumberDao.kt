@@ -53,6 +53,9 @@ interface SongNumberDao {
   @Query("SELECT pn.* FROM psalmnumbers pn INNER JOIN books b ON pn.bookid = b._id WHERE b.edition = :bookExternalId ORDER BY pn.number")
   fun getBookSongsByBookId(bookExternalId: BookExternalId): Flow<List<SongNumberWithSong>>
 
+  @Query("SELECT * FROM psalmnumbers pn INNER JOIN books b ON pn.bookid = b._id WHERE b.displayshortname = :bookShortName AND pn.number = :songNumber")
+  suspend fun getByBookShortNameAndSongNumber(bookShortName: String, songNumber: Int): SongNumberEntity?
+
   @Transaction
   @Query("SELECT * FROM psalmnumbers WHERE _id = :id")
   fun getById(id: Long): Flow<SongNumberEntity>

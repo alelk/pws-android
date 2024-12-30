@@ -93,4 +93,19 @@ dependencies {
   implementation(libs.room.runtime)
   implementation(libs.timber)
   implementation(libs.datastore.preferences)
+  implementation(libs.jackson.kotlin)
+  implementation(libs.jackson.databind)
+
+  // Test dependencies
+  testImplementation(libs.kotest.runner.junit5)
+  testImplementation(libs.kotest.assertions.core)
+  testImplementation(libs.kotest.framework.datatest)
+  testImplementation(libs.kotest.property)
+  testImplementation(libs.robolectric)
+  testImplementation(libs.androidx.test.core)
+  testImplementation(libs.room.testing)
+}
+
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
 }

@@ -8,7 +8,7 @@ import androidx.room.Transaction
 import io.github.alelk.pws.database.common.entity.FavoriteEntity
 import kotlinx.coroutines.flow.Flow
 
-data class Favorite(val id: Long, val songNumber: Int, val songName: String, val bookDisplayName: String, val songNumberId: Long)
+data class Favorite(val id: Long, val songNumber: Int, val songName: String, val bookDisplayName: String, val songNumberId: Long, val bookShortName: String)
 
 @Dao
 interface FavoriteDao {
@@ -29,7 +29,7 @@ interface FavoriteDao {
   @Transaction
   @Query(
     """
-    SELECT f._id as id, p.name as songName, pn.number as songNumber, b.displayname as bookDisplayName, pn._id as songNumberId
+    SELECT f._id as id, p.name as songName, pn.number as songNumber, b.displayname as bookDisplayName, pn._id as songNumberId, b.displayshortname as bookShortName
     FROM favorites f 
     INNER JOIN psalmnumbers pn on f.psalmnumberid = pn._id 
     INNER JOIN psalms p on pn.psalmid=p._id
@@ -51,10 +51,14 @@ interface FavoriteDao {
   @Transaction
   suspend fun addToFavorites(songNumberId: Long) {
     val existing = getBySongNumberId(songNumberId)
-    val lastPosition = getLast()?.position
-    val position = lastPosition?.plus(1) ?: 1
-    val favorite = existing?.copy(position = position) ?: FavoriteEntity(position = position, songNumberId = songNumberId)
-    upsert(favorite)
+    if (existing == null) {
+      val maxPosition = getLast()?.position ?: 0
+      val favorite = FavoriteEntity(
+        position = maxPosition + 1,
+        songNumberId = songNumberId
+      )
+      upsert(favorite)
+    }
   }
 
   @Transaction

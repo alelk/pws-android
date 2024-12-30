@@ -44,6 +44,12 @@ interface BookStatisticDao {
   @Query("SELECT count(_id) FROM bookstatistic")
   suspend fun count(): Int
 
+  @Query("SELECT * FROM bookstatistic bs INNER JOIN books b on bs.bookid = b._id WHERE bs.userpref > 0")
+  suspend fun getUserPreferredBooks():List<BookStatisticWithBook>
+
+  @Query("SELECT * FROM bookstatistic bs INNER JOIN books b on bs.bookid = b._id WHERE b.displayshortname = :bookShortName")
+  suspend fun getByBookShortName(bookShortName: String): BookStatisticWithBook?
+
   @Delete
   suspend fun delete(bookStatistic: BookStatisticEntity)
 
