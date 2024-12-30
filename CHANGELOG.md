@@ -1,5 +1,12 @@
 # PWS Android
 
+## [1.10.6](https://github.com/alelk/pws-android/compare/v1.10.5...v1.10.6) (2024-12-30)
+
+
+### Bug Fixes
+
+* **database:** configure database migration for import/export feature ([#41](https://github.com/alelk/pws-android/issues/41)) ([fe183b2](https://github.com/alelk/pws-android/commit/fe183b20935993a543cc0db42068654e07948596))
+
 ## [1.10.5](https://github.com/alelk/pws-android/compare/v1.10.4...v1.10.5) (2024-12-18)
 
 
