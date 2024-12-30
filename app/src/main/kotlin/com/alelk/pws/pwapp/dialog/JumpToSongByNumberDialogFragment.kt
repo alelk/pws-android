@@ -31,7 +31,7 @@ import com.alelk.pws.pwapp.activity.SongActivity
 import com.alelk.pws.pwapp.databinding.DialogSearchPsalmNumberBinding
 import com.alelk.pws.pwapp.model.BookViewModel
 import com.google.android.material.snackbar.Snackbar
-import io.github.alelk.pws.database.common.model.BookExternalId
+import io.github.alelk.pws.domain.model.BookExternalId
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
@@ -54,7 +54,7 @@ class JumpToSongByNumberDialogFragment : DialogFragment() {
 
     bookViewModel
       .setBookExternalId(
-        BookExternalId.parse(checkNotNull(requireArguments().getString(KEY_BOOK_ID)) { "book external id argument required" })
+        io.github.alelk.pws.domain.model.BookExternalId.parse(checkNotNull(requireArguments().getString(KEY_BOOK_ID)) { "book external id argument required" })
       )
 
     lifecycleScope.launch {
@@ -102,7 +102,7 @@ class JumpToSongByNumberDialogFragment : DialogFragment() {
   companion object {
     const val KEY_BOOK_ID = "bookId"
 
-    fun newInstance(bookId: BookExternalId): JumpToSongByNumberDialogFragment {
+    fun newInstance(bookId: io.github.alelk.pws.domain.model.BookExternalId): JumpToSongByNumberDialogFragment {
       return JumpToSongByNumberDialogFragment().apply {
         arguments = Bundle().apply { putString(KEY_BOOK_ID, bookId.identifier) }
       }

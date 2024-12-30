@@ -3,10 +3,10 @@ package io.github.alelk.pws.database.common.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import io.github.alelk.pws.database.common.model.Person
-import io.github.alelk.pws.database.common.model.Tonality
-import io.github.alelk.pws.database.common.model.Version
-import io.github.alelk.pws.database.common.model.Year
+import io.github.alelk.pws.domain.model.Person
+import io.github.alelk.pws.domain.model.Tonality
+import io.github.alelk.pws.domain.model.Version
+import io.github.alelk.pws.domain.model.Year
 import java.util.Locale
 
 @Entity(tableName = "psalms")

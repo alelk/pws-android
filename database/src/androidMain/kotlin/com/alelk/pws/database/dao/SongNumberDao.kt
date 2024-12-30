@@ -8,12 +8,11 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Relation
 import androidx.room.Transaction
-import androidx.room.Update
 import io.github.alelk.pws.database.common.entity.BookEntity
 import io.github.alelk.pws.database.common.entity.FavoriteEntity
 import io.github.alelk.pws.database.common.entity.SongEntity
 import io.github.alelk.pws.database.common.entity.SongNumberEntity
-import io.github.alelk.pws.database.common.model.BookExternalId
+import io.github.alelk.pws.domain.model.BookExternalId
 import kotlinx.coroutines.flow.Flow
 
 data class SongNumberWithSongWithBookWithFavorites(

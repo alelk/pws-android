@@ -2,7 +2,7 @@ package io.github.alelk.pws.database.dao
 
 import androidx.room.*
 import io.github.alelk.pws.database.common.entity.SongSongReferenceEntity
-import io.github.alelk.pws.database.common.model.BookExternalId
+import io.github.alelk.pws.domain.model.BookExternalId
 
 @Dao
 interface SongSongReferenceDao {

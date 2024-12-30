@@ -1,14 +1,9 @@
 package io.github.alelk.pws.database.common.entity
 
-import io.github.alelk.pws.database.common.locale
-import io.github.alelk.pws.database.common.model.BookExternalId
-import io.github.alelk.pws.database.common.model.Person
-import io.github.alelk.pws.database.common.model.Version
-import io.github.alelk.pws.database.common.model.Year
-import io.github.alelk.pws.database.common.model.bookExternalId
-import io.github.alelk.pws.database.common.model.person
-import io.github.alelk.pws.database.common.model.version
-import io.github.alelk.pws.database.common.model.year
+import io.github.alelk.pws.domain.model.BookExternalId
+import io.github.alelk.pws.domain.model.Person
+import io.github.alelk.pws.domain.model.Version
+import io.github.alelk.pws.domain.model.Year
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.Codepoint
 import io.kotest.property.arbitrary.arbitrary

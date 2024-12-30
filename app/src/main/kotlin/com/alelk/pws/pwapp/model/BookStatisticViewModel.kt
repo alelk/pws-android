@@ -5,7 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import com.alelk.pws.database.DatabaseProvider
 import com.alelk.pws.database.dao.BookStatisticWithBook
 import io.github.alelk.pws.database.common.entity.BookStatisticEntity
-import io.github.alelk.pws.database.common.model.BookExternalId
+import io.github.alelk.pws.domain.model.BookExternalId
 import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
 
@@ -14,7 +14,7 @@ class BookStatisticViewModel(application: Application) : AndroidViewModel(applic
 
   val bookStatistic: Flow<List<BookStatisticWithBook>> = bookStatisticDao.getAll()
 
-  suspend fun update(bookId: BookExternalId, updateFn: suspend (existing: BookStatisticWithBook) -> BookStatisticEntity) {
+  suspend fun update(bookId: io.github.alelk.pws.domain.model.BookExternalId, updateFn: suspend (existing: BookStatisticWithBook) -> BookStatisticEntity) {
     val existing = bookStatisticDao.getByBookExternalId(bookId)
     if (existing != null) {
       val bookStatistic = updateFn(existing)

@@ -4,7 +4,7 @@ plugins {
   id("com.google.devtools.ksp") version "${libs.versions.kotlin.get()}-${libs.versions.ksp.get()}"
   id("com.android.library")
   id("org.jetbrains.kotlin.multiplatform")
-  alias(libs.plugins.kotest.multiplatform)
+  //alias(libs.plugins.kotest.multiplatform)
   id("maven-publish")
 }
 
@@ -17,6 +17,7 @@ kotlin {
   sourceSets {
     val commonMain by getting {
       dependencies {
+        implementation(project(":domain"))
         implementation(libs.room.runtime)
         implementation(libs.kotlinx.coroutines.core)
       }
@@ -26,6 +27,7 @@ kotlin {
         implementation(libs.kotest.assertions.core)
         implementation(libs.kotest.framework.engine)
         implementation(libs.kotest.property)
+        implementation(project(":domain:domain-test-fixtures"))
         implementation(kotlin("test-common"))
         implementation(kotlin("test-annotations-common"))
       }

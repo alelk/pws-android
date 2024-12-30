@@ -1,6 +1,6 @@
 package io.github.alelk.pws.database.common.entity
 
-import io.github.alelk.pws.database.common.model.Color
+import io.github.alelk.pws.domain.model.Color
 import io.github.alelk.pws.database.common.model.TagId
 import io.github.alelk.pws.database.common.model.color
 import io.github.alelk.pws.database.common.model.tagId

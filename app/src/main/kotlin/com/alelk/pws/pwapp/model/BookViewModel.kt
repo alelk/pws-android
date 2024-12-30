@@ -7,7 +7,7 @@ import com.alelk.pws.database.DatabaseProvider
 import com.alelk.pws.database.dao.SongNumberWithSong
 import io.github.alelk.pws.database.common.entity.BookEntity
 import io.github.alelk.pws.database.common.entity.SongNumberEntity
-import io.github.alelk.pws.database.common.model.BookExternalId
+import io.github.alelk.pws.domain.model.BookExternalId
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -31,10 +31,10 @@ class BookViewModel(application: Application) : AndroidViewModel(application) {
   private val bookDao = DatabaseProvider.getDatabase(application).bookDao()
   private val songNumberDao = DatabaseProvider.getDatabase(application).songNumberDao()
 
-  private val _bookExternalId = MutableStateFlow<BookExternalId?>(null)
+  private val _bookExternalId = MutableStateFlow<io.github.alelk.pws.domain.model.BookExternalId?>(null)
   val bookExternalId = _bookExternalId.asStateFlow()
 
-  fun setBookExternalId(bookExternalId: BookExternalId) {
+  fun setBookExternalId(bookExternalId: io.github.alelk.pws.domain.model.BookExternalId) {
     if (_bookExternalId.value != bookExternalId) {
       _bookExternalId.value = bookExternalId
       Timber.d("book external id is changed: $bookExternalId")

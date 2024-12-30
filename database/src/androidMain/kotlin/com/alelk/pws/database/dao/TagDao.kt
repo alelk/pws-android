@@ -7,7 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import io.github.alelk.pws.database.common.entity.TagEntity
-import io.github.alelk.pws.database.common.model.TagId
+import io.github.alelk.pws.domain.model.TagId
 import kotlinx.coroutines.flow.Flow
 
 data class SongInfo(

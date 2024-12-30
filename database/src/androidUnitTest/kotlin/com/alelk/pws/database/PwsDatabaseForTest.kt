@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.room.Room
 import androidx.room.withTransaction
 import androidx.test.core.app.ApplicationProvider
-import io.github.alelk.pws.database.common.distinctBy
 import io.github.alelk.pws.database.common.entity.BookEntity
 import io.github.alelk.pws.database.common.entity.SongEntity
 import io.github.alelk.pws.database.common.entity.SongNumberEntity
@@ -13,6 +12,7 @@ import io.github.alelk.pws.database.common.entity.bookEntity
 import io.github.alelk.pws.database.common.entity.songEntity
 import io.github.alelk.pws.database.common.entity.songNumberEntity
 import io.github.alelk.pws.database.common.entity.tagEntity
+import io.github.alelk.pws.domain.distinctBy
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.list
 import io.kotest.property.arbitrary.next
