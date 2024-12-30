@@ -82,6 +82,7 @@ android {
 }
 
 dependencies {
+  implementation(project(":domain"))
   implementation(project(":database"))
 
   implementation(libs.preference.ktx)

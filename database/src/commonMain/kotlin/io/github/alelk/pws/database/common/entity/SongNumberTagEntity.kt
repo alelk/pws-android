@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
-import io.github.alelk.pws.database.common.model.TagId
+import io.github.alelk.pws.domain.model.TagId
 
 @Entity(
   tableName = "song_number_tags",

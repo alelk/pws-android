@@ -1,4 +1,4 @@
-package io.github.alelk.pws.database.common.model
+package io.github.alelk.pws.domain.model
 
 data class Color(val r: Int, val g: Int, val b: Int) {
   init {

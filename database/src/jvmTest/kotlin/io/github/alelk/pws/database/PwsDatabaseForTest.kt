@@ -6,7 +6,7 @@ import androidx.room.exclusiveTransaction
 import androidx.room.useReaderConnection
 import androidx.room.useWriterConnection
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
-import io.github.alelk.pws.database.common.distinctBy
+import io.github.alelk.pws.domain.distinctBy
 import io.github.alelk.pws.database.common.entity.BookEntity
 import io.github.alelk.pws.database.common.entity.SongEntity
 import io.github.alelk.pws.database.common.entity.SongNumberEntity

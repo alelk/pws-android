@@ -4,7 +4,7 @@ import android.os.Build
 import br.com.colman.kotest.android.extensions.robolectric.RobolectricTest
 import com.alelk.pws.database.PwsDatabase
 import com.alelk.pws.database.pwsDbForTest
-import io.github.alelk.pws.database.common.distinctBy
+import io.github.alelk.pws.domain.distinctBy
 import io.github.alelk.pws.database.common.entity.SongEntity
 import io.github.alelk.pws.database.common.entity.songEntity
 import io.github.alelk.pws.database.common.entity.songSongReferenceEntity

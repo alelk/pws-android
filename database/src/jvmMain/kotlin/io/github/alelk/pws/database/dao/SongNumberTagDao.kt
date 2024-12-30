@@ -7,8 +7,8 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import io.github.alelk.pws.database.common.entity.SongNumberEntity
 import io.github.alelk.pws.database.common.entity.SongNumberTagEntity
-import io.github.alelk.pws.database.common.model.BookExternalId
-import io.github.alelk.pws.database.common.model.TagId
+import io.github.alelk.pws.domain.model.BookExternalId
+import io.github.alelk.pws.domain.model.TagId
 
 @Dao
 interface SongNumberTagDao : Pageable<SongNumberTagEntity> {

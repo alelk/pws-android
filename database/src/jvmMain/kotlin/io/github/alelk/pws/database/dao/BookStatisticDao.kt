@@ -7,7 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import io.github.alelk.pws.database.common.entity.BookEntity
 import io.github.alelk.pws.database.common.entity.BookStatisticEntity
-import io.github.alelk.pws.database.common.model.BookExternalId
+import io.github.alelk.pws.domain.model.BookExternalId
 
 @Dao
 interface BookStatisticDao {

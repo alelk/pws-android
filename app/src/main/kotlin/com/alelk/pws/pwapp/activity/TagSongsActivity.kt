@@ -11,7 +11,7 @@ import com.alelk.pws.pwapp.R
 import com.alelk.pws.pwapp.activity.base.AppCompatThemedActivity
 import com.alelk.pws.pwapp.adapter.SongsInfoAdapter
 import com.alelk.pws.pwapp.model.TagsViewModel
-import io.github.alelk.pws.database.common.model.TagId
+import io.github.alelk.pws.domain.model.TagId
 
 class TagSongsActivity : AppCompatThemedActivity() {
   private lateinit var recyclerView: RecyclerView

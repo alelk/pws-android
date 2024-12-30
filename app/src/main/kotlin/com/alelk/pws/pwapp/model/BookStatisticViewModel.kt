@@ -5,7 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import com.alelk.pws.database.DatabaseProvider
 import com.alelk.pws.database.dao.BookStatisticWithBook
 import io.github.alelk.pws.database.common.entity.BookStatisticEntity
-import io.github.alelk.pws.database.common.model.BookExternalId
+import io.github.alelk.pws.domain.model.BookExternalId
 import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
 

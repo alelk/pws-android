@@ -1,4 +1,4 @@
-package io.github.alelk.pws.database.common.model
+package io.github.alelk.pws.domain.model
 
 @JvmInline
 value class TagId(private val identifier: String) {
