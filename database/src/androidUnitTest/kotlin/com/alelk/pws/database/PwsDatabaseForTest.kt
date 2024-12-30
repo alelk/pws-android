@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import androidx.room.withTransaction
 import androidx.test.core.app.ApplicationProvider
-import io.github.alelk.pws.database.common.distinctBy
+import io.github.alelk.pws.domain.distinctBy
 import io.github.alelk.pws.database.common.entity.BookEntity
 import io.github.alelk.pws.database.common.entity.SongEntity
 import io.github.alelk.pws.database.common.entity.SongNumberEntity

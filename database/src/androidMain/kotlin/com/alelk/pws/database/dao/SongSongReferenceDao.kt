@@ -4,24 +4,23 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import androidx.room.Update
 import io.github.alelk.pws.database.common.entity.SongRefReason
 import io.github.alelk.pws.database.common.entity.SongSongReferenceEntity
-import io.github.alelk.pws.database.common.model.BookExternalId
+import io.github.alelk.pws.domain.model.BookExternalId
 import kotlinx.coroutines.flow.Flow
 
 /** Reference between two songs. */
 data class SongSongReference(
-  val songId: Long,
-  val refSongId: Long,
-  val refReason: SongRefReason,
-  val volume: Int,
-  val refSongName: String,
-  val refSongNumber: Int,
-  val refSongNumberId: Long,
-  val refSongNumberBookId: Long,
-  val refSongNumberBookExternalId: BookExternalId,
-  val refSongNumberBookDisplayName: String,
+    val songId: Long,
+    val refSongId: Long,
+    val refReason: SongRefReason,
+    val volume: Int,
+    val refSongName: String,
+    val refSongNumber: Int,
+    val refSongNumberId: Long,
+    val refSongNumberBookId: Long,
+    val refSongNumberBookExternalId: BookExternalId,
+    val refSongNumberBookDisplayName: String,
 )
 
 @Dao

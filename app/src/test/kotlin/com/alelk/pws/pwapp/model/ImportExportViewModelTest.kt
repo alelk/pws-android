@@ -4,7 +4,7 @@ import com.alelk.pws.database.dao.Favorite
 import com.alelk.pws.database.dao.SongDetails
 import com.alelk.pws.pwapp.theme.AppTheme
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import io.github.alelk.pws.database.common.model.Color
+import io.github.alelk.pws.domain.model.Color
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe

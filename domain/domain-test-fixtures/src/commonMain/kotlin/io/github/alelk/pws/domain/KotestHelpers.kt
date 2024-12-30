@@ -1,4 +1,4 @@
-package io.github.alelk.pws.database.common
+package io.github.alelk.pws.domain
 
 import io.kotest.property.Arb
 import io.kotest.property.RandomSource

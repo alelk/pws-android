@@ -16,3 +16,6 @@ local.properties
 /database/test-data
 
 .kotlin
+
+/domain/build
+/domain/domain-test-fixtures/build

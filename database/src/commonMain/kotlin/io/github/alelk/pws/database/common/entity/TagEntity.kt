@@ -4,8 +4,8 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import io.github.alelk.pws.database.common.model.Color
-import io.github.alelk.pws.database.common.model.TagId
+import io.github.alelk.pws.domain.model.Color
+import io.github.alelk.pws.domain.model.TagId
 
 @Entity(
   tableName = "tags",
@@ -15,11 +15,11 @@ import io.github.alelk.pws.database.common.model.TagId
   ]
 )
 data class TagEntity(
-  @PrimaryKey @ColumnInfo(name = "id") val id: TagId,
-  @ColumnInfo(name = "name") val name: String,
-  @ColumnInfo(name = "priority", defaultValue = "0") val priority: Int,
-  @ColumnInfo(name = "color") val color: Color,
-  @ColumnInfo(name = "predefined", defaultValue = "false") val predefined: Boolean = true
+    @PrimaryKey @ColumnInfo(name = "id") val id: TagId,
+    @ColumnInfo(name = "name") val name: String,
+    @ColumnInfo(name = "priority", defaultValue = "0") val priority: Int,
+    @ColumnInfo(name = "color") val color: Color,
+    @ColumnInfo(name = "predefined", defaultValue = "false") val predefined: Boolean = true
 ) {
   init {
     require(name.isNotEmpty()) { "tag name must not be empty" }

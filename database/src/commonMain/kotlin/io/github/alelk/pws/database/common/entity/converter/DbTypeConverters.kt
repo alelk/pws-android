@@ -2,14 +2,14 @@ package io.github.alelk.pws.database.common.entity.converter
 
 import androidx.room.TypeConverter
 import io.github.alelk.pws.database.common.entity.SongRefReason
-import io.github.alelk.pws.database.common.model.BookExternalId
-import io.github.alelk.pws.database.common.model.Color
-import io.github.alelk.pws.database.common.model.Person
-import io.github.alelk.pws.database.common.model.TagId
-import io.github.alelk.pws.database.common.model.Tonality
-import io.github.alelk.pws.database.common.model.Version
-import io.github.alelk.pws.database.common.model.Year
-import io.github.alelk.pws.database.common.model.toTagId
+import io.github.alelk.pws.domain.model.BookExternalId
+import io.github.alelk.pws.domain.model.Color
+import io.github.alelk.pws.domain.model.Person
+import io.github.alelk.pws.domain.model.TagId
+import io.github.alelk.pws.domain.model.Tonality
+import io.github.alelk.pws.domain.model.Version
+import io.github.alelk.pws.domain.model.Year
+import io.github.alelk.pws.domain.model.toTagId
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

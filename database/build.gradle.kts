@@ -17,12 +17,14 @@ kotlin {
   sourceSets {
     val commonMain by getting {
       dependencies {
+        implementation(project(":domain"))
         implementation(libs.room.runtime)
         implementation(libs.kotlinx.coroutines.core)
       }
     }
     val commonTest by getting {
       dependencies {
+        implementation(project(":domain:domain-test-fixtures"))
         implementation(libs.kotest.assertions.core)
         implementation(libs.kotest.framework.engine)
         implementation(libs.kotest.property)

@@ -10,9 +10,7 @@ import com.alelk.pws.pwapp.theme.AppTheme
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.github.alelk.pws.database.common.entity.SongNumberTagEntity
 import io.github.alelk.pws.database.common.entity.TagEntity
-import io.github.alelk.pws.database.common.model.Color
-import io.github.alelk.pws.database.common.model.TagId
-import io.github.alelk.pws.database.common.model.Tonality
+import io.github.alelk.pws.domain.model.Color
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
@@ -110,7 +108,7 @@ class ImportExportViewModel(application: Application) : AndroidViewModel(applica
               name = songDetails.songName,
               lyric = songDetails.songText ?: existingSong.lyric,
               bibleRef = songDetails.bibleReferences ?: existingSong.bibleRef,
-              tonalities = songDetails.songTonality?.let { listOfNotNull(Tonality.fromIdentifier(it)) } ?: existingSong.tonalities,
+              tonalities = songDetails.songTonality?.let { listOfNotNull(io.github.alelk.pws.domain.model.Tonality.fromIdentifier(it)) } ?: existingSong.tonalities,
               edited = true
             )
             songDao.update(updatedSong)

@@ -1,4 +1,4 @@
-package io.github.alelk.pws.database.common.model
+package io.github.alelk.pws.domain.model
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe

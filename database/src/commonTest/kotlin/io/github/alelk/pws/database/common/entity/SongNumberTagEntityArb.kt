@@ -1,7 +1,7 @@
 package io.github.alelk.pws.database.common.entity
 
-import io.github.alelk.pws.database.common.model.TagId
-import io.github.alelk.pws.database.common.model.tagId
+import io.github.alelk.pws.domain.model.TagId
+import io.github.alelk.pws.domain.model.tagId
 import io.kotest.common.DelicateKotest
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary

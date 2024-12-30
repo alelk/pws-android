@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import io.github.alelk.pws.database.common.entity.TagEntity
-import io.github.alelk.pws.database.common.model.TagId
+import io.github.alelk.pws.domain.model.TagId
 
 @Dao
 interface TagDao : Pageable<TagEntity> {

@@ -6,7 +6,7 @@ import br.com.colman.kotest.android.extensions.robolectric.RobolectricTest
 import com.alelk.pws.database.PwsDatabase
 import com.alelk.pws.database.pwsDbForTest
 import io.github.alelk.pws.database.common.entity.bookEntity
-import io.github.alelk.pws.database.common.model.bookExternalId
+import io.github.alelk.pws.domain.model.bookExternalId
 import io.kotest.core.spec.style.FeatureSpec
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder

@@ -9,8 +9,8 @@ import androidx.room.Transaction
 import io.github.alelk.pws.database.common.entity.SongNumberEntity
 import io.github.alelk.pws.database.common.entity.SongNumberTagEntity
 import io.github.alelk.pws.database.common.entity.TagEntity
-import io.github.alelk.pws.database.common.model.BookExternalId
-import io.github.alelk.pws.database.common.model.TagId
+import io.github.alelk.pws.domain.model.BookExternalId
+import io.github.alelk.pws.domain.model.TagId
 import kotlinx.coroutines.flow.Flow
 
 @Dao

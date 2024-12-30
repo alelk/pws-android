@@ -1,4 +1,4 @@
-package io.github.alelk.pws.database.common.model
+package io.github.alelk.pws.domain.model
 
 enum class Tonality(val identifier: String) {
   A_MAJOR("a major"),

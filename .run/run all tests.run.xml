@@ -10,6 +10,7 @@
       </option>
       <option name="taskNames">
         <list>
+          <option value=":domain:jvmTest" />
           <option value=":database:testRuDebugUnitTest" />
           <option value=":app:testRuDebugUnitTest" />
         </list>
