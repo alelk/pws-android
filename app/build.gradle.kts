@@ -1,3 +1,5 @@
+import com.android.build.api.artifact.SingleArtifact
+
 plugins {
   id("com.android.application")
   id("org.jetbrains.kotlin.android")
@@ -11,8 +13,13 @@ android {
     create("release-ru") {
       keyAlias = project.findProperty("android.release.keyAliasRu") as String?
       keyPassword = project.findProperty("android.release.keyPassword") as String?
-      storeFile =
-        (project.findProperty("android.release.keystorePath") as String?)?.let(::file)
+      storeFile = (project.findProperty("android.release.keystorePath") as String?)?.let(::file)
+      storePassword = project.findProperty("android.release.storePassword") as String?
+    }
+    create("release-uk") {
+      keyAlias = project.findProperty("android.release.keyAliasUk") as String?
+      keyPassword = project.findProperty("android.release.keyPassword") as String?
+      storeFile = (project.findProperty("android.release.keystorePath") as String?)?.let(::file)
       storePassword = project.findProperty("android.release.storePassword") as String?
     }
   }
@@ -78,6 +85,18 @@ android {
 
   viewBinding {
     enable = true
+  }
+
+  androidComponents.onVariants { variant ->
+    val copyTaskName = "copy${variant.name.replaceFirstChar { it.uppercase() }}Bundle"
+    tasks.register<Copy>(copyTaskName) {
+        from(variant.artifacts.get(SingleArtifact.BUNDLE))
+        into(project.layout.buildDirectory.dir("outputs/"))
+        rename { "app-${variant.name}.aab" }
+    }
+    tasks.configureEach {
+      if (this.name == "bundle${variant.name.replaceFirstChar { it.uppercase() }}") finalizedBy(copyTaskName)
+    }
   }
 }
 
