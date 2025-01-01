@@ -21,7 +21,7 @@ class SongTest : StringSpec({
     id = 1,
     version = Version(1, 0),
     locale = Locale.forLanguageTag("en"),
-    title = "Song Title",
+    name = "Song Name",
     lyric = "Verse 1 Line 1\nVerse 1 Line 2\n\nVerse 2 Line 1\nVerse 2 Line 2",
     tonalities = listOf(Tonality.A_MAJOR, Tonality.B_MAJOR),
     author = Person("Author"),
@@ -37,7 +37,7 @@ class SongTest : StringSpec({
       |id: 1
       |version: "1.0"
       |locale: "en"
-      |title: "Song Title"
+      |name: "Song Name"
       |lyric: |-
       |  Verse 1 Line 1
       |  Verse 1 Line 2

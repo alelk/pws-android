@@ -44,18 +44,28 @@ interface SongNumberTagDao : Pageable<SongNumberTagEntity> {
   @Query("SELECT * FROM song_number_tags ORDER BY tag_id, song_number_id LIMIT :limit OFFSET :offset")
   override suspend fun getAll(limit: Int, offset: Int): List<SongNumberTagEntity>
 
-  @Query("SELECT " +
-    "    b.displayname as bookName," +
-    "    b.displayshortname as bookShortName," +
-    "    pn.number as songNumber," +
-    "    p.name as songName," +
-    "    p.text as songText," +
-    "    p.tonalities as songTonality " +
-    "FROM song_number_tags snt " +
-    "INNER JOIN psalmnumbers pn ON pn._id = snt.song_number_id " +
-    "INNER JOIN books b ON b._id = pn.bookid " +
-    "INNER JOIN psalms p ON p._id = pn.psalmid " +
-    "WHERE snt.tag_id = :tagId")
+  @Query(
+    "SELECT " +
+      "b.displayname as bookName, " +
+      "b.edition as bookId, " +
+      "b.displayshortname as bookShortName, " +
+      "pn.number as songNumber, " +
+      "p._id as songId, " +
+      "p.version as songVersion, " +
+      "p.locale as songLocale, " +
+      "p.name as songName, " +
+      "p.text as songText, " +
+      "p.tonalities as songTonalities, " +
+      "p.author as songAuthor, " +
+      "p.translator as songTranslator, " +
+      "p.composer as songComposer, " +
+      "p.bibleref as bibleReferences " +
+      "FROM song_number_tags snt " +
+      "INNER JOIN psalmnumbers pn ON pn._id = snt.song_number_id " +
+      "INNER JOIN books b ON b._id = pn.bookid " +
+      "INNER JOIN psalms p ON p._id = pn.psalmid " +
+      "WHERE snt.tag_id = :tagId"
+  )
   suspend fun getSongDetailsByTagId(tagId: TagId): List<SongDetails>
 
   @Query("SELECT count(*) FROM song_number_tags")

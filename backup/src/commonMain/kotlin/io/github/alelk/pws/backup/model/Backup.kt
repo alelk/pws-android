@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 
 @Serializable
 data class Backup(
-  val metadata: Metadata,
+  val metadata: Metadata = Metadata(),
   val songs: List<Song>? = null,
   val favorites: List<SongNumber>? = null,
   val tags: List<Tag>? = null,
@@ -17,7 +17,7 @@ data class Backup(
   @Serializable
   data class Metadata(
     @Serializable(with = LocalDateTimeSerializer::class)
-    val createdAt: LocalDateTime
+    val createdAt: LocalDateTime = LocalDateTime.now()
   ) {
     val version: Int = 1
   }

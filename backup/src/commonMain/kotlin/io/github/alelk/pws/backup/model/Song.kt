@@ -20,7 +20,7 @@ data class Song(
   val version: Version,
   @Serializable(with = LocaleSerializer::class)
   val locale: Locale,
-  val title: String,
+  val name: String,
   val lyric: String,
   val tonalities: List<@Serializable(with = TonalitySerializer::class) Tonality>? = null,
   @Serializable(with = PersonSerializer::class)

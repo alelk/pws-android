@@ -3,7 +3,6 @@ package io.github.alelk.pws.backup.model
 import com.charleskorn.kaml.Yaml
 import io.github.alelk.pws.domain.model.BookExternalId
 import io.github.alelk.pws.domain.model.Color
-import io.github.alelk.pws.domain.model.TagId
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 
@@ -12,7 +11,7 @@ class TagTest : StringSpec({
   val book2Id = BookExternalId.parse("book-2")
 
   val tag1 = Tag(
-    TagId.parse("tag1"),
+    "tag1",
     Color.parse("#ff0000"),
     setOf(
       SongNumber(book1Id, 1),
@@ -24,7 +23,7 @@ class TagTest : StringSpec({
   )
 
   val tag1Yaml = """
-    |id: "tag1"
+    |name: "tag1"
     |color: "#ff0000"
     |songs:
     |  "book-1":

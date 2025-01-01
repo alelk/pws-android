@@ -5,6 +5,11 @@ import android.database.Cursor
 import android.provider.BaseColumns
 import androidx.room.*
 import io.github.alelk.pws.database.common.entity.SongEntity
+import io.github.alelk.pws.domain.model.BookExternalId
+import io.github.alelk.pws.domain.model.Person
+import io.github.alelk.pws.domain.model.Tonality
+import io.github.alelk.pws.domain.model.Version
+import java.util.Locale
 
 data class SongSearchResult(
   val songNumberId: Long,
@@ -17,10 +22,17 @@ data class SongSearchResult(
 data class SongDetails(
   val bookName: String,
   val bookShortName: String,
+  val bookId: BookExternalId,
+  val songId: Long,
   val songNumber: Int,
+  val songLocale: Locale,
+  val songVersion: Version,
   val songName: String,
-  val songText: String?,
-  val songTonality: String?,
+  val songText: String,
+  val songTonalities: List<Tonality>?,
+  val songAuthor: Person?,
+  val songTranslator: Person?,
+  val songComposer: Person?,
   val bibleReferences: String?
 )
 
@@ -45,11 +57,18 @@ interface SongDao : Pageable<SongEntity> {
   @Query(
     "SELECT " +
       "b.displayname as bookName, " +
+      "b.edition as bookId, " +
       "b.displayshortname as bookShortName, " +
       "pn.number as songNumber, " +
+      "p._id as songId, " +
+      "p.version as songVersion, " +
+      "p.locale as songLocale, " +
       "p.name as songName, " +
       "p.text as songText, " +
-      "p.tonalities as songTonality, " +
+      "p.tonalities as songTonalities, " +
+      "p.author as songAuthor, " +
+      "p.translator as songTranslator, " +
+      "p.composer as songComposer, " +
       "p.bibleref as bibleReferences " +
     "FROM psalms p " +
     "INNER JOIN psalmnumbers pn ON p._id = pn.psalmid " +

@@ -30,7 +30,7 @@ class BackupServiceTest : StringSpec({
         id = 100L,
         version = Version(1, 1),
         locale = Locale.forLanguageTag("en"),
-        title = "Song 1",
+        name = "Song 1",
         lyric = "Verse 1 Line 1\nVerse 1 Line 2\n\nVerse 2 Line 1\nVerse 2 Line 2",
         tonalities = listOf(Tonality.B_MAJOR, Tonality.A_MINOR),
         author = Person("Author 1"),
@@ -47,7 +47,9 @@ class BackupServiceTest : StringSpec({
     ),
     tags = listOf(
       Tag(
-        TagId("tag-1"), Color(100, 100, 100), setOf(
+        "tag-1",
+        Color(100, 100, 100),
+        setOf(
           SongNumber(book1Id, 1),
           SongNumber(book1Id, 2),
           SongNumber(book1Id, 3),
@@ -71,7 +73,7 @@ class BackupServiceTest : StringSpec({
     |  id: 100
     |  version: "1.1"
     |  locale: "en"
-    |  title: "Song 1"
+    |  name: "Song 1"
     |  lyric: |-
     |    Verse 1 Line 1
     |    Verse 1 Line 2
@@ -95,7 +97,7 @@ class BackupServiceTest : StringSpec({
     |- bookId: "book-2"
     |  number: 2
     |tags:
-    |- id: "tag-1"
+    |- name: "tag-1"
     |  color: "#646464"
     |  songs:
     |    "book-1":
@@ -136,4 +138,9 @@ class BackupServiceTest : StringSpec({
     bkp shouldBe backup1
   }
 
+  "read backup from input stream" {
+    file.writeText(backup1Text)
+    val bkp = BackupService().read(file.inputStream())
+    bkp shouldBe backup1
+  }
 })
