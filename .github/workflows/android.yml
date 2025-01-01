@@ -28,7 +28,7 @@ jobs:
 
     - name: Build ruDebug & ukDebug
       run: |
-        ./gradlew buildRuDebug buildUkDebug testRuDebug :database:jvmTest
+        ./gradlew buildRuDebug buildUkDebug testRuDebug :domain:jvmTest :backup:jvmTest :database:jvmTest
 
     - name: Run Additional Tests
       run: |

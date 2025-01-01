@@ -84,6 +84,7 @@ android {
 dependencies {
   implementation(project(":domain"))
   implementation(project(":database"))
+  implementation(project(":backup"))
 
   implementation(libs.preference.ktx)
   implementation(libs.lifecycle.viewmodel.ktx)
