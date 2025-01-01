@@ -20,3 +20,5 @@ local.properties
 /domain/build
 /domain/domain-test-fixtures/build
 /backup/build
+
+/output

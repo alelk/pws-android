@@ -1,7 +1,3 @@
-import com.android.build.api.artifact.SingleArtifact
-import com.android.build.gradle.internal.tasks.FinalizeBundleTask
-import org.gradle.internal.extensions.stdlib.capitalized
-
 plugins {
   id("com.android.application")
   id("org.jetbrains.kotlin.android")
@@ -32,15 +28,33 @@ android {
     minSdk = 21
     targetSdk = rootProject.extra["sdkVersion"] as Int
     versionCode = rootProject.extra["versionCode"] as Int
-    versionName =
-      "${rootProject.extra["versionName"]}-${rootProject.extra["versionNameSuffix"]}"
+    versionName = "${rootProject.extra["versionName"]}-${rootProject.extra["versionNameSuffix"]}"
+  }
+
+  productFlavors {
+    create("ru") {
+      dimension = "contentLevel"
+    }
+    create("uk") {
+      dimension = "contentLevel"
+      applicationIdSuffix = ".uk"
+      versionNameSuffix = "-uk"
+      resValue("string", "db_authority", "com.alelk.pws.database.uk")
+    }
+    create("full") {
+      dimension = "contentLevel"
+      applicationIdSuffix = ".full"
+      versionNameSuffix = "-full"
+      resValue("string", "db_authority", "com.alelk.pws.database.full")
+    }
   }
 
   buildTypes {
     getByName("release") {
       isMinifyEnabled = false
       proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
-      signingConfig = signingConfigs.getByName("release-ru")
+      productFlavors.getByName("ru").signingConfig = signingConfigs.getByName("release-ru")
+      productFlavors.getByName("uk").signingConfig = signingConfigs.getByName("release-uk")
     }
     getByName("debug") {
       isDebuggable = true
@@ -62,24 +76,6 @@ android {
 
   flavorDimensions.add("contentLevel")
 
-  productFlavors {
-    create("ru") {
-      dimension = "contentLevel"
-    }
-    create("uk") {
-      dimension = "contentLevel"
-      applicationIdSuffix = ".uk"
-      versionNameSuffix = "-uk"
-      resValue("string", "db_authority", "com.alelk.pws.database.uk")
-    }
-    create("full") {
-      dimension = "contentLevel"
-      applicationIdSuffix = ".full"
-      versionNameSuffix = "-full"
-      resValue("string", "db_authority", "com.alelk.pws.database.full")
-    }
-  }
-
   namespace = "com.alelk.pws.pwapp"
   applicationVariants.forEach { variant ->
     variant.resValue("string", "versionName", variant.versionName)
@@ -87,21 +83,6 @@ android {
 
   viewBinding {
     enable = true
-  }
-
-  applicationVariants.forEach { variant ->
-    variant.outputs.all {
-      productFlavors.forEach { productFlavor ->
-        val packageName = "pws-app-${variant.name}-${productFlavor.versionName}-${productFlavor.name}"
-        val bundleFinalizeTaskName = "sign${productFlavor.name.capitalized()}${variant.buildType.name.capitalized()}Bundle"
-        logger.info("packageName: $packageName, bundleFinalizeTaskName: $bundleFinalizeTaskName")
-        tasks.named(bundleFinalizeTaskName, FinalizeBundleTask::class.java) {
-          val file = finalBundleFile.asFile.get()
-          val finalFile = File(file.parentFile, "$packageName.aab")
-          finalBundleFile.set(finalFile)
-        }
-      }
-    }
   }
 }
 
