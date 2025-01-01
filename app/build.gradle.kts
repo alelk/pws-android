@@ -11,8 +11,13 @@ android {
     create("release-ru") {
       keyAlias = project.findProperty("android.release.keyAliasRu") as String?
       keyPassword = project.findProperty("android.release.keyPassword") as String?
-      storeFile =
-        (project.findProperty("android.release.keystorePath") as String?)?.let(::file)
+      storeFile = (project.findProperty("android.release.keystorePath") as String?)?.let(::file)
+      storePassword = project.findProperty("android.release.storePassword") as String?
+    }
+    create("release-uk") {
+      keyAlias = project.findProperty("android.release.keyAliasUk") as String?
+      keyPassword = project.findProperty("android.release.keyPassword") as String?
+      storeFile = (project.findProperty("android.release.keystorePath") as String?)?.let(::file)
       storePassword = project.findProperty("android.release.storePassword") as String?
     }
   }
@@ -23,15 +28,33 @@ android {
     minSdk = 21
     targetSdk = rootProject.extra["sdkVersion"] as Int
     versionCode = rootProject.extra["versionCode"] as Int
-    versionName =
-      "${rootProject.extra["versionName"]}-${rootProject.extra["versionNameSuffix"]}"
+    versionName = "${rootProject.extra["versionName"]}-${rootProject.extra["versionNameSuffix"]}"
+  }
+
+  productFlavors {
+    create("ru") {
+      dimension = "contentLevel"
+    }
+    create("uk") {
+      dimension = "contentLevel"
+      applicationIdSuffix = ".uk"
+      versionNameSuffix = "-uk"
+      resValue("string", "db_authority", "com.alelk.pws.database.uk")
+    }
+    create("full") {
+      dimension = "contentLevel"
+      applicationIdSuffix = ".full"
+      versionNameSuffix = "-full"
+      resValue("string", "db_authority", "com.alelk.pws.database.full")
+    }
   }
 
   buildTypes {
     getByName("release") {
       isMinifyEnabled = false
       proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
-      signingConfig = signingConfigs.getByName("release-ru")
+      productFlavors.getByName("ru").signingConfig = signingConfigs.getByName("release-ru")
+      productFlavors.getByName("uk").signingConfig = signingConfigs.getByName("release-uk")
     }
     getByName("debug") {
       isDebuggable = true
@@ -52,24 +75,6 @@ android {
   }
 
   flavorDimensions.add("contentLevel")
-
-  productFlavors {
-    create("ru") {
-      dimension = "contentLevel"
-    }
-    create("uk") {
-      dimension = "contentLevel"
-      applicationIdSuffix = ".uk"
-      versionNameSuffix = "-uk"
-      resValue("string", "db_authority", "com.alelk.pws.database.uk")
-    }
-    create("full") {
-      dimension = "contentLevel"
-      applicationIdSuffix = ".full"
-      versionNameSuffix = "-full"
-      resValue("string", "db_authority", "com.alelk.pws.database.full")
-    }
-  }
 
   namespace = "com.alelk.pws.pwapp"
   applicationVariants.forEach { variant ->
@@ -107,5 +112,5 @@ dependencies {
 }
 
 tasks.withType<Test>().configureEach {
-    useJUnitPlatform()
+  useJUnitPlatform()
 }
