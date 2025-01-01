@@ -1,4 +1,6 @@
 import com.android.build.api.artifact.SingleArtifact
+import com.android.build.gradle.internal.tasks.FinalizeBundleTask
+import org.gradle.internal.extensions.stdlib.capitalized
 
 plugins {
   id("com.android.application")
@@ -87,15 +89,18 @@ android {
     enable = true
   }
 
-  androidComponents.onVariants { variant ->
-    val copyTaskName = "copy${variant.name.replaceFirstChar { it.uppercase() }}Bundle"
-    tasks.register<Copy>(copyTaskName) {
-        from(variant.artifacts.get(SingleArtifact.BUNDLE))
-        into(project.layout.buildDirectory.dir("outputs/"))
-        rename { "app-${variant.name}.aab" }
-    }
-    tasks.configureEach {
-      if (this.name == "bundle${variant.name.replaceFirstChar { it.uppercase() }}") finalizedBy(copyTaskName)
+  applicationVariants.forEach { variant ->
+    variant.outputs.all {
+      productFlavors.forEach { productFlavor ->
+        val packageName = "pws-app-${variant.name}-${productFlavor.versionName}-${productFlavor.name}"
+        val bundleFinalizeTaskName = "sign${productFlavor.name.capitalized()}${variant.buildType.name.capitalized()}Bundle"
+        logger.info("packageName: $packageName, bundleFinalizeTaskName: $bundleFinalizeTaskName")
+        tasks.named(bundleFinalizeTaskName, FinalizeBundleTask::class.java) {
+          val file = finalBundleFile.asFile.get()
+          val finalFile = File(file.parentFile, "$packageName.aab")
+          finalBundleFile.set(finalFile)
+        }
+      }
     }
   }
 }
@@ -126,5 +131,5 @@ dependencies {
 }
 
 tasks.withType<Test>().configureEach {
-    useJUnitPlatform()
+  useJUnitPlatform()
 }
