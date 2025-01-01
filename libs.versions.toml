@@ -38,10 +38,6 @@ sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sql
 # Logging
 timber = { module = "com.jakewharton.timber:timber", version = "5.0.1" }
 
-# Json
-jackson-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
-jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
-
 # Yaml
 kaml = { module = "com.charleskorn.kaml:kaml", version.ref = "kaml" } # https://search.maven.org/artifact/com.charleskorn.kaml/kaml
 
