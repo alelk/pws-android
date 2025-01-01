@@ -6,9 +6,18 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import io.github.alelk.pws.database.common.entity.FavoriteEntity
+import io.github.alelk.pws.domain.model.BookExternalId
 import kotlinx.coroutines.flow.Flow
 
-data class Favorite(val id: Long, val songNumber: Int, val songName: String, val bookDisplayName: String, val songNumberId: Long, val bookShortName: String)
+data class Favorite(
+  val id: Long,
+  val songNumber: Int,
+  val songName: String,
+  val bookId: BookExternalId,
+  val bookDisplayName: String,
+  val songNumberId: Long,
+  val bookShortName: String
+)
 
 @Dao
 interface FavoriteDao {
@@ -29,7 +38,14 @@ interface FavoriteDao {
   @Transaction
   @Query(
     """
-    SELECT f._id as id, p.name as songName, pn.number as songNumber, b.displayname as bookDisplayName, pn._id as songNumberId, b.displayshortname as bookShortName
+    SELECT 
+      f._id as id, 
+      p.name as songName, 
+      pn.number as songNumber, 
+      b.edition as bookId,
+      b.displayname as bookDisplayName, 
+      pn._id as songNumberId, 
+      b.displayshortname as bookShortName
     FROM favorites f 
     INNER JOIN psalmnumbers pn on f.psalmnumberid = pn._id 
     INNER JOIN psalms p on pn.psalmid=p._id

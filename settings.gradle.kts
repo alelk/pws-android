@@ -1,5 +1,5 @@
 rootProject.name = "P&W Songs for Android"
-include( ":domain", ":domain:domain-test-fixtures", ":app", ":database")
+include( ":domain", ":domain:domain-test-fixtures", ":backup", ":database", ":app")
 
 pluginManagement {
   repositories {

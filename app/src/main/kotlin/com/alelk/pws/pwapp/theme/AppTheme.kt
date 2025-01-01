@@ -41,6 +41,6 @@ enum class AppTheme(
   companion object {
     fun byKey(context: Context, themeKey: String): AppTheme? = entries.find { theme -> context.getString(theme.themeKeyResId) == themeKey }
     fun byIdentifier(identifier: String): AppTheme? = entries.find { it.identifier == identifier }
-    val DEFAUL = AppTheme.LIGHT
+    val DEFAULT = LIGHT
   }
 }

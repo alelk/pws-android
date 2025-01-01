@@ -84,6 +84,7 @@ android {
 dependencies {
   implementation(project(":domain"))
   implementation(project(":database"))
+  implementation(project(":backup"))
 
   implementation(libs.preference.ktx)
   implementation(libs.lifecycle.viewmodel.ktx)
@@ -94,8 +95,6 @@ dependencies {
   implementation(libs.room.runtime)
   implementation(libs.timber)
   implementation(libs.datastore.preferences)
-  implementation(libs.jackson.kotlin)
-  implementation(libs.jackson.databind)
 
   // Test dependencies
   testImplementation(libs.kotest.runner.junit5)

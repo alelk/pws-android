@@ -34,7 +34,7 @@ class AppPreferencesViewModel(application: Application) : AndroidViewModel(appli
   val songTextSize: Flow<Float?> = datastore.data.map { it[SONG_TEXT_SIZE] }
   val songTextExpanded: Flow<Boolean> = datastore.data.map { it[SONG_TEXT_EXPANDED] ?: true }
   val appTheme: StateFlow<AppTheme> =
-    datastore.data.map { it[APP_THEME]?.let(AppTheme::byIdentifier) ?: AppTheme.DEFAUL }
+    datastore.data.map { it[APP_THEME]?.let(AppTheme::byIdentifier) ?: AppTheme.DEFAULT }
       .distinctUntilChanged()
       .let { prefs ->
         prefs.stateIn(viewModelScope, SharingStarted.Eagerly, runBlocking { prefs.first() })

@@ -12,17 +12,21 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.alelk.pws.pwapp.R
 import com.alelk.pws.pwapp.activity.MainSettingsActivity
-import com.alelk.pws.pwapp.model.ImportExportViewModel
+import com.alelk.pws.pwapp.model.BackupViewModel
+import io.github.alelk.pws.backup.BackupService
 import java.io.File
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.Date
 
-class ImportExportPreferenceFragment : PreferenceFragmentCompat() {
-  private val viewModel: ImportExportViewModel by viewModels()
+class BackupPreferenceFragment : PreferenceFragmentCompat() {
+  private val viewModel: BackupViewModel by viewModels()
+
+  private val backupService = BackupService()
 
   private lateinit var importPreference: Preference
   private lateinit var exportPreference: Preference
@@ -34,22 +38,22 @@ class ImportExportPreferenceFragment : PreferenceFragmentCompat() {
       result.data?.data?.let { uri ->
         coroutineScope.launch {
           context?.contentResolver?.openOutputStream(uri)?.use { outputStream ->
-            // We need a temporary file to store the exported user data before copying it to the output stream.
-            // This is because the export process involves writing data to a file, and using a temporary file
-            // allows us to handle the data safely and efficiently before transferring it to the final destination.
-            val tempFile = File(context?.cacheDir, "temp_backup.json")
-            val isSuccess = withContext(Dispatchers.IO) {
-              viewModel.exportDatabase(tempFile)
-            }
-            if (isSuccess) {
+            try {
+              // We need a temporary file to store the exported user data before copying it to the output stream.
+              // This is because the export process involves writing data to a file, and using a temporary file
+              // allows us to handle the data safely and efficiently before transferring it to the final destination.
+              val tempFile = File(context?.cacheDir, "temp_backup.pws")
+              val backup = viewModel.getBackup()
               withContext(Dispatchers.IO) {
+                backupService.write(backup, tempFile)
                 tempFile.inputStream().copyTo(outputStream)
               }
               Toast.makeText(context, R.string.export_success, Toast.LENGTH_SHORT).show()
-            } else {
+              tempFile.delete()
+            } catch (e: Throwable) {
+              Timber.e(e, "Failed to export backup")
               Toast.makeText(context, R.string.export_failed, Toast.LENGTH_SHORT).show()
             }
-            tempFile.delete()
           }
         }
       }
@@ -61,12 +65,12 @@ class ImportExportPreferenceFragment : PreferenceFragmentCompat() {
       result.data?.data?.let { uri ->
         coroutineScope.launch {
           context?.contentResolver?.openInputStream(uri)?.use { inputStream ->
-            val isSuccess = withContext(Dispatchers.IO) {
-              viewModel.importDatabase(inputStream, uri)
-            }
-            if (isSuccess) {
+            try {
+              val backup = withContext(Dispatchers.IO) { backupService.read(inputStream) }
+              viewModel.restoreBackup(backup)
               Toast.makeText(context, R.string.import_success, Toast.LENGTH_SHORT).show()
-            } else {
+            } catch (e: Throwable) {
+              Timber.e(e, "Failed to import backup")
               Toast.makeText(context, R.string.import_failed, Toast.LENGTH_SHORT).show()
             }
           }
@@ -105,9 +109,9 @@ class ImportExportPreferenceFragment : PreferenceFragmentCompat() {
   private fun handleExport() {
     val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
       addCategory(Intent.CATEGORY_OPENABLE)
-      type = "application/json"
+      type = "application/octet-stream"
       val currentTime = SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(Date())
-      putExtra(Intent.EXTRA_TITLE, "pws_backup_$currentTime.json")
+      putExtra(Intent.EXTRA_TITLE, "pws_backup_$currentTime.pws")
     }
     exportLauncher.launch(intent)
   }
@@ -115,7 +119,7 @@ class ImportExportPreferenceFragment : PreferenceFragmentCompat() {
   private fun handleImport() {
     val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
       addCategory(Intent.CATEGORY_OPENABLE)
-      type = "application/json"
+      type = "application/octet-stream"
     }
     importLauncher.launch(intent)
   }
