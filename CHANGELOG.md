@@ -1,5 +1,12 @@
 # PWS Android
 
+## [1.11.1](https://github.com/alelk/pws-android/compare/v1.11.0...v1.11.1) (2025-01-01)
+
+
+### Bug Fixes
+
+* add build script; prepare for new public release ([#49](https://github.com/alelk/pws-android/issues/49)) ([157ebd3](https://github.com/alelk/pws-android/commit/157ebd32ff2a0ee2231dcf439d4c15c9eb7e7e31))
+
 # [1.11.0](https://github.com/alelk/pws-android/compare/v1.10.7...v1.11.0) (2025-01-01)
 
 
