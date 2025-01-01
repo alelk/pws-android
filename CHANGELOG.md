@@ -1,5 +1,12 @@
 # PWS Android
 
+# [1.11.0](https://github.com/alelk/pws-android/compare/v1.10.7...v1.11.0) (2025-01-01)
+
+
+### Features
+
+* **backup:** backup feature refactoring ([#48](https://github.com/alelk/pws-android/issues/48)) ([e544c4d](https://github.com/alelk/pws-android/commit/e544c4db874bb349569cc80ec4dca89f131a982a))
+
 ## [1.10.7](https://github.com/alelk/pws-android/compare/v1.10.6...v1.10.7) (2024-12-30)
 
 
