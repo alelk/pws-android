@@ -156,7 +156,7 @@ publishing {
   publications {
     create<MavenPublication>("gpr") {
       groupId = "io.github.alelk.pws"
-      artifactId = if (!isSnapshot) "pws-database" else "pws-database-snapshot"
+      artifactId = "pws-database"
       version = versionName
       artifact(tasks.named("jvmJar"))
       artifact(tasks.named("jvmSourcesJar"))
@@ -165,7 +165,7 @@ publishing {
 
   repositories {
     maven {
-      name = if (isSnapshot) "GitHubPackages-Snapshots" else "GitHubPackages"
+      name = "GitHubPackages"
       url = uri("https://maven.pkg.github.com/alelk/pws-android")
       credentials {
         username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_USER") ?: "alelk"
