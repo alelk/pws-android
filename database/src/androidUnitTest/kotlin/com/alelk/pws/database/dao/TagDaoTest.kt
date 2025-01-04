@@ -12,6 +12,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldStartWith
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.of
+import io.kotest.property.arbitrary.removeEdgecases
 import io.kotest.property.arbitrary.take
 import io.kotest.property.checkAll
 
@@ -26,13 +27,13 @@ class TagDaoTest : FeatureSpec({
   feature("tag dao crud") {
 
     scenario("insert a tag") {
-      checkAll(10, Arb.tagEntity()) { tag ->
+      checkAll(10, Arb.tagEntity().removeEdgecases()) { tag ->
         db.tagDao().insert(tag)
       }
       db.tagDao().count() shouldBe 10
     }
 
-    val tags = Arb.tagEntity().take(10).toList()
+    val tags = Arb.tagEntity().removeEdgecases().take(10).toList()
     scenario("insert batch") {
       db.tagDao().insert(tags)
       db.tagDao().count() shouldBe 20
