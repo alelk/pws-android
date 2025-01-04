@@ -1,5 +1,12 @@
 # PWS Android
 
+## [1.11.2](https://github.com/alelk/pws-android/compare/v1.11.1...v1.11.2) (2025-01-02)
+
+
+### Bug Fixes
+
+* configure domain package publication ([#50](https://github.com/alelk/pws-android/issues/50)) ([8e0af70](https://github.com/alelk/pws-android/commit/8e0af70cc35d399bbc8ec549b34c150fc73f5d65))
+
 ## [1.11.1](https://github.com/alelk/pws-android/compare/v1.11.0...v1.11.1) (2025-01-01)
 
 
