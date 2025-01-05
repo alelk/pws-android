@@ -38,9 +38,18 @@ import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
+import dagger.Lazy
+import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
+import javax.inject.Inject
 
+@AndroidEntryPoint
 open class MainActivity : AppCompatThemedActivity(), NavigationView.OnNavigationItemSelectedListener {
+
+  @Inject lateinit var readNowFragment: Lazy<ReadNowFragment>
+  @Inject lateinit var booksFragment: Lazy<BooksFragment>
+  @Inject lateinit var historyFragment: Lazy<HistoryFragment>
+  @Inject lateinit var favoritesFragment: Lazy<FavoritesFragment>
 
   private var mDrawerLayout: DrawerLayout? = null
   private var mNavigationItemId = R.id.drawer_main_home
@@ -160,22 +169,22 @@ open class MainActivity : AppCompatThemedActivity(), NavigationView.OnNavigation
     var titleResId = R.string.app_name
     when (mNavigationItemId) {
       R.id.drawer_main_home -> {
-        fragment = ReadNowFragment()
+        fragment = readNowFragment.get()
         titleResId = R.string.lbl_drawer_main_home
       }
 
       R.id.drawer_main_books -> {
-        fragment = BooksFragment()
+        fragment = booksFragment.get()
         titleResId = R.string.lbl_drawer_main_books
       }
 
       R.id.drawer_main_history -> {
-        fragment = HistoryFragment()
+        fragment = historyFragment.get()
         titleResId = R.string.lbl_drawer_main_history
       }
 
       R.id.drawer_main_favorite -> {
-        fragment = FavoritesFragment()
+        fragment = favoritesFragment.get()
         titleResId = R.string.lbl_drawer_main_favorite
       }
     }

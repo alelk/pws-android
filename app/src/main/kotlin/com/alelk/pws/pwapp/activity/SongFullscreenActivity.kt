@@ -29,10 +29,12 @@ import com.alelk.pws.pwapp.fragment.SongTextFragment
 import com.alelk.pws.pwapp.model.BooksViewModel
 import com.alelk.pws.pwapp.model.FavoritesViewModel
 import com.alelk.pws.pwapp.model.SongsViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 // todo: reimplement or remove
 @Deprecated("reimplement or remove")
+@AndroidEntryPoint
 class SongFullscreenActivity : AppCompatThemedActivity() {
   private var songNumberId: Long = -1
 

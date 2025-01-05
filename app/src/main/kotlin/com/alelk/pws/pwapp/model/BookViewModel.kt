@@ -1,10 +1,10 @@
 package com.alelk.pws.pwapp.model
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.alelk.pws.database.DatabaseProvider
+import com.alelk.pws.database.PwsDatabase
 import com.alelk.pws.database.dao.SongNumberWithSong
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.alelk.pws.database.common.entity.BookEntity
 import io.github.alelk.pws.database.common.entity.SongNumberEntity
 import io.github.alelk.pws.domain.model.BookExternalId
@@ -20,16 +20,18 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import timber.log.Timber
+import javax.inject.Inject
 
 data class BookInfo(
   val book: BookEntity,
   val songs: List<SongNumberWithSong>
 )
 
+@HiltViewModel
 @OptIn(ExperimentalCoroutinesApi::class)
-class BookViewModel(application: Application) : AndroidViewModel(application) {
-  private val bookDao = DatabaseProvider.getDatabase(application).bookDao()
-  private val songNumberDao = DatabaseProvider.getDatabase(application).songNumberDao()
+class BookViewModel @Inject constructor(database: PwsDatabase) : ViewModel() {
+  private val bookDao = database.bookDao()
+  private val songNumberDao = database.songNumberDao()
 
   private val _bookExternalId = MutableStateFlow<BookExternalId?>(null)
   val bookExternalId = _bookExternalId.asStateFlow()

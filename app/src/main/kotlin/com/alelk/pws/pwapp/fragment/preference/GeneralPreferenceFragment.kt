@@ -34,6 +34,7 @@ import com.alelk.pws.pwapp.activity.MainSettingsActivity
 import com.alelk.pws.pwapp.model.AppPreferencesViewModel
 import com.alelk.pws.pwapp.model.BookStatisticViewModel
 import com.alelk.pws.pwapp.theme.AppTheme
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.launch
@@ -44,8 +45,7 @@ import timber.log.Timber
  *
  * Created by Alex Elkin on 06.08.2016.
  */
-
-// fixme not working
+@AndroidEntryPoint
 class GeneralPreferenceFragment : PreferenceFragmentCompat() {
 
   private val bookStatisticViewModel: BookStatisticViewModel by viewModels()

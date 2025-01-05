@@ -50,6 +50,7 @@ import com.alelk.pws.pwapp.model.textDocument
 import com.alelk.pws.pwapp.model.textDocumentHtml
 import com.alelk.pws.pwapp.view.TagView
 import com.google.android.flexbox.FlexboxLayout
+import dagger.hilt.android.AndroidEntryPoint
 import io.github.alelk.pws.database.common.entity.SongEntity
 import io.github.alelk.pws.database.common.entity.TagEntity
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -68,6 +69,7 @@ import kotlin.time.Duration.Companion.seconds
 /**
  * Created by Alex Elkin on 18.04.2015.
  */
+@AndroidEntryPoint
 class SongTextFragment : Fragment() {
 
   private val songViewModel: SongViewModel by viewModels()

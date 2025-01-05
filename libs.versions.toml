@@ -4,6 +4,8 @@ kotlin = "2.1.0"
 kotlinx-coroutines = "1.9.0"
 ksp = "1.0.29"
 
+hilt = "2.54"
+
 android-application = "8.7.3"
 android-material = "1.12.0"
 
@@ -41,6 +43,9 @@ timber = { module = "com.jakewharton.timber:timber", version = "5.0.1" }
 # Yaml
 kaml = { module = "com.charleskorn.kaml:kaml", version.ref = "kaml" } # https://search.maven.org/artifact/com.charleskorn.kaml/kaml
 
+# DI
+hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" } # https://mvnrepository.com/artifact/com.google.dagger/hilt-android
+hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" } # https://mvnrepository.com/artifact/com.google.dagger/hilt-compiler
 
 # Preferences
 datastore-preferences = { module = "androidx.datastore:datastore-preferences", version = "1.1.1" } # https://mvnrepository.com/artifact/androidx.datastore/datastore-preferences
@@ -72,3 +77,4 @@ android-application = { id = "com.android.application", version.ref = "android-a
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotest-multiplatform = { id = "io.kotest.multiplatform", version.ref = "kotest" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" } # https://plugins.gradle.org/plugin/org.jetbrains.kotlin.plugin.serialization
+hilt = {id = "com.google.dagger.hilt.android", version = "2.51.1"}

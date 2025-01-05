@@ -23,7 +23,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -33,6 +32,7 @@ import com.alelk.pws.pwapp.R
 import com.alelk.pws.pwapp.activity.SongActivity
 import com.alelk.pws.pwapp.adapter.SearchRecyclerViewAdapter
 import com.alelk.pws.pwapp.model.SearchSongViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -40,6 +40,7 @@ import kotlinx.coroutines.launch
  *
  * Created by Alex Elkin on 23.05.2016.
  */
+@AndroidEntryPoint
 class SearchResultsFragment : Fragment() {
 
   private val searchViewModel: SearchSongViewModel by activityViewModels()

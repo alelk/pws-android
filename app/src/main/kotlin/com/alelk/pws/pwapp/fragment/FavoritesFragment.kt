@@ -34,15 +34,18 @@ import com.alelk.pws.pwapp.R
 import com.alelk.pws.pwapp.activity.SongActivity
 import com.alelk.pws.pwapp.adapter.FavoritesRecyclerViewAdapter
 import com.alelk.pws.pwapp.model.FavoritesViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 /**
  * Favorites Fragment
  *
  * Created by Alex Elkin on 18.02.2016.
  */
-class FavoritesFragment : Fragment() {
+@AndroidEntryPoint
+class FavoritesFragment @Inject constructor() : Fragment() {
   private var sortOrder = SORT_BY_ADDED_DATE // default
   private val sharedPrefs by lazy {
     requireActivity().getSharedPreferences("favorites_prefs", Context.MODE_PRIVATE)

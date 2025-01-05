@@ -33,15 +33,18 @@ import com.alelk.pws.pwapp.R
 import com.alelk.pws.pwapp.activity.SongActivity
 import com.alelk.pws.pwapp.adapter.HistoryRecyclerViewAdapter
 import com.alelk.pws.pwapp.model.HistoryViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 /**
  * History Fragment
  *
  * Created by Alex Elkin on 18.02.2016.
  */
-class HistoryFragment : Fragment() {
+@AndroidEntryPoint
+class HistoryFragment @Inject constructor() : Fragment() {
 
   private val historyViewModel: HistoryViewModel by viewModels()
 

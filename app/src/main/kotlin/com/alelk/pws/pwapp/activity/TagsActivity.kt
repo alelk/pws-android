@@ -16,11 +16,13 @@ import com.alelk.pws.pwapp.activity.base.AppCompatThemedActivity
 import com.alelk.pws.pwapp.adapter.TagsAdapter
 import com.alelk.pws.pwapp.dialog.TagDialog
 import com.alelk.pws.pwapp.model.TagsViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import io.github.alelk.pws.database.common.entity.TagEntity
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class TagsActivity : AppCompatThemedActivity() {
 
   private var isEditMode = false

@@ -1,9 +1,12 @@
 package com.alelk.pws.pwapp.model
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import com.alelk.pws.database.DatabaseProvider
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.lifecycle.ViewModel
+import com.alelk.pws.database.PwsDatabase
 import com.alelk.pws.pwapp.theme.AppTheme
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.alelk.pws.backup.model.Backup
 import io.github.alelk.pws.backup.model.Song
 import io.github.alelk.pws.backup.model.SongNumber
@@ -13,17 +16,21 @@ import io.github.alelk.pws.database.common.entity.TagEntity
 import io.github.alelk.pws.domain.model.BibleRef
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
 import timber.log.Timber
+import javax.inject.Inject
 
-class BackupViewModel(application: Application) : AndroidViewModel(application) {
-  private val appPreferencesViewModel: AppPreferencesViewModel = AppPreferencesViewModel(getApplication())
-  private val tagViewModel: TagsViewModel = TagsViewModel(application)
+@HiltViewModel
+class BackupViewModel @Inject constructor(
+  db: PwsDatabase,
+  private val datastore: DataStore<Preferences>
+) : ViewModel() {
 
-  private val db = DatabaseProvider.getDatabase(application)
   private val bookStatisticDao = db.bookStatisticDao()
   private val favoriteDao = db.favoriteDao()
   private val categoryDao = db.tagDao()
   private val songDao = db.songDao()
+  private val tagDao = db.tagDao()
   private val songNumberTagDao = db.songNumberTagDao()
   private val songNumberDao = db.songNumberDao()
 
@@ -53,10 +60,14 @@ class BackupViewModel(application: Application) : AndroidViewModel(application) 
         io.github.alelk.pws.backup.model.BookPreference(it.book.externalId, pref)
       }
     }
+
+    suspend fun <K> setting(key: Preferences.Key<K>, valueMapper: (K) -> String = { it.toString() }) =
+      datastore.data.map { it[key] }.firstOrNull()?.let { key.name to valueMapper(it) }
+
     val settings = listOfNotNull(
-      appPreferencesViewModel.songTextSize.firstOrNull()?.toString()?.let { AppPreferenceKeys.SONG_TEXT_SIZE.name to it },
-      appPreferencesViewModel.songTextExpanded.firstOrNull()?.toString()?.let { AppPreferenceKeys.SONG_TEXT_EXPANDED.name to it },
-      appPreferencesViewModel.appTheme.firstOrNull()?.identifier?.let { AppPreferenceKeys.APP_THEME.name to it }
+      setting(AppPreferenceKeys.SONG_TEXT_SIZE),
+      setting(AppPreferenceKeys.SONG_TEXT_EXPANDED),
+      setting(AppPreferenceKeys.APP_THEME),
     ).toMap()
     return Backup(songs = editedSongs, favorites = favorites, tags = customTags, bookPreferences = bookPreferences, settings = settings)
   }
@@ -104,7 +115,7 @@ class BackupViewModel(application: Application) : AndroidViewModel(application) 
       val tagEntity = if (existingTag == null) {
         // create new tag if it doesn't exist
         val newTag = TagEntity(
-          id = tagViewModel.getNextCustomTagId(),
+          id = tagDao.getNextCustomTagId(),
           name = tag.name,
           color = tag.color,
           predefined = false,
@@ -145,10 +156,22 @@ class BackupViewModel(application: Application) : AndroidViewModel(application) 
 
     // restore app settings
     val settings = backup.settings
+
+    suspend fun <K> applySetting(key: Preferences.Key<K>, valueMapper: (String) -> K) =
+      datastore.edit { preferences ->
+        val value =
+          settings?.get(key.name)?.let {
+            runCatching { valueMapper(it) }
+              .onFailure { e -> Timber.e(e, "error restoring setting ${key.name} from backup. Invalid value: '$it'") }
+              .getOrNull()
+          }
+        if (value != null) preferences[key] = value
+      }
+
     if (settings != null) {
-      settings[AppPreferenceKeys.SONG_TEXT_SIZE.name]?.toFloatOrNull()?.let { appPreferencesViewModel.setSongTextSize(it) }
-      settings[AppPreferenceKeys.SONG_TEXT_EXPANDED.name]?.toBooleanStrictOrNull()?.let { appPreferencesViewModel.setSongTextExpanded(it) }
-      settings[AppPreferenceKeys.APP_THEME.name]?.let { AppTheme.byIdentifier(it) }?.let { appPreferencesViewModel.setAppTheme(it) }
+      applySetting(AppPreferenceKeys.SONG_TEXT_SIZE) { it.toFloat() }
+      applySetting(AppPreferenceKeys.SONG_TEXT_EXPANDED) { it.toBoolean() }
+      applySetting(AppPreferenceKeys.APP_THEME) { checkNotNull(AppTheme.byIdentifier(it)?.identifier) { "unknown app theme: '$it'" } }
     }
   }
 }

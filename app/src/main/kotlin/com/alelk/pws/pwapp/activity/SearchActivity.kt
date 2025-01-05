@@ -29,7 +29,9 @@ import com.alelk.pws.pwapp.R
 import com.alelk.pws.pwapp.activity.base.AppCompatThemedActivity
 import com.alelk.pws.pwapp.fragment.SearchResultsFragment
 import com.alelk.pws.pwapp.model.SearchSongViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SearchActivity : AppCompatThemedActivity() {
 
   private val searchViewModel: SearchSongViewModel by viewModels()

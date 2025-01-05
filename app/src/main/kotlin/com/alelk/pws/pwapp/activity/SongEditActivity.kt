@@ -33,10 +33,12 @@ import com.alelk.pws.pwapp.activity.base.AppCompatThemedActivity
 import com.alelk.pws.pwapp.fragment.SongTextFragment
 import com.alelk.pws.pwapp.model.SongInfo
 import com.alelk.pws.pwapp.model.SongViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class SongEditActivity : AppCompatThemedActivity() {
   companion object {
     const val KEY_SONG_NUMBER_ID = SongTextFragment.KEY_SONG_NUMBER_ID

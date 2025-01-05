@@ -1,13 +1,15 @@
 package com.alelk.pws.pwapp.model
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import com.alelk.pws.database.DatabaseProvider
+import androidx.lifecycle.ViewModel
+import com.alelk.pws.database.PwsDatabase
 import com.alelk.pws.database.dao.Favorite
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class FavoritesViewModel(application: Application) : AndroidViewModel(application) {
-  private val favoritesDao = DatabaseProvider.getDatabase(application).favoriteDao()
+@HiltViewModel
+class FavoritesViewModel @Inject constructor(database: PwsDatabase) : ViewModel() {
+  private val favoritesDao = database.favoriteDao()
   fun getFavoritesSortedByDate(): Flow<List<Favorite>> = favoritesDao.getAll()
   fun getFavoritesSortedByName(): Flow<List<Favorite>> = favoritesDao.getAll(sort = "songName")
   fun getFavoritesSortedByNumber(): Flow<List<Favorite>> = favoritesDao.getAll(sort = "songNumber")

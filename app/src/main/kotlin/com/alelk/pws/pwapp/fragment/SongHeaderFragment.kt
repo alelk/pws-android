@@ -27,6 +27,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.alelk.pws.pwapp.R
 import com.alelk.pws.pwapp.model.SongViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -39,6 +40,7 @@ import kotlinx.coroutines.launch
  *
  * Created by Alex Elkin on 11.05.2016.
  */
+@AndroidEntryPoint
 class SongHeaderFragment : Fragment() {
   private val songViewModel: SongViewModel by activityViewModels()
 

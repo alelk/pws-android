@@ -31,6 +31,7 @@ import com.alelk.pws.pwapp.activity.SongActivity
 import com.alelk.pws.pwapp.databinding.DialogSearchPsalmNumberBinding
 import com.alelk.pws.pwapp.model.BookViewModel
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import io.github.alelk.pws.domain.model.BookExternalId
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
@@ -42,6 +43,7 @@ import kotlinx.coroutines.launch
  *
  * Created by Alex Elkin on 12.06.2016.
  */
+@AndroidEntryPoint
 class JumpToSongByNumberDialogFragment : DialogFragment() {
 
   private var binding: DialogSearchPsalmNumberBinding? = null

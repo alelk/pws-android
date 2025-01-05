@@ -1,6 +1,8 @@
 plugins {
   id("com.android.application")
   id("org.jetbrains.kotlin.android")
+  alias(libs.plugins.hilt)
+  id("kotlin-kapt")
 }
 
 
@@ -101,6 +103,10 @@ dependencies {
   implementation(libs.timber)
   implementation(libs.datastore.preferences)
 
+  // DI
+  implementation(libs.hilt.android)
+  kapt(libs.hilt.compiler)
+
   // Test dependencies
   testImplementation(libs.kotest.runner.junit5)
   testImplementation(libs.kotest.assertions.core)
@@ -113,4 +119,8 @@ dependencies {
 
 tasks.withType<Test>().configureEach {
   useJUnitPlatform()
+}
+
+kapt {
+  correctErrorTypes = true
 }

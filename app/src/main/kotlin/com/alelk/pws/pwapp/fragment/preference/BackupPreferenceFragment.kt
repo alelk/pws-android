@@ -13,6 +13,7 @@ import androidx.preference.PreferenceFragmentCompat
 import com.alelk.pws.pwapp.R
 import com.alelk.pws.pwapp.activity.MainSettingsActivity
 import com.alelk.pws.pwapp.model.BackupViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import io.github.alelk.pws.backup.BackupService
 import java.io.File
 import kotlinx.coroutines.CoroutineScope
@@ -23,6 +24,7 @@ import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.Date
 
+@AndroidEntryPoint
 class BackupPreferenceFragment : PreferenceFragmentCompat() {
   private val viewModel: BackupViewModel by viewModels()
 

@@ -1,16 +1,18 @@
 package com.alelk.pws.pwapp.model
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import com.alelk.pws.database.DatabaseProvider
+import androidx.lifecycle.ViewModel
+import com.alelk.pws.database.PwsDatabase
 import com.alelk.pws.database.dao.BookStatisticWithBook
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.alelk.pws.database.common.entity.BookStatisticEntity
 import io.github.alelk.pws.domain.model.BookExternalId
 import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
+import javax.inject.Inject
 
-class BookStatisticViewModel(application: Application) : AndroidViewModel(application) {
-  private val bookStatisticDao = DatabaseProvider.getDatabase(application).bookStatisticDao()
+@HiltViewModel
+class BookStatisticViewModel @Inject constructor(database: PwsDatabase) : ViewModel() {
+  private val bookStatisticDao = database.bookStatisticDao()
 
   val bookStatistic: Flow<List<BookStatisticWithBook>> = bookStatisticDao.getAll()
 

@@ -1,10 +1,10 @@
 package com.alelk.pws.pwapp.model
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.alelk.pws.database.DatabaseProvider
+import com.alelk.pws.database.PwsDatabase
 import com.alelk.pws.database.dao.SongSongReference
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.alelk.pws.database.common.entity.BookEntity
 import io.github.alelk.pws.database.common.entity.FavoriteEntity
 import io.github.alelk.pws.database.common.entity.HistoryEntity
@@ -28,6 +28,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import timber.log.Timber
 import java.util.Date
+import javax.inject.Inject
 
 data class SongInfo(
   val song: SongEntity,
@@ -43,8 +44,8 @@ data class SongInfo(
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class SongViewModel(application: Application) : AndroidViewModel(application) {
-  private val db = DatabaseProvider.getDatabase(application)
+@HiltViewModel
+class SongViewModel @Inject constructor(db: PwsDatabase) : ViewModel() {
   private val songDao = db.songDao()
   private val songNumberDao = db.songNumberDao()
   private val favoriteDao = db.favoriteDao()
