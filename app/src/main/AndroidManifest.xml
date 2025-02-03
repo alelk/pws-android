@@ -23,6 +23,7 @@
     android:icon="@mipmap/ic_launcher"
     android:label="@string/app_name"
     android:supportsRtl="true"
+    android:name=".PwsApplication"
     android:theme="@style/Theme.AppTheme">
     <activity
       android:name=".activity.MainActivity"

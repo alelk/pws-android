@@ -18,6 +18,12 @@ data class SongInfo(
   val songName: String
 )
 
+private const val customTagPrefix = "custom-"
+
+fun TagId.customTagNumber(): Int? = this.toString().takeIf { it.startsWith(customTagPrefix) }?.removePrefix(customTagPrefix)?.dropWhile { it == '0' }?.toInt()
+fun TagId.Companion.createCustomTag(number: Int) = parse("$customTagPrefix${number.toString().padStart(5, '0')}")
+fun TagEntity.isCustomTag(): Boolean = this.id.customTagNumber() != null
+
 @Dao
 interface TagDao {
   @Insert(onConflict = OnConflictStrategy.ABORT)
@@ -70,4 +76,15 @@ interface TagDao {
 
   @Query("DELETE FROM tags")
   suspend fun deleteAll()
+
+  suspend fun getLastCustomTag() =
+    getAllNotPredefined()
+      .filter { it.isCustomTag() }
+      .sortedBy { it.id.customTagNumber() }
+      .lastOrNull()
+
+  suspend fun getNextCustomTagId(): TagId {
+    val lastCustomTagIdNumber = getLastCustomTag()?.id?.customTagNumber()
+    return TagId.createCustomTag(lastCustomTagIdNumber?.plus(1) ?: 1)
+  }
 }

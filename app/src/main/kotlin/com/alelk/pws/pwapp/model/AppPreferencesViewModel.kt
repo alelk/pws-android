@@ -1,17 +1,18 @@
 package com.alelk.pws.pwapp.model
 
-import android.app.Application
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.alelk.pws.pwapp.dataStore
 import com.alelk.pws.pwapp.model.AppPreferenceKeys.APP_THEME
 import com.alelk.pws.pwapp.model.AppPreferenceKeys.SONG_TEXT_EXPANDED
 import com.alelk.pws.pwapp.model.AppPreferenceKeys.SONG_TEXT_SIZE
 import com.alelk.pws.pwapp.theme.AppTheme
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -20,6 +21,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.runBlocking
+import javax.inject.Inject
 
 object AppPreferenceKeys {
   val SONG_TEXT_SIZE = floatPreferencesKey("song-text-size")
@@ -27,9 +29,8 @@ object AppPreferenceKeys {
   val APP_THEME = stringPreferencesKey("app-theme")
 }
 
-class AppPreferencesViewModel(application: Application) : AndroidViewModel(application) {
-
-  private val datastore = application.dataStore
+@HiltViewModel
+class AppPreferencesViewModel @Inject constructor(private val datastore: DataStore<Preferences>) : ViewModel() {
 
   val songTextSize: Flow<Float?> = datastore.data.map { it[SONG_TEXT_SIZE] }
   val songTextExpanded: Flow<Boolean> = datastore.data.map { it[SONG_TEXT_EXPANDED] ?: true }

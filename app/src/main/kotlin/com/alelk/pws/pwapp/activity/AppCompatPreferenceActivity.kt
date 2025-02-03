@@ -24,12 +24,14 @@ import androidx.annotation.LayoutRes
 import android.view.ViewGroup
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
+import dagger.hilt.android.AndroidEntryPoint
 
 /**
  * A [android.preference.PreferenceActivity] which supports AppCompat.
  *
  * @author Alex Elkin
  */
+@AndroidEntryPoint
 abstract class AppCompatPreferenceActivity : AppCompatActivity() {
   private var mDelegate: AppCompatDelegate? = null
   override fun onCreate(savedInstanceState: Bundle?) {

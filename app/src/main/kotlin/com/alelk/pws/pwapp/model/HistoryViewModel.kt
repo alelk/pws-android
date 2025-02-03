@@ -1,15 +1,17 @@
 package com.alelk.pws.pwapp.model
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import com.alelk.pws.database.DatabaseProvider
+import androidx.lifecycle.ViewModel
+import com.alelk.pws.database.PwsDatabase
 import com.alelk.pws.database.dao.HistoryDao
 import com.alelk.pws.database.dao.HistoryItem
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class HistoryViewModel(application: Application) : AndroidViewModel(application) {
+@HiltViewModel
+class HistoryViewModel @Inject constructor (database: PwsDatabase) : ViewModel() {
 
-  private val historyDao: HistoryDao = DatabaseProvider.getDatabase(application).historyDao()
+  private val historyDao: HistoryDao = database.historyDao()
 
   val historyItems: Flow<List<HistoryItem>> = historyDao.getAll()
 

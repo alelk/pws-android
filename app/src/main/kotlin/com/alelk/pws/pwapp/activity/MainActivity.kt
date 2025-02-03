@@ -34,8 +34,10 @@ import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
+import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
+@AndroidEntryPoint
 open class MainActivity : AppCompatThemedActivity() {
 
   private val drawerLayout by lazy { findViewById<DrawerLayout>(R.id.layout_main_drawer) }

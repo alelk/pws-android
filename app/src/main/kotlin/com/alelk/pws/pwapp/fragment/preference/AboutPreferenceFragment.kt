@@ -22,12 +22,14 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.alelk.pws.pwapp.R
 import com.alelk.pws.pwapp.activity.MainSettingsActivity
+import dagger.hilt.android.AndroidEntryPoint
 
 /**
  * About App
  *
  * Created by Alex Elkin on 07.11.2016.
  */
+@AndroidEntryPoint
 class AboutPreferenceFragment : PreferenceFragmentCompat() {
   private var mPrefAboutApp: Preference? = null
 

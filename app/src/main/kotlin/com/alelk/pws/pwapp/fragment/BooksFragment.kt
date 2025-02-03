@@ -31,16 +31,19 @@ import com.alelk.pws.pwapp.R
 import com.alelk.pws.pwapp.activity.SongActivity
 import com.alelk.pws.pwapp.adapter.BooksRecyclerViewAdapter
 import com.alelk.pws.pwapp.model.BooksViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 /**
  * Books Fragment
  *
  * Created by Mykhailo Dmytriakha on 05.03.2024
  */
-class BooksFragment : Fragment() {
+@AndroidEntryPoint
+class BooksFragment @Inject constructor() : Fragment() {
 
   private lateinit var booksAdapter: BooksRecyclerViewAdapter
   private val bookViewModel: BooksViewModel by viewModels()

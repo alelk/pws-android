@@ -1,10 +1,10 @@
 package com.alelk.pws.pwapp.model
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.alelk.pws.database.DatabaseProvider
+import com.alelk.pws.database.PwsDatabase
 import com.alelk.pws.database.dao.SongSearchResult
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,10 +15,11 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
+@HiltViewModel
 @OptIn(ExperimentalCoroutinesApi::class)
-class SearchSongViewModel(application: Application) : AndroidViewModel(application) {
-  private val db = DatabaseProvider.getDatabase(application)
+class SearchSongViewModel @Inject constructor(db: PwsDatabase) : ViewModel() {
   private val songDao = db.songDao()
 
   private val _searchQuery = MutableStateFlow<String?>(null)

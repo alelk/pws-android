@@ -44,6 +44,7 @@ import com.alelk.pws.pwapp.model.textDocumentHtml
 import com.alelk.pws.pwapp.theme.ThemeType
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
@@ -54,6 +55,7 @@ import timber.log.Timber
  *
  * Created by Alex Elkin on 25.03.2016.
  */
+@AndroidEntryPoint
 class SongActivity : AppCompatThemedActivity() {
   private val songViewModel: SongViewModel by viewModels()
   private val tagsViewModel: TagsViewModel by viewModels()

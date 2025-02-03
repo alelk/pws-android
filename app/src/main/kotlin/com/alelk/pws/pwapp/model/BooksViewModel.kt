@@ -1,15 +1,17 @@
 package com.alelk.pws.pwapp.model
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import com.alelk.pws.database.DatabaseProvider
+import androidx.lifecycle.ViewModel
+import com.alelk.pws.database.PwsDatabase
 import com.alelk.pws.database.dao.Book
 import com.alelk.pws.database.dao.BookDao
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.alelk.pws.database.common.entity.SongNumberEntity
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class BooksViewModel(application: Application) : AndroidViewModel(application) {
-  private val bookDao: BookDao = DatabaseProvider.getDatabase(application).bookDao()
+@HiltViewModel
+class BooksViewModel @Inject constructor(database: PwsDatabase) : ViewModel() {
+  private val bookDao: BookDao = database.bookDao()
 
   val allActiveBooks: Flow<List<Book>> = bookDao.getAllActive()
 

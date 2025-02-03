@@ -11,8 +11,10 @@ import com.alelk.pws.pwapp.R
 import com.alelk.pws.pwapp.activity.base.AppCompatThemedActivity
 import com.alelk.pws.pwapp.adapter.SongsInfoAdapter
 import com.alelk.pws.pwapp.model.TagsViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import io.github.alelk.pws.domain.model.TagId
 
+@AndroidEntryPoint
 class TagSongsActivity : AppCompatThemedActivity() {
   private lateinit var recyclerView: RecyclerView
   private lateinit var songsInfoAdapter: SongsInfoAdapter
