@@ -35,7 +35,6 @@ import com.alelk.pws.pwapp.model.AppPreferencesViewModel
 import com.alelk.pws.pwapp.model.BookStatisticViewModel
 import com.alelk.pws.pwapp.theme.AppTheme
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
