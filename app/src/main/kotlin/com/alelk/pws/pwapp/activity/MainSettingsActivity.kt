@@ -18,11 +18,10 @@ package com.alelk.pws.pwapp.activity
 import android.os.Bundle
 import com.alelk.pws.pwapp.R
 import com.alelk.pws.pwapp.activity.base.AppCompatThemedActivity
-import com.alelk.pws.pwapp.fragment.preference.RootPreferenceFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
- * A [PreferenceActivity] that contains main PWS App settings.
+ * A PreferenceActivity that contains main PWS App settings.
  *
  * Created by Alex Elkin on 18.02.2016.
  */
@@ -32,12 +31,5 @@ class MainSettingsActivity : AppCompatThemedActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_settings)
-//    setupActionBar()
-    supportFragmentManager.beginTransaction().replace(R.id.fragment_settings, RootPreferenceFragment()).commit()
   }
-
-//  private fun setupActionBar() {
-//    val actionBar = supportActionBar
-//    actionBar?.setDisplayHomeAsUpEnabled(true)
-//  }
 }
