@@ -1,5 +1,12 @@
 # PWS Android
 
+## [1.11.3](https://github.com/alelk/pws-android/compare/v1.11.2...v1.11.3) (2025-02-03)
+
+
+### Bug Fixes
+
+* **search:** fix case-insensitive search ([#55](https://github.com/alelk/pws-android/issues/55)) ([6498749](https://github.com/alelk/pws-android/commit/64987498e68310addc16340a2f03e30f47404628))
+
 ## [1.11.2](https://github.com/alelk/pws-android/compare/v1.11.1...v1.11.2) (2025-01-02)
 
 
