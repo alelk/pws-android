@@ -100,6 +100,10 @@ dependencies {
   implementation(libs.room.runtime)
   implementation(libs.timber)
   implementation(libs.datastore.preferences)
+  implementation(libs.navigation.fragment)
+  implementation(libs.navigation.ui)
+    implementation(libs.androidx.navigation.fragment.ktx)
+  implementation(libs.androidx.navigation.ui.ktx)
 
   // Test dependencies
   testImplementation(libs.kotest.runner.junit5)

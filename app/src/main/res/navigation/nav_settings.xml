@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:id="@+id/nav_settings"
+  app:startDestination="@id/rootPreferenceFragment">
+
+  <fragment
+    android:id="@+id/rootPreferenceFragment"
+    android:name="com.alelk.pws.pwapp.fragment.preference.RootPreferenceFragment"
+    android:label="Settings" />
+
+  <fragment
+    android:id="@+id/generalPreferenceFragment"
+    android:name="com.alelk.pws.pwapp.fragment.preference.GeneralPreferenceFragment"
+    android:label="General Settings" />
+
+  <fragment
+    android:id="@+id/backupPreferenceFragment"
+    android:name="com.alelk.pws.pwapp.fragment.preference.BackupPreferenceFragment"
+    android:label="@string/pref_header_import_export" />
+
+  <fragment
+    android:id="@+id/aboutPreferenceFragment"
+    android:name="com.alelk.pws.pwapp.fragment.preference.AboutPreferenceFragment"
+    android:label="@string/pref_header_about" />
+
+</navigation>

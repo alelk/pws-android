@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/app_navigation"
+  app:startDestination="@id/readNowFragment">
+
+  <fragment
+    android:id="@+id/readNowFragment"
+    android:name="com.alelk.pws.pwapp.fragment.ReadNowFragment"
+    android:label="ReadNowFragment" />
+  <fragment
+    android:id="@+id/favoritesFragment"
+    android:name="com.alelk.pws.pwapp.fragment.FavoritesFragment"
+    android:label="FavoritesFragment" />
+  <fragment
+    android:id="@+id/historyFragment"
+    android:name="com.alelk.pws.pwapp.fragment.HistoryFragment"
+    android:label="HistoryFragment" />
+  <fragment
+    android:id="@+id/booksFragment"
+    android:name="com.alelk.pws.pwapp.fragment.BooksFragment"
+    android:label="BooksFragment" />
+
+  <activity
+    android:id="@+id/tagsActivity"
+    android:name="com.alelk.pws.pwapp.activity.TagsActivity"
+    android:label="activity_categories"
+    tools:layout="@layout/activity_categories" />
+  <activity
+    android:id="@+id/mainSettingsActivity"
+    android:name="com.alelk.pws.pwapp.activity.MainSettingsActivity"
+    android:label="MainSettingsActivity" />
+
+</navigation>
