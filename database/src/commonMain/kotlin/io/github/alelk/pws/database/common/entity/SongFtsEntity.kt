@@ -2,7 +2,7 @@ package io.github.alelk.pws.database.common.entity
 
 import androidx.room.*
 
-@Fts4(contentEntity = SongEntity::class, tokenizer = FtsOptions.TOKENIZER_PORTER)
+@Fts4(contentEntity = SongEntity::class, tokenizer = FtsOptions.TOKENIZER_UNICODE61, tokenizerArgs = ["remove_diacritics=1"])
 @Entity(tableName = "songs_fts")
 data class SongFtsEntity(
   @PrimaryKey @ColumnInfo(name = "rowid") val id: Int,
