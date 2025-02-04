@@ -6,9 +6,9 @@ ksp = "1.0.29"
 
 hilt = "2.54"
 
-android-application = "8.7.3"
+android-application = "8.8.0"
 android-material = "1.12.0"
-navigation = "2.8.5"
+navigation = "2.8.6"
 
 room = "2.7.0-alpha11"
 
@@ -51,7 +51,7 @@ hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt"
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" } # https://mvnrepository.com/artifact/com.google.dagger/hilt-compiler
 
 # Preferences
-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version = "1.1.1" } # https://mvnrepository.com/artifact/androidx.datastore/datastore-preferences
+datastore-preferences = { module = "androidx.datastore:datastore-preferences", version = "1.1.2" } # https://mvnrepository.com/artifact/androidx.datastore/datastore-preferences
 
 preference-ktx = { group = "androidx.preference", name = "preference-ktx", version = "1.2.1" }
 lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version = "2.8.7" }
