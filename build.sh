@@ -5,6 +5,10 @@ DEST_DIR="output"
 DEST_PACKAGE_RU="$DEST_DIR/pws-app-release-$APP_VERSION-ru"
 DEST_PACKAGE_UK="$DEST_DIR/pws-app-release-$APP_VERSION-uk"
 
+./gradlew clean
+rm -rf ./.gradle/buildOutputCleanup
+rm -rf ./.gradle/configuration-cache
+
 ./gradlew bundleRuRelease bundleUkRelease assembleRuRelease assembleUkRelease
 
 mkdir $DEST_DIR
