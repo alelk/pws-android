@@ -7,11 +7,11 @@ import androidx.lifecycle.asLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.github.alelk.pws.database.dao.SongInfo
-import com.alelk.pws.pwapp.R
 import io.github.alelk.pws.android.app.activity.base.AppCompatThemedActivity
 import io.github.alelk.pws.android.app.adapter.SongsInfoAdapter
 import io.github.alelk.pws.android.app.model.TagsViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import io.github.alelk.pws.android.app.R
 import io.github.alelk.pws.domain.model.TagId
 
 @AndroidEntryPoint

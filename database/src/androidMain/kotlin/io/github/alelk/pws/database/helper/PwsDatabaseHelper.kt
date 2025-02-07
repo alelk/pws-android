@@ -11,7 +11,7 @@ import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import com.alelk.pws.database.R
+import io.github.alelk.pws.database.R
 import timber.log.Timber
 import java.io.*
 

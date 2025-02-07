@@ -26,8 +26,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
-import com.alelk.pws.database.BuildConfig
-import com.alelk.pws.pwapp.R
 import io.github.alelk.pws.android.app.activity.base.AppCompatThemedActivity
 import io.github.alelk.pws.android.app.theme.ThemeType
 import com.google.android.material.appbar.AppBarLayout
@@ -35,6 +33,8 @@ import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint
+import io.github.alelk.pws.android.app.R
+import io.github.alelk.pws.database.BuildConfig
 import timber.log.Timber
 
 @AndroidEntryPoint

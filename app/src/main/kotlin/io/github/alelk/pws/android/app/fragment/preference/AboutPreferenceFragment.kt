@@ -20,9 +20,9 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import com.alelk.pws.pwapp.R
 import io.github.alelk.pws.android.app.activity.MainSettingsActivity
 import dagger.hilt.android.AndroidEntryPoint
+import io.github.alelk.pws.android.app.R
 
 /**
  * About App

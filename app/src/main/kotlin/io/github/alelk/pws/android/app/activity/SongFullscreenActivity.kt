@@ -22,7 +22,6 @@ import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
-import com.alelk.pws.pwapp.R
 import io.github.alelk.pws.android.app.activity.base.AppCompatThemedActivity
 import io.github.alelk.pws.android.app.adapter.SongTextFragmentPagerAdapter
 import io.github.alelk.pws.android.app.fragment.SongTextFragment
@@ -30,6 +29,7 @@ import io.github.alelk.pws.android.app.model.BooksViewModel
 import io.github.alelk.pws.android.app.model.FavoritesViewModel
 import io.github.alelk.pws.android.app.model.SongsViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import io.github.alelk.pws.android.app.R
 import kotlinx.coroutines.launch
 
 // todo: reimplement or remove

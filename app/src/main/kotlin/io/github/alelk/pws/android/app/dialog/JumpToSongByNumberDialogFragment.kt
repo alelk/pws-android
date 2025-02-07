@@ -26,12 +26,12 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.alelk.pws.pwapp.R
 import io.github.alelk.pws.android.app.activity.SongActivity
-import com.alelk.pws.pwapp.databinding.DialogSearchSongNumberBinding
 import io.github.alelk.pws.android.app.model.BookViewModel
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import io.github.alelk.pws.android.app.R
+import io.github.alelk.pws.android.app.databinding.DialogSearchSongNumberBinding
 import io.github.alelk.pws.domain.model.BookExternalId
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull

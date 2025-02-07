@@ -1,7 +1,7 @@
 package io.github.alelk.pws.database.data
 
 import android.content.Context
-import com.alelk.pws.database.R
+import io.github.alelk.pws.database.R
 
 /**
  * Tonalities signature map to resources

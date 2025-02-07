@@ -78,7 +78,7 @@ android {
 
   flavorDimensions.add("contentLevel")
 
-  namespace = "com.alelk.pws.pwapp"
+  namespace = "io.github.alelk.pws.android.app"
   applicationVariants.forEach { variant ->
     variant.resValue("string", "versionName", variant.versionName)
   }

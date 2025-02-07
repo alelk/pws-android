@@ -8,8 +8,8 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import io.github.alelk.pws.android.app.R
 import io.github.alelk.pws.domain.model.Color as DbColor
-import com.alelk.pws.pwapp.R
 import io.github.alelk.pws.database.common.entity.TagEntity
 import io.github.alelk.pws.domain.model.TagId
 import kotlin.random.Random

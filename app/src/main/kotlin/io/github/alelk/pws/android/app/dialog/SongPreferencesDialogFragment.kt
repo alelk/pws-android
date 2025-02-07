@@ -24,8 +24,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.alelk.pws.pwapp.R
-import com.alelk.pws.pwapp.databinding.DialogSongPreferencesBinding
+import io.github.alelk.pws.android.app.R
+import io.github.alelk.pws.android.app.databinding.DialogSongPreferencesBinding
 import io.github.alelk.pws.android.app.model.AppPreferencesViewModel
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch

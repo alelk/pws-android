@@ -6,7 +6,7 @@ import android.content.ContentValues
 import android.content.UriMatcher
 import android.database.Cursor
 import android.net.Uri
-import com.alelk.pws.database.BuildConfig
+import io.github.alelk.pws.database.BuildConfig
 import io.github.alelk.pws.database.DatabaseProvider
 import io.github.alelk.pws.database.dao.SongDao
 import timber.log.Timber
