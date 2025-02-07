@@ -19,8 +19,8 @@
         android:id="@+id/seek_bar_font_size" />
 
     <Switch
-        android:id="@+id/swtch_expand_psalm_text"
+        android:id="@+id/swtch_expand_song_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/lbl_expand_psalm_text" />
+        android:text="@string/lbl_expand_song_text" />
 </LinearLayout>

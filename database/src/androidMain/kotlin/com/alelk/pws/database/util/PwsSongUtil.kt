@@ -10,15 +10,15 @@ import java.util.Locale
  * Created by Alex Elkin on 14.03.2016.
  */
 object PwsSongUtil {
-  private var builder = PwsPsalmHtmlBuilder(Locale.getDefault())
+  private var builder = PwsSongHtmlBuilder(Locale.getDefault())
 
   @JvmOverloads
-  fun songTextToHtml(locale: Locale?, psalmText: String?, isExpanded: Boolean = true): String {
+  fun songTextToHtml(locale: Locale?, songText: String?, isExpanded: Boolean = true): String {
     builder = builder.forLocale(locale)
-    return builder.buildHtml(psalmText!!, isExpanded)
+    return builder.buildHtml(songText!!, isExpanded)
   }
 
-  fun psalmTextToPrettyHtml(
+  fun songTextToPrettyHtml(
     locale: Locale,
     psalmText: String?,
     bibleRef: String?,
@@ -46,30 +46,30 @@ object PwsSongUtil {
 
   fun buildSongInfoHtml(
     locale: Locale,
-    psalmAuthor: String?,
-    psalmTranslator: String?,
+    songAuthor: String?,
+    songTranslator: String?,
     music: String?
   ): String? {
-    val psalmInfo = ArrayList<String?>()
-    if (psalmAuthor != null) psalmInfo.add(
+    val songInfo = ArrayList<String?>()
+    if (songAuthor != null) songInfo.add(
       "<b>" + getLocalizedString(
         "lbl_author",
         locale
-      ) + ":</b> " + psalmAuthor
+      ) + ":</b> " + songAuthor
     )
-    if (psalmTranslator != null) psalmInfo.add(
+    if (songTranslator != null) songInfo.add(
       "<b>" + getLocalizedString(
         "lbl_translator",
         locale
-      ) + ":</b> " + psalmTranslator
+      ) + ":</b> " + songTranslator
     )
-    if (music != null) psalmInfo.add(
+    if (music != null) songInfo.add(
       "<b>" + getLocalizedString(
         "lbl_music",
         locale
       ) + ":</b> " + music
     )
-    return if (psalmInfo.size == 0) null else TextUtils.join("<br>", psalmInfo)
+    return if (songInfo.size == 0) null else TextUtils.join("<br>", songInfo)
   }
 
   private fun getLocalizedString(stringKey: String, locale: Locale): String? {

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/scrollview_psalm_text"
+    android:id="@+id/scrollview_song_text"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:context=".activity.SongActivity">
@@ -14,29 +14,29 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:padding="4dp"
-        android:id="@+id/ll_psalm_text_content"
+        android:id="@+id/ll_song_text_content"
         android:orientation="vertical"
         tools:context=".fragment.SongTextFragment">
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/PsalmContent"
+            style="@style/SongContent"
             card_view:cardBackgroundColor="?attr/cardBackgroundColor"
             android:id="@+id/cv_tonalities">
             <TextView
-                style="@style/PsalmContent.PsalmBody.Tonalities"
-                android:id="@+id/txt_psalm_tonalities"/>
+                style="@style/SongContent.SongBody.Tonalities"
+                android:id="@+id/txt_song_tonalities"/>
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             card_view:cardBackgroundColor="?attr/cardBackgroundColor"
-            style="@style/PsalmContent">
+            style="@style/SongContent">
             <TextView
-                style="@style/PsalmContent.PsalmBody.PsalmText"
-                android:id="@+id/txt_psalm_text"/>
+                style="@style/SongContent.SongBody.SongText"
+                android:id="@+id/txt_song_text"/>
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
@@ -61,11 +61,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             card_view:cardBackgroundColor="?attr/cardBackgroundColor"
-            style="@style/PsalmContent"
-            android:id="@+id/cv_psalm_info">
+            style="@style/SongContent"
+            android:id="@+id/cv_song_info">
             <TextView
-                style="@style/PsalmContent.PsalmBody.Info"
-                android:id="@+id/txt_psalm_info"/>
+                style="@style/SongContent.SongBody.Info"
+                android:id="@+id/txt_song_info"/>
         </androidx.cardview.widget.CardView>
 
         <androidx.recyclerview.widget.RecyclerView
@@ -73,7 +73,7 @@
             android:layout_marginBottom="6dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/rv_referred_psalms"
+            android:id="@+id/rv_referred_songs"
             />
 
     </LinearLayout>

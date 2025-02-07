@@ -25,14 +25,14 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.alelk.pws.pwapp.R
-import com.alelk.pws.pwapp.databinding.DialogPsalmPreferencesBinding
+import com.alelk.pws.pwapp.databinding.DialogSongPreferencesBinding
 import com.alelk.pws.pwapp.model.AppPreferencesViewModel
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
 /**
- * Psalm Preferences Dialog Fragment
+ * Song Preferences Dialog Fragment
  *
  * Created by Alex Elkin on 26.12.2016.
  */
@@ -40,14 +40,14 @@ class SongPreferencesDialogFragment : DialogFragment() {
   private val viewModel: AppPreferencesViewModel by viewModels()
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-    val binding = DialogPsalmPreferencesBinding.inflate(layoutInflater)
+    val binding = DialogSongPreferencesBinding.inflate(layoutInflater)
     lifecycleScope.launch {
       repeatOnLifecycle(Lifecycle.State.STARTED) {
         launch {
           val songTextSize = viewModel.songTextSize.firstOrNull()
           val textExpanded = viewModel.songTextExpanded.firstOrNull()
           if (songTextSize != null) binding.seekBarFontSize.progress = ((songTextSize - MIN_TEXT_SIZE) / (MAX_TEXT_SIZE - MIN_TEXT_SIZE) * 100).toInt()
-          if (textExpanded != null) binding.swtchExpandPsalmText.isChecked = textExpanded
+          if (textExpanded != null) binding.swtchExpandSongText.isChecked = textExpanded
         }
       }
     }
@@ -64,7 +64,7 @@ class SongPreferencesDialogFragment : DialogFragment() {
       override fun onStopTrackingTouch(seekBar: SeekBar?) {}
     })
 
-    binding.swtchExpandPsalmText.setOnCheckedChangeListener { _, isChecked ->
+    binding.swtchExpandSongText.setOnCheckedChangeListener { _, isChecked ->
       lifecycleScope.launch {
         Timber.d("is expanded: $isChecked")
         viewModel.setSongTextExpanded(isChecked)

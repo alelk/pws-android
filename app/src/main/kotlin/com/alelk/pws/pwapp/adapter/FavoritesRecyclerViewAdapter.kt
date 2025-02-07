@@ -32,12 +32,12 @@ import com.alelk.pws.pwapp.adapter.FavoritesRecyclerViewAdapter.FavoriteViewHold
  * Created by Alex Elkin on 19.05.2016.
  */
 class FavoritesRecyclerViewAdapter(
-  private val onItemClickListener: (psalmNumberId: Long) -> Unit
+  private val onItemClickListener: (songNumberId: Long) -> Unit
 ) : ListAdapter<Favorite, FavoriteViewHolder>(FavoriteDiffCallback()) {
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoriteViewHolder {
     val view = LayoutInflater.from(parent.context)
-      .inflate(R.layout.layout_psalm_list_item, parent, false)
+      .inflate(R.layout.layout_song_list_item, parent, false)
     return FavoriteViewHolder(view)
   }
 
@@ -47,19 +47,19 @@ class FavoritesRecyclerViewAdapter(
   }
 
   class FavoriteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    private val psalmName: TextView = itemView.findViewById(R.id.txt_psalm_name)
-    private val psalmNumber: TextView = itemView.findViewById(R.id.txt_psalm_number)
+    private val songName: TextView = itemView.findViewById(R.id.txt_song_name)
+    private val songNumber: TextView = itemView.findViewById(R.id.txt_song_number)
     private val bookDisplayName: TextView = itemView.findViewById(R.id.txt_book_name)
-    private var psalmNumberId: Long = 0
+    private var songNumberId: Long = 0
 
-    fun bind(favorite: Favorite, onItemClickListener: (psalmNumberId: Long) -> Unit) {
-      psalmNumber.text = favorite.songNumber.toString()
-      psalmName.text = favorite.songName
+    fun bind(favorite: Favorite, onItemClickListener: (songNumberId: Long) -> Unit) {
+      songNumber.text = favorite.songNumber.toString()
+      songName.text = favorite.songName
       bookDisplayName.text = favorite.bookDisplayName
-      psalmNumberId = favorite.songNumberId
+      songNumberId = favorite.songNumberId
 
       itemView.setOnClickListener {
-        onItemClickListener(psalmNumberId)
+        onItemClickListener(songNumberId)
       }
     }
   }

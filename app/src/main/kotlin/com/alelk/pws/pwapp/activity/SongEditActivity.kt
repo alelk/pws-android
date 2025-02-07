@@ -48,7 +48,7 @@ class SongEditActivity : AppCompatThemedActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_psalm_edit)
+    setContentView(R.layout.activity_song_edit)
     val songNumberId = intent.getLongExtra(KEY_SONG_NUMBER_ID, -1).takeIf { it > 0 }
     songViewModel.setSongNumberId(songNumberId)
     findViewById<Button>(R.id.saveButton).setOnClickListener {
@@ -64,10 +64,10 @@ class SongEditActivity : AppCompatThemedActivity() {
   }
 
   private fun populateUIFromSong(song: SongInfo) {
-    val songNameEdit = findViewById<EditText>(R.id.psalmNameEdit)
-    val songLyricEdit = findViewById<EditText>(R.id.psalmTextEdit)
+    val songNameEdit = findViewById<EditText>(R.id.songNameEdit)
+    val songLyricEdit = findViewById<EditText>(R.id.songTextEdit)
     val bibleRefEdit = findViewById<EditText>(R.id.bibleRefEdit)
-    val songTonalitiesSpinner = findViewById<Spinner>(R.id.psalmTonalitiesSpinner)
+    val songTonalitiesSpinner = findViewById<Spinner>(R.id.songTonalitiesSpinner)
 
     songNameEdit.setText(song.song.name)
     songLyricEdit.setText(song.song.lyric)
@@ -84,10 +84,10 @@ class SongEditActivity : AppCompatThemedActivity() {
   }
 
   private suspend fun saveSong() {
-    val name = findViewById<EditText>(R.id.psalmNameEdit).text.toString()
-    val lyric = findViewById<EditText>(R.id.psalmTextEdit).text.toString()
+    val name = findViewById<EditText>(R.id.songNameEdit).text.toString()
+    val lyric = findViewById<EditText>(R.id.songTextEdit).text.toString()
     val bibleRef = findViewById<EditText>(R.id.bibleRefEdit).text.toString()
-    val tonality = findViewById<Spinner>(R.id.psalmTonalitiesSpinner).selectedItem.toString()
+    val tonality = findViewById<Spinner>(R.id.songTonalitiesSpinner).selectedItem.toString()
 
     val nextTonality =
       if (tonality != getString(R.string.tonality_not_defined)) io.github.alelk.pws.domain.model.Tonality.fromIdentifier(tonality) else null

@@ -8,12 +8,12 @@ import java.util.Date
 
 fun Arb.Companion.historyEntity(
   id: Arb<Long> = Arb.long(min = 1, max = 1_000_000),
-  psalmNumberId: Arb<Long> = Arb.long(min = 1, max = 1_000_000),
+  songNumberId: Arb<Long> = Arb.long(min = 1, max = 1_000_000),
   accessTimestamp: Arb<Date> = Arb.javaDate()
 ): Arb<HistoryEntity> = arbitrary {
   HistoryEntity(
     id = id.bind(),
-    songNumberId = psalmNumberId.bind(),
+    songNumberId = songNumberId.bind(),
     accessTimestamp = accessTimestamp.bind()
   )
 }

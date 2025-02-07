@@ -40,7 +40,7 @@ class EditSongTagsDialog(private val activity: Activity) {
   }
 
   private fun setupDialogView() {
-    dialogView = LayoutInflater.from(activity).inflate(R.layout.dialog_edit_psalm_category, null)
+    dialogView = LayoutInflater.from(activity).inflate(R.layout.dialog_edit_song_category, null)
     assignedCategoriesFlexbox = dialogView.findViewById(R.id.assigned_categories)
     unassignedCategoriesFlexbox = dialogView.findViewById(R.id.unassigned_categories)
 

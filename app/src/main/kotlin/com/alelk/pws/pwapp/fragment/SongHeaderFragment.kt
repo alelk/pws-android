@@ -36,7 +36,7 @@ import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 
 /**
- * Psalm Header Fragment
+ * Song Header Fragment
  *
  * Created by Alex Elkin on 11.05.2016.
  */
@@ -45,7 +45,7 @@ class SongHeaderFragment : Fragment() {
   private val songViewModel: SongViewModel by activityViewModels()
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-    inflater.inflate(R.layout.fragment_psalm_header, container, false)
+    inflater.inflate(R.layout.fragment_song_header, container, false)
 
   @OptIn(ExperimentalCoroutinesApi::class)
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -53,7 +53,7 @@ class SongHeaderFragment : Fragment() {
     viewLifecycleOwner.lifecycleScope.launch {
       repeatOnLifecycle(Lifecycle.State.STARTED) {
         songViewModel.song.filterNotNull().mapLatest { it.song to it.book }.distinctUntilChanged().collectLatest { (song, book) ->
-          view.findViewById<TextView>(R.id.txt_psalm_name).text = song.name
+          view.findViewById<TextView>(R.id.txt_song_name).text = song.name
           view.findViewById<TextView>(R.id.txt_book_name).text = book.displayName
           view.findViewById<TextView>(R.id.txt_bible_ref).text = song.bibleRef ?: ""
         }

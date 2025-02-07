@@ -11,16 +11,16 @@ import java.util.regex.Pattern
  *
  * Created by Alex Elkin on 13.11.2017.
  */
-class PwsPsalmHtmlBuilder(private val locale: Locale?) {
-  private val verseNumberPattern: Pattern = psalmVerseNumberPattern(locale)
-  private val verseLabelPattern: Pattern = getPsalmVerseLabelPattern(locale)
-  private val chorusNumberPattern: Pattern = getPsalmChorusNumberPattern(locale)
-  private val chorusLabelPattern: Pattern = getPsalmChorusLabelPattern(locale)
+class PwsSongHtmlBuilder(private val locale: Locale?) {
+  private val verseNumberPattern: Pattern = songVerseNumberPattern(locale)
+  private val verseLabelPattern: Pattern = getSongVerseLabelPattern(locale)
+  private val chorusNumberPattern: Pattern = getSongChorusNumberPattern(locale)
+  private val chorusLabelPattern: Pattern = getSongChorusLabelPattern(locale)
 
 
-  fun forLocale(locale: Locale?): PwsPsalmHtmlBuilder =
+  fun forLocale(locale: Locale?): PwsSongHtmlBuilder =
     if (this.locale != null && this.locale == locale || locale != null && locale == this.locale) this
-    else PwsPsalmHtmlBuilder(locale)
+    else PwsSongHtmlBuilder(locale)
 
   fun buildHtml(psalmText: String, isExpanded: Boolean): String =
     if (isExpanded) buildExpandedHtml(psalmText)
@@ -28,23 +28,23 @@ class PwsPsalmHtmlBuilder(private val locale: Locale?) {
 
   private fun buildExpandedHtml(psalmText: String): String {
 
-    var psalmPartType: String? = null
-    var psalmPartNumber = 0
+    var songPartType: String? = null
+    var songPartNumber = 0
     val choruses = mutableMapOf<Int, String>()
     val verses = mutableMapOf<Int, String>()
-    var psalmPartText = StringBuilder()
+    var songPartText = StringBuilder()
 
-    fun startPsalmPart(ppt: String, ppn: String?) {
-      psalmPartType = ppt
-      psalmPartNumber = parsePsalmPartNumber(ppn)
-      psalmPartText = StringBuilder()
+    fun startSongPart(ppt: String, ppn: String?) {
+      songPartType = ppt
+      songPartNumber = parseSongPartNumber(ppn)
+      songPartText = StringBuilder()
     }
 
-    fun endPsalmPart() {
-      if (psalmPartType == null) return
-      if ("verse" == psalmPartType) verses[psalmPartNumber] = psalmPartText.toString()
-      if ("chorus" == psalmPartType) choruses[psalmPartNumber] = psalmPartText.toString()
-      psalmPartType = null
+    fun endSongPart() {
+      if (songPartType == null) return
+      if ("verse" == songPartType) verses[songPartNumber] = songPartText.toString()
+      if ("chorus" == songPartType) choruses[songPartNumber] = songPartText.toString()
+      songPartType = null
     }
 
     return buildString {
@@ -53,48 +53,48 @@ class PwsPsalmHtmlBuilder(private val locale: Locale?) {
         val line = tokenizer.nextToken()
         when {
           line.matches(verseNumberPattern.pattern().toRegex()) -> {
-            endPsalmPart()
+            endSongPart()
             val matcher = verseNumberPattern.matcher(line)
-            if (matcher.find()) startPsalmPart("verse", matcher.group(1))
+            if (matcher.find()) startSongPart("verse", matcher.group(1))
             append("<font color='#7aaf83'>")
             append(line.replace('.', ' '))
             append("</font><br>")
           }
 
           line.matches(chorusNumberPattern.pattern().toRegex()) -> {
-            endPsalmPart()
+            endSongPart()
             val matcher = chorusNumberPattern.matcher(line)
-            if (matcher.find()) startPsalmPart("chorus", matcher.group(2))
+            if (matcher.find()) startSongPart("chorus", matcher.group(2))
             append("<font color='#7aaf83'>")
             append(line.replace('.', ' '))
             append("</font><br>")
           }
 
           line.matches(verseLabelPattern.pattern().toRegex()) -> {
-            endPsalmPart()
+            endSongPart()
             val matcher = verseLabelPattern.matcher(line)
             if (matcher.find()) {
               append("<font color='#999999'>")
               append(matcher.group(1))
               append(if (TextUtils.isEmpty(matcher.group(2))) "" else " ${matcher.group(2)}").append("</font><br>")
-              append(verses[parsePsalmPartNumber(matcher.group(2))])
+              append(verses[parseSongPartNumber(matcher.group(2))])
             }
           }
 
           line.matches(chorusLabelPattern.pattern().toRegex()) -> {
-            endPsalmPart()
+            endSongPart()
             val matcher = chorusLabelPattern.matcher(line)
             if (matcher.find()) {
               append("<font color='#999999'>")
               append(matcher.group(1))
               append(if (matcher.group(2).isNullOrEmpty()) "" else " " + matcher.group(2))
               append("</font><br>")
-              append(choruses[parsePsalmPartNumber(matcher.group(2))])
+              append(choruses[parseSongPartNumber(matcher.group(2))])
             }
           }
 
           else -> {
-            psalmPartText.append(line).append("<br>")
+            songPartText.append(line).append("<br>")
             append(line)
             append("<br>")
           }
@@ -104,7 +104,7 @@ class PwsPsalmHtmlBuilder(private val locale: Locale?) {
   }
 
 
-  private fun parsePsalmPartNumber(str: String?): Int =
+  private fun parseSongPartNumber(str: String?): Int =
     if (str == null) 1
     else try {
       str.toInt()
@@ -139,23 +139,23 @@ class PwsPsalmHtmlBuilder(private val locale: Locale?) {
     }
 
   companion object {
-    private const val PSALM_VERSE_NUMBER_FORMAT = """^\s*(%s)?\s*(\d{1,2})\s*\.\s*$"""
-    private const val PSALM_VERSE_LABEL_FORMAT = """^\s*\[(%s)\s*(\d{1,2})\]\s*$"""
-    private const val PSALM_CHORUS_NUMBER_FORMAT = """^\s*(%s)\s*(\d{1,2})?\s*\.\s*$"""
-    private const val PSALM_CHORUS_LABEL_FORMAT = """^\s*\[(%s)\s*(\d{1,2})?\]\s*$"""
-    private fun psalmVerseNumberPattern(locale: Locale?): Pattern =
-      Pattern.compile(String.format(PSALM_VERSE_NUMBER_FORMAT, getLocalizedString("lbl_verse", locale)))
+    private const val SONG_VERSE_NUMBER_FORMAT = """^\s*(%s)?\s*(\d{1,2})\s*\.\s*$"""
+    private const val SONG_VERSE_LABEL_FORMAT = """^\s*\[(%s)\s*(\d{1,2})\]\s*$"""
+    private const val SONG_CHORUS_NUMBER_FORMAT = """^\s*(%s)\s*(\d{1,2})?\s*\.\s*$"""
+    private const val SONG_CHORUS_LABEL_FORMAT = """^\s*\[(%s)\s*(\d{1,2})?\]\s*$"""
+    private fun songVerseNumberPattern(locale: Locale?): Pattern =
+      Pattern.compile(String.format(SONG_VERSE_NUMBER_FORMAT, getLocalizedString("lbl_verse", locale)))
 
-    private fun getPsalmVerseLabelPattern(locale: Locale?): Pattern {
-      return Pattern.compile(String.format(PSALM_VERSE_LABEL_FORMAT, getLocalizedString("lbl_verse", locale)))
+    private fun getSongVerseLabelPattern(locale: Locale?): Pattern {
+      return Pattern.compile(String.format(SONG_VERSE_LABEL_FORMAT, getLocalizedString("lbl_verse", locale)))
     }
 
-    private fun getPsalmChorusNumberPattern(locale: Locale?): Pattern {
-      return Pattern.compile(String.format(PSALM_CHORUS_NUMBER_FORMAT, getLocalizedString("lbl_chorus", locale)))
+    private fun getSongChorusNumberPattern(locale: Locale?): Pattern {
+      return Pattern.compile(String.format(SONG_CHORUS_NUMBER_FORMAT, getLocalizedString("lbl_chorus", locale)))
     }
 
-    private fun getPsalmChorusLabelPattern(locale: Locale?): Pattern {
-      return Pattern.compile(String.format(PSALM_CHORUS_LABEL_FORMAT, getLocalizedString("lbl_chorus", locale)))
+    private fun getSongChorusLabelPattern(locale: Locale?): Pattern {
+      return Pattern.compile(String.format(SONG_CHORUS_LABEL_FORMAT, getLocalizedString("lbl_chorus", locale)))
     }
 
     private fun getLocalizedString(stringKey: String, locale: Locale?): String? {

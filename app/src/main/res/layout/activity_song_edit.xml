@@ -9,29 +9,29 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Label for Psalm Name -->
+        <!-- Label for Song Name -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="4dp"
-            android:text="@string/label_psalm_name" />
-        <!-- EditText for Psalm Name -->
+            android:text="@string/label_song_name" />
+        <!-- EditText for Song Name -->
         <EditText
-            android:id="@+id/psalmNameEdit"
+            android:id="@+id/songNameEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textCapWords"
             android:paddingBottom="4dp" />
 
-        <!-- Label for Psalm Text -->
+        <!-- Label for Song Text -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="12dp"
-            android:text="@string/label_psalm_text" />
-        <!-- EditText for Psalm Text -->
+            android:text="@string/label_song_text" />
+        <!-- EditText for Song Text -->
         <EditText
-            android:id="@+id/psalmTextEdit"
+            android:id="@+id/songTextEdit"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -53,15 +53,15 @@
             android:layout_height="wrap_content"
             android:inputType="text" />
 
-        <!-- Label for Psalm Tonalities -->
+        <!-- Label for Song Tonalities -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="12dp"
-            android:text="@string/label_psalm_tonalities" />
-        <!-- Spinner for Psalm Tonalities -->
+            android:text="@string/label_song_tonalities" />
+        <!-- Spinner for Song Tonalities -->
         <Spinner
-            android:id="@+id/psalmTonalitiesSpinner"
+            android:id="@+id/songTonalitiesSpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

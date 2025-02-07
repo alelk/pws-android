@@ -7,8 +7,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
-        android:text="@string/lbl_enter_psalm_number"
-        android:id="@+id/lbl_select_psalm_number"
+        android:text="@string/lbl_enter_song_number"
+        android:id="@+id/lbl_select_song_number"
         android:layout_marginStart="16dp" />
 
     <EditText
@@ -16,6 +16,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="numberDecimal"
-        android:id="@+id/edittxt_psalm_number"
+        android:id="@+id/edittxt_song_number"
         android:minWidth="100dp"/>
 </LinearLayout>

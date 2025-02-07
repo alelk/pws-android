@@ -20,7 +20,7 @@ val SongInfo.textDocument: String
 
 val SongInfo.textDocumentHtml: String
   get() =
-    PwsSongUtil.psalmTextToPrettyHtml(
+    PwsSongUtil.songTextToPrettyHtml(
       this.song.locale,
       this.song.lyric,
       this.song.bibleRef,

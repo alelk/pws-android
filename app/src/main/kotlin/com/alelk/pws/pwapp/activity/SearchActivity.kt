@@ -91,7 +91,7 @@ class SearchActivity : AppCompatThemedActivity() {
     }
     searchView.inputType = intent.getIntExtra(KEY_INPUT_TYPE, InputType.TYPE_CLASS_TEXT)
     if (searchView.inputType and InputType.TYPE_MASK_CLASS == InputType.TYPE_CLASS_NUMBER) {
-      searchView.queryHint = getString(R.string.hint_enter_psalm_number)
+      searchView.queryHint = getString(R.string.hint_enter_song_number)
     }
     return true
   }

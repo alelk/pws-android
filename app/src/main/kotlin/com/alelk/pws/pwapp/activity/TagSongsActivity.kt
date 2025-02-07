@@ -22,16 +22,16 @@ class TagSongsActivity : AppCompatThemedActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_category_psalms)
+    setContentView(R.layout.activity_category_songs)
 
     val tagId = checkNotNull(intent.getStringExtra(TAG_ID)) { "$TAG_ID required" }
     val tagName = intent.getStringExtra(TAG_NAME) ?: ""
 
-    title = "${getString(R.string.title_activity_category_psalms)} $tagName"
+    title = "${getString(R.string.title_activity_category_songs)} $tagName"
 
     songsInfoAdapter = SongsInfoAdapter { songInfo -> onSongSelected(songInfo) }
 
-    recyclerView = findViewById<RecyclerView>(R.id.category_psalms_recycler_view).apply {
+    recyclerView = findViewById<RecyclerView>(R.id.category_songs_recycler_view).apply {
       adapter = songsInfoAdapter
       layoutManager = LinearLayoutManager(this@TagSongsActivity)
     }

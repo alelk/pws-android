@@ -6,7 +6,7 @@
   tools:context="com.alelk.pws.pwapp.activity.SongFullscreenActivity">
 
   <androidx.viewpager2.widget.ViewPager2
-    android:id="@+id/pager_psalm_text"
+    android:id="@+id/pager_song_text"
     android:layout_width="match_parent"
     android:layout_height="match_parent" />
 

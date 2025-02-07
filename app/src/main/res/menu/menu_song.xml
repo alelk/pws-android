@@ -23,7 +23,7 @@
     android:id="@+id/menu_search"
     android:icon="@drawable/ic_search_black_24dp"
     android:orderInCategory="1"
-    android:title="@string/lbl_search_psalm"
+    android:title="@string/lbl_search_song"
     app:actionViewClass="androidx.appcompat.widget.SearchView"
     app:showAsAction="ifRoom" />
 
@@ -44,7 +44,7 @@
   <item
     android:id="@+id/menu_edit"
     android:orderInCategory="4"
-    android:title="@string/lbl_edit_psalm"
+    android:title="@string/lbl_edit_song"
     app:showAsAction="never" />
 
   <item android:id="@+id/menu_edit_categories"
@@ -55,7 +55,7 @@
 
   <item
     android:id="@+id/menu_text_size"
-    android:title="@string/lbl_psalm_text_size"
+    android:title="@string/lbl_song_text_size"
     android:orderInCategory="6"
     app:showAsAction="never" />
 

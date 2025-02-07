@@ -54,10 +54,10 @@ class HistoryFragment @Inject constructor() : Fragment() {
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
 
-    val historyAdapter = HistoryRecyclerViewAdapter { psalmNumberId: Long ->
-      val intentPsalmView = Intent(activity, SongActivity::class.java)
-      intentPsalmView.putExtra(SongActivity.KEY_SONG_NUMBER_ID, psalmNumberId)
-      startActivity(intentPsalmView)
+    val historyAdapter = HistoryRecyclerViewAdapter { songNumberId: Long ->
+      val intentSongView = Intent(activity, SongActivity::class.java)
+      intentSongView.putExtra(SongActivity.KEY_SONG_NUMBER_ID, songNumberId)
+      startActivity(intentSongView)
     }
 
     view.findViewById<RecyclerView>(R.id.rv_history).apply {

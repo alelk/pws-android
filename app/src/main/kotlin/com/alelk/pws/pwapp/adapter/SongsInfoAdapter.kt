@@ -16,16 +16,16 @@ class SongsInfoAdapter(
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongInfoHolder {
     val itemView = LayoutInflater.from(parent.context)
-      .inflate(R.layout.layout_psalm_list_item, parent, false)
+      .inflate(R.layout.layout_song_list_item, parent, false)
     return SongInfoHolder(itemView)
   }
 
   override fun onBindViewHolder(holder: SongInfoHolder, position: Int) {
-    val psalmInfo = songInfoList[position]
-    holder.bind(psalmInfo)
+    val songInfo = songInfoList[position]
+    holder.bind(songInfo)
 
     holder.itemView.setOnClickListener {
-      onSongSelected(psalmInfo)
+      onSongSelected(songInfo)
     }
   }
 
@@ -37,13 +37,13 @@ class SongsInfoAdapter(
   }
 
   class SongInfoHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    private val psalmName: TextView = itemView.findViewById(R.id.txt_psalm_name)
-    private val psalmNumber: TextView = itemView.findViewById(R.id.txt_psalm_number)
+    private val songName: TextView = itemView.findViewById(R.id.txt_song_name)
+    private val songNumber: TextView = itemView.findViewById(R.id.txt_song_number)
     private val bookName: TextView = itemView.findViewById(R.id.txt_book_name)
 
     fun bind(songInfo: SongInfo) {
-      psalmName.text = songInfo.songName
-      psalmNumber.text = songInfo.songNumber.toString()
+      songName.text = songInfo.songName
+      songNumber.text = songInfo.songNumber.toString()
       bookName.text = songInfo.bookDisplayName
     }
   }

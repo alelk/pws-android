@@ -41,11 +41,11 @@ class SongReferencesRecyclerViewAdapter(
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
     return if (viewType == TYPE_HEADER) {
       val view = LayoutInflater.from(parent.context)
-        .inflate(R.layout.layout_referred_psalm_list_header, parent, false)
+        .inflate(R.layout.layout_referred_song_list_header, parent, false)
       HeaderViewHolder(view)
     } else {
       val view = LayoutInflater.from(parent.context)
-        .inflate(R.layout.layout_referred_psalm_list_item, parent, false)
+        .inflate(R.layout.layout_referred_song_list_item, parent, false)
       ReferredViewHolder(view, parent.context)
     }
   }
@@ -67,12 +67,12 @@ class SongReferencesRecyclerViewAdapter(
   override fun getItemCount(): Int = super.getItemCount() + 1
 
   class ReferredViewHolder(itemView: View, val context: Context) : RecyclerView.ViewHolder(itemView) {
-    private val songName: TextView = itemView.findViewById(R.id.txt_psalm_name)
-    private val songNumber: TextView = itemView.findViewById(R.id.txt_psalm_number)
+    private val songName: TextView = itemView.findViewById(R.id.txt_song_name)
+    private val songNumber: TextView = itemView.findViewById(R.id.txt_song_number)
     private val bookDisplayName: TextView = itemView.findViewById(R.id.txt_book_name)
     private val reason: TextView = itemView.findViewById(R.id.txt_reason)
 
-    fun bind(item: SongSongReference, onItemClickListener: (psalmNumberId: Long) -> Unit) {
+    fun bind(item: SongSongReference, onItemClickListener: (songNumberId: Long) -> Unit) {
       songName.text = item.refSongName
       songNumber.text = item.refSongNumber.toString()
       bookDisplayName.text = item.refSongNumberBookDisplayName
@@ -87,7 +87,7 @@ class SongReferencesRecyclerViewAdapter(
   }
 
   class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    private val txtReferences: TextView = itemView.findViewById(R.id.lbl_psalm_references)
+    private val txtReferences: TextView = itemView.findViewById(R.id.lbl_song_references)
     fun bind(textSize: Float) {
       txtReferences.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize)
     }

@@ -17,9 +17,9 @@
 
 <resources>
     <string name="action_settings">Ustawienia</string>
-    <string name="title_activity_psalm_fullscreen">Pieśń</string>
+    <string name="title_activity_song_fullscreen">Pieśń</string>
     <string name="title_activity_main_settings">Ustawienia</string>
-    <string name="title_activity_psalm_edit">Edytuj Psalm</string>
+    <string name="title_activity_song_edit">Edytuj Psalm</string>
 
     <!-- Main activity display strings. -->
     <string name="txt_main_navigation_header_comment">Biblioteka pieśni chrześcijańskich.</string>
@@ -42,57 +42,57 @@
     <string name="title_activity_search">Szukaj</string>
     <string name="lbl_search_widget">Szukaj&#8230;</string>
     <string name="hint_enter_text">Wpisz dowolny tekst w celu wyszukania pieśni&#8230;</string>
-    <string name="hint_enter_psalm_number">Wpisz numer pieśni&#8230;</string>
+    <string name="hint_enter_song_number">Wpisz numer pieśni&#8230;</string>
     <string name="lbl_fts_search_progress">Trwa pełnotekstowe wyszukiwanie&#8230;\n</string>
 
-    <!-- Psalm activity display strings. -->
+    <!-- Song activity display strings. -->
     <string name="lbl_chorus">Refren</string>
     <string name="lbl_author">Słowa</string>
     <string name="lbl_translator">Tłumaczenie</string>
     <string name="lbl_music">Muzyka</string>
     <string name="lbl_references">Odsyłacze</string>
     <string name="lbl_another_variant" formatted="true">Druga wersja pieśni. Źródło tekstów: %1$d%%</string>
-    <string name="lbl_search_psalm">Szukaj</string>
+    <string name="lbl_search_song">Szukaj</string>
     <string name="lbl_jump_to_number">Przejdź do numeru</string>
     <string name="lbl_share">Udostępnij</string>
     <string name="lbl_edit">Edytować</string>
     <string name="lbl_delete">Usuwać</string>
-    <string name="lbl_psalm_text_size">Rozmiar tekstu pieśni</string>
+    <string name="lbl_song_text_size">Rozmiar tekstu pieśni</string>
     <string name="sort_by_added_date">Sortuj według daty dodania</string>
     <string name="sort_by_number">Sortuj według numeru</string>
     <string name="sort_by_name">Sortuj według nazwy</string>
     <string name="msg_added_to_favorites">Dodano do ulubionych</string>
     <string name="msg_removed_from_favorites">Usunięto z ulubionych</string>
 
-    <!-- Edit psalm activity -->
-    <string name="label_psalm_name">Nazwa Psalmu</string>
-    <string name="label_psalm_text">Tekst Psalmu</string>
+    <!-- Edit song activity -->
+    <string name="label_song_name">Nazwa Psalmu</string>
+    <string name="label_song_text">Tekst Psalmu</string>
     <string name="label_bible_ref">Odniesienie Biblijne</string>
-    <string name="label_psalm_tonalities">Tonacje Psalmu</string>
+    <string name="label_song_tonalities">Tonacje Psalmu</string>
     <string name="btn_save">Zapisz</string>
-    <string name="lbl_edit_psalm">Edytuj psalm</string>
+    <string name="lbl_edit_song">Edytuj psalm</string>
 
-    <!-- Psalm fullscreen activity display strings. -->
+    <!-- Song fullscreen activity display strings. -->
     <string name="lbl_add_to_favorites">Dodaj do ulubionych</string>
     <string name="lbl_remove_from_favorites">Usuń z ulubionych</string>
 
-    <!-- Search psalm number dialog display strings. -->
+    <!-- Search song number dialog display strings. -->
     <string name="lbl_ok">OK</string>
     <string name="lbl_cancel">Anuluj</string>
-    <string name="lbl_enter_psalm_number">Wpisz numer w określonym śpiewniku, którego poszukujesz: </string>
-    <string name="msg_no_psalm_number_found">Numer nie znaleziono</string>
+    <string name="lbl_enter_song_number">Wpisz numer w określonym śpiewniku, którego poszukujesz: </string>
+    <string name="msg_no_song_number_found">Numer nie znaleziono</string>
     <string name="lbl_done">Gotowe</string>
     <string name="lbl_error">Błąd</string>
     <string name="lbl_edit_categories_for_song">Edytuj kategorie dla utworu</string>
 
-    <!-- Psalm preferences dialog display strings. -->
+    <!-- Song preferences dialog display strings. -->
     <string name="lbl_text_size">Rozmiar tekstu:</string>
-    <string name="lbl_expand_psalm_text">Refren po każdym wersecie</string>
+    <string name="lbl_expand_song_text">Refren po każdym wersecie</string>
 
-    <!--    Categories -->
+    <!-- Categories -->
     <string name="lbl_drawer_main_categories">Kategorie</string>
     <string name="title_activity_category">Kategoria:</string>
-    <string name="title_activity_category_psalms">Psalms by category</string>
+    <string name="title_activity_category_songs">Songs by category</string>
     <string name="title_activity_category_edit">Edytuj kategorie</string>
     <string name="hint_category_name">Nazwa kategorii</string>
     <string name="lbl_add_category">Dodaj kategorię</string>
