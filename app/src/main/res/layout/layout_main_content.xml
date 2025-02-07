@@ -22,7 +22,7 @@
   android:layout_height="wrap_content"
   android:fitsSystemWindows="true"
   app:layout_behavior="@string/appbar_scrolling_view_behavior"
-  tools:context="com.alelk.pws.pwapp.activity.MainActivity"
+  tools:context="com.alelk.pws.pwapp.io.github.alelk.pws.android.app.activity.MainActivity"
   tools:showIn="@layout/layout_main_appbar">
 
   <androidx.fragment.app.FragmentContainerView

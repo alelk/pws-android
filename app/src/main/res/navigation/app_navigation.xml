@@ -7,29 +7,29 @@
 
   <fragment
     android:id="@+id/readNowFragment"
-    android:name="com.alelk.pws.pwapp.fragment.ReadNowFragment"
+    android:name="io.github.alelk.pws.android.app.fragment.ReadNowFragment"
     android:label="ReadNowFragment" />
   <fragment
     android:id="@+id/favoritesFragment"
-    android:name="com.alelk.pws.pwapp.fragment.FavoritesFragment"
+    android:name="io.github.alelk.pws.android.app.fragment.FavoritesFragment"
     android:label="FavoritesFragment" />
   <fragment
     android:id="@+id/historyFragment"
-    android:name="com.alelk.pws.pwapp.fragment.HistoryFragment"
+    android:name="io.github.alelk.pws.android.app.fragment.HistoryFragment"
     android:label="HistoryFragment" />
   <fragment
     android:id="@+id/booksFragment"
-    android:name="com.alelk.pws.pwapp.fragment.BooksFragment"
+    android:name="io.github.alelk.pws.android.app.fragment.BooksFragment"
     android:label="BooksFragment" />
 
   <activity
     android:id="@+id/tagsActivity"
-    android:name="com.alelk.pws.pwapp.activity.TagsActivity"
+    android:name="io.github.alelk.pws.android.app.activity.TagsActivity"
     android:label="activity_categories"
     tools:layout="@layout/activity_categories" />
   <activity
     android:id="@+id/mainSettingsActivity"
-    android:name="com.alelk.pws.pwapp.activity.MainSettingsActivity"
+    android:name="io.github.alelk.pws.android.app.activity.MainSettingsActivity"
     android:label="MainSettingsActivity" />
 
 </navigation>

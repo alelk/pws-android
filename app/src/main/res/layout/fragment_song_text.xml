@@ -6,7 +6,7 @@
     android:id="@+id/scrollview_song_text"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context=".activity.SongActivity">
+    tools:context="io.github.alelk.pws.android.app.activity.SongActivity">
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
@@ -16,7 +16,7 @@
         android:padding="4dp"
         android:id="@+id/ll_song_text_content"
         android:orientation="vertical"
-        tools:context=".fragment.SongTextFragment">
+        tools:context="io.github.alelk.pws.android.app.fragment.SongTextFragment">
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
