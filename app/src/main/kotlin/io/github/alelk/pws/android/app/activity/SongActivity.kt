@@ -30,7 +30,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
-import com.alelk.pws.pwapp.R
 import io.github.alelk.pws.android.app.activity.base.AppCompatThemedActivity
 import io.github.alelk.pws.android.app.adapter.SongTextFragmentPagerAdapter
 import io.github.alelk.pws.android.app.dialog.EditSongTagsDialog
@@ -45,6 +44,7 @@ import io.github.alelk.pws.android.app.theme.ThemeType
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
+import io.github.alelk.pws.android.app.R
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch

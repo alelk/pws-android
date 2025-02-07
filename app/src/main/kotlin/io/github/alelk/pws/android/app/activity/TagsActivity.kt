@@ -11,12 +11,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.alelk.pws.pwapp.R
 import io.github.alelk.pws.android.app.activity.base.AppCompatThemedActivity
 import io.github.alelk.pws.android.app.adapter.TagsAdapter
 import io.github.alelk.pws.android.app.dialog.TagDialog
 import io.github.alelk.pws.android.app.model.TagsViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import io.github.alelk.pws.android.app.R
 import io.github.alelk.pws.database.common.entity.TagEntity
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull

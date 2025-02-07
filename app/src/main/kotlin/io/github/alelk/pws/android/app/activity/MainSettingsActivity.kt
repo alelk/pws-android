@@ -16,9 +16,9 @@
 package io.github.alelk.pws.android.app.activity
 
 import android.os.Bundle
-import com.alelk.pws.pwapp.R
 import io.github.alelk.pws.android.app.activity.base.AppCompatThemedActivity
 import dagger.hilt.android.AndroidEntryPoint
+import io.github.alelk.pws.android.app.R
 
 /**
  * A PreferenceActivity that contains main PWS App settings.

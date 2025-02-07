@@ -40,7 +40,6 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import io.github.alelk.pws.database.data.Tonality.Companion.getInstanceBySignature
 import io.github.alelk.pws.database.util.PwsSongUtil
-import com.alelk.pws.pwapp.R
 import io.github.alelk.pws.android.app.activity.SongActivity
 import io.github.alelk.pws.android.app.adapter.SongReferencesRecyclerViewAdapter
 import io.github.alelk.pws.android.app.adapter.SongTextFragmentPagerAdapter
@@ -51,6 +50,7 @@ import io.github.alelk.pws.android.app.model.textDocumentHtml
 import io.github.alelk.pws.android.app.view.TagView
 import com.google.android.flexbox.FlexboxLayout
 import dagger.hilt.android.AndroidEntryPoint
+import io.github.alelk.pws.android.app.R
 import io.github.alelk.pws.database.common.entity.SongEntity
 import io.github.alelk.pws.database.common.entity.TagEntity
 import kotlinx.coroutines.ExperimentalCoroutinesApi

@@ -30,11 +30,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.github.alelk.pws.database.dao.Favorite
-import com.alelk.pws.pwapp.R
 import io.github.alelk.pws.android.app.activity.SongActivity
 import io.github.alelk.pws.android.app.adapter.FavoritesRecyclerViewAdapter
 import io.github.alelk.pws.android.app.model.FavoritesViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import io.github.alelk.pws.android.app.R
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject

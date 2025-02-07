@@ -25,9 +25,9 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.alelk.pws.pwapp.R
 import io.github.alelk.pws.android.app.model.SongViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import io.github.alelk.pws.android.app.R
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged

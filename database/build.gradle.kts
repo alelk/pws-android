@@ -139,7 +139,7 @@ android {
       buildConfigField("String", "DB_AUTHORITY", "\"com.alelk.pws.database.full\"")
     }
   }
-  namespace = "com.alelk.pws.database"
+  namespace = "io.github.alelk.pws.database"
 
   buildFeatures {
     buildConfig = true

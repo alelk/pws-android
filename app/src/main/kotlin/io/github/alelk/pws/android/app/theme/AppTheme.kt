@@ -18,7 +18,7 @@ package io.github.alelk.pws.android.app.theme
 import android.content.Context
 import androidx.annotation.StringRes
 import androidx.annotation.StyleRes
-import com.alelk.pws.pwapp.R
+import io.github.alelk.pws.android.app.R
 
 /**
  * App Theme

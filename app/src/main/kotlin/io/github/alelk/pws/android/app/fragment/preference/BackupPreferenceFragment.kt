@@ -10,10 +10,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import com.alelk.pws.pwapp.R
 import io.github.alelk.pws.android.app.activity.MainSettingsActivity
 import io.github.alelk.pws.android.app.model.BackupViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import io.github.alelk.pws.android.app.R
 import io.github.alelk.pws.backup.BackupService
 import java.io.File
 import kotlinx.coroutines.CoroutineScope

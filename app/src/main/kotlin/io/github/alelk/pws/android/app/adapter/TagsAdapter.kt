@@ -8,7 +8,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.alelk.pws.pwapp.R
+import io.github.alelk.pws.android.app.R
 import io.github.alelk.pws.database.common.entity.TagEntity
 
 class TagsAdapter(

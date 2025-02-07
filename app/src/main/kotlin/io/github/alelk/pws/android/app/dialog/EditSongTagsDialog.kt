@@ -4,9 +4,9 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
-import com.alelk.pws.pwapp.R
 import io.github.alelk.pws.android.app.view.TagView
 import com.google.android.flexbox.FlexboxLayout
+import io.github.alelk.pws.android.app.R
 import io.github.alelk.pws.database.common.entity.TagEntity
 import java.util.SortedSet
 

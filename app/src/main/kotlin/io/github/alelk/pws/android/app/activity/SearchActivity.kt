@@ -25,11 +25,11 @@ import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.commit
-import com.alelk.pws.pwapp.R
 import io.github.alelk.pws.android.app.activity.base.AppCompatThemedActivity
 import io.github.alelk.pws.android.app.fragment.SearchResultsFragment
 import io.github.alelk.pws.android.app.model.SearchSongViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import io.github.alelk.pws.android.app.R
 
 @AndroidEntryPoint
 class SearchActivity : AppCompatThemedActivity() {

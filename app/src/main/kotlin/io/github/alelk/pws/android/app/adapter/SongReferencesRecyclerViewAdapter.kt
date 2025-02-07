@@ -24,8 +24,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import io.github.alelk.pws.android.app.R
 import io.github.alelk.pws.database.dao.SongSongReference
-import com.alelk.pws.pwapp.R
 import io.github.alelk.pws.database.common.entity.SongRefReason
 
 /**

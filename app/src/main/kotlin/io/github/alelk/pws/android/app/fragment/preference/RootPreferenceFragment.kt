@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import com.alelk.pws.pwapp.R
+import io.github.alelk.pws.android.app.R
 
 class RootPreferenceFragment : PreferenceFragmentCompat() {
   override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {

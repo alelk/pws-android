@@ -29,12 +29,12 @@ import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import io.github.alelk.pws.database.dao.BookStatisticWithBook
-import com.alelk.pws.pwapp.R
 import io.github.alelk.pws.android.app.activity.MainSettingsActivity
 import io.github.alelk.pws.android.app.model.AppPreferencesViewModel
 import io.github.alelk.pws.android.app.model.BookStatisticViewModel
 import io.github.alelk.pws.android.app.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
+import io.github.alelk.pws.android.app.R
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
