@@ -62,40 +62,40 @@ class SongActivity : AppCompatThemedActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_psalm)
+    setContentView(R.layout.activity_song)
     val songNumberId = intent.getLongExtra(KEY_SONG_NUMBER_ID, -1L)
     Timber.d("song activity created: song number id = $songNumberId")
     songViewModel.setSongNumberId(songNumberId)
 
-    val toolbar = findViewById<Toolbar>(R.id.toolbar_psalm)
+    val toolbar = findViewById<Toolbar>(R.id.toolbar_song)
     setSupportActionBar(toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-    findViewById<FloatingActionButton>(R.id.fab_psalm).apply { setOnClickListener { lifecycleScope.launch { songViewModel.toggleFavorite() } } }
+    findViewById<FloatingActionButton>(R.id.fab_song).apply { setOnClickListener { lifecycleScope.launch { songViewModel.toggleFavorite() } } }
     lifecycleScope.launch {
       repeatOnLifecycle(Lifecycle.State.STARTED) {
         launch {
           songViewModel.isFavorite.collect { isFavorite ->
-            findViewById<FloatingActionButton>(R.id.fab_psalm).apply {
+            findViewById<FloatingActionButton>(R.id.fab_song).apply {
               if (isFavorite) setImageResource(R.drawable.ic_favorite_white_24dp)
               else setImageResource(R.drawable.ic_favorite_border_white_24dp)
             }
           }
         }
         launch {
-          songViewModel.number.collect { songNumber -> findViewById<CollapsingToolbarLayout>(R.id.collapsing_toolbar_psalm).title = "№ $songNumber" }
+          songViewModel.number.collect { songNumber -> findViewById<CollapsingToolbarLayout>(R.id.collapsing_toolbar_song).title = "№ $songNumber" }
         }
       }
     }
 
-    (supportFragmentManager.findFragmentById(R.id.fragment_psalm_header) as? SongHeaderFragment?)
+    (supportFragmentManager.findFragmentById(R.id.fragment_song_header) as? SongHeaderFragment?)
       ?: run {
         supportFragmentManager.commit {
-          add(R.id.fragment_psalm_header, SongHeaderFragment())
+          add(R.id.fragment_song_header, SongHeaderFragment())
         }
       }
 
-    val songTextPager = findViewById<ViewPager2>(R.id.pager_psalm_text)
+    val songTextPager = findViewById<ViewPager2>(R.id.pager_song_text)
     lifecycleScope.launch {
       repeatOnLifecycle(Lifecycle.State.STARTED) {
         songViewModel.allBookNumbers.collect { allBookNumbers ->
@@ -120,7 +120,7 @@ class SongActivity : AppCompatThemedActivity() {
   }
 
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
-    menuInflater.inflate(R.menu.menu_psalm, menu)
+    menuInflater.inflate(R.menu.menu_song, menu)
     val searchManager = getSystemService(SEARCH_SERVICE) as? SearchManager
     val searchView = menu.findItem(R.id.menu_search).actionView as SearchView
     if (searchManager != null) {

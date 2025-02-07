@@ -27,7 +27,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
-            style="@style/CardStyle.PsalmNumber"
+            style="@style/CardStyle.SongNumber"
             android:id="@+id/txt_book_number"/>
         <LinearLayout
             android:layout_width="0dp"
@@ -37,7 +37,7 @@
             android:layout_marginTop="4dp"
             android:layout_marginBottom="4dp">
             <TextView
-                style="@style/CardStyle.PsalmName"
+                style="@style/CardStyle.SongName"
                 android:id="@+id/txt_book_name"
                 android:layout_marginBottom="6dp"/>
             <TextView

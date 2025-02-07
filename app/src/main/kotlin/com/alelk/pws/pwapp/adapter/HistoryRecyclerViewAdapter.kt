@@ -47,14 +47,14 @@ class HistoryRecyclerViewAdapter(private val onItemClickListener: (id: Long) -> 
   }
 
   class HistoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    private val psalmName: TextView = itemView.findViewById(R.id.txt_psalm_name)
-    private val psalmNumber: TextView = itemView.findViewById(R.id.txt_psalm_number)
+    private val songName: TextView = itemView.findViewById(R.id.txt_song_name)
+    private val songNumber: TextView = itemView.findViewById(R.id.txt_song_number)
     private val bookDisplayName: TextView = itemView.findViewById(R.id.txt_book_name)
     private val timestamp: TextView = itemView.findViewById(R.id.txt_timestamp)
 
     fun bind(historyItem: HistoryItem, onItemClickListener: (id: Long) -> Unit) {
-      psalmNumber.text = historyItem.songNumber.toString()
-      psalmName.text = historyItem.songName
+      songNumber.text = historyItem.songNumber.toString()
+      songName.text = historyItem.songName
       bookDisplayName.text = historyItem.bookDisplayName
       timestamp.text = DateUtils.getRelativeTimeSpanString(
         historyItem.timestamp.time, System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS

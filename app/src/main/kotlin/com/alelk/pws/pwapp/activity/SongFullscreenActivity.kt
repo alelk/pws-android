@@ -44,11 +44,11 @@ class SongFullscreenActivity : AppCompatThemedActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_psalm_fullscreen)
-    songNumberId = intent.getLongExtra(KEY_PSALM_NUMBER_ID, -1)
+    setContentView(R.layout.activity_song_fullscreen)
+    songNumberId = intent.getLongExtra(KEY_SONG_NUMBER_ID, -1)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-    val songTextPager = findViewById<ViewPager2>(R.id.pager_psalm_text)
+    val songTextPager = findViewById<ViewPager2>(R.id.pager_song_text)
     lifecycleScope.launch {
       songsViewModel.getSongNumber(songNumberId).collect { n ->
         bookViewModel.getBookSongNumbers(n.bookId).collect { numbers ->
@@ -83,6 +83,6 @@ class SongFullscreenActivity : AppCompatThemedActivity() {
   }
 
   companion object {
-    const val KEY_PSALM_NUMBER_ID = SongTextFragment.KEY_SONG_NUMBER_ID
+    const val KEY_SONG_NUMBER_ID = SongTextFragment.KEY_SONG_NUMBER_ID
   }
 }

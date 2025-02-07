@@ -4,10 +4,10 @@ import io.kotest.core.spec.style.FeatureSpec
 import io.kotest.matchers.shouldBe
 import java.util.Locale
 
-class PwsPsalmHtmlBuilderTest : FeatureSpec({
+class PwsSongHtmlBuilderTest : FeatureSpec({
 
-  feature("build html from psalm with single chorus") {
-    val psalm = """
+  feature("build html from song with single chorus") {
+    val song = """
       | 1.
       | Verse 1 Line 1
       | Verse 1 Line 2
@@ -36,7 +36,7 @@ class PwsPsalmHtmlBuilderTest : FeatureSpec({
         |<font color='#7aaf83'> 3 </font><br> Verse 3 Line 1<br> Verse 3 Line 2<br>
         |""".trimMargin().split('\n').joinToString("")
 
-      val html = PwsPsalmHtmlBuilder(Locale.forLanguageTag("en")).buildHtml(psalm, false)
+      val html = PwsSongHtmlBuilder(Locale.forLanguageTag("en")).buildHtml(song, false)
       html shouldBe expectedHtml
     }
 
@@ -49,13 +49,13 @@ class PwsPsalmHtmlBuilderTest : FeatureSpec({
         |<font color='#7aaf83'> 3 </font><br> Verse 3 Line 1<br> Verse 3 Line 2<br>
         |""".trimMargin().split('\n').joinToString("")
 
-      val html = PwsPsalmHtmlBuilder(Locale.forLanguageTag("en")).buildHtml(psalm, true)
+      val html = PwsSongHtmlBuilder(Locale.forLanguageTag("en")).buildHtml(song, true)
       html shouldBe expectedHtml
     }
   }
 
-  feature("build html from psalm with multiple choruses") {
-    val psalm = """
+  feature("build html from song with multiple choruses") {
+    val song = """
       | 1.
       | Verse 1 Line 1
       | Verse 1 Line 2
@@ -100,7 +100,7 @@ class PwsPsalmHtmlBuilderTest : FeatureSpec({
         |<font color='#888888'><i> [Chorus 1]</i></font><br>
         |""".trimMargin().split('\n').joinToString("")
 
-      val html = PwsPsalmHtmlBuilder(Locale.forLanguageTag("en")).buildHtml(psalm, false)
+      val html = PwsSongHtmlBuilder(Locale.forLanguageTag("en")).buildHtml(song, false)
       html shouldBe expectedHtml
     }
 
@@ -117,7 +117,7 @@ class PwsPsalmHtmlBuilderTest : FeatureSpec({
         |<font color='#999999'>Chorus 1</font><br> Chorus 1 Line 1<br> Chorus 1 Line 2<br> <br>
         |""".trimMargin().split('\n').joinToString("")
 
-      val html = PwsPsalmHtmlBuilder(Locale.forLanguageTag("en")).buildHtml(psalm, true)
+      val html = PwsSongHtmlBuilder(Locale.forLanguageTag("en")).buildHtml(song, true)
       html shouldBe expectedHtml
     }
   }

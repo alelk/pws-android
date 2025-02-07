@@ -82,7 +82,7 @@
                     android:orientation="horizontal"
                     style="?attr/buttonBarStyle">
                     <Button
-                        android:id="@+id/btn_search_psalm_number"
+                        android:id="@+id/btn_search_song_number"
                         style="?attr/buttonBarStyle"
                         android:layout_width="0dp"
                         android:layout_weight="1"
@@ -92,7 +92,7 @@
                         android:text="@string/lbl_search_by_number"
                         android:drawableTop="?attr/toolbarSearchByNumberIcon"/>
                     <Button
-                        android:id="@+id/btn_search_psalm_text"
+                        android:id="@+id/btn_search_song_text"
                         style="?attr/buttonBarStyle"
                         android:layout_width="0dp"
                         android:layout_weight="1"

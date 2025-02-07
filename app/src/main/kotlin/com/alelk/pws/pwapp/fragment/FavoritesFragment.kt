@@ -72,10 +72,10 @@ class FavoritesFragment @Inject constructor() : Fragment() {
     val recyclerView = v.findViewById<RecyclerView>(R.id.rv_favorites)
     recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-    mFavoritesAdapter = FavoritesRecyclerViewAdapter { psalmNumberId: Long ->
-      val intentPsalmView = Intent(requireActivity(), SongActivity::class.java)
-      intentPsalmView.putExtra(SongActivity.KEY_SONG_NUMBER_ID, psalmNumberId)
-      startActivity(intentPsalmView)
+    mFavoritesAdapter = FavoritesRecyclerViewAdapter { songNumberId: Long ->
+      val intentSongView = Intent(requireActivity(), SongActivity::class.java)
+      intentSongView.putExtra(SongActivity.KEY_SONG_NUMBER_ID, songNumberId)
+      startActivity(intentSongView)
     }
     recyclerView.adapter = mFavoritesAdapter
 

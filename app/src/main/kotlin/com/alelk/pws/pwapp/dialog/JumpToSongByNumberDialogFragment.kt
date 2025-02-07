@@ -28,7 +28,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.alelk.pws.pwapp.R
 import com.alelk.pws.pwapp.activity.SongActivity
-import com.alelk.pws.pwapp.databinding.DialogSearchPsalmNumberBinding
+import com.alelk.pws.pwapp.databinding.DialogSearchSongNumberBinding
 import com.alelk.pws.pwapp.model.BookViewModel
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -38,7 +38,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 
 /**
- * Search Psalm Number Dialog Fragment
+ * Search Song Number Dialog Fragment
  *
  *
  * Created by Alex Elkin on 12.06.2016.
@@ -46,13 +46,13 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class JumpToSongByNumberDialogFragment : DialogFragment() {
 
-  private var binding: DialogSearchPsalmNumberBinding? = null
+  private var binding: DialogSearchSongNumberBinding? = null
   private val bookViewModel: BookViewModel by viewModels()
 
   private var songNumberToJump: Int? = null
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-    binding = DialogSearchPsalmNumberBinding.inflate(layoutInflater)
+    binding = DialogSearchSongNumberBinding.inflate(layoutInflater)
 
     bookViewModel
       .setBookExternalId(
@@ -64,12 +64,12 @@ class JumpToSongByNumberDialogFragment : DialogFragment() {
         bookViewModel.songNumbers.filterNotNull().collectLatest { numbers ->
           val minNumber = numbers.minByOrNull { it.number }?.number ?: 1
           val maxNumber = numbers.maxByOrNull { it.number }?.number ?: 1
-          binding?.edittxtPsalmNumber?.hint = "$minNumber - $maxNumber"
+          binding?.edittxtSongNumber?.hint = "$minNumber - $maxNumber"
         }
       }
     }
 
-    binding?.edittxtPsalmNumber?.addTextChangedListener(object : TextWatcher {
+    binding?.edittxtSongNumber?.addTextChangedListener(object : TextWatcher {
       override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
       override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
         songNumberToJump = s.toString().toIntOrNull()
@@ -88,7 +88,7 @@ class JumpToSongByNumberDialogFragment : DialogFragment() {
           )
           dialog.cancel()
         } else {
-          binding?.root?.let { Snackbar.make(it, R.string.msg_no_psalm_number_found, Snackbar.LENGTH_SHORT).setAction("Action", null).show() }
+          binding?.root?.let { Snackbar.make(it, R.string.msg_no_song_number_found, Snackbar.LENGTH_SHORT).setAction("Action", null).show() }
           dialog.dismiss()
         }
       }

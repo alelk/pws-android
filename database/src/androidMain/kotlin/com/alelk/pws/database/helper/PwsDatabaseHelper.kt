@@ -318,8 +318,8 @@ class PwsDatabaseHelper(private val mContext: Context) : SQLiteOpenHelper(
             contentValues.put("text", text)
             contentValues.put("bibleref", bibleRef)
             contentValues.put("tonalities", tonalities)
-            val psalmId = current.getLong(current.getColumnIndex("_id"))
-            db.update("psalms", contentValues, "_id=?", arrayOf(psalmId.toString()))
+            val songId = current.getLong(current.getColumnIndex("_id"))
+            db.update("psalms", contentValues, "_id=?", arrayOf(songId.toString()))
             Log.v(LOG_TAG, "${this::insertEditedSongs.name}: Inserted new item to songs: edition=$edition number=$number")
           }
         }

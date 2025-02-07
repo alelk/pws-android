@@ -22,15 +22,15 @@
         android:layout_marginTop="30dp">
 
         <TextView
-            style="@style/PsalmHeaderStyle.PsalmName"
-            android:id="@+id/txt_psalm_name" />
+            style="@style/SongHeaderStyle.SongName"
+            android:id="@+id/txt_song_name" />
 
         <TextView
-            style="@style/PsalmHeaderStyle.BibleRef"
+            style="@style/SongHeaderStyle.BibleRef"
             android:id="@+id/txt_bible_ref"/>
 
         <TextView
-            style="@style/PsalmHeaderStyle.BookName"
+            style="@style/SongHeaderStyle.BookName"
             android:id="@+id/txt_book_name"/>
 
     </LinearLayout>

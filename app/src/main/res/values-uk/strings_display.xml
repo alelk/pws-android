@@ -18,9 +18,9 @@
 <resources>
 
     <string name="action_settings">Налаштування</string>
-    <string name="title_activity_psalm_fullscreen">Пісня</string>
+    <string name="title_activity_song_fullscreen">Пісня</string>
     <string name="title_activity_main_settings">Налаштування</string>
-    <string name="title_activity_psalm_edit">Редагування псалму</string>
+    <string name="title_activity_song_edit">Редагування псалму</string>
 
     <!-- Main activity display strings. -->
     <string name="txt_main_navigation_header_comment">Бібліотека християнських пісень.</string>
@@ -43,56 +43,56 @@
     <string name="title_activity_search">Пошук</string>
     <string name="lbl_search_widget">Пошук&#8230;</string>
     <string name="hint_enter_text">Введіть будь який текст для пошуку пісні&#8230;</string>
-    <string name="hint_enter_psalm_number">Введіть номер пісні&#8230;</string>
+    <string name="hint_enter_song_number">Введіть номер пісні&#8230;</string>
     <string name="lbl_fts_search_progress">Виконується повнотекстовий пошук&#8230;\n</string>
 
-    <!-- Psalm activity display strings. -->
+    <!-- Song activity display strings. -->
     <string name="lbl_chorus">Приспів</string>
     <string name="lbl_author">Слова</string>
     <string name="lbl_translator">Переклад</string>
     <string name="lbl_music">Музика</string>
     <string name="lbl_references">Посилання</string>
     <string name="lbl_another_variant" formatted="true">Друга версія пісні.\nСхожість текстів: %1$d%%</string>
-    <string name="lbl_search_psalm">Знайти</string>
+    <string name="lbl_search_song">Знайти</string>
     <string name="lbl_jump_to_number">Перейти по номеру</string>
     <string name="lbl_share">Поділитися</string>
     <string name="lbl_edit">Редагувати</string>
     <string name="lbl_delete">Видалити</string>
-    <string name="lbl_psalm_text_size">Розмір тексту</string>
+    <string name="lbl_song_text_size">Розмір тексту</string>
     <string name="sort_by_added_date">Сортувати за датою додавання</string>
     <string name="sort_by_number">Сортувати за номером</string>
     <string name="sort_by_name">Сортувати за назвою</string>
     <string name="msg_added_to_favorites">Додано до обраного.</string>
     <string name="msg_removed_from_favorites">Видалено з обраного.</string>
 
-    <!-- Edit psalm activity -->
-    <string name="label_psalm_name">Назва псалму</string>
-    <string name="label_psalm_text">Текст псалму</string>
+    <!-- Edit song activity -->
+    <string name="label_song_name">Назва псалму</string>
+    <string name="label_song_text">Текст псалму</string>
     <string name="label_bible_ref">Біблійне посилання</string>
-    <string name="label_psalm_tonalities">Тональності псалму</string>
+    <string name="label_song_tonalities">Тональності псалму</string>
     <string name="btn_save">Зберегти</string>
-    <string name="lbl_edit_psalm">Редагувати псалом</string>
+    <string name="lbl_edit_song">Редагувати псалом</string>
 
 
-    <!-- Psalm fullscreen activity display strings. -->
+    <!-- Song fullscreen activity display strings. -->
     <string name="lbl_add_to_favorites">Додати до обраного</string>
     <string name="lbl_remove_from_favorites">Видалити з обраного</string>
 
-    <!-- Search psalm number dialog display strings. -->
+    <!-- Search song number dialog display strings. -->
     <string name="lbl_ok">OK</string>
     <string name="lbl_cancel">Відміна</string>
-    <string name="lbl_enter_psalm_number">Введіть номер в даному збірнику, на який бажаєте перейти: </string>
-    <string name="msg_no_psalm_number_found">Номер не знайдено</string>
+    <string name="lbl_enter_song_number">Введіть номер в даному збірнику, на який бажаєте перейти: </string>
+    <string name="msg_no_song_number_found">Номер не знайдено</string>
     <string name="lbl_done">Готово</string>
     <string name="lbl_error">Помилка</string>
 
-    <!-- Psalm preferences dialog display strings. -->
+    <!-- Song preferences dialog display strings. -->
     <string name="lbl_text_size">Розмір тексту:</string>
-    <string name="lbl_expand_psalm_text">Приспів після кожного куплета</string>
+    <string name="lbl_expand_song_text">Приспів після кожного куплета</string>
 
-    <!--    Categories -->
+    <!-- Categories -->
     <string name="title_activity_category">Категорії</string>
-    <string name="title_activity_category_psalms">Категорія:</string>
+    <string name="title_activity_category_songs">Категорія:</string>
     <string name="title_activity_category_edit">Редагувати категорії</string>
     <string name="lbl_drawer_main_categories">Категорії</string>
     <string name="hint_category_name">Назва категорії</string>

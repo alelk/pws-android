@@ -62,13 +62,13 @@
 <!--    <activity-->
 <!--      android:name=".activity.SongFullscreenActivity"-->
 <!--      android:configChanges="orientation|keyboardHidden|screenSize"-->
-<!--      android:label="@string/title_activity_psalm_fullscreen"-->
+<!--      android:label="@string/title_activity_song_fullscreen"-->
 <!--      android:theme="@style/Theme.AppTheme.NoActionBar" />-->
     <activity
       android:name=".activity.SongEditActivity"
       android:configChanges="orientation|keyboardHidden|screenSize"
       android:parentActivityName=".activity.SongActivity"
-      android:label="@string/title_activity_psalm_edit"
+      android:label="@string/title_activity_song_edit"
       android:windowSoftInputMode="adjustResize"
       android:theme="@style/Theme.AppTheme.NoActionBar" />
     <activity
@@ -77,7 +77,7 @@
       android:parentActivityName=".activity.MainActivity" />
     <activity
         android:name=".activity.TagSongsActivity"
-        android:label="@string/title_activity_category_psalms"
+        android:label="@string/title_activity_category_songs"
         android:parentActivityName=".activity.TagsActivity" />
     <activity
       android:name=".activity.MainSettingsActivity"

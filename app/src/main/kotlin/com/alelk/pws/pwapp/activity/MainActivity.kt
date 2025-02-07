@@ -51,8 +51,8 @@ open class MainActivity : AppCompatThemedActivity() {
     val fabSearchNumber = findViewById<FloatingActionButton>(R.id.fab_search_number)
     fabSearchText!!.setOnClickListener(onButtonClick)
     fabSearchNumber!!.setOnClickListener(onButtonClick)
-    findViewById<View>(R.id.btn_search_psalm_number).setOnClickListener(onButtonClick)
-    findViewById<View>(R.id.btn_search_psalm_text).setOnClickListener(onButtonClick)
+    findViewById<View>(R.id.btn_search_song_number).setOnClickListener(onButtonClick)
+    findViewById<View>(R.id.btn_search_song_text).setOnClickListener(onButtonClick)
     val appBar = findViewById<AppBarLayout>(R.id.appbar_main)
     appBar.addOnOffsetChangedListener { _: AppBarLayout?, verticalOffset: Int ->
       if (verticalOffset == 0) {
@@ -119,7 +119,7 @@ open class MainActivity : AppCompatThemedActivity() {
 
   private val onButtonClick = View.OnClickListener { view: View ->
     when (view.id) {
-      R.id.btn_search_psalm_number, R.id.fab_search_number -> {
+      R.id.btn_search_song_number, R.id.fab_search_number -> {
         val intentSearchNumber = Intent(baseContext, SearchActivity::class.java)
         intentSearchNumber.putExtra(
           SearchActivity.KEY_INPUT_TYPE,
@@ -128,7 +128,7 @@ open class MainActivity : AppCompatThemedActivity() {
         startActivity(intentSearchNumber)
       }
 
-      R.id.btn_search_psalm_text, R.id.fab_search_text -> {
+      R.id.btn_search_song_text, R.id.fab_search_text -> {
         val intentSearchText = Intent(baseContext, SearchActivity::class.java)
         intentSearchText.putExtra(
           SearchActivity.KEY_INPUT_TYPE,

@@ -17,10 +17,10 @@
 
 <searchable xmlns:android="http://schemas.android.com/apk/res/android"
     android:label="@string/lbl_search_widget"
-    android:hint="@string/hint_enter_psalm_number"
+    android:hint="@string/hint_enter_song_number"
     android:searchSuggestAuthority="@string/db_authority"
-    android:searchSuggestPath="psalms"
+    android:searchSuggestPath="songs"
     android:searchSuggestIntentAction="android.intent.action.VIEW"
-    android:searchSuggestIntentData="psalms"
+    android:searchSuggestIntentData="songs"
     >
 </searchable>

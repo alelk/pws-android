@@ -34,7 +34,7 @@ import com.alelk.pws.pwapp.R
  */
 
 class SearchRecyclerViewAdapter(
-  private val mClickListener: (psalmNumberId: Long) -> Unit
+  private val mClickListener: (songNumberId: Long) -> Unit
 ) : ListAdapter<SongSearchResult, SearchRecyclerViewAdapter.SearchViewHolder>(DiffCallback()) {
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchViewHolder {
@@ -44,24 +44,24 @@ class SearchRecyclerViewAdapter(
   }
 
   override fun onBindViewHolder(holder: SearchViewHolder, position: Int) {
-    val psalmSearchResult = getItem(position)
-    holder.bind(psalmSearchResult, mClickListener)
+    val songSearchResult = getItem(position)
+    holder.bind(songSearchResult, mClickListener)
   }
 
   class SearchViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    private val songName: TextView = itemView.findViewById(R.id.txt_psalm_name)
-    private val songNumber: TextView = itemView.findViewById(R.id.txt_psalm_number)
+    private val songName: TextView = itemView.findViewById(R.id.txt_song_name)
+    private val songNumber: TextView = itemView.findViewById(R.id.txt_song_number)
     private val bookDisplayName: TextView = itemView.findViewById(R.id.txt_book_name)
     private val text: TextView = itemView.findViewById(R.id.txt_text)
 
     fun bind(
-      psalmSearchResult: SongSearchResult,
-      onItemClickListener: (psalmNumberId: Long) -> Unit
+      songSearchResult: SongSearchResult,
+      onItemClickListener: (songNumberId: Long) -> Unit
     ) {
-      songNumber.text = psalmSearchResult.songNumber.toString()
-      songName.text = psalmSearchResult.songName
-      bookDisplayName.text = psalmSearchResult.bookDisplayName
-      val snippet = psalmSearchResult.snippet
+      songNumber.text = songSearchResult.songNumber.toString()
+      songName.text = songSearchResult.songName
+      bookDisplayName.text = songSearchResult.bookDisplayName
+      val snippet = songSearchResult.snippet
       if (snippet.isNotEmpty()) {
         text.text = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
           Html.fromHtml(snippet, Html.FROM_HTML_MODE_LEGACY)
@@ -70,7 +70,7 @@ class SearchRecyclerViewAdapter(
         }
       }
       itemView.setOnClickListener {
-        onItemClickListener(psalmSearchResult.songNumberId)
+        onItemClickListener(songSearchResult.songNumberId)
       }
     }
   }

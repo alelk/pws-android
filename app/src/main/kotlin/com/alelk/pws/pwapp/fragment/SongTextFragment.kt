@@ -83,16 +83,16 @@ class SongTextFragment : Fragment() {
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
     songViewModel.setSongNumberId(arguments?.getLong(KEY_SONG_NUMBER_ID))
-    return inflater.inflate(R.layout.fragment_psalm_text, container, false)
+    return inflater.inflate(R.layout.fragment_song_text, container, false)
   }
 
   @OptIn(ExperimentalCoroutinesApi::class)
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
 
-    songText = view.findViewById(R.id.txt_psalm_text)
-    songInfo = view.findViewById(R.id.txt_psalm_info)
-    tonalities = view.findViewById(R.id.txt_psalm_tonalities)
+    songText = view.findViewById(R.id.txt_song_text)
+    songInfo = view.findViewById(R.id.txt_song_info)
+    tonalities = view.findViewById(R.id.txt_song_tonalities)
     songTagsCard = view.findViewById(R.id.cv_categories)
     songTags = view.findViewById(R.id.categories)
 
@@ -102,7 +102,7 @@ class SongTextFragment : Fragment() {
           .apply { putExtra(SongActivity.KEY_SONG_NUMBER_ID, songNumberId) }
       startActivity(intent)
     }
-    val songReferencesView = view.findViewById<RecyclerView>(R.id.rv_referred_psalms).apply {
+    val songReferencesView = view.findViewById<RecyclerView>(R.id.rv_referred_songs).apply {
       layoutManager = LinearLayoutManager(requireContext())
       isNestedScrollingEnabled = false
       adapter = songReferencesAdapter
@@ -199,12 +199,12 @@ class SongTextFragment : Fragment() {
   }
 
   override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenu.ContextMenuInfo?) {
-    requireActivity().menuInflater.inflate(R.menu.menu_psalm_text_context, menu)
+    requireActivity().menuInflater.inflate(R.menu.menu_song_text_context, menu)
   }
 
   override fun onContextItemSelected(item: MenuItem): Boolean {
     if (R.id.menu_copy == item.itemId) {
-      val viewPager = requireActivity().findViewById<ViewPager2>(R.id.pager_psalm_text)
+      val viewPager = requireActivity().findViewById<ViewPager2>(R.id.pager_song_text)
       val adapter = viewPager.adapter as? SongTextFragmentPagerAdapter
       val currentSongNumberId = adapter?.allSongNumberIds?.getOrNull(viewPager.currentItem)
       
