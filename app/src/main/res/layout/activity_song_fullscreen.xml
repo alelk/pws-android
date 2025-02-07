@@ -3,7 +3,7 @@
   android:layout_width="match_parent"
   android:layout_height="match_parent"
   android:background="?attr/fullscreanBackground"
-  tools:context="com.alelk.pws.pwapp.activity.SongFullscreenActivity">
+  tools:context="com.alelk.pws.pwapp.io.github.alelk.pws.android.app.activity.SongFullscreenActivity">
 
   <androidx.viewpager2.widget.ViewPager2
     android:id="@+id/pager_song_text"
