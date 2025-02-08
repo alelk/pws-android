@@ -1,10 +1,10 @@
 package io.github.alelk.pws.database.dao
 
 import io.github.alelk.pws.database.clean
-import io.github.alelk.pws.database.common.entity.SongNumberEntity
-import io.github.alelk.pws.database.common.entity.bookEntity
-import io.github.alelk.pws.database.common.entity.songEntity
-import io.github.alelk.pws.database.common.entity.songNumberEntity
+import io.github.alelk.pws.database.entity.SongNumberEntity
+import io.github.alelk.pws.database.entity.bookEntity
+import io.github.alelk.pws.database.entity.songEntity
+import io.github.alelk.pws.database.entity.songNumberEntity
 import io.github.alelk.pws.database.pwsDbForTest
 import io.github.alelk.pws.database.withBookEntities
 import io.github.alelk.pws.database.withSongEntities
@@ -27,7 +27,7 @@ import io.kotest.property.checkAll
 @OptIn(DelicateKotest::class)
 class SongNumberDaoTest : FeatureSpec({
 
-  val db = pwsDbForTest()
+  val db = pwsDbForTest(inMemory = true)
   val bookDao = db.bookDao()
   val songDao = db.songDao()
   val songNumberDao = db.songNumberDao()

@@ -7,7 +7,6 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import io.github.alelk.pws.database.common.entity.converter.DbTypeConverters
 import io.github.alelk.pws.database.dao.BookDao
 import io.github.alelk.pws.database.dao.BookStatisticDao
 import io.github.alelk.pws.database.dao.FavoriteDao
@@ -17,18 +16,19 @@ import io.github.alelk.pws.database.dao.SongNumberDao
 import io.github.alelk.pws.database.dao.SongSongReferenceDao
 import io.github.alelk.pws.database.dao.TagDao
 import io.github.alelk.pws.database.dao.SongNumberTagDao
+import io.github.alelk.pws.database.entity.BookEntity
+import io.github.alelk.pws.database.entity.BookStatisticEntity
+import io.github.alelk.pws.database.entity.FavoriteEntity
+import io.github.alelk.pws.database.entity.HistoryEntity
+import io.github.alelk.pws.database.entity.SongEntity
+import io.github.alelk.pws.database.entity.SongFtsEntity
+import io.github.alelk.pws.database.entity.SongNumberEntity
+import io.github.alelk.pws.database.entity.SongNumberTagEntity
+import io.github.alelk.pws.database.entity.SongSongReferenceEntity
+import io.github.alelk.pws.database.entity.TagEntity
+import io.github.alelk.pws.database.entity.converter.DbTypeConverters
 import io.github.alelk.pws.database.helper.PwsDatabaseHelper
 import io.github.alelk.pws.database.helper.PwsDatabaseHelper.Companion.DATABASE_VERSION
-import io.github.alelk.pws.database.common.entity.BookEntity
-import io.github.alelk.pws.database.common.entity.BookStatisticEntity
-import io.github.alelk.pws.database.common.entity.FavoriteEntity
-import io.github.alelk.pws.database.common.entity.HistoryEntity
-import io.github.alelk.pws.database.common.entity.SongEntity
-import io.github.alelk.pws.database.common.entity.SongFtsEntity
-import io.github.alelk.pws.database.common.entity.SongNumberEntity
-import io.github.alelk.pws.database.common.entity.SongNumberTagEntity
-import io.github.alelk.pws.database.common.entity.SongSongReferenceEntity
-import io.github.alelk.pws.database.common.entity.TagEntity
 import timber.log.Timber
 import kotlin.time.measureTime
 

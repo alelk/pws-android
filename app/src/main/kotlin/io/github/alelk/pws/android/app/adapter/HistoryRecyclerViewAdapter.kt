@@ -24,8 +24,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import io.github.alelk.pws.android.app.R
-import io.github.alelk.pws.database.dao.HistoryItem
 import io.github.alelk.pws.android.app.adapter.HistoryRecyclerViewAdapter.HistoryViewHolder
+import io.github.alelk.pws.database.entity.HistoryWithSongNumberWithSongWithBook
 
 /**
  * History Recycler View Adapter
@@ -33,7 +33,7 @@ import io.github.alelk.pws.android.app.adapter.HistoryRecyclerViewAdapter.Histor
  * Created by Alex Elkin on 23.05.2016.
  */
 class HistoryRecyclerViewAdapter(private val onItemClickListener: (id: Long) -> Unit) :
-  ListAdapter<HistoryItem, HistoryViewHolder>(HistoryItemDiffCallback()) {
+  ListAdapter<HistoryWithSongNumberWithSongWithBook, HistoryViewHolder>(HistoryItemDiffCallback()) {
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryViewHolder {
     val view = LayoutInflater.from(parent.context)
@@ -52,23 +52,23 @@ class HistoryRecyclerViewAdapter(private val onItemClickListener: (id: Long) -> 
     private val bookDisplayName: TextView = itemView.findViewById(R.id.txt_book_name)
     private val timestamp: TextView = itemView.findViewById(R.id.txt_timestamp)
 
-    fun bind(historyItem: HistoryItem, onItemClickListener: (id: Long) -> Unit) {
-      songNumber.text = historyItem.songNumber.toString()
-      songName.text = historyItem.songName
-      bookDisplayName.text = historyItem.bookDisplayName
+    fun bind(historyItem: HistoryWithSongNumberWithSongWithBook, onItemClickListener: (id: Long) -> Unit) {
+      songNumber.text = historyItem.songNumber.number.toString()
+      songName.text = historyItem.song.name
+      bookDisplayName.text = historyItem.book.displayName
       timestamp.text = DateUtils.getRelativeTimeSpanString(
-        historyItem.timestamp.time, System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS
+        historyItem.history.accessTimestamp.time, System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS
       )
       itemView.setOnClickListener { onItemClickListener(historyItem.songNumberId) }
     }
   }
 
-  class HistoryItemDiffCallback : DiffUtil.ItemCallback<HistoryItem>() {
-    override fun areItemsTheSame(oldItem: HistoryItem, newItem: HistoryItem): Boolean {
-      return oldItem.id == newItem.id
+  class HistoryItemDiffCallback : DiffUtil.ItemCallback<HistoryWithSongNumberWithSongWithBook>() {
+    override fun areItemsTheSame(oldItem: HistoryWithSongNumberWithSongWithBook, newItem: HistoryWithSongNumberWithSongWithBook): Boolean {
+      return oldItem.history.id == newItem.history.id
     }
 
-    override fun areContentsTheSame(oldItem: HistoryItem, newItem: HistoryItem): Boolean {
+    override fun areContentsTheSame(oldItem: HistoryWithSongNumberWithSongWithBook, newItem: HistoryWithSongNumberWithSongWithBook): Boolean {
       return oldItem == newItem
     }
   }

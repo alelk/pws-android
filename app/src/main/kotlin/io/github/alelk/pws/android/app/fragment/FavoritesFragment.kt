@@ -29,13 +29,14 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import io.github.alelk.pws.database.dao.Favorite
 import io.github.alelk.pws.android.app.activity.SongActivity
 import io.github.alelk.pws.android.app.adapter.FavoritesRecyclerViewAdapter
 import io.github.alelk.pws.android.app.model.FavoritesViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.alelk.pws.android.app.R
+import io.github.alelk.pws.database.entity.FavoriteWithSongNumberWithSongWithBook
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -90,16 +91,18 @@ class FavoritesFragment @Inject constructor() : Fragment() {
     synchronized(this) {
       observeFavoritesJob?.cancel()
       observeFavoritesJob = viewLifecycleOwner.lifecycleScope.launch {
-        when (sortOrder) {
-          SORT_BY_NUMBER -> favoritesViewModel.getFavoritesSortedByNumber().collect { updateUI(it) }
-          SORT_BY_NAME -> favoritesViewModel.getFavoritesSortedByName().collect { updateUI(it) }
-          SORT_BY_ADDED_DATE -> favoritesViewModel.getFavoritesSortedByDate().collect { updateUI(it) }
+        favoritesViewModel.allFavorites.collectLatest { favorites ->
+          when (sortOrder) {
+            SORT_BY_NUMBER -> updateUI(favorites.sortedBy { it.songNumber.number })
+            SORT_BY_NAME -> updateUI(favorites.sortedBy { it.song.name })
+            SORT_BY_ADDED_DATE -> updateUI(favorites.sortedByDescending { it.favorite.position })
+          }
         }
       }
     }
   }
 
-  private fun updateUI(favorites: List<Favorite>) {
+  private fun updateUI(favorites: List<FavoriteWithSongNumberWithSongWithBook>) {
     mFavoritesAdapter?.submitList(favorites)
   }
 

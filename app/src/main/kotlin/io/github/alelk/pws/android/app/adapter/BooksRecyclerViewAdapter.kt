@@ -23,17 +23,17 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import io.github.alelk.pws.android.app.R
-import io.github.alelk.pws.database.dao.Book
 import io.github.alelk.pws.android.app.adapter.BooksRecyclerViewAdapter.BooksViewHolder
+import io.github.alelk.pws.database.entity.BookWithSongNumbersEntity
 
 /**
  * Books Recycler View Adapter
  *
  * Created by Mykhailo Dmytriakha on 05.03.2024.
  */
-class BooksRecyclerViewAdapter(private val onItemClickListener: (bookNumberId: Long) -> Unit) : ListAdapter<Book, BooksViewHolder>(
-    BookDiffCallback()
-) {
+class BooksRecyclerViewAdapter(
+  private val onItemClickListener: (bookNumberId: BookWithSongNumbersEntity) -> Unit
+) : ListAdapter<BookWithSongNumbersEntity, BooksViewHolder>(BookDiffCallback()) {
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BooksViewHolder {
     val view = LayoutInflater.from(parent.context)
@@ -51,20 +51,20 @@ class BooksRecyclerViewAdapter(private val onItemClickListener: (bookNumberId: L
     private val bookShortName: TextView = itemView.findViewById(R.id.txt_book_short_name)
     private val bookNumber: TextView = itemView.findViewById(R.id.txt_book_number)
 
-    fun bind(book: Book, onItemClickListener: (bookNumberId: Long) -> Unit) {
-      bookName.text = book.displayName
-      bookShortName.text = book.name
-      bookNumber.text = book.id.toString()
-      itemView.setOnClickListener { onItemClickListener(book.firstSongNumberId) }
+    fun bind(book: BookWithSongNumbersEntity, onItemClickListener: (book: BookWithSongNumbersEntity) -> Unit) {
+      bookName.text = book.book.displayName
+      bookShortName.text = book.book.name
+      bookNumber.text = book.book.id.toString()
+      itemView.setOnClickListener { onItemClickListener(book) }
     }
   }
 
-  class BookDiffCallback : DiffUtil.ItemCallback<Book>() {
-    override fun areItemsTheSame(oldItem: Book, newItem: Book): Boolean {
-      return oldItem.id == newItem.id
+  class BookDiffCallback : DiffUtil.ItemCallback<BookWithSongNumbersEntity>() {
+    override fun areItemsTheSame(oldItem: BookWithSongNumbersEntity, newItem: BookWithSongNumbersEntity): Boolean {
+      return oldItem.book.id == newItem.book.id
     }
 
-    override fun areContentsTheSame(oldItem: Book, newItem: Book): Boolean {
+    override fun areContentsTheSame(oldItem: BookWithSongNumbersEntity, newItem: BookWithSongNumbersEntity): Boolean {
       return oldItem == newItem
     }
   }

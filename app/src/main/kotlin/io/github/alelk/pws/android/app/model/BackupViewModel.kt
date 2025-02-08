@@ -11,19 +11,20 @@ import io.github.alelk.pws.backup.model.Backup
 import io.github.alelk.pws.backup.model.Song
 import io.github.alelk.pws.backup.model.SongNumber
 import io.github.alelk.pws.backup.model.Tag
-import io.github.alelk.pws.database.common.entity.SongNumberTagEntity
-import io.github.alelk.pws.database.common.entity.TagEntity
+import io.github.alelk.pws.database.entity.SongNumberTagEntity
+import io.github.alelk.pws.database.entity.TagEntity
 import io.github.alelk.pws.domain.model.BibleRef
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class BackupViewModel @Inject constructor(
-    db: PwsDatabase,
-    private val datastore: DataStore<Preferences>
+  db: PwsDatabase,
+  private val datastore: DataStore<Preferences>
 ) : ViewModel() {
 
   private val bookStatisticDao = db.bookStatisticDao()
@@ -35,27 +36,27 @@ class BackupViewModel @Inject constructor(
   private val songNumberDao = db.songNumberDao()
 
   suspend fun getBackup(): Backup {
-    val favorites = favoriteDao.getAll().first().map { f -> SongNumber(f.bookId, f.songNumber) }
+    val favorites = favoriteDao.getAllFlow().first().map { f -> SongNumber(f.book.externalId, f.songNumber.number) }
     val editedSongs = songDao.getAllEdited().map { s ->
       Song(
-        number = SongNumber(s.bookId, s.songNumber),
-        id = s.songId,
-        name = s.songName,
-        locale = s.songLocale,
-        version = s.songVersion,
-        lyric = s.songText,
-        tonalities = s.songTonalities,
-        author = s.songAuthor,
-        translator = s.songTranslator,
-        composer = s.songComposer,
-        bibleRef = s.bibleReferences?.let(::BibleRef)
+        number = SongNumber(s.book.externalId, s.songNumber.number),
+        id = s.song.id,
+        name = s.song.name,
+        locale = s.song.locale,
+        version = s.song.version,
+        lyric = s.song.lyric,
+        tonalities = s.song.tonalities,
+        author = s.song.author,
+        translator = s.song.translator,
+        composer = s.song.composer,
+        bibleRef = s.song.bibleRef?.let(::BibleRef)
       )
-    }
+    }.toList()
     val customTags = categoryDao.getAllNotPredefined().map { t ->
-      val tagSongs = songNumberTagDao.getSongDetailsByTagId(t.id)
-      Tag(name = t.name, color = t.color, songs = tagSongs.map { SongNumber(it.bookId, it.songNumber) }.toSet())
+      val tagSongs = songNumberDao.getAllByTagId(t.id).map { SongNumber(it.book.externalId, it.songNumber.number) }.toSet()
+      Tag(name = t.name, color = t.color, songs = tagSongs)
     }
-    val bookPreferences = bookStatisticDao.getUserPreferredBooks().mapNotNull {
+    val bookPreferences = bookStatisticDao.getAllActive().mapNotNull {
       it.bookStatistic.userPreference?.let { pref ->
         io.github.alelk.pws.backup.model.BookPreference(it.book.externalId, pref)
       }
@@ -148,7 +149,7 @@ class BackupViewModel @Inject constructor(
 
     // restore book preferences
     backup.bookPreferences?.forEach { bookPreference ->
-      bookStatisticDao.getByBookExternalId(bookPreference.bookId)?.let {
+      bookStatisticDao.getBookStatisticWithBookByBookExternalId(bookPreference.bookId)?.let {
         val updatedBookStatistic = it.bookStatistic.copy(userPreference = bookPreference.preference)
         bookStatisticDao.update(updatedBookStatistic)
       }

@@ -25,7 +25,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import io.github.alelk.pws.android.app.R
-import io.github.alelk.pws.database.dao.SongSearchResult
+import io.github.alelk.pws.database.entity.SongSearchResultEntity
 
 /**
  * Search Recycler View Adapter
@@ -35,7 +35,7 @@ import io.github.alelk.pws.database.dao.SongSearchResult
 
 class SearchRecyclerViewAdapter(
   private val mClickListener: (songNumberId: Long) -> Unit
-) : ListAdapter<SongSearchResult, SearchRecyclerViewAdapter.SearchViewHolder>(DiffCallback()) {
+) : ListAdapter<SongSearchResultEntity, SearchRecyclerViewAdapter.SearchViewHolder>(DiffCallback()) {
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchViewHolder {
     val view = LayoutInflater.from(parent.context)
@@ -55,8 +55,8 @@ class SearchRecyclerViewAdapter(
     private val text: TextView = itemView.findViewById(R.id.txt_text)
 
     fun bind(
-        songSearchResult: SongSearchResult,
-        onItemClickListener: (songNumberId: Long) -> Unit
+      songSearchResult: SongSearchResultEntity,
+      onItemClickListener: (songNumberId: Long) -> Unit
     ) {
       songNumber.text = songSearchResult.songNumber.toString()
       songName.text = songSearchResult.songName
@@ -75,12 +75,12 @@ class SearchRecyclerViewAdapter(
     }
   }
 
-  class DiffCallback : DiffUtil.ItemCallback<SongSearchResult>() {
-    override fun areItemsTheSame(oldItem: SongSearchResult, newItem: SongSearchResult): Boolean {
+  class DiffCallback : DiffUtil.ItemCallback<SongSearchResultEntity>() {
+    override fun areItemsTheSame(oldItem: SongSearchResultEntity, newItem: SongSearchResultEntity): Boolean {
       return oldItem.songNumberId == newItem.songNumberId
     }
 
-    override fun areContentsTheSame(oldItem: SongSearchResult, newItem: SongSearchResult): Boolean {
+    override fun areContentsTheSame(oldItem: SongSearchResultEntity, newItem: SongSearchResultEntity): Boolean {
       return oldItem == newItem
     }
   }

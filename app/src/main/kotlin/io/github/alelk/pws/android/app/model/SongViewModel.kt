@@ -3,15 +3,15 @@ package io.github.alelk.pws.android.app.model
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.alelk.pws.database.PwsDatabase
-import io.github.alelk.pws.database.dao.SongSongReference
+import io.github.alelk.pws.database.entity.SongSongReferenceDetailsEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.github.alelk.pws.database.common.entity.BookEntity
-import io.github.alelk.pws.database.common.entity.FavoriteEntity
-import io.github.alelk.pws.database.common.entity.HistoryEntity
-import io.github.alelk.pws.database.common.entity.SongEntity
-import io.github.alelk.pws.database.common.entity.SongNumberEntity
-import io.github.alelk.pws.database.common.entity.SongNumberTagEntity
-import io.github.alelk.pws.database.common.entity.TagEntity
+import io.github.alelk.pws.database.entity.BookEntity
+import io.github.alelk.pws.database.entity.FavoriteEntity
+import io.github.alelk.pws.database.entity.HistoryEntity
+import io.github.alelk.pws.database.entity.SongEntity
+import io.github.alelk.pws.database.entity.SongNumberEntity
+import io.github.alelk.pws.database.entity.SongNumberTagEntity
+import io.github.alelk.pws.database.entity.TagEntity
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,7 +36,7 @@ data class SongInfo(
   val tags: List<TagEntity>,
   val favorite: FavoriteEntity?,
   val book: BookEntity,
-  val references: List<SongSongReference>,
+  val references: List<SongSongReferenceDetailsEntity>,
   val allBookNumbers: List<SongNumberEntity>,
 ) {
   val isFavorite: Boolean get() = favorite != null
@@ -66,10 +66,10 @@ class SongViewModel @Inject constructor(db: PwsDatabase) : ViewModel() {
 
   val song: StateFlow<SongInfo?> = _songNumberId.filterNotNull()
     .flatMapLatest { songNumberId ->
-      val songFlow = songNumberDao.getSongOfBookById(songNumberId)
-      val bookNumbersFlow = bookDao.getBookSongNumbersBySongNumberId(songNumberId)
-      val tagsFlow = songNumberTagDao.flowTagsBySongNumberId(songNumberId)
-      val referencesFlow = songReferenceDao.getBySongNumberId(songNumberId)
+      val songFlow = songNumberDao.getSongOfBookByIdFlow(songNumberId)
+      val bookNumbersFlow = bookDao.getBookSongNumbersBySongNumberIdFlow(songNumberId)
+      val tagsFlow = songNumberTagDao.getTagsBySongNumberIdFlow(songNumberId)
+      val referencesFlow = songReferenceDao.getBySongNumberIdFlow(songNumberId)
 
       combine(songFlow, bookNumbersFlow, tagsFlow, referencesFlow) { songOfBook, bookNumbers, tags, references ->
         SongInfo(
@@ -77,7 +77,7 @@ class SongViewModel @Inject constructor(db: PwsDatabase) : ViewModel() {
           book = songOfBook.book,
           songNumber = songOfBook.songNumber,
           tags = tags,
-          favorite = songOfBook.favorite.firstOrNull(),
+          favorite = songOfBook.favorite,
           allBookNumbers = bookNumbers,
           references = references
         )
@@ -97,7 +97,7 @@ class SongViewModel @Inject constructor(db: PwsDatabase) : ViewModel() {
   val number = song.mapLatest { it?.songNumber?.number }.distinctUntilChanged()
   val tags: Flow<List<TagEntity>?> = song.mapLatest { it?.tags }.distinctUntilChanged()
   val allBookNumbers: Flow<List<SongNumberEntity>?> = song.mapLatest { it?.allBookNumbers }.distinctUntilChanged()
-  val references: Flow<List<SongSongReference>?> = song.mapLatest { it?.references?.distinctBy { r -> r.refSongId } }.distinctUntilChanged()
+  val references: Flow<List<SongSongReferenceDetailsEntity>?> = song.mapLatest { it?.references?.distinctBy { r -> r.refSongId } }.distinctUntilChanged()
 
   suspend fun update(updateFn: suspend (existing: SongEntity) -> SongEntity) {
     val nextSong = song.value?.song?.let { song ->

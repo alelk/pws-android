@@ -1,8 +1,8 @@
 package io.github.alelk.pws.database.dao
 
 import io.github.alelk.pws.database.clean
-import io.github.alelk.pws.database.common.entity.bookEntity
-import io.github.alelk.pws.database.common.entity.bookStatisticEntity
+import io.github.alelk.pws.database.entity.bookEntity
+import io.github.alelk.pws.database.entity.bookStatisticEntity
 import io.github.alelk.pws.database.pwsDbForTest
 import io.kotest.core.spec.style.FeatureSpec
 import io.kotest.matchers.shouldBe

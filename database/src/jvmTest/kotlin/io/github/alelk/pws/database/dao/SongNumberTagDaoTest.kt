@@ -1,6 +1,6 @@
 package io.github.alelk.pws.database.dao
 
-import io.github.alelk.pws.database.common.entity.songNumberTagEntity
+import io.github.alelk.pws.database.entity.songNumberTagEntity
 import io.github.alelk.pws.database.pwsDbForTest
 import io.github.alelk.pws.database.withBookEntities
 import io.github.alelk.pws.database.withSongEntities

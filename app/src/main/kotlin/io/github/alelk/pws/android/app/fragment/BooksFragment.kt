@@ -57,9 +57,9 @@ class BooksFragment @Inject constructor() : Fragment() {
     val recyclerView = view.findViewById<RecyclerView>(R.id.rv_books)
     val layoutManager = LinearLayoutManager(requireContext())
     recyclerView.layoutManager = layoutManager
-    booksAdapter = BooksRecyclerViewAdapter { songNumberId: Long ->
+    booksAdapter = BooksRecyclerViewAdapter { book ->
       val intent = Intent(requireActivity(), SongActivity::class.java)
-      intent.putExtra(SongActivity.KEY_SONG_NUMBER_ID, songNumberId)
+      book.songNumbers.minByOrNull { it.number }?.id?.let { intent.putExtra(SongActivity.KEY_SONG_NUMBER_ID, it) }
       startActivity(intent)
     }
     recyclerView.adapter = booksAdapter

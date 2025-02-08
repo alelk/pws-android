@@ -5,7 +5,7 @@ import android.os.Build
 import br.com.colman.kotest.android.extensions.robolectric.RobolectricTest
 import io.github.alelk.pws.database.PwsDatabase
 import io.github.alelk.pws.database.pwsDbForTest
-import io.github.alelk.pws.database.common.entity.bookEntity
+import io.github.alelk.pws.database.entity.bookEntity
 import io.github.alelk.pws.domain.model.bookExternalId
 import io.kotest.core.spec.style.FeatureSpec
 import io.kotest.matchers.collections.shouldContainExactly
@@ -42,7 +42,7 @@ class BookDaoTest : FeatureSpec({
     scenario("get book by external id") {
       checkAll(10, Arb.bookEntity().removeEdgecases()) { book ->
         db.bookDao().insert(book)
-        db.bookDao().getByExternalId(book.externalId).firstOrNull() shouldBe book
+        db.bookDao().getByExternalIdFlow(book.externalId).firstOrNull() shouldBe book
       }
     }
 

@@ -4,8 +4,8 @@ import android.os.Build
 import br.com.colman.kotest.android.extensions.robolectric.RobolectricTest
 import io.github.alelk.pws.database.PwsDatabase
 import io.github.alelk.pws.database.pwsDbForTest
-import io.github.alelk.pws.database.common.entity.bookEntity
-import io.github.alelk.pws.database.common.entity.bookStatisticEntity
+import io.github.alelk.pws.database.entity.bookEntity
+import io.github.alelk.pws.database.entity.bookStatisticEntity
 import io.kotest.core.spec.style.FeatureSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
