@@ -7,7 +7,7 @@ import android.content.UriMatcher
 import android.database.Cursor
 import android.net.Uri
 import io.github.alelk.pws.database.BuildConfig
-import io.github.alelk.pws.database.DatabaseProvider
+import io.github.alelk.pws.database.PwsDatabaseProvider
 import io.github.alelk.pws.database.dao.SongDao
 import timber.log.Timber
 
@@ -20,7 +20,7 @@ class PwsDataProvider : ContentProvider() {
   private lateinit var songDao: SongDao
 
   override fun onCreate(): Boolean {
-    val db = DatabaseProvider.getDatabase(context!!)
+    val db = PwsDatabaseProvider.getDatabase(context!!)
     songDao = db.songDao()
     return true
   }

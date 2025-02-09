@@ -19,6 +19,7 @@ import io.github.alelk.pws.database.entity.BookStatisticEntity
 import io.github.alelk.pws.database.entity.FavoriteEntity
 import io.github.alelk.pws.database.entity.HistoryEntity
 import io.github.alelk.pws.database.entity.SongEntity
+import io.github.alelk.pws.database.entity.SongFtsEntity
 import io.github.alelk.pws.database.entity.SongNumberEntity
 import io.github.alelk.pws.database.entity.SongNumberTagEntity
 import io.github.alelk.pws.database.entity.SongSongReferenceEntity
@@ -26,13 +27,14 @@ import io.github.alelk.pws.database.entity.TagEntity
 import io.github.alelk.pws.database.entity.converter.DbTypeConverters
 
 @Database(
-  version = 10,
+  version = 11,
   entities = [
     BookEntity::class,
     BookStatisticEntity::class,
     FavoriteEntity::class,
     HistoryEntity::class,
     SongEntity::class,
+    SongFtsEntity::class,
     SongNumberEntity::class,
     SongSongReferenceEntity::class,
     TagEntity::class,

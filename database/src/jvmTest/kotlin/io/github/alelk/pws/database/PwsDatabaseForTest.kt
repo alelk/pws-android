@@ -25,10 +25,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 
 fun pwsDbForTest(inMemory: Boolean = false): PwsDatabase =
-  Room.let {
-    if (inMemory) it.inMemoryDatabaseBuilder<PwsDatabase>()
-    else it.databaseBuilder<PwsDatabase>("test-data/pws-test.db")
-  }.setDriver(BundledSQLiteDriver()).build()
+  if (inMemory) Room.inMemoryDatabaseBuilder<PwsDatabase>().setDriver(BundledSQLiteDriver()).build()
+  else Room.databaseBuilder<PwsDatabase>("test-data/pws.db").build()
 
 suspend fun PwsDatabase.clean() {
   val db = this
