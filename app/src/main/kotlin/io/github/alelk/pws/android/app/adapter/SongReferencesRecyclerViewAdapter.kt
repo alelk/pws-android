@@ -25,8 +25,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import io.github.alelk.pws.android.app.R
-import io.github.alelk.pws.database.dao.SongSongReference
-import io.github.alelk.pws.database.common.entity.SongRefReason
+import io.github.alelk.pws.database.entity.SongSongReferenceDetailsEntity
 
 /**
  * Song References Recycler View Adapter
@@ -36,7 +35,7 @@ import io.github.alelk.pws.database.common.entity.SongRefReason
 class SongReferencesRecyclerViewAdapter(
   private val headerTextSize: Float,
   private val onItemClickListener: (songNumberId: Long) -> Unit
-) : ListAdapter<SongSongReference, RecyclerView.ViewHolder>(DiffCallback()) {
+) : ListAdapter<SongSongReferenceDetailsEntity, RecyclerView.ViewHolder>(DiffCallback()) {
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
     return if (viewType == TYPE_HEADER) {
@@ -72,12 +71,12 @@ class SongReferencesRecyclerViewAdapter(
     private val bookDisplayName: TextView = itemView.findViewById(R.id.txt_book_name)
     private val reason: TextView = itemView.findViewById(R.id.txt_reason)
 
-    fun bind(item: SongSongReference, onItemClickListener: (songNumberId: Long) -> Unit) {
+    fun bind(item: SongSongReferenceDetailsEntity, onItemClickListener: (songNumberId: Long) -> Unit) {
       songName.text = item.refSongName
       songNumber.text = item.refSongNumber.toString()
       bookDisplayName.text = item.refSongNumberBookDisplayName
 
-      val reasonText = if (item.refReason == SongRefReason.Variation) context.getString(R.string.lbl_another_variant, item.volume) else ""
+      val reasonText = if (item.refReason == io.github.alelk.pws.database.entity.SongRefReason.Variation) context.getString(R.string.lbl_another_variant, item.volume) else ""
       reason.text = reasonText
 
       itemView.setOnClickListener {
@@ -99,11 +98,11 @@ class SongReferencesRecyclerViewAdapter(
     private const val MIN_HEADER_TEXT_SIZE = 10f
   }
 
-  class DiffCallback : DiffUtil.ItemCallback<SongSongReference>() {
-    override fun areItemsTheSame(oldItem: SongSongReference, newItem: SongSongReference): Boolean =
+  class DiffCallback : DiffUtil.ItemCallback<SongSongReferenceDetailsEntity>() {
+    override fun areItemsTheSame(oldItem: SongSongReferenceDetailsEntity, newItem: SongSongReferenceDetailsEntity): Boolean =
       oldItem.songId == newItem.songId && oldItem.refSongId == newItem.refSongId
 
-    override fun areContentsTheSame(oldItem: SongSongReference, newItem: SongSongReference): Boolean =
+    override fun areContentsTheSame(oldItem: SongSongReferenceDetailsEntity, newItem: SongSongReferenceDetailsEntity): Boolean =
       oldItem == newItem
   }
 }

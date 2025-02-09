@@ -17,7 +17,7 @@ import io.github.alelk.pws.android.app.dialog.TagDialog
 import io.github.alelk.pws.android.app.model.TagsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.alelk.pws.android.app.R
-import io.github.alelk.pws.database.common.entity.TagEntity
+import io.github.alelk.pws.database.entity.TagEntity
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch

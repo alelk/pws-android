@@ -3,14 +3,14 @@ package io.github.alelk.pws.database.dao
 import android.os.Build
 import br.com.colman.kotest.android.extensions.robolectric.RobolectricTest
 import io.github.alelk.pws.database.PwsDatabase
+import io.github.alelk.pws.database.entity.SongNumberEntity
 import io.github.alelk.pws.database.pwsDbForTest
 import io.github.alelk.pws.database.withBookEntities
 import io.github.alelk.pws.database.withSongEntities
 import io.github.alelk.pws.database.withSongNumberEntities
-import io.github.alelk.pws.database.common.entity.SongNumberEntity
-import io.github.alelk.pws.database.common.entity.bookEntity
-import io.github.alelk.pws.database.common.entity.songEntity
-import io.github.alelk.pws.database.common.entity.songNumberEntity
+import io.github.alelk.pws.database.entity.bookEntity
+import io.github.alelk.pws.database.entity.songEntity
+import io.github.alelk.pws.database.entity.songNumberEntity
 import io.kotest.common.DelicateKotest
 import io.kotest.core.spec.style.FeatureSpec
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
@@ -59,7 +59,7 @@ class SongNumberDaoTest : FeatureSpec({
       songNumbers.take(100).forEach { songNumber ->
         val id = db.songNumberDao().insert(songNumber)
         id shouldNotBe null
-        db.songNumberDao().getById(id).firstOrNull() shouldBe songNumber.copy(id = id)
+        db.songNumberDao().getByIdFlow(id).firstOrNull() shouldBe songNumber.copy(id = id)
       }
     }
 

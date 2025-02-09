@@ -8,7 +8,7 @@ import io.github.alelk.pws.database.withBookEntities
 import io.github.alelk.pws.database.withSongEntities
 import io.github.alelk.pws.database.withSongNumberEntities
 import io.github.alelk.pws.database.withTagEntities
-import io.github.alelk.pws.database.common.entity.songNumberTagEntity
+import io.github.alelk.pws.database.entity.songNumberTagEntity
 import io.kotest.core.spec.style.FeatureSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb

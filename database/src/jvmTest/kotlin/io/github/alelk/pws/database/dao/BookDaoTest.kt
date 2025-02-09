@@ -2,7 +2,7 @@ package io.github.alelk.pws.database.dao
 
 import androidx.sqlite.SQLiteException
 import io.github.alelk.pws.database.PwsDatabase
-import io.github.alelk.pws.database.common.entity.bookEntity
+import io.github.alelk.pws.database.entity.bookEntity
 import io.github.alelk.pws.database.pwsDbForTest
 import io.github.alelk.pws.domain.model.bookExternalId
 import io.kotest.assertions.throwables.shouldThrow

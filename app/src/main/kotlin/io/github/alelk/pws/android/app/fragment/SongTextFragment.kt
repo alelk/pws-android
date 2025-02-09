@@ -51,8 +51,8 @@ import io.github.alelk.pws.android.app.view.TagView
 import com.google.android.flexbox.FlexboxLayout
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.alelk.pws.android.app.R
-import io.github.alelk.pws.database.common.entity.SongEntity
-import io.github.alelk.pws.database.common.entity.TagEntity
+import io.github.alelk.pws.database.entity.SongEntity
+import io.github.alelk.pws.database.entity.TagEntity
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay

@@ -23,8 +23,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import io.github.alelk.pws.android.app.R
-import io.github.alelk.pws.database.dao.Favorite
 import io.github.alelk.pws.android.app.adapter.FavoritesRecyclerViewAdapter.FavoriteViewHolder
+import io.github.alelk.pws.database.entity.FavoriteWithSongNumberWithSongWithBook
 
 /**
  * Favorites Recycler View Adapter
@@ -33,7 +33,7 @@ import io.github.alelk.pws.android.app.adapter.FavoritesRecyclerViewAdapter.Favo
  */
 class FavoritesRecyclerViewAdapter(
   private val onItemClickListener: (songNumberId: Long) -> Unit
-) : ListAdapter<Favorite, FavoriteViewHolder>(FavoriteDiffCallback()) {
+) : ListAdapter<FavoriteWithSongNumberWithSongWithBook, FavoriteViewHolder>(FavoriteDiffCallback()) {
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoriteViewHolder {
     val view = LayoutInflater.from(parent.context)
@@ -52,10 +52,10 @@ class FavoritesRecyclerViewAdapter(
     private val bookDisplayName: TextView = itemView.findViewById(R.id.txt_book_name)
     private var songNumberId: Long = 0
 
-    fun bind(favorite: Favorite, onItemClickListener: (songNumberId: Long) -> Unit) {
-      songNumber.text = favorite.songNumber.toString()
-      songName.text = favorite.songName
-      bookDisplayName.text = favorite.bookDisplayName
+    fun bind(favorite: FavoriteWithSongNumberWithSongWithBook, onItemClickListener: (songNumberId: Long) -> Unit) {
+      songNumber.text = favorite.songNumber.number.toString()
+      songName.text = favorite.song.name
+      bookDisplayName.text = favorite.book.displayName
       songNumberId = favorite.songNumberId
 
       itemView.setOnClickListener {
@@ -64,8 +64,11 @@ class FavoritesRecyclerViewAdapter(
     }
   }
 
-  class FavoriteDiffCallback : DiffUtil.ItemCallback<Favorite>() {
-    override fun areItemsTheSame(oldItem: Favorite, newItem: Favorite): Boolean = oldItem.id == newItem.id
-    override fun areContentsTheSame(oldItem: Favorite, newItem: Favorite): Boolean = oldItem == newItem
+  class FavoriteDiffCallback : DiffUtil.ItemCallback<FavoriteWithSongNumberWithSongWithBook>() {
+    override fun areItemsTheSame(oldItem: FavoriteWithSongNumberWithSongWithBook, newItem: FavoriteWithSongNumberWithSongWithBook): Boolean =
+      oldItem.favorite.id == newItem.favorite.id
+
+    override fun areContentsTheSame(oldItem: FavoriteWithSongNumberWithSongWithBook, newItem: FavoriteWithSongNumberWithSongWithBook): Boolean =
+      oldItem == newItem
   }
 }

@@ -4,7 +4,7 @@ import android.os.Build
 import br.com.colman.kotest.android.extensions.robolectric.RobolectricTest
 import io.github.alelk.pws.database.PwsDatabase
 import io.github.alelk.pws.database.pwsDbForTest
-import io.github.alelk.pws.database.common.entity.songEntity
+import io.github.alelk.pws.database.entity.songEntity
 import io.kotest.core.spec.style.FeatureSpec
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe

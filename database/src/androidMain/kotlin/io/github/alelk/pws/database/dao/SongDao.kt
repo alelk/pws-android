@@ -3,94 +3,12 @@ package io.github.alelk.pws.database.dao
 import android.app.SearchManager
 import android.database.Cursor
 import android.provider.BaseColumns
-import androidx.room.*
-import io.github.alelk.pws.database.common.entity.SongEntity
-import io.github.alelk.pws.domain.model.BookExternalId
-import io.github.alelk.pws.domain.model.Person
-import io.github.alelk.pws.domain.model.Tonality
-import io.github.alelk.pws.domain.model.Version
-import java.util.Locale
-
-data class SongSearchResult(
-  val songNumberId: Long,
-  val songName: String,
-  val songNumber: Int,
-  val bookDisplayName: String,
-  val snippet: String
-)
-
-data class SongDetails(
-  val bookName: String,
-  val bookShortName: String,
-  val bookId: BookExternalId,
-  val songId: Long,
-  val songNumber: Int,
-  val songLocale: Locale,
-  val songVersion: Version,
-  val songName: String,
-  val songText: String,
-  val songTonalities: List<Tonality>?,
-  val songAuthor: Person?,
-  val songTranslator: Person?,
-  val songComposer: Person?,
-  val bibleReferences: String?
-)
+import androidx.room.Dao
+import androidx.room.Query
+import io.github.alelk.pws.database.entity.SongSearchResultEntity
 
 @Dao
-interface SongDao : Pageable<SongEntity> {
-
-  @Insert(onConflict = OnConflictStrategy.REPLACE)
-  suspend fun insert(song: SongEntity): Long
-
-  @Insert(onConflict = OnConflictStrategy.REPLACE)
-  suspend fun insert(songs: List<SongEntity>): List<Long>
-
-  @Query("SELECT * FROM psalms WHERE _id = :id")
-  suspend fun getById(id: Long): SongEntity?
-
-  @Query("SELECT * FROM psalms WHERE _id in (:ids)")
-  suspend fun getByIds(ids: List<Long>): List<SongEntity>
-
-  @Query("SELECT * FROM psalms ORDER BY _id LIMIT :limit OFFSET :offset")
-  override suspend fun getAll(limit: Int, offset: Int): List<SongEntity>
-
-  @Query(
-    "SELECT " +
-      "b.displayname as bookName, " +
-      "b.edition as bookId, " +
-      "b.displayshortname as bookShortName, " +
-      "pn.number as songNumber, " +
-      "p._id as songId, " +
-      "p.version as songVersion, " +
-      "p.locale as songLocale, " +
-      "p.name as songName, " +
-      "p.text as songText, " +
-      "p.tonalities as songTonalities, " +
-      "p.author as songAuthor, " +
-      "p.translator as songTranslator, " +
-      "p.composer as songComposer, " +
-      "p.bibleref as bibleReferences " +
-    "FROM psalms p " +
-    "INNER JOIN psalmnumbers pn ON p._id = pn.psalmid " +
-    "INNER JOIN books b ON pn.bookid = b._id " +
-    "INNER JOIN bookstatistic bs ON bs.bookid = b._id " +
-    "WHERE p.edited > 0 AND bs.userpref > 0")
-  suspend fun getAllEdited(): List<SongDetails>
-
-  @Query("SELECT count(_id) FROM psalms")
-  suspend fun count(): Int
-
-  @Update
-  suspend fun update(song: SongEntity)
-
-  @Delete
-  suspend fun delete(song: SongEntity)
-
-  @Delete
-  suspend fun delete(songs: List<SongEntity>)
-
-  @Query("DELETE FROM psalms")
-  suspend fun deleteAll()
+actual interface SongDao: SongDaoBase {
 
   @Query(
     """
@@ -169,7 +87,7 @@ interface SongDao : Pageable<SongEntity> {
     LIMIT :limit
     """
   )
-  suspend fun findBySongNumber(psalmNumber: Int, limit: Int?): List<SongSearchResult>
+  suspend fun findBySongNumber(psalmNumber: Int, limit: Int?): List<SongSearchResultEntity>
 
   @Query(
     """
@@ -190,5 +108,5 @@ interface SongDao : Pageable<SongEntity> {
     LIMIT :limit
     """
   )
-  suspend fun findBySongText(songText: String, limit: Int?): List<SongSearchResult>
+  suspend fun findBySongText(songText: String, limit: Int?): List<SongSearchResultEntity>
 }

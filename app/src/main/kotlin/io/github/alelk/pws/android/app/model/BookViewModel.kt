@@ -3,10 +3,10 @@ package io.github.alelk.pws.android.app.model
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.alelk.pws.database.PwsDatabase
-import io.github.alelk.pws.database.dao.SongNumberWithSong
+import io.github.alelk.pws.database.entity.SongNumberWithSongEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.github.alelk.pws.database.common.entity.BookEntity
-import io.github.alelk.pws.database.common.entity.SongNumberEntity
+import io.github.alelk.pws.database.entity.BookEntity
+import io.github.alelk.pws.database.entity.SongNumberEntity
 import io.github.alelk.pws.domain.model.BookExternalId
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,7 +24,7 @@ import javax.inject.Inject
 
 data class BookInfo(
   val book: BookEntity,
-  val songs: List<SongNumberWithSong>
+  val songs: List<SongNumberWithSongEntity>
 )
 
 @HiltViewModel
@@ -46,8 +46,8 @@ class BookViewModel @Inject constructor(database: PwsDatabase) : ViewModel() {
   val book: StateFlow<BookInfo?> =
     _bookExternalId.filterNotNull()
       .flatMapLatest { bookExternalId ->
-        val bookFlow = bookDao.getByExternalId(bookExternalId)
-        val songNumbersFlow = songNumberDao.getBookSongsByBookId(bookExternalId)
+        val bookFlow = bookDao.getByExternalIdFlow(bookExternalId)
+        val songNumbersFlow = songNumberDao.getBookSongsByBookIdFlow(bookExternalId)
         combine(bookFlow, songNumbersFlow) { book, songNumbers -> book?.let { BookInfo(book, songNumbers) } }
       }
       .distinctUntilChanged()

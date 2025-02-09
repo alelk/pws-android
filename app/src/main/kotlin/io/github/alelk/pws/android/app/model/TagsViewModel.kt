@@ -2,10 +2,10 @@ package io.github.alelk.pws.android.app.model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.github.alelk.pws.database.PwsDatabase
-import io.github.alelk.pws.database.dao.SongInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.github.alelk.pws.database.common.entity.TagEntity
+import io.github.alelk.pws.database.PwsDatabase
+import io.github.alelk.pws.database.entity.SongNumberWithSongWithBookWithFavorite
+import io.github.alelk.pws.database.entity.TagEntity
 import io.github.alelk.pws.domain.model.TagId
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -19,7 +19,7 @@ class TagsViewModel @Inject constructor(database: PwsDatabase) : ViewModel() {
   private val tagDao = database.tagDao()
 
   val allTags: StateFlow<List<TagEntity>?> =
-    tagDao.getAll()
+    tagDao.getAllFlow()
       .distinctUntilChanged()
       .stateIn(viewModelScope, SharingStarted.Lazily, null)
 
@@ -32,5 +32,5 @@ class TagsViewModel @Inject constructor(database: PwsDatabase) : ViewModel() {
 
   suspend fun getNextCustomTagId(): TagId = tagDao.getNextCustomTagId()
 
-  fun getTagSongs(tagId: TagId): Flow<List<SongInfo>> = tagDao.getTagSongs(tagId)
+  fun getTagSongs(tagId: TagId): Flow<List<SongNumberWithSongWithBookWithFavorite>> = tagDao.getTagSongsFlow(tagId)
 }

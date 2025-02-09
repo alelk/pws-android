@@ -1,10 +1,10 @@
 package io.github.alelk.pws.database.dao
 
 import io.github.alelk.pws.database.clean
+import io.github.alelk.pws.database.entity.SongEntity
 import io.github.alelk.pws.domain.distinctBy
-import io.github.alelk.pws.database.common.entity.SongEntity
-import io.github.alelk.pws.database.common.entity.songEntity
-import io.github.alelk.pws.database.common.entity.songSongReferenceEntity
+import io.github.alelk.pws.database.entity.songEntity
+import io.github.alelk.pws.database.entity.songSongReferenceEntity
 import io.github.alelk.pws.database.pwsDbForTest
 import io.kotest.core.spec.style.FeatureSpec
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder

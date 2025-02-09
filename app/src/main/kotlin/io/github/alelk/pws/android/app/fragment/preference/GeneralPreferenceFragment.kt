@@ -28,13 +28,13 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
-import io.github.alelk.pws.database.dao.BookStatisticWithBook
 import io.github.alelk.pws.android.app.activity.MainSettingsActivity
 import io.github.alelk.pws.android.app.model.AppPreferencesViewModel
 import io.github.alelk.pws.android.app.model.BookStatisticViewModel
 import io.github.alelk.pws.android.app.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.alelk.pws.android.app.R
+import io.github.alelk.pws.database.entity.BookStatisticWithBookEntity
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -89,7 +89,7 @@ class GeneralPreferenceFragment : PreferenceFragmentCompat() {
     }
   }
 
-  private fun initBookPreferences(bookPreferences: PreferenceCategory, books: List<BookStatisticWithBook>) {
+  private fun initBookPreferences(bookPreferences: PreferenceCategory, books: List<BookStatisticWithBookEntity>) {
     Timber.d("book preferences: ${books.joinToString(", ") { "${it.book.externalId}->${it.bookStatistic.userPreference}" }}")
     bookPreferences.removeAll()
     books.forEach { book ->

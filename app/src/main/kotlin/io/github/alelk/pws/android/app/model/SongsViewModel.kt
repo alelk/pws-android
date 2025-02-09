@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import io.github.alelk.pws.database.PwsDatabase
 import io.github.alelk.pws.database.dao.SongNumberDao
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.github.alelk.pws.database.common.entity.SongNumberEntity
+import io.github.alelk.pws.database.entity.SongNumberEntity
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -12,5 +12,5 @@ import javax.inject.Inject
 @HiltViewModel
 class SongsViewModel @Inject constructor(database: PwsDatabase) : ViewModel() {
   private val songNumberDao: SongNumberDao = database.songNumberDao()
-  fun getSongNumber(songNumberId: Long): Flow<SongNumberEntity> = songNumberDao.getById(songNumberId)
+  fun getSongNumber(songNumberId: Long): Flow<SongNumberEntity> = songNumberDao.getByIdFlow(songNumberId)
 }
