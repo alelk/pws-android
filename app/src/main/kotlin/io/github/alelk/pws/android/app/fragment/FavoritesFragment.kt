@@ -24,16 +24,17 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.view.menu.MenuBuilder
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import dagger.hilt.android.AndroidEntryPoint
+import io.github.alelk.pws.android.app.R
 import io.github.alelk.pws.android.app.activity.SongActivity
 import io.github.alelk.pws.android.app.adapter.FavoritesRecyclerViewAdapter
 import io.github.alelk.pws.android.app.model.FavoritesViewModel
-import dagger.hilt.android.AndroidEntryPoint
-import io.github.alelk.pws.android.app.R
 import io.github.alelk.pws.database.entity.FavoriteWithSongNumberWithSongWithBook
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
@@ -48,6 +49,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class FavoritesFragment @Inject constructor() : Fragment() {
   private var sortOrder = SORT_BY_ADDED_DATE // default
+  private var isAscending = false // default order for added date is descending
   private val sharedPrefs by lazy {
     requireActivity().getSharedPreferences("favorites_prefs", Context.MODE_PRIVATE)
   }
@@ -61,6 +63,7 @@ class FavoritesFragment @Inject constructor() : Fragment() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     sortOrder = sharedPrefs.getInt(KEY_SORTED_BY, SORT_BY_ADDED_DATE)
+    isAscending = sharedPrefs.getBoolean(KEY_IS_ASCENDING, if (sortOrder == SORT_BY_ADDED_DATE) false else true)
     setHasOptionsMenu(true)
   }
 
@@ -93,9 +96,20 @@ class FavoritesFragment @Inject constructor() : Fragment() {
       observeFavoritesJob = viewLifecycleOwner.lifecycleScope.launch {
         favoritesViewModel.allFavorites.collectLatest { favorites ->
           when (sortOrder) {
-            SORT_BY_NUMBER -> updateUI(favorites.sortedBy { it.songNumber.number })
-            SORT_BY_NAME -> updateUI(favorites.sortedBy { it.song.name })
-            SORT_BY_ADDED_DATE -> updateUI(favorites.sortedByDescending { it.favorite.position })
+            SORT_BY_NUMBER -> {
+              if (isAscending) updateUI(favorites.sortedBy { it.songNumber.number })
+              else updateUI(favorites.sortedByDescending { it.songNumber.number })
+            }
+
+            SORT_BY_NAME -> {
+              if (isAscending) updateUI(favorites.sortedBy { it.song.name })
+              else updateUI(favorites.sortedByDescending { it.song.name })
+            }
+
+            SORT_BY_ADDED_DATE -> {
+              if (isAscending) updateUI(favorites.sortedBy { it.favorite.position })
+              else updateUI(favorites.sortedByDescending { it.favorite.position })
+            }
           }
         }
       }
@@ -106,12 +120,40 @@ class FavoritesFragment @Inject constructor() : Fragment() {
     mFavoritesAdapter?.submitList(favorites)
   }
 
-  override fun onSaveInstanceState(outState: Bundle) {
-    super.onSaveInstanceState(outState)
-    with(sharedPrefs.edit()) {
+  private fun saveSortPreferences() {
+    sharedPrefs.edit().apply {
       putInt(KEY_SORTED_BY, sortOrder)
+      putBoolean(KEY_IS_ASCENDING, isAscending)
       apply()
     }
+  }
+  
+  private fun updateSortAndRefresh(newSortOrder: Int, defaultAscending: Boolean) {
+    if (sortOrder == newSortOrder) {
+      isAscending = !isAscending
+    } else {
+      sortOrder = newSortOrder
+      isAscending = defaultAscending
+    }
+    observeFavorites()
+    saveSortPreferences()
+    requireActivity().invalidateOptionsMenu()
+  }
+
+  private fun updateMenuIcon(menuItem: MenuItem?, sortType: Int) {
+    menuItem?.let { item ->
+      if (sortOrder == sortType) {
+        val iconRes = if (isAscending) R.drawable.ic_arrow_upward else R.drawable.ic_arrow_downward
+        item.setIcon(iconRes)
+      } else {
+        item.icon = null
+      }
+    }
+  }
+
+  override fun onSaveInstanceState(outState: Bundle) {
+    super.onSaveInstanceState(outState)
+    saveSortPreferences()
   }
 
   override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -122,32 +164,37 @@ class FavoritesFragment @Inject constructor() : Fragment() {
   }
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
-    val result = when (item.itemId) {
+    when (item.itemId) {
       menuSortByNumber!!.itemId -> {
-        this.sortOrder = SORT_BY_NUMBER
-        observeFavorites()
-        true
+        updateSortAndRefresh(SORT_BY_NUMBER, true)
+        return true
       }
 
       menuSortByName!!.itemId -> {
-        this.sortOrder = SORT_BY_NAME
-        observeFavorites()
-        true
+        updateSortAndRefresh(SORT_BY_NAME, true)
+        return true
       }
 
       menuSortByAddedDate!!.itemId -> {
-        this.sortOrder = SORT_BY_ADDED_DATE
-        observeFavorites()
-        true
+        updateSortAndRefresh(SORT_BY_ADDED_DATE, false)
+        return true
       }
 
-      else -> super.onOptionsItemSelected(item)
+      else -> return super.onOptionsItemSelected(item)
     }
-    with(sharedPrefs.edit()) {
-      putInt(KEY_SORTED_BY, sortOrder)
-      apply()
+  }
+
+  override fun onPrepareOptionsMenu(menu: Menu) {
+    // Use the AndroidX MenuBuilder to force icons in the overflow menu
+    if (menu is MenuBuilder) {
+      menu.setOptionalIconsVisible(true)
     }
-    return result
+
+    updateMenuIcon(menuSortByNumber, SORT_BY_NUMBER)
+    updateMenuIcon(menuSortByName, SORT_BY_NAME)
+    updateMenuIcon(menuSortByAddedDate, SORT_BY_ADDED_DATE)
+
+    super.onPrepareOptionsMenu(menu)
   }
 
   companion object {
@@ -155,5 +202,6 @@ class FavoritesFragment @Inject constructor() : Fragment() {
     const val SORT_BY_NUMBER = 3
     const val SORT_BY_NAME = 4
     private const val KEY_SORTED_BY = "favorites-sorted-by"
+    private const val KEY_IS_ASCENDING = "favorites-is-ascending"
   }
 }
