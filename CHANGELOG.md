@@ -1,5 +1,12 @@
 # PWS Android
 
+# [1.12.0](https://github.com/alelk/pws-android/compare/v1.11.4...v1.12.0) (2025-02-11)
+
+
+### Features
+
+* **favorites:** Add sorting direction and menu icons for favorites list ([#63](https://github.com/alelk/pws-android/issues/63)) ([5e0686c](https://github.com/alelk/pws-android/commit/5e0686cbb8e2aacef3ed719b78c2e83151d0df1c))
+
 ## [1.11.4](https://github.com/alelk/pws-android/compare/v1.11.3...v1.11.4) (2025-02-04)
 
 
