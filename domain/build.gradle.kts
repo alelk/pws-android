@@ -5,17 +5,20 @@ plugins {
 
 kotlin {
   jvm()
+  iosArm64()
   sourceSets {
     val commonMain by getting {
       dependencies {
       }
     }
     val jvmMain by getting {}
+    val iosArm64Main by getting {}
 
     val commonTest by getting {
       dependencies {
         implementation(project(":domain:domain-test-fixtures"))
         implementation(libs.kotest.property)
+        implementation(libs.kotest.assertions.core)
         implementation(libs.kotest.framework.engine)
         implementation(kotlin("test-common"))
         implementation(kotlin("test-annotations-common"))
