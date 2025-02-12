@@ -1,5 +1,12 @@
 # PWS Android
 
+# [1.13.0](https://github.com/alelk/pws-android/compare/v1.12.0...v1.13.0) (2025-02-12)
+
+
+### Features
+
+* **category:** Add sorting functionality for tag songs list ([#64](https://github.com/alelk/pws-android/issues/64)) ([1629a04](https://github.com/alelk/pws-android/commit/1629a0478ea072119e200f6574510502ce14df2e))
+
 # [1.12.0](https://github.com/alelk/pws-android/compare/v1.11.4...v1.12.0) (2025-02-11)
 
 
