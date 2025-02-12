@@ -30,12 +30,14 @@ import io.github.alelk.pws.android.app.model.AppPreferencesViewModel
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import dagger.hilt.android.AndroidEntryPoint
 
 /**
  * Song Preferences Dialog Fragment
  *
  * Created by Alex Elkin on 26.12.2016.
  */
+@AndroidEntryPoint
 class SongPreferencesDialogFragment : DialogFragment() {
   private val viewModel: AppPreferencesViewModel by viewModels()
 
