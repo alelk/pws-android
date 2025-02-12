@@ -6,29 +6,30 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import io.github.alelk.pws.database.entity.SongEntity
-import io.github.alelk.pws.database.entity.SongNumberWithSongWithBook
+import io.github.alelk.pws.database.entity.SongNumberWithSongWithBookEntity
+import io.github.alelk.pws.domain.model.SongId
 
-interface SongDaoBase : Pageable1<SongEntity> {
-
-  @Insert(onConflict = OnConflictStrategy.REPLACE)
-  suspend fun insert(song: SongEntity): Long
+interface SongDaoBase : Pageable<SongEntity> {
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
-  suspend fun insert(songs: List<SongEntity>): List<Long>
+  suspend fun insert(song: SongEntity)
 
-  @Query("SELECT * FROM psalms WHERE _id = :id")
-  suspend fun getById(id: Long): SongEntity?
+  @Insert(onConflict = OnConflictStrategy.REPLACE)
+  suspend fun insert(songs: List<SongEntity>)
 
-  @Query("SELECT * FROM psalms WHERE _id in (:ids)")
-  suspend fun getByIds(ids: List<Long>): List<SongEntity>
+  @Query("SELECT * FROM songs WHERE id = :id")
+  suspend fun getById(id: SongId): SongEntity?
 
-  @Query("SELECT * FROM psalms ORDER BY _id LIMIT :limit OFFSET :offset")
+  @Query("SELECT * FROM songs WHERE id in (:ids)")
+  suspend fun getByIds(ids: List<SongId>): List<SongEntity>
+
+  @Query("SELECT * FROM songs ORDER BY id LIMIT :limit OFFSET :offset")
   override suspend fun getAll(limit: Int, offset: Int): List<SongEntity>
 
-  @Query("""SELECT pn.* FROM psalmnumbers pn inner join psalms p on pn.psalmid = p._id WHERE p.edited > 0""")
-  suspend fun getAllEdited(): List<SongNumberWithSongWithBook>
+  @Query("""SELECT sn.* FROM song_numbers sn inner join songs s on sn.song_id = s.id WHERE s.edited > 0""")
+  suspend fun getAllEdited(): List<SongNumberWithSongWithBookEntity>
 
-  @Query("SELECT count(_id) FROM psalms")
+  @Query("SELECT count(id) FROM songs")
   suspend fun count(): Int
 
   @Update
@@ -40,7 +41,7 @@ interface SongDaoBase : Pageable1<SongEntity> {
   @Delete
   suspend fun delete(songs: List<SongEntity>)
 
-  @Query("DELETE FROM psalms")
+  @Query("DELETE FROM songs")
   suspend fun deleteAll()
 
 }

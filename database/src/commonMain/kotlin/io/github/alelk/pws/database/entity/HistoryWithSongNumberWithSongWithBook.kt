@@ -5,15 +5,11 @@ import androidx.room.Relation
 
 data class HistoryWithSongNumberWithSongWithBook(
   @Embedded
-  val songNumber: SongNumberEntity,
-  @Relation(parentColumn = "psalmid", entityColumn = "_id")
+  val history: HistoryEntity,
+  @Relation(parentColumn = "song_id", entityColumn = "id")
   val song: SongEntity,
-  @Relation(parentColumn = "bookid", entityColumn = "_id")
+  @Relation(parentColumn = "book_id", entityColumn = "id")
   val book: BookEntity,
-  @Relation(parentColumn = "_id", entityColumn = "psalmnumberid")
-  private val _history: HistoryEntity?
-) {
-  val bookId: Long get() = checkNotNull(book.id) { "book id cannot be null" }
-  val songNumberId: Long get() = checkNotNull(songNumber.id) { "song number id cannot be null" }
-  val history: HistoryEntity get() = requireNotNull(_history) { "history cannot be null" }
-}
+  @Relation(parentColumn = "(song_id,book_id)", entityColumn = "(song_id,book_id)")
+  val songNumber: SongNumberEntity,
+)

@@ -6,10 +6,9 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import io.github.alelk.pws.database.entity.BookEntity
 import io.github.alelk.pws.database.entity.BookStatisticEntity
 import io.github.alelk.pws.database.entity.BookStatisticWithBookEntity
-import io.github.alelk.pws.domain.model.BookExternalId
+import io.github.alelk.pws.domain.model.BookId
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -26,25 +25,19 @@ interface BookStatisticDao {
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   suspend fun update(bookStatistic: BookStatisticEntity): Long
 
-  @Query("SELECT * FROM bookstatistic WHERE _id = :id")
-  suspend fun getById(id: Long): BookStatisticEntity?
+  @Query("SELECT * FROM bookstatistic WHERE id = :id")
+  suspend fun getById(id: BookId): BookStatisticEntity?
 
-  @Query("SELECT * FROM bookstatistic WHERE bookid = :bookId")
-  suspend fun getByBookId(bookId: Long): BookStatisticEntity?
+  @Query("SELECT * FROM bookstatistic WHERE id IN (:bookIds)")
+  suspend fun getByIds(bookIds: List<BookId>): List<BookStatisticEntity>
 
-  @Query("SELECT * FROM bookstatistic WHERE bookid IN (:bookIds)")
-  suspend fun getByBookIds(bookIds: List<Long>): List<BookStatisticEntity>
+  @Query("SELECT * FROM bookstatistic WHERE id = :bookId")
+  suspend fun getBookStatisticWithBookById(bookId: BookId): BookStatisticWithBookEntity?
 
-  @Query("SELECT * FROM bookstatistic bs JOIN books b ON bs.bookid=b._id WHERE b.edition IN (:bookExternalIds)")
-  suspend fun getByBookExternalIds(bookExternalIds: List<BookExternalId>): Map<BookStatisticEntity, BookEntity>
-
-  @Query("SELECT * FROM bookstatistic bs INNER JOIN books b on bs.bookid = b._id WHERE b.edition = :bookExternalId")
-  suspend fun getBookStatisticWithBookByBookExternalId(bookExternalId: BookExternalId): BookStatisticWithBookEntity?
-
-  @Query("SELECT * FROM bookstatistic bs INNER JOIN books b on bs.bookid = b._id WHERE bs.userpref > 0")
+  @Query("SELECT * FROM bookstatistic bs WHERE bs.priority > 0")
   suspend fun getAllActive():List<BookStatisticWithBookEntity>
 
-  @Query("SELECT count(_id) FROM bookstatistic")
+  @Query("SELECT count(id) FROM bookstatistic")
   suspend fun count(): Int
 
   @Delete
@@ -56,6 +49,6 @@ interface BookStatisticDao {
   // flows
 
   @Transaction
-  @Query("SELECT * FROM bookstatistic ORDER BY _id")
+  @Query("SELECT * FROM bookstatistic ORDER BY id")
   fun getAllBookStatisticWithBookFlow(): Flow<List<BookStatisticWithBookEntity>>
 }

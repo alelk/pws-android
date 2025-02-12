@@ -1,0 +1,58 @@
+package io.github.alelk.pws.database.dao
+
+import io.github.alelk.pws.database.PwsDatabase
+import io.github.alelk.pws.database.clean
+import io.github.alelk.pws.database.entity.songTagEntity
+import io.github.alelk.pws.database.pwsDbForTest
+import io.github.alelk.pws.database.withSongEntities
+import io.github.alelk.pws.database.withTagEntities
+import io.github.alelk.pws.domain.distinctBy
+import io.kotest.core.spec.style.FeatureSpec
+import io.kotest.matchers.shouldBe
+import io.kotest.property.Arb
+import io.kotest.property.arbitrary.of
+import io.kotest.property.arbitrary.take
+import io.kotest.property.checkAll
+
+@DaoTest
+class SongTagDaoTest : FeatureSpec({
+
+  lateinit var db: PwsDatabase
+
+  beforeContainer { db = pwsDbForTest(inMemory = true) }
+  afterContainer { db.clean(); db.close() }
+
+  feature("song tag crud") {
+    db.withSongEntities(countSongs = 50) { songs ->
+      val songIds = songs.map { it.id }
+      db.withTagEntities(countTags = 10) { tags ->
+        val tagIds = tags.map { it.id }
+        val songTagArb = Arb.songTagEntity(songId = Arb.of(songIds), tagId = Arb.of(tagIds)).distinctBy { it.songId to it.tagId }
+
+        scenario("insert single and get by id") {
+          checkAll(10, songTagArb) { snTag ->
+            db.songNumberTagDao().insert(snTag)
+            db.songNumberTagDao().getById(snTag.songId, snTag.tagId) shouldBe snTag
+          }
+          db.songNumberTagDao().count() shouldBe 10
+        }
+
+        val snTags = songTagArb.take(10).toList()
+        scenario("insert batch and get by ids") {
+          db.songNumberTagDao().insert(snTags)
+          db.songNumberTagDao().count() shouldBe 20
+        }
+
+        scenario("delete single") {
+          db.songNumberTagDao().delete(snTags.first())
+          db.songNumberTagDao().count() shouldBe 19
+        }
+
+        scenario("delete batch") {
+          db.songNumberTagDao().delete(snTags)
+          db.songNumberTagDao().count() shouldBe 10
+        }
+      }
+    }
+  }
+})

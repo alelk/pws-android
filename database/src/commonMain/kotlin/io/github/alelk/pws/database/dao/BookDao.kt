@@ -9,39 +9,34 @@ import androidx.room.Transaction
 import io.github.alelk.pws.database.entity.BookEntity
 import io.github.alelk.pws.database.entity.BookWithSongNumbersEntity
 import io.github.alelk.pws.database.entity.SongNumberEntity
-import io.github.alelk.pws.domain.model.BookExternalId
+import io.github.alelk.pws.domain.model.BookId
+import io.github.alelk.pws.domain.model.SongId
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface BookDao : Pageable1<BookEntity> {
+interface BookDao : Pageable<BookEntity> {
   @Insert(onConflict = OnConflictStrategy.ABORT)
-  suspend fun insert(book: BookEntity): Long
+  suspend fun insert(book: BookEntity)
 
   @Insert(onConflict = OnConflictStrategy.ABORT)
-  suspend fun insert(books: List<BookEntity>): List<Long>
+  suspend fun insert(books: List<BookEntity>)
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
-  suspend fun update(book: BookEntity): Long
+  suspend fun update(book: BookEntity)
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
-  suspend fun update(books: List<BookEntity>): List<Long>
+  suspend fun update(books: List<BookEntity>)
 
-  @Query("SELECT * FROM books WHERE _id = :id")
-  suspend fun getById(id: Long): BookEntity?
+  @Query("SELECT * FROM books WHERE id = :id")
+  suspend fun getById(id: BookId): BookEntity?
 
-  @Query("SELECT * FROM books WHERE _id in (:ids)")
-  suspend fun getByIds(ids: List<Long>): List<BookEntity>
+  @Query("SELECT * FROM books WHERE id in (:ids)")
+  suspend fun getByIds(ids: List<BookId>): List<BookEntity>
 
-  @Query("SELECT * FROM books ORDER BY _id LIMIT :limit OFFSET :offset")
+  @Query("SELECT * FROM books ORDER BY id LIMIT :limit OFFSET :offset")
   override suspend fun getAll(limit: Int, offset: Int): List<BookEntity>
 
-  @Query("SELECT * FROM books WHERE edition = :externalId")
-  suspend fun getByExternalId(externalId: BookExternalId): BookEntity?
-
-  @Query("SELECT * FROM books WHERE edition in (:externalIds)")
-  suspend fun getByExternalIds(externalIds: List<BookExternalId>): List<BookEntity>
-
-  @Query("SELECT count(_id) FROM books")
+  @Query("SELECT count(id) FROM books")
   suspend fun count(): Int
 
   @Delete
@@ -57,18 +52,18 @@ interface BookDao : Pageable1<BookEntity> {
 
   @Query(
     """
-    SELECT pn.* 
-    FROM books b INNER JOIN psalmnumbers pn ON pn.bookid = b._id 
-    WHERE b._id IN (SELECT bookid FROM psalmnumbers WHERE _id = :songNumberId) 
-    ORDER BY pn.number
+    SELECT sn.* 
+    FROM books b INNER JOIN song_numbers sn ON sn.book_id = b.id 
+    WHERE b.id IN (SELECT book_id FROM song_numbers WHERE song_id = :songId AND book_id = :bookId) 
+    ORDER BY sn.number
     """
   )
-  fun getBookSongNumbersBySongNumberIdFlow(songNumberId: Long): Flow<List<SongNumberEntity>>
+  fun getBookSongNumbersBySongNumberIdFlow(songId: SongId, bookId: BookId): Flow<List<SongNumberEntity>>
 
-  @Query("SELECT * FROM books WHERE edition = :externalId")
-  fun getByExternalIdFlow(externalId: BookExternalId): Flow<BookEntity?>
+  @Query("SELECT * FROM books WHERE id = :bookId")
+  fun getByIdFlow(bookId: BookId): Flow<BookEntity?>
 
   @Transaction
-  @Query("""SELECT b.* FROM books b INNER JOIN bookstatistic bs on bs.bookid=b._id WHERE bs.userpref > 0""")
+  @Query("""SELECT b.* FROM books b INNER JOIN bookstatistic bs on bs.id=b.id WHERE bs.priority > 0""")
   fun getAllActiveFlow(): Flow<List<BookWithSongNumbersEntity>>
 }

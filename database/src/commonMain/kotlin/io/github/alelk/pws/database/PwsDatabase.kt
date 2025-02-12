@@ -11,8 +11,8 @@ import io.github.alelk.pws.database.dao.FavoriteDao
 import io.github.alelk.pws.database.dao.HistoryDao
 import io.github.alelk.pws.database.dao.SongDao
 import io.github.alelk.pws.database.dao.SongNumberDao
-import io.github.alelk.pws.database.dao.SongNumberTagDao
-import io.github.alelk.pws.database.dao.SongSongReferenceDao
+import io.github.alelk.pws.database.dao.SongTagDao
+import io.github.alelk.pws.database.dao.SongReferenceDao
 import io.github.alelk.pws.database.dao.TagDao
 import io.github.alelk.pws.database.entity.BookEntity
 import io.github.alelk.pws.database.entity.BookStatisticEntity
@@ -21,8 +21,8 @@ import io.github.alelk.pws.database.entity.HistoryEntity
 import io.github.alelk.pws.database.entity.SongEntity
 import io.github.alelk.pws.database.entity.SongFtsEntity
 import io.github.alelk.pws.database.entity.SongNumberEntity
-import io.github.alelk.pws.database.entity.SongNumberTagEntity
-import io.github.alelk.pws.database.entity.SongSongReferenceEntity
+import io.github.alelk.pws.database.entity.SongTagEntity
+import io.github.alelk.pws.database.entity.SongReferenceEntity
 import io.github.alelk.pws.database.entity.TagEntity
 import io.github.alelk.pws.database.entity.converter.DbTypeConverters
 
@@ -36,9 +36,9 @@ import io.github.alelk.pws.database.entity.converter.DbTypeConverters
     SongEntity::class,
     SongFtsEntity::class,
     SongNumberEntity::class,
-    SongSongReferenceEntity::class,
+    SongReferenceEntity::class,
     TagEntity::class,
-    SongNumberTagEntity::class
+    SongTagEntity::class
   ],
   exportSchema = false
 )
@@ -50,9 +50,9 @@ abstract class PwsDatabase : RoomDatabase() {
   abstract fun historyDao(): HistoryDao
   abstract fun songDao(): SongDao
   abstract fun songNumberDao(): SongNumberDao
-  abstract fun songSongReferenceDao(): SongSongReferenceDao
+  abstract fun songReferenceDao(): SongReferenceDao
   abstract fun tagDao(): TagDao
-  abstract fun songNumberTagDao(): SongNumberTagDao
+  abstract fun songNumberTagDao(): SongTagDao
 
   suspend fun vacuumAndCheckpoint() = this.useWriterConnection {
     it.execSQL("VACUUM")
