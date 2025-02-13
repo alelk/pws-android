@@ -1,5 +1,12 @@
 # PWS Android
 
+# [1.14.0](https://github.com/alelk/pws-android/compare/v1.13.0...v1.14.0) (2025-02-13)
+
+
+### Features
+
+* **dependency-injection:** Add Hilt dependency injection to SongPreferencesDialogFragment ([#65](https://github.com/alelk/pws-android/issues/65)) ([abc039d](https://github.com/alelk/pws-android/commit/abc039dc8cd75af98845a082107ae6020533e38f))
+
 # [1.13.0](https://github.com/alelk/pws-android/compare/v1.12.0...v1.13.0) (2025-02-12)
 
 
