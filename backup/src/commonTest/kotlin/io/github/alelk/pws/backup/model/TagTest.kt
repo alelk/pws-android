@@ -1,14 +1,14 @@
 package io.github.alelk.pws.backup.model
 
 import com.charleskorn.kaml.Yaml
-import io.github.alelk.pws.domain.model.BookExternalId
+import io.github.alelk.pws.domain.model.BookId
 import io.github.alelk.pws.domain.model.Color
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 
 class TagTest : StringSpec({
-  val book1Id = BookExternalId.parse("book-1")
-  val book2Id = BookExternalId.parse("book-2")
+  val book1Id = BookId.parse("book-1")
+  val book2Id = BookId.parse("book-2")
 
   val tag1 = Tag(
     "tag1",
