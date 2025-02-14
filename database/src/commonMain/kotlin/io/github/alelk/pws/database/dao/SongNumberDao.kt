@@ -72,9 +72,13 @@ interface SongNumberDao {
 
   @Transaction
   @Query("SELECT * FROM song_numbers WHERE book_id = :bookId AND song_id = :songId")
-  fun getByIdFlow(bookId: BookId, songId: SongId): Flow<SongNumberEntity>
+  fun getByIdFlow(bookId: BookId, songId: SongId): Flow<SongNumberEntity?>
 
-  fun getByIdFrom(songNumberId: SongNumberId) = getByIdFlow(songNumberId.bookId, songNumberId.songId)
+  fun getByIdFlow(songNumberId: SongNumberId) = getByIdFlow(songNumberId.bookId, songNumberId.songId)
+
+  @Transaction
+  @Query("SELECT * FROM song_numbers WHERE book_id = :bookId ORDER BY number")
+  fun getByBookIdFlow(bookId: BookId): Flow<List<SongNumberEntity>>
 
   //@Transaction
   //@Query("SELECT * FROM song_numbers WHERE book_id = :bookId AND song_id = :songId")

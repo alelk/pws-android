@@ -31,26 +31,26 @@ class SongTagDaoTest : FeatureSpec({
 
         scenario("insert single and get by id") {
           checkAll(10, songTagArb) { snTag ->
-            db.songNumberTagDao().insert(snTag)
-            db.songNumberTagDao().getById(snTag.songId, snTag.tagId) shouldBe snTag
+            db.songTagDao().insert(snTag)
+            db.songTagDao().getById(snTag.songId, snTag.tagId) shouldBe snTag
           }
-          db.songNumberTagDao().count() shouldBe 10
+          db.songTagDao().count() shouldBe 10
         }
 
         val snTags = songTagArb.take(10).toList()
         scenario("insert batch and get by ids") {
-          db.songNumberTagDao().insert(snTags)
-          db.songNumberTagDao().count() shouldBe 20
+          db.songTagDao().insert(snTags)
+          db.songTagDao().count() shouldBe 20
         }
 
         scenario("delete single") {
-          db.songNumberTagDao().delete(snTags.first())
-          db.songNumberTagDao().count() shouldBe 19
+          db.songTagDao().delete(snTags.first())
+          db.songTagDao().count() shouldBe 19
         }
 
         scenario("delete batch") {
-          db.songNumberTagDao().delete(snTags)
-          db.songNumberTagDao().count() shouldBe 10
+          db.songTagDao().delete(snTags)
+          db.songTagDao().count() shouldBe 10
         }
       }
     }

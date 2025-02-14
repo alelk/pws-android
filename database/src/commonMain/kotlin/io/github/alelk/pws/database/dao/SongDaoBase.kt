@@ -8,6 +8,7 @@ import androidx.room.Update
 import io.github.alelk.pws.database.entity.SongEntity
 import io.github.alelk.pws.database.entity.SongNumberWithSongWithBookEntity
 import io.github.alelk.pws.domain.model.SongId
+import kotlinx.coroutines.flow.Flow
 
 interface SongDaoBase : Pageable<SongEntity> {
 
@@ -43,5 +44,10 @@ interface SongDaoBase : Pageable<SongEntity> {
 
   @Query("DELETE FROM songs")
   suspend fun deleteAll()
+
+  // flow
+
+  @Query("SELECT * FROM songs WHERE id = :id")
+  fun getByIdFlow(id: SongId): Flow<SongEntity?>
 
 }

@@ -7,7 +7,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import io.github.alelk.pws.database.entity.FavoriteEntity
-import io.github.alelk.pws.database.entity.FavoriteWithSongNumberWithSongWithBook
 import io.github.alelk.pws.domain.model.BookId
 import io.github.alelk.pws.domain.model.SongId
 import io.github.alelk.pws.domain.model.SongNumberId
@@ -16,10 +15,10 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface FavoriteDao {
   @Insert
-  suspend fun insert(favorite: FavoriteEntity): Long
+  suspend fun insert(favorite: FavoriteEntity)
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
-  suspend fun upsert(favorite: FavoriteEntity): Long
+  suspend fun upsert(favorite: FavoriteEntity)
 
   @Transaction
   @Query("SELECT * FROM favorites WHERE book_id = :bookId AND song_id = :songId")
@@ -62,6 +61,12 @@ interface FavoriteDao {
       upsert(favorite)
     }
   }
+
+  @Transaction
+  @Query("SELECT * FROM favorites WHERE book_id = :bookId AND song_id = :songId")
+  fun getByIdFlow(bookId: BookId, songId: SongId): Flow<FavoriteEntity?>
+
+  fun getByIdFlow(id: SongNumberId) = getByIdFlow(id.bookId, id.songId)
 
   @Transaction
   suspend fun toggleFavorite(songNumberId: SongNumberId) {

@@ -5,9 +5,11 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import io.github.alelk.pws.database.entity.SongTagEntity
 import io.github.alelk.pws.domain.model.SongId
 import io.github.alelk.pws.domain.model.TagId
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface SongTagDao : Pageable<SongTagEntity> {
@@ -38,9 +40,4 @@ interface SongTagDao : Pageable<SongTagEntity> {
   @Query("DELETE FROM song_tags")
   suspend fun deleteAll()
 
-  // flows
-
-//  @Transaction
-//  @Query("SELECT t.* FROM tags t INNER JOIN song_number_tags snt ON t.id = snt.tag_id WHERE snt.song_number_id = :songNumberId ORDER BY t.predefined, t.priority")
-//  fun getTagsBySongIdFlow(songNumberId: Long): Flow<List<TagEntity>>
 }

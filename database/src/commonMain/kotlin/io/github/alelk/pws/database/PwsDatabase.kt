@@ -52,7 +52,7 @@ abstract class PwsDatabase : RoomDatabase() {
   abstract fun songNumberDao(): SongNumberDao
   abstract fun songReferenceDao(): SongReferenceDao
   abstract fun tagDao(): TagDao
-  abstract fun songNumberTagDao(): SongTagDao
+  abstract fun songTagDao(): SongTagDao
 
   suspend fun vacuumAndCheckpoint() = this.useWriterConnection {
     it.execSQL("VACUUM")

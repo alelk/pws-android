@@ -5,8 +5,11 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
+import io.github.alelk.pws.database.entity.SongEntity
 import io.github.alelk.pws.database.entity.SongReferenceEntity
+import io.github.alelk.pws.database.entity.SongReferenceDetailsEntity
 import io.github.alelk.pws.domain.model.SongId
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface SongReferenceDao {
@@ -68,29 +71,20 @@ interface SongReferenceDao {
 //
   @Query("DELETE FROM song_references")
   suspend fun deleteAll()
-//
-//  @Query(
-//    """
-//    SELECT
-//      r.psalmid AS songId,
-//      r.refpsalmid AS refSongId,
-//      r.reason AS refReason,
-//      r.volume AS volume,
-//      p.name AS refSongName,
-//      pn.number AS refSongNumber,
-//      pn._id AS refSongNumberId,
-//      b._id AS refSongNumberBookId,
-//      b.edition AS refSongNumberBookExternalId,
-//      b.displayName AS refSongNumberBookDisplayName
-//    FROM psalmnumbers source
-//    INNER JOIN psalmpsalmreferences r ON source.psalmid = r.psalmid
-//    INNER JOIN psalms p ON r.refpsalmid = p._id
-//    INNER JOIN psalmnumbers pn ON p._id = pn.psalmid
-//    INNER JOIN books b ON pn.bookid = b._id
-//    INNER JOIN bookstatistic bs ON b._id = bs.bookid
-//    WHERE source._id = :songNumberId AND bs.userpref > 0
-//    ORDER BY bs.userpref DESC, r.priority
-//    """
-//  )
-//  fun getBySongNumberIdFlow(songNumberId: Long): Flow<List<SongSongReferenceDetailsEntity>>
+
+  @Query(
+    """
+    SELECT
+      r.*,
+      b.*
+    FROM song_references r
+    INNER JOIN songs s ON r.ref_song_id = s.id
+    INNER JOIN song_numbers sn ON s.id = sn.song_id
+    INNER JOIN books b ON sn.book_id = b.id
+    INNER JOIN bookstatistic bs ON b.id = bs.id
+    WHERE r.song_id = :songId AND bs.priority > 0
+    ORDER BY bs.priority DESC, r.priority
+    """
+  )
+  fun getActiveReferredSongsBySongIdFlow(songId: SongId): Flow<List<SongReferenceDetailsEntity>>
 }

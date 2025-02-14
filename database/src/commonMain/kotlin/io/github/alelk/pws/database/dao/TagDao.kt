@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import io.github.alelk.pws.database.entity.TagEntity
+import io.github.alelk.pws.domain.model.SongId
 import io.github.alelk.pws.domain.model.TagId
 import kotlinx.coroutines.flow.Flow
 
@@ -81,4 +82,7 @@ interface TagDao : Pageable<TagEntity> {
 
   @Query("SELECT * FROM tags ORDER BY priority, id")
   fun getAllFlow(): Flow<List<TagEntity>>
+
+  @Query("SELECT t.* FROM tags t INNER JOIN song_tags st ON t.id = st.tag_id WHERE st.song_id = :songId ORDER BY t.predefined, t.priority DESC")
+  fun getBySongIdFlow(songId: SongId): Flow<List<TagEntity>>
 }

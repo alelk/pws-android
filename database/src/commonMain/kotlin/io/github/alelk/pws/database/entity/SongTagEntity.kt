@@ -21,5 +21,6 @@ import io.github.alelk.pws.domain.model.TagId
 )
 data class SongTagEntity(
   @ColumnInfo(name = "song_id") val songId: SongId,
-  @ColumnInfo(name = "tag_id") val tagId: TagId
+  @ColumnInfo(name = "tag_id") val tagId: TagId,
+  @ColumnInfo(name = "priority") val priority: Int = 0
 )
