@@ -6,13 +6,13 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import io.github.alelk.pws.android.app.R
-import io.github.alelk.pws.database.entity.SongNumberWithSongWithBookWithFavorite
+import io.github.alelk.pws.database.entity.SongNumberWithSongWithBookEntity
 
 class SongsInfoAdapter(
-  private val onSongSelected: (SongNumberWithSongWithBookWithFavorite) -> Unit
+  private val onSongSelected: (SongNumberWithSongWithBookEntity) -> Unit
 ) : RecyclerView.Adapter<SongsInfoAdapter.SongInfoHolder>() {
 
-  private var songInfoList: List<SongNumberWithSongWithBookWithFavorite> = emptyList()
+  private var songInfoList: List<SongNumberWithSongWithBookEntity> = emptyList()
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongInfoHolder {
     val itemView = LayoutInflater.from(parent.context)
@@ -31,7 +31,7 @@ class SongsInfoAdapter(
 
   override fun getItemCount(): Int = songInfoList.size
 
-  fun swapData(newSongInfoList: List<SongNumberWithSongWithBookWithFavorite>) {
+  fun swapData(newSongInfoList: List<SongNumberWithSongWithBookEntity>) {
     songInfoList = newSongInfoList
     notifyDataSetChanged()
   }
@@ -41,7 +41,7 @@ class SongsInfoAdapter(
     private val songNumber: TextView = itemView.findViewById(R.id.txt_song_number)
     private val bookName: TextView = itemView.findViewById(R.id.txt_book_name)
 
-    fun bind(songInfo: SongNumberWithSongWithBookWithFavorite) {
+    fun bind(songInfo: SongNumberWithSongWithBookEntity) {
       songName.text = songInfo.song.name
       songNumber.text = songInfo.songNumber.number.toString()
       bookName.text = songInfo.book.displayName

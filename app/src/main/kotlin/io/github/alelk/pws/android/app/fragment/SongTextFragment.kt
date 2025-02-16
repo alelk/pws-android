@@ -53,6 +53,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import io.github.alelk.pws.android.app.R
 import io.github.alelk.pws.database.entity.SongEntity
 import io.github.alelk.pws.database.entity.TagEntity
+import io.github.alelk.pws.domain.model.SongNumberId
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -64,6 +65,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.util.Locale
 import kotlin.time.Duration.Companion.seconds
 
 /**
@@ -82,7 +84,7 @@ class SongTextFragment : Fragment() {
   private lateinit var songTags: FlexboxLayout
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-    songViewModel.setSongNumberId(arguments?.getLong(KEY_SONG_NUMBER_ID))
+    songViewModel.setSongNumberId(arguments?.getString(KEY_SONG_NUMBER_ID)?.let(SongNumberId::parse))
     return inflater.inflate(R.layout.fragment_song_text, container, false)
   }
 
@@ -96,10 +98,10 @@ class SongTextFragment : Fragment() {
     songTagsCard = view.findViewById(R.id.cv_categories)
     songTags = view.findViewById(R.id.categories)
 
-    val songReferencesAdapter = SongReferencesRecyclerViewAdapter(-1.0f) { songNumberId: Long ->
+    val songReferencesAdapter = SongReferencesRecyclerViewAdapter(-1.0f) { songNumberId: SongNumberId ->
       val intent =
         Intent(requireActivity().baseContext, SongActivity::class.java)
-          .apply { putExtra(SongActivity.KEY_SONG_NUMBER_ID, songNumberId) }
+          .apply { putExtra(SongActivity.KEY_SONG_NUMBER_ID, songNumberId.toString()) }
       startActivity(intent)
     }
     val songReferencesView = view.findViewById<RecyclerView>(R.id.rv_referred_songs).apply {
@@ -140,12 +142,12 @@ class SongTextFragment : Fragment() {
   /** Update ui for song info */
   private fun updateUi(song: SongEntity, isTextExpanded: Boolean) = kotlin.runCatching {
     Timber.d("update ui for song text: songId=${song.id}")
-    val songTextHtml = PwsSongUtil.songTextToHtml(song.locale, song.lyric, isTextExpanded)
+    val songTextHtml = PwsSongUtil.songTextToHtml(Locale.forLanguageTag(song.locale.value), song.lyric, isTextExpanded)
     songText.text =
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) Html.fromHtml(songTextHtml, Html.FROM_HTML_MODE_COMPACT)
       else Html.fromHtml(songTextHtml)
 
-    val songInfoHtml = PwsSongUtil.buildSongInfoHtml(song.locale, song.author?.name, song.translator?.name, song.composer?.name)
+    val songInfoHtml = PwsSongUtil.buildSongInfoHtml(Locale.forLanguageTag(song.locale.value), song.author?.name, song.translator?.name, song.composer?.name)
     if (songInfoHtml == null)
       this.songInfo.visibility = View.GONE
     else
@@ -208,7 +210,7 @@ class SongTextFragment : Fragment() {
       val adapter = viewPager.adapter as? SongTextFragmentPagerAdapter
       val currentSongNumberId = adapter?.allSongNumberIds?.getOrNull(viewPager.currentItem)
       
-      if (currentSongNumberId != arguments?.getLong(KEY_SONG_NUMBER_ID)) {
+      if (currentSongNumberId != arguments?.getString(KEY_SONG_NUMBER_ID)?.let(SongNumberId::parse)) {
         Timber.v("Ignoring context menu in non-visible fragment (songId=${arguments?.getLong(
             KEY_SONG_NUMBER_ID
         )})")
@@ -217,7 +219,7 @@ class SongTextFragment : Fragment() {
 
       val clipboardManager = activity?.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager ?: return false
       val song = songViewModel.song.value ?: return false
-      Timber.d("copying song# ${song.songNumber.number} from book ${song.book.externalId} with name ${song.song.name}")
+      Timber.d("copying song# ${song.songNumber.number} from book ${song.book.id} with name ${song.song.name}")
       val clip = ClipData.newHtmlText(getString(R.string.app_name), song.textDocument, song.textDocumentHtml)
       clipboardManager.setPrimaryClip(clip)
       return true
@@ -229,10 +231,10 @@ class SongTextFragment : Fragment() {
     const val KEY_SONG_NUMBER_ID = "songNumberId"
     private val ADD_TO_HISTORY_DELAY = 7.seconds
 
-    fun newInstance(songNumberId: Long): SongTextFragment {
+    fun newInstance(songNumberId: SongNumberId): SongTextFragment {
       return SongTextFragment().apply {
         arguments = Bundle().apply {
-          putLong(KEY_SONG_NUMBER_ID, songNumberId)
+          putString(KEY_SONG_NUMBER_ID, songNumberId.toString())
         }
       }
     }

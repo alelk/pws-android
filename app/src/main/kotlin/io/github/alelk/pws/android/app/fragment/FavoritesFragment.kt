@@ -29,12 +29,13 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import io.github.alelk.pws.android.app.activity.SongActivity
-import io.github.alelk.pws.android.app.adapter.FavoritesRecyclerViewAdapter
-import io.github.alelk.pws.android.app.model.FavoritesViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.alelk.pws.android.app.R
-import io.github.alelk.pws.database.entity.FavoriteWithSongNumberWithSongWithBook
+import io.github.alelk.pws.android.app.activity.SongActivity
+import io.github.alelk.pws.android.app.adapter.FavoritesRecyclerViewAdapter
+import io.github.alelk.pws.android.app.model.FavoriteInfo
+import io.github.alelk.pws.android.app.model.FavoritesViewModel
+import io.github.alelk.pws.domain.model.SongNumberId
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -73,9 +74,9 @@ class FavoritesFragment @Inject constructor() : Fragment() {
     val recyclerView = v.findViewById<RecyclerView>(R.id.rv_favorites)
     recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-    mFavoritesAdapter = FavoritesRecyclerViewAdapter { songNumberId: Long ->
+    mFavoritesAdapter = FavoritesRecyclerViewAdapter { songNumberId: SongNumberId ->
       val intentSongView = Intent(requireActivity(), SongActivity::class.java)
-      intentSongView.putExtra(SongActivity.KEY_SONG_NUMBER_ID, songNumberId)
+      intentSongView.putExtra(SongActivity.KEY_SONG_NUMBER_ID, songNumberId.toString())
       startActivity(intentSongView)
     }
     recyclerView.adapter = mFavoritesAdapter
@@ -93,16 +94,16 @@ class FavoritesFragment @Inject constructor() : Fragment() {
       observeFavoritesJob = viewLifecycleOwner.lifecycleScope.launch {
         favoritesViewModel.allFavorites.collectLatest { favorites ->
           when (sortOrder) {
-            SORT_BY_NUMBER -> updateUI(favorites.sortedBy { it.songNumber.number })
-            SORT_BY_NAME -> updateUI(favorites.sortedBy { it.song.name })
-            SORT_BY_ADDED_DATE -> updateUI(favorites.sortedByDescending { it.favorite.position })
+            SORT_BY_NUMBER -> updateUI(favorites.sortedBy { it.songNumber })
+            SORT_BY_NAME -> updateUI(favorites.sortedBy { it.songName })
+            SORT_BY_ADDED_DATE -> updateUI(favorites.sortedByDescending { it.position })
           }
         }
       }
     }
   }
 
-  private fun updateUI(favorites: List<FavoriteWithSongNumberWithSongWithBook>) {
+  private fun updateUI(favorites: List<FavoriteInfo>) {
     mFavoritesAdapter?.submitList(favorites)
   }
 

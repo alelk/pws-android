@@ -4,17 +4,16 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.ViewModel
-import io.github.alelk.pws.database.PwsDatabase
-import io.github.alelk.pws.android.app.theme.AppTheme
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.github.alelk.pws.android.app.theme.AppTheme
 import io.github.alelk.pws.backup.model.Backup
 import io.github.alelk.pws.backup.model.BookPreference
 import io.github.alelk.pws.backup.model.Song
 import io.github.alelk.pws.backup.model.SongNumber
 import io.github.alelk.pws.backup.model.Tag
+import io.github.alelk.pws.database.PwsDatabase
 import io.github.alelk.pws.database.entity.SongTagEntity
 import io.github.alelk.pws.database.entity.TagEntity
-import io.github.alelk.pws.domain.model.BibleRef
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
@@ -48,7 +47,7 @@ class BackupViewModel @Inject constructor(
         author = s.song.author,
         translator = s.song.translator,
         composer = s.song.composer,
-        bibleRef = s.song.bibleRef?.takeIf { it.isNotBlank() }?.let(::BibleRef)
+        bibleRef = s.song.bibleRef
       )
     }.toList()
     val customTags = tagDao.getAllNotPredefined().map { t ->
@@ -83,7 +82,7 @@ class BackupViewModel @Inject constructor(
               name = song.name,
               lyric = song.lyric,
               tonalities = song.tonalities,
-              bibleRef = song.bibleRef?.text,
+              bibleRef = song.bibleRef,
               author = song.author,
               translator = song.translator,
               composer = song.composer,

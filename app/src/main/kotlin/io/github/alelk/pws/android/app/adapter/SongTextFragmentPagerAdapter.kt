@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import io.github.alelk.pws.android.app.fragment.SongTextFragment
+import io.github.alelk.pws.domain.model.SongNumberId
 
 /**
  * Song Text Fragment State Pager Adapter
@@ -27,7 +28,7 @@ import io.github.alelk.pws.android.app.fragment.SongTextFragment
  */
 class SongTextFragmentPagerAdapter(
   fragmentActivity: FragmentActivity,
-  var allSongNumberIds: List<Long>
+  var allSongNumberIds: List<SongNumberId>
 ) : FragmentStateAdapter(fragmentActivity) {
 
   override fun getItemCount(): Int = allSongNumberIds.size

@@ -26,6 +26,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import io.github.alelk.pws.android.app.R
 import io.github.alelk.pws.database.entity.SongSearchResultEntity
+import io.github.alelk.pws.domain.model.SongNumberId
 
 /**
  * Search Recycler View Adapter
@@ -34,7 +35,7 @@ import io.github.alelk.pws.database.entity.SongSearchResultEntity
  */
 
 class SearchRecyclerViewAdapter(
-  private val mClickListener: (songNumberId: Long) -> Unit
+  private val clickListener: (songNumberId: SongNumberId) -> Unit
 ) : ListAdapter<SongSearchResultEntity, SearchRecyclerViewAdapter.SearchViewHolder>(DiffCallback()) {
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchViewHolder {
@@ -45,7 +46,7 @@ class SearchRecyclerViewAdapter(
 
   override fun onBindViewHolder(holder: SearchViewHolder, position: Int) {
     val songSearchResult = getItem(position)
-    holder.bind(songSearchResult, mClickListener)
+    holder.bind(songSearchResult, clickListener)
   }
 
   class SearchViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -56,7 +57,7 @@ class SearchRecyclerViewAdapter(
 
     fun bind(
       songSearchResult: SongSearchResultEntity,
-      onItemClickListener: (songNumberId: Long) -> Unit
+      onItemClickListener: (songNumberId: SongNumberId) -> Unit
     ) {
       songNumber.text = songSearchResult.songNumber.toString()
       songName.text = songSearchResult.songName

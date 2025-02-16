@@ -59,7 +59,7 @@ class BooksFragment @Inject constructor() : Fragment() {
     recyclerView.layoutManager = layoutManager
     booksAdapter = BooksRecyclerViewAdapter { book ->
       val intent = Intent(requireActivity(), SongActivity::class.java)
-      book.songNumbers.minByOrNull { it.number }?.id?.let { intent.putExtra(SongActivity.KEY_SONG_NUMBER_ID, it) }
+      book.songNumbers.minByOrNull { it.number }?.id?.let { intent.putExtra(SongActivity.KEY_SONG_NUMBER_ID, it.toString()) }
       startActivity(intent)
     }
     recyclerView.adapter = booksAdapter

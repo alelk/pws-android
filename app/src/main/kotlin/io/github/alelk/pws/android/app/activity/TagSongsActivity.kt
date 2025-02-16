@@ -6,12 +6,12 @@ import androidx.activity.viewModels
 import androidx.lifecycle.asLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import dagger.hilt.android.AndroidEntryPoint
+import io.github.alelk.pws.android.app.R
 import io.github.alelk.pws.android.app.activity.base.AppCompatThemedActivity
 import io.github.alelk.pws.android.app.adapter.SongsInfoAdapter
 import io.github.alelk.pws.android.app.model.TagsViewModel
-import dagger.hilt.android.AndroidEntryPoint
-import io.github.alelk.pws.android.app.R
-import io.github.alelk.pws.database.entity.SongNumberWithSongWithBookWithFavorite
+import io.github.alelk.pws.database.entity.SongNumberWithSongWithBookEntity
 import io.github.alelk.pws.domain.model.TagId
 
 @AndroidEntryPoint
@@ -41,9 +41,9 @@ class TagSongsActivity : AppCompatThemedActivity() {
     }
   }
 
-  private fun onSongSelected(data: SongNumberWithSongWithBookWithFavorite) {
+  private fun onSongSelected(data: SongNumberWithSongWithBookEntity) {
     val intentSongView = Intent(this, SongActivity::class.java).apply {
-      putExtra(SongActivity.KEY_SONG_NUMBER_ID, data.songNumberId)
+      putExtra(SongActivity.KEY_SONG_NUMBER_ID, data.songNumber.id.toString())
     }
     startActivity(intentSongView)
   }

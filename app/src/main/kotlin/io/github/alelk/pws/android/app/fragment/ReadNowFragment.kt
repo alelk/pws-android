@@ -33,6 +33,7 @@ import io.github.alelk.pws.android.app.adapter.HistoryRecyclerViewAdapter
 import io.github.alelk.pws.android.app.model.HistoryViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.alelk.pws.android.app.R
+import io.github.alelk.pws.domain.model.SongNumberId
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -50,9 +51,9 @@ class ReadNowFragment @Inject constructor() : Fragment(R.layout.fragment_readnow
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
 
-    val historyAdapter = HistoryRecyclerViewAdapter { songNumberId: Long ->
+    val historyAdapter = HistoryRecyclerViewAdapter { songNumberId: SongNumberId ->
       val intentSongView = Intent(activity, SongActivity::class.java)
-      intentSongView.putExtra(SongActivity.KEY_SONG_NUMBER_ID, songNumberId)
+      intentSongView.putExtra(SongActivity.KEY_SONG_NUMBER_ID, songNumberId.identifier)
       startActivity(intentSongView)
     }
 

@@ -104,8 +104,9 @@ dependencies {
   implementation(libs.datastore.preferences)
   implementation(libs.navigation.fragment)
   implementation(libs.navigation.ui)
-    implementation(libs.androidx.navigation.fragment.ktx)
+  implementation(libs.androidx.navigation.fragment.ktx)
   implementation(libs.androidx.navigation.ui.ktx)
+  implementation(libs.kotlinx.datetime)
 
   // DI
   implementation(libs.hilt.android)

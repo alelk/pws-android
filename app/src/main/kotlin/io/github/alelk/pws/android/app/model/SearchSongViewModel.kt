@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.alelk.pws.database.PwsDatabase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.github.alelk.pws.database.dao.SongDao
 import io.github.alelk.pws.database.entity.SongSearchResultEntity
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 @OptIn(ExperimentalCoroutinesApi::class)
 class SearchSongViewModel @Inject constructor(db: PwsDatabase) : ViewModel() {
-  private val songDao = db.songDao()
+  private val songDao: SongDao = db.songDao()
 
   private val _searchQuery = MutableStateFlow<String?>(null)
   val searchQuery: StateFlow<String?> get() = _searchQuery.asStateFlow()
