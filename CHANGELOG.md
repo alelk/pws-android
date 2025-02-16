@@ -1,5 +1,26 @@
 # PWS Android
 
+# [1.14.0](https://github.com/alelk/pws-android/compare/v1.13.0...v1.14.0) (2025-02-13)
+
+
+### Features
+
+* **dependency-injection:** Add Hilt dependency injection to SongPreferencesDialogFragment ([#65](https://github.com/alelk/pws-android/issues/65)) ([abc039d](https://github.com/alelk/pws-android/commit/abc039dc8cd75af98845a082107ae6020533e38f))
+
+# [1.13.0](https://github.com/alelk/pws-android/compare/v1.12.0...v1.13.0) (2025-02-12)
+
+
+### Features
+
+* **category:** Add sorting functionality for tag songs list ([#64](https://github.com/alelk/pws-android/issues/64)) ([1629a04](https://github.com/alelk/pws-android/commit/1629a0478ea072119e200f6574510502ce14df2e))
+
+# [1.12.0](https://github.com/alelk/pws-android/compare/v1.11.4...v1.12.0) (2025-02-11)
+
+
+### Features
+
+* **favorites:** Add sorting direction and menu icons for favorites list ([#63](https://github.com/alelk/pws-android/issues/63)) ([5e0686c](https://github.com/alelk/pws-android/commit/5e0686cbb8e2aacef3ed719b78c2e83151d0df1c))
+
 ## [1.11.4](https://github.com/alelk/pws-android/compare/v1.11.3...v1.11.4) (2025-02-04)
 
 
