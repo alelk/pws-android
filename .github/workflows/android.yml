@@ -2,7 +2,7 @@ name: Android CI
 
 on:
   push:
-    branches: [ "master", "next"]
+    branches: [ "master" , "next" ]
   pull_request:
     branches: [ "master", "next" ]
 
@@ -15,51 +15,52 @@ jobs:
       issues: write
       pull-requests: write
       packages: write
+      checks: write
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: set up JDK 21
-      uses: actions/setup-java@v3
-      with:
-        java-version: '21'
-        distribution: 'temurin'
-        cache: gradle
+      - name: set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: gradle
 
-    - name: Build ruDebug & ukDebug
-      run: |
-        ./gradlew buildRuDebug buildUkDebug testRuDebug :domain:jvmTest domain:testDebugUnitTest :backup:jvmTest :database:jvmTest :database:testRuDebugUnitTest
+      - name: Build ruDebug & ukDebug
+        run: |
+          ./gradlew buildRuDebug buildUkDebug testRuDebug :domain:jvmTest domain:testDebugUnitTest :backup:jvmTest :database:jvmTest :database:testRuDebugUnitTest
 
-    - name: Upload Test Results
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: test-results
-        path: |
-          app/build/reports/tests/
-          app/build/test-results/
-        retention-days: 14
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: |
+            app/build/reports/tests/
+            app/build/test-results/
+          retention-days: 14
 
-    - name: Set up Node 20
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20.18.0'
-      if: success() && github.ref == 'refs/heads/master'
+      - name: Set up Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.18.0'
+        if: success() && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/next')
 
-    - name: Install Semantic Release plugins
-      run: npm install --global semantic-release@24.1.2 @semantic-release/changelog@6.0.3 @semantic-release/git@10.0.1 @semantic-release/github@9.2.5 @semantic-release/exec@6.0.3
-      if: success() && github.ref == 'refs/heads/master'
+      - name: Install Semantic Release plugins
+        run: npm install --global semantic-release@24.1.2 @semantic-release/changelog@6.0.3 @semantic-release/git@10.0.1 @semantic-release/github@9.2.5 @semantic-release/exec@6.0.3
+        if: success() && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/next')
 
-    - name: Release
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: npx semantic-release
-      if: success() && github.ref == 'refs/heads/master'
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release
+        if: success() && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/next')
 
-    - name: Upload artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: APP Version
-        path: app.version
-        retention-days: 30
-      if: success() && github.ref == 'refs/heads/master'
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: APP Version
+          path: app.version
+          retention-days: 30
+        if: success() && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/next')
