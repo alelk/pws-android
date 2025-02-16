@@ -1,5 +1,15 @@
 # PWS Android
 
+# [2.0.0-rc.1](https://github.com/alelk/pws-android/compare/v1.15.0...v2.0.0-rc.1) (2025-02-16)
+
+
+* feat!: new pre-release ([13a6f2f](https://github.com/alelk/pws-android/commit/13a6f2f57c8e3aeee925913267a3dcaa16dec64b))
+
+
+### BREAKING CHANGES
+
+* database schema has changed
+
 # [1.15.0](https://github.com/alelk/pws-android/compare/v1.14.0...v1.15.0) (2025-02-16)
 
 
