@@ -4,7 +4,7 @@ import androidx.room.*
 import io.github.alelk.pws.domain.model.BookId
 
 @Entity(
-  tableName = "bookstatistic",
+  tableName = "book_statistic",
   foreignKeys = [
     ForeignKey(entity = BookEntity::class, parentColumns = ["id"], childColumns = ["id"], onDelete = ForeignKey.CASCADE, onUpdate = ForeignKey.NO_ACTION)
   ]

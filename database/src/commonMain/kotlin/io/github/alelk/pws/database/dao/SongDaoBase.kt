@@ -8,6 +8,7 @@ import androidx.room.Update
 import io.github.alelk.pws.database.entity.SongEntity
 import io.github.alelk.pws.database.entity.SongNumberWithSongWithBookEntity
 import io.github.alelk.pws.domain.model.SongId
+import io.github.alelk.pws.domain.model.TagId
 import kotlinx.coroutines.flow.Flow
 
 interface SongDaoBase : Pageable<SongEntity> {
@@ -50,4 +51,15 @@ interface SongDaoBase : Pageable<SongEntity> {
   @Query("SELECT * FROM songs WHERE id = :id")
   fun getByIdFlow(id: SongId): Flow<SongEntity?>
 
+  @Query("SELECT * FROM songs WHERE id IN (:ids)")
+  fun getByIdsFlow(ids: List<SongId>): Flow<List<SongEntity>>
+
+  @Query("""
+    SELECT sn.* FROM song_numbers sn
+    INNER JOIN songs s ON sn.song_id = s.id
+    INNER JOIN song_tags st ON s.id = st.song_id
+    INNER JOIN book_statistic bs ON sn.book_id = bs.id
+    WHERE st.tag_id = :tagId AND bs.priority > 0
+  """)
+  fun getActiveTagSongsFlow(tagId: TagId): Flow<List<SongNumberWithSongWithBookEntity>>
 }

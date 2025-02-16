@@ -25,30 +25,30 @@ interface BookStatisticDao {
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   suspend fun update(bookStatistic: BookStatisticEntity): Long
 
-  @Query("SELECT * FROM bookstatistic WHERE id = :id")
+  @Query("SELECT * FROM book_statistic WHERE id = :id")
   suspend fun getById(id: BookId): BookStatisticEntity?
 
-  @Query("SELECT * FROM bookstatistic WHERE id IN (:bookIds)")
+  @Query("SELECT * FROM book_statistic WHERE id IN (:bookIds)")
   suspend fun getByIds(bookIds: List<BookId>): List<BookStatisticEntity>
 
-  @Query("SELECT * FROM bookstatistic WHERE id = :bookId")
+  @Query("SELECT * FROM book_statistic WHERE id = :bookId")
   suspend fun getBookStatisticWithBookById(bookId: BookId): BookStatisticWithBookEntity?
 
-  @Query("SELECT * FROM bookstatistic bs WHERE bs.priority > 0")
+  @Query("SELECT * FROM book_statistic bs WHERE bs.priority > 0")
   suspend fun getAllActive():List<BookStatisticWithBookEntity>
 
-  @Query("SELECT count(id) FROM bookstatistic")
+  @Query("SELECT count(id) FROM book_statistic")
   suspend fun count(): Int
 
   @Delete
   suspend fun delete(bookStatistic: BookStatisticEntity)
 
-  @Query("DELETE FROM bookstatistic")
+  @Query("DELETE FROM book_statistic")
   suspend fun deleteAll()
 
   // flows
 
   @Transaction
-  @Query("SELECT * FROM bookstatistic ORDER BY id")
+  @Query("SELECT * FROM book_statistic ORDER BY id")
   fun getAllBookStatisticWithBookFlow(): Flow<List<BookStatisticWithBookEntity>>
 }

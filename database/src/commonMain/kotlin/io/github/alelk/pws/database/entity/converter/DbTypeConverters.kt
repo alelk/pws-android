@@ -2,6 +2,7 @@ package io.github.alelk.pws.database.entity.converter
 
 import androidx.room.TypeConverter
 import io.github.alelk.pws.database.entity.SongRefReason
+import io.github.alelk.pws.domain.model.BibleRef
 import io.github.alelk.pws.domain.model.BookId
 import io.github.alelk.pws.domain.model.Color
 import io.github.alelk.pws.domain.model.Locale
@@ -113,6 +114,12 @@ class DbTypeConverters {
 
   @TypeConverter
   fun parseSongId(id: Long): SongId = SongId(id)
+
+  @TypeConverter
+  fun bibleRefToString(bibleRef: BibleRef): String = bibleRef.toString()
+
+  @TypeConverter
+  fun parseBibleRef(bibleRef: String): BibleRef = BibleRef(bibleRef)
 
   companion object {
     val TIMESTAMP_FORMAT = LocalDateTime.Format { date(LocalDate.Formats.ISO); char(' '); time(LocalTime.Formats.ISO) }

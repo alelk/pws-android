@@ -81,7 +81,7 @@ interface SongReferenceDao {
     INNER JOIN songs s ON r.ref_song_id = s.id
     INNER JOIN song_numbers sn ON s.id = sn.song_id
     INNER JOIN books b ON sn.book_id = b.id
-    INNER JOIN bookstatistic bs ON b.id = bs.id
+    INNER JOIN book_statistic bs ON b.id = bs.id
     WHERE r.song_id = :songId AND bs.priority > 0
     ORDER BY bs.priority DESC, r.priority
     """

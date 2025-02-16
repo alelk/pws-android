@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import io.github.alelk.pws.domain.model.BibleRef
 import io.github.alelk.pws.domain.model.Locale
 import io.github.alelk.pws.domain.model.Person
 import io.github.alelk.pws.domain.model.SongId
@@ -23,6 +24,6 @@ data class SongEntity(
   @ColumnInfo(name = "composer") val composer: Person? = null,
   @ColumnInfo(name = "tonalities") val tonalities: List<Tonality>? = null,
   @ColumnInfo(name = "year") val year: Year? = null,
-  @ColumnInfo(name = "bibleref") val bibleRef: String? = null,
+  @ColumnInfo(name = "bibleref") val bibleRef: BibleRef? = null,
   @ColumnInfo(name = "edited", defaultValue = "false") val edited: Boolean = false,
 )

@@ -16,13 +16,14 @@ private fun currentDateTime() = Clock.System.now().toLocalDateTime(TimeZone.curr
   foreignKeys = [
     ForeignKey(
       entity = SongNumberEntity::class,
-      parentColumns = ["song_id", "book_id"], childColumns = ["song_id", "book_id"],
+      parentColumns = ["book_id", "song_id"], childColumns = ["book_id", "song_id"],
       onDelete = ForeignKey.CASCADE, onUpdate = ForeignKey.NO_ACTION
     )
   ],
   indices = [
     Index(name = "idx_history_song_id", value = ["song_id"]),
     Index(name = "idx_history_book_id", value = ["book_id"]),
+    Index(name = "ids_history_book_id_song_id", value = ["book_id", "song_id"])
   ]
 )
 data class HistoryEntity(

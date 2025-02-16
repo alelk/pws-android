@@ -1,5 +1,6 @@
 package io.github.alelk.pws.database.entity
 
+import io.github.alelk.pws.domain.model.BibleRef
 import io.github.alelk.pws.domain.model.Locale
 import io.github.alelk.pws.domain.model.locale
 import io.github.alelk.pws.domain.model.Person
@@ -7,6 +8,7 @@ import io.github.alelk.pws.domain.model.SongId
 import io.github.alelk.pws.domain.model.Tonality
 import io.github.alelk.pws.domain.model.Version
 import io.github.alelk.pws.domain.model.Year
+import io.github.alelk.pws.domain.model.bibleRef
 import io.github.alelk.pws.domain.model.person
 import io.github.alelk.pws.domain.model.songId
 import io.github.alelk.pws.domain.model.tonality
@@ -32,7 +34,7 @@ fun Arb.Companion.songEntity(
   composer: Arb<Person?> = Arb.person().orNull(),
   tonalities: Arb<List<Tonality>?> = Arb.list(Arb.tonality(), 0..3).orNull(),
   year: Arb<Year?> = Arb.year().orNull(),
-  bibleRef: Arb<String?> = Arb.string(5..50, Codepoint.az()).orNull()
+  bibleRef: Arb<BibleRef?> = Arb.bibleRef().orNull(0.5)
 ): Arb<SongEntity> = arbitrary {
   SongEntity(
     id = id.bind(),

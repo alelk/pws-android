@@ -21,6 +21,7 @@ import io.github.alelk.pws.domain.model.SongNumberId
   indices = [
     Index(name = "idx_songs_numbers_song_id", value = ["song_id"]),
     Index(name = "idx_song_numbers_book_id", value = ["book_id"]),
+    Index(name = "idx_song_numbers_number", value = ["number"]),
     Index(name = "idx_song_numbers_song_id_book_id", value = ["song_id", "book_id"], unique = true),
     Index(name = "idx_song_numbers_book_id_number", value = ["book_id", "number"], unique = true),
   ]

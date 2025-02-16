@@ -63,7 +63,10 @@ interface BookDao : Pageable<BookEntity> {
   @Query("SELECT * FROM books WHERE id = :bookId")
   fun getByIdFlow(bookId: BookId): Flow<BookEntity?>
 
+  @Query("SELECT * FROM books WHERE id in (:bookIds)")
+  fun getByIdsFlow(bookIds: List<BookId>): Flow<List<BookEntity>>
+
   @Transaction
-  @Query("""SELECT b.* FROM books b INNER JOIN bookstatistic bs on bs.id=b.id WHERE bs.priority > 0""")
+  @Query("""SELECT b.* FROM books b INNER JOIN book_statistic bs on bs.id=b.id WHERE bs.priority > 0""")
   fun getAllActiveFlow(): Flow<List<BookWithSongNumbersEntity>>
 }

@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import io.github.alelk.pws.database.entity.FavoriteEntity
+import io.github.alelk.pws.database.entity.SongNumberEntity
 import io.github.alelk.pws.domain.model.BookId
 import io.github.alelk.pws.domain.model.SongId
 import io.github.alelk.pws.domain.model.SongNumberId
@@ -44,10 +45,6 @@ interface FavoriteDao {
   @Query("DELETE FROM favorites")
   suspend fun deleteAll()
 
-  //@Transaction
-  //@Query("""SELECT * FROM favorites ORDER BY position""")
-  //fun getAllFlow(): Flow<List<FavoriteWithSongNumberWithSongWithBook>>
-
   @Transaction
   @Query("SELECT * FROM favorites ORDER BY position DESC")
   suspend fun getLast(): FavoriteEntity?
@@ -63,14 +60,24 @@ interface FavoriteDao {
   }
 
   @Transaction
+  suspend fun toggleFavorite(songNumberId: SongNumberId) {
+    if (isFavorite(songNumberId)) deleteBySongNumberId(songNumberId)
+    else addToFavorites(songNumberId)
+  }
+
+  // flows
+
+  @Transaction
   @Query("SELECT * FROM favorites WHERE book_id = :bookId AND song_id = :songId")
   fun getByIdFlow(bookId: BookId, songId: SongId): Flow<FavoriteEntity?>
 
   fun getByIdFlow(id: SongNumberId) = getByIdFlow(id.bookId, id.songId)
 
   @Transaction
-  suspend fun toggleFavorite(songNumberId: SongNumberId) {
-    if (isFavorite(songNumberId)) deleteBySongNumberId(songNumberId)
-    else addToFavorites(songNumberId)
-  }
+  @Query("""SELECT * FROM favorites ORDER BY position""")
+  fun getAllFlow(): Flow<List<FavoriteEntity>>
+
+  @Transaction
+  @Query("""SELECT f.*, sn.* FROM favorites f INNER JOIN song_numbers sn on f.song_id = sn.song_id and f.book_id = sn.book_id ORDER BY position""")
+  fun getAllFavoritesWithSongNumberFlow(): Flow<Map<FavoriteEntity, SongNumberEntity>>
 }

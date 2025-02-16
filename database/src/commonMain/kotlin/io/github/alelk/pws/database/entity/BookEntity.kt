@@ -24,4 +24,10 @@ data class BookEntity(
   @ColumnInfo(name = "editors") val editors: List<Person>? = null,
   @ColumnInfo(name = "description") val description: String? = null,
   @ColumnInfo(name = "preface") val preface: String? = null
-)
+) {
+  init {
+    require(name.isNotBlank()) { "book name must not be blank" }
+    require(displayShortName.isNotBlank()) { "book display short name must not be blank" }
+    require(displayName.isNotBlank()) { "book display name must not be blank" }
+  }
+}

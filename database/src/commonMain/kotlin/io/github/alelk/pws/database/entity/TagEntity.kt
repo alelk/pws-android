@@ -22,6 +22,6 @@ data class TagEntity(
     @ColumnInfo(name = "predefined", defaultValue = "false") val predefined: Boolean = true
 ) {
   init {
-    require(name.isNotEmpty()) { "tag name must not be empty" }
+    require(name.isNotBlank()) { "tag name must not be blank" }
   }
 }
