@@ -28,11 +28,7 @@ jobs:
 
     - name: Build ruDebug & ukDebug
       run: |
-        ./gradlew buildRuDebug buildUkDebug testRuDebug :domain:jvmTest :backup:jvmTest :database:jvmTest
-
-    - name: Run Additional Tests
-      run: |
-        ./gradlew testRuDebugUnitTest testUkDebugUnitTest --stacktrace
+        ./gradlew buildRuDebug buildUkDebug testRuDebug :domain:jvmTest domain:testDebugUnitTest :backup:jvmTest :database:jvmTest :database:testRuDebugUnitTest
 
     - name: Upload Test Results
       if: always()

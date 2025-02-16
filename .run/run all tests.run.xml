@@ -11,6 +11,7 @@
       <option name="taskNames">
         <list>
           <option value=":domain:jvmTest" />
+          <option value="domain:testDebugUnitTest" />
           <option value=":database:jvmTest" />
           <option value=":database:testRuDebugUnitTest" />
           <option value=":backup:jvmTest" />
