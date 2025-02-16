@@ -1,6 +1,7 @@
 package io.github.alelk.pws.android.app.model
 
 import io.github.alelk.pws.database.util.PwsSongUtil
+import java.util.Locale
 
 val SongInfo.textDocument: String
   get() {
@@ -21,9 +22,9 @@ val SongInfo.textDocument: String
 val SongInfo.textDocumentHtml: String
   get() =
     PwsSongUtil.songTextToPrettyHtml(
-      this.song.locale,
+      Locale.forLanguageTag(this.song.locale.value),
       this.song.lyric,
-      this.song.bibleRef,
+      this.song.bibleRef?.text,
       this.song.name,
       this.songNumber.number,
       this.song.author?.name,

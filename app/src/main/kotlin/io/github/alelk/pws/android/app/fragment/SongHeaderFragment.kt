@@ -55,7 +55,7 @@ class SongHeaderFragment : Fragment() {
         songViewModel.song.filterNotNull().mapLatest { it.song to it.book }.distinctUntilChanged().collectLatest { (song, book) ->
           view.findViewById<TextView>(R.id.txt_song_name).text = song.name
           view.findViewById<TextView>(R.id.txt_book_name).text = book.displayName
-          view.findViewById<TextView>(R.id.txt_bible_ref).text = song.bibleRef ?: ""
+          view.findViewById<TextView>(R.id.txt_bible_ref).text = song.bibleRef?.text ?: ""
         }
       }
     }

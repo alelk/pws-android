@@ -34,6 +34,8 @@ import io.github.alelk.pws.android.app.model.SongInfo
 import io.github.alelk.pws.android.app.model.SongViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.alelk.pws.android.app.R
+import io.github.alelk.pws.domain.model.BibleRef
+import io.github.alelk.pws.domain.model.SongNumberId
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
@@ -49,7 +51,7 @@ class SongEditActivity : AppCompatThemedActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_song_edit)
-    val songNumberId = intent.getLongExtra(KEY_SONG_NUMBER_ID, -1).takeIf { it > 0 }
+    val songNumberId = intent.getStringExtra(KEY_SONG_NUMBER_ID)?.let(SongNumberId::parse)
     songViewModel.setSongNumberId(songNumberId)
     findViewById<Button>(R.id.saveButton).setOnClickListener {
       lifecycleScope.launch {
@@ -71,7 +73,7 @@ class SongEditActivity : AppCompatThemedActivity() {
 
     songNameEdit.setText(song.song.name)
     songLyricEdit.setText(song.song.lyric)
-    bibleRefEdit.setText(song.song.bibleRef)
+    bibleRefEdit.setText(song.song.bibleRef?.text)
 
     // fixme: migrate to new tonality model
     val tonalities = Tonality.entries.map { it.signature.lowercase() } + resources.getString(R.string.tonality_not_defined)
@@ -86,7 +88,7 @@ class SongEditActivity : AppCompatThemedActivity() {
   private suspend fun saveSong() {
     val name = findViewById<EditText>(R.id.songNameEdit).text.toString()
     val lyric = findViewById<EditText>(R.id.songTextEdit).text.toString()
-    val bibleRef = findViewById<EditText>(R.id.bibleRefEdit).text.toString()
+    val bibleRef = findViewById<EditText>(R.id.bibleRefEdit).text.toString().takeIf { it.isNotBlank() }?.let { BibleRef(it) }
     val tonality = findViewById<Spinner>(R.id.songTonalitiesSpinner).selectedItem.toString()
 
     val nextTonality =
@@ -94,7 +96,7 @@ class SongEditActivity : AppCompatThemedActivity() {
 
     songViewModel.update { it.copy(name = name, lyric = lyric, bibleRef = bibleRef, tonalities = listOfNotNull(nextTonality)) }
 
-    val intent = Intent().apply { putExtra(SongActivity.KEY_SONG_NUMBER_ID, songViewModel.songNumberId.value) }
+    val intent = Intent().apply { putExtra(SongActivity.KEY_SONG_NUMBER_ID, songViewModel.songNumberId.value?.toString()) }
     setResult(Activity.RESULT_OK, intent)
     finish()
   }
@@ -103,7 +105,7 @@ class SongEditActivity : AppCompatThemedActivity() {
     return when (item.itemId) {
       android.R.id.home -> {
         val intent = Intent().apply {
-          putExtra(SongActivity.KEY_SONG_NUMBER_ID, songViewModel.songNumberId.value)
+          putExtra(SongActivity.KEY_SONG_NUMBER_ID, songViewModel.songNumberId.value?.toString())
         }
         setResult(Activity.RESULT_CANCELED, intent)
         finish()

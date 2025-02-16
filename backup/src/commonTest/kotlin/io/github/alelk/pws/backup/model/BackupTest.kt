@@ -3,15 +3,15 @@ package io.github.alelk.pws.backup.model
 import com.charleskorn.kaml.Yaml
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
-import java.time.LocalDateTime
+import kotlinx.datetime.LocalDateTime
 
 class BackupTest : StringSpec({
 
-  val backup1 = Backup(metadata = Backup.Metadata(LocalDateTime.parse("2025-01-01T00:00:00")))
+  val backup1 = Backup(metadata = Backup.Metadata(LocalDateTime.parse("2025-01-01T00:00:10")))
 
   val backup1Yaml = """
     |metadata:
-    |  createdAt: "2025-01-01T00:00:00"
+    |  createdAt: "2025-01-01T00:00:10"
     |  version: 1
     |songs: null
     |favorites: null

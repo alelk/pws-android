@@ -1,5 +1,7 @@
 package io.github.alelk.pws.domain.model
 
+import kotlin.jvm.JvmInline
+
 @JvmInline
 value class Year(private val value: Int) {
   init {
@@ -7,9 +9,10 @@ value class Year(private val value: Int) {
     require(value > 0) { "invalid year $value" }
   }
 
-  override fun toString(): String = value.toString()
+  override fun toString(): String = value.toString().padStart(4, '0')
 
   companion object {
-    fun parse(year: String) = Year(year.toInt())
+    const val FORMAT = "yyyy"
+    fun parse(year: String) = Year(requireNotNull(year.dropWhile { it == '0' }.toIntOrNull()) { "invalid year: $year" })
   }
 }

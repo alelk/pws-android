@@ -33,6 +33,7 @@ import io.github.alelk.pws.android.app.adapter.SearchRecyclerViewAdapter
 import io.github.alelk.pws.android.app.model.SearchSongViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.alelk.pws.android.app.R
+import io.github.alelk.pws.domain.model.SongNumberId
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -60,9 +61,9 @@ class SearchResultsFragment : Fragment() {
     val layoutSearchProgress = v.findViewById<View>(R.id.layout_search_progress)
 
     recyclerView.layoutManager = LinearLayoutManager(requireContext())
-    val adapter = SearchRecyclerViewAdapter { songNumberId: Long ->
+    val adapter = SearchRecyclerViewAdapter { songNumberId: SongNumberId ->
       val intent = Intent(requireContext(), SongActivity::class.java)
-      intent.putExtra(SongActivity.KEY_SONG_NUMBER_ID, songNumberId)
+      intent.putExtra(SongActivity.KEY_SONG_NUMBER_ID, songNumberId.toString())
       startActivity(intent)
     }
     recyclerView.adapter = adapter

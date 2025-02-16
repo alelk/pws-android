@@ -1,30 +1,38 @@
 package io.github.alelk.pws.database.entity
 
 import androidx.room.*
+import io.github.alelk.pws.domain.model.BookId
+import io.github.alelk.pws.domain.model.SongId
+import io.github.alelk.pws.domain.model.SongNumberId
 
 /** Number of song in book.
  *
  * Unique constraints:
  * - Pair (songId, bookId) - book cannot contain the same song twice.
- * - Pair (number, bookId) - book contain numbered list of songs and song number is unique in book
+ * - Pair (bookId, number) - book contain numbered list of songs and song number is unique in book
  */
 @Entity(
-  tableName = "psalmnumbers",
+  tableName = "song_numbers",
+  primaryKeys = ["book_id", "song_id"],
   foreignKeys = [
-    ForeignKey(entity = SongEntity::class, parentColumns = ["_id"], childColumns = ["psalmid"], onDelete = ForeignKey.CASCADE),
-    ForeignKey(entity = BookEntity::class, parentColumns = ["_id"], childColumns = ["bookid"], onDelete = ForeignKey.CASCADE)
+    ForeignKey(entity = SongEntity::class, parentColumns = ["id"], childColumns = ["song_id"], onDelete = ForeignKey.CASCADE),
+    ForeignKey(entity = BookEntity::class, parentColumns = ["id"], childColumns = ["book_id"], onDelete = ForeignKey.CASCADE)
   ],
   indices = [
-    Index(name = "idx_psalmnumbers_psalmid", value = ["psalmid"]),
-    Index(name = "idx_psalmnumbers_bookid", value = ["bookid"]),
-    Index(name = "idx_psalmnumbers_psalmid_bookid", value = ["psalmid", "bookid"], unique = true),
-    Index(name = "idx_psalmnumbers_number_bookid", value = ["number", "bookid"], unique = true),
+    Index(name = "idx_songs_numbers_song_id", value = ["song_id"]),
+    Index(name = "idx_song_numbers_book_id", value = ["book_id"]),
+    Index(name = "idx_song_numbers_number", value = ["number"]),
+    Index(name = "idx_song_numbers_song_id_book_id", value = ["song_id", "book_id"], unique = true),
+    Index(name = "idx_song_numbers_book_id_number", value = ["book_id", "number"], unique = true),
   ]
 )
 data class SongNumberEntity(
-  @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "_id") val id: Long? = null,
+  @ColumnInfo(name = "book_id") val bookId: BookId,
+  @ColumnInfo(name = "song_id") val songId: SongId,
   @ColumnInfo(name = "number") val number: Int,
-  @ColumnInfo(name = "psalmid") val songId: Long,
-  @ColumnInfo(name = "bookid") val bookId: Long,
   @ColumnInfo(name = "priority") val priority: Int,
-)
+) {
+  val id: SongNumberId get() = SongNumberId(bookId, songId)
+
+  constructor(songNumberId: SongNumberId, number: Int, priority: Int) : this(songNumberId.bookId, songNumberId.songId, number, priority)
+}

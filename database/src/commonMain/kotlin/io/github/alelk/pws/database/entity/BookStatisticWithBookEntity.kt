@@ -6,6 +6,6 @@ import androidx.room.Relation
 data class BookStatisticWithBookEntity(
   @Embedded
   val bookStatistic: BookStatisticEntity,
-  @Relation(parentColumn = "bookid", entityColumn = "_id")
+  @Relation(parentColumn = "id", entityColumn = "id")
   val book: BookEntity,
 )

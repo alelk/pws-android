@@ -32,7 +32,7 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.alelk.pws.android.app.R
 import io.github.alelk.pws.android.app.databinding.DialogSearchSongNumberBinding
-import io.github.alelk.pws.domain.model.BookExternalId
+import io.github.alelk.pws.domain.model.BookId
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
@@ -55,8 +55,8 @@ class JumpToSongByNumberDialogFragment : DialogFragment() {
     binding = DialogSearchSongNumberBinding.inflate(layoutInflater)
 
     bookViewModel
-      .setBookExternalId(
-        BookExternalId.parse(checkNotNull(requireArguments().getString(KEY_BOOK_ID)) { "book external id argument required" })
+      .setBookId(
+        BookId.parse(checkNotNull(requireArguments().getString(KEY_BOOK_ID)) { "book external id argument required" })
       )
 
     lifecycleScope.launch {
@@ -84,7 +84,7 @@ class JumpToSongByNumberDialogFragment : DialogFragment() {
         val number = bookViewModel.songNumbers.value?.find { n -> n.number == songNumberToJump }
         if (number != null) {
           startActivity(
-            Intent(requireActivity(), SongActivity::class.java).apply { putExtra(SongActivity.KEY_SONG_NUMBER_ID, number.id) }
+            Intent(requireActivity(), SongActivity::class.java).apply { putExtra(SongActivity.KEY_SONG_NUMBER_ID, number.id.toString()) }
           )
           dialog.cancel()
         } else {
@@ -104,7 +104,7 @@ class JumpToSongByNumberDialogFragment : DialogFragment() {
   companion object {
     const val KEY_BOOK_ID = "bookId"
 
-    fun newInstance(bookId: BookExternalId): JumpToSongByNumberDialogFragment {
+    fun newInstance(bookId: BookId): JumpToSongByNumberDialogFragment {
       return JumpToSongByNumberDialogFragment().apply {
         arguments = Bundle().apply { putString(KEY_BOOK_ID, bookId.identifier) }
       }

@@ -5,11 +5,13 @@ plugins {
 
 kotlin {
   jvm()
+  iosArm64()
   sourceSets {
     val commonMain by getting {
       dependencies {
         implementation(project(":domain"))
         implementation(libs.kaml)
+        implementation(libs.kotlinx.datetime)
       }
     }
     val jvmMain by getting {}

@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.alelk.pws.database.PwsDatabase
-import io.github.alelk.pws.database.entity.SongNumberWithSongWithBookWithFavorite
+import io.github.alelk.pws.database.entity.SongNumberWithSongWithBookEntity
 import io.github.alelk.pws.database.entity.TagEntity
 import io.github.alelk.pws.domain.model.TagId
 import kotlinx.coroutines.flow.Flow
@@ -17,6 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class TagsViewModel @Inject constructor(database: PwsDatabase) : ViewModel() {
   private val tagDao = database.tagDao()
+  private val songDao = database.songDao()
 
   val allTags: StateFlow<List<TagEntity>?> =
     tagDao.getAllFlow()
@@ -32,5 +33,5 @@ class TagsViewModel @Inject constructor(database: PwsDatabase) : ViewModel() {
 
   suspend fun getNextCustomTagId(): TagId = tagDao.getNextCustomTagId()
 
-  fun getTagSongs(tagId: TagId): Flow<List<SongNumberWithSongWithBookWithFavorite>> = tagDao.getTagSongsFlow(tagId)
+  fun getTagSongs(tagId: TagId): Flow<List<SongNumberWithSongWithBookEntity>> = songDao.getActiveTagSongsFlow(tagId)
 }

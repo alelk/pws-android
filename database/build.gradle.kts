@@ -13,6 +13,7 @@ kotlin {
     publishLibraryVariants("ruRelease")
   }
   jvm()
+  iosArm64()
 
   sourceSets {
     val commonMain by getting {
@@ -20,6 +21,7 @@ kotlin {
         implementation(project(":domain"))
         implementation(libs.room.runtime)
         implementation(libs.kotlinx.coroutines.core)
+        implementation(libs.kotlinx.datetime)
       }
     }
     val commonTest by getting {
@@ -28,6 +30,7 @@ kotlin {
         implementation(libs.kotest.assertions.core)
         implementation(libs.kotest.framework.engine)
         implementation(libs.kotest.property)
+        implementation(libs.kotest.property.datetime)
         implementation(kotlin("test-common"))
         implementation(kotlin("test-annotations-common"))
       }
@@ -65,6 +68,8 @@ kotlin {
         implementation(libs.sqlite.bundled)
       }
     }
+    val iosArm64Main by getting {}
+    val iosArm64Test by getting {}
   }
 
   targets.withType<KotlinAndroidTarget> {

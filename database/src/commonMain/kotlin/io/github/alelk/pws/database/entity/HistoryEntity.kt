@@ -1,17 +1,40 @@
 package io.github.alelk.pws.database.entity
 
 import androidx.room.*
-import java.util.Date
+import io.github.alelk.pws.domain.model.BookId
+import io.github.alelk.pws.domain.model.SongId
+import io.github.alelk.pws.domain.model.SongNumberId
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+
+private fun currentDateTime() = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
 
 @Entity(
   tableName = "history",
   foreignKeys = [
-    ForeignKey(entity = SongNumberEntity::class, parentColumns = ["_id"], childColumns = ["psalmnumberid"], onDelete = ForeignKey.CASCADE)
+    ForeignKey(
+      entity = SongNumberEntity::class,
+      parentColumns = ["book_id", "song_id"], childColumns = ["book_id", "song_id"],
+      onDelete = ForeignKey.CASCADE, onUpdate = ForeignKey.NO_ACTION
+    )
   ],
-  indices = [Index(name = "idx_history_psalmnumberid", value = ["psalmnumberid"])]
+  indices = [
+    Index(name = "idx_history_song_id", value = ["song_id"]),
+    Index(name = "idx_history_book_id", value = ["book_id"]),
+    Index(name = "ids_history_book_id_song_id", value = ["book_id", "song_id"])
+  ]
 )
 data class HistoryEntity(
-  @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "_id") val id: Long = 0,
-  @ColumnInfo(name = "psalmnumberid") val songNumberId: Long,
-  @ColumnInfo(name = "accesstimestamp") val accessTimestamp: Date
-)
+  @ColumnInfo(name = "song_id") val songId: SongId,
+  @ColumnInfo(name = "book_id") val bookId: BookId,
+  @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val id: Long = 0,
+  @ColumnInfo(name = "access_timestamp") val accessTimestamp: LocalDateTime = currentDateTime()
+) {
+
+  constructor(songNumberId: SongNumberId, id: Long = 0, accessTimestamp: LocalDateTime = currentDateTime()) :
+    this(songNumberId.songId, songNumberId.bookId, id, accessTimestamp)
+
+  val songNumberId: SongNumberId get() = SongNumberId(bookId, songId)
+}

@@ -24,7 +24,8 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import io.github.alelk.pws.android.app.R
 import io.github.alelk.pws.android.app.adapter.FavoritesRecyclerViewAdapter.FavoriteViewHolder
-import io.github.alelk.pws.database.entity.FavoriteWithSongNumberWithSongWithBook
+import io.github.alelk.pws.android.app.model.FavoriteInfo
+import io.github.alelk.pws.domain.model.SongNumberId
 
 /**
  * Favorites Recycler View Adapter
@@ -32,8 +33,8 @@ import io.github.alelk.pws.database.entity.FavoriteWithSongNumberWithSongWithBoo
  * Created by Alex Elkin on 19.05.2016.
  */
 class FavoritesRecyclerViewAdapter(
-  private val onItemClickListener: (songNumberId: Long) -> Unit
-) : ListAdapter<FavoriteWithSongNumberWithSongWithBook, FavoriteViewHolder>(FavoriteDiffCallback()) {
+  private val onItemClickListener: (songNumberId: SongNumberId) -> Unit
+) : ListAdapter<FavoriteInfo, FavoriteViewHolder>(FavoriteDiffCallback()) {
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoriteViewHolder {
     val view = LayoutInflater.from(parent.context)
@@ -50,25 +51,25 @@ class FavoritesRecyclerViewAdapter(
     private val songName: TextView = itemView.findViewById(R.id.txt_song_name)
     private val songNumber: TextView = itemView.findViewById(R.id.txt_song_number)
     private val bookDisplayName: TextView = itemView.findViewById(R.id.txt_book_name)
-    private var songNumberId: Long = 0
+    private var songNumberId: SongNumberId? = null
 
-    fun bind(favorite: FavoriteWithSongNumberWithSongWithBook, onItemClickListener: (songNumberId: Long) -> Unit) {
-      songNumber.text = favorite.songNumber.number.toString()
-      songName.text = favorite.song.name
-      bookDisplayName.text = favorite.book.displayName
+    fun bind(favorite: FavoriteInfo, onItemClickListener: (songNumberId: SongNumberId) -> Unit) {
+      songNumber.text = favorite.songNumber.toString()
+      songName.text = favorite.songName
+      bookDisplayName.text = favorite.bookDisplayName
       songNumberId = favorite.songNumberId
 
       itemView.setOnClickListener {
-        onItemClickListener(songNumberId)
+        songNumberId?.let { onItemClickListener(it) }
       }
     }
   }
 
-  class FavoriteDiffCallback : DiffUtil.ItemCallback<FavoriteWithSongNumberWithSongWithBook>() {
-    override fun areItemsTheSame(oldItem: FavoriteWithSongNumberWithSongWithBook, newItem: FavoriteWithSongNumberWithSongWithBook): Boolean =
-      oldItem.favorite.id == newItem.favorite.id
+  class FavoriteDiffCallback : DiffUtil.ItemCallback<FavoriteInfo>() {
+    override fun areItemsTheSame(oldItem: FavoriteInfo, newItem: FavoriteInfo): Boolean =
+      oldItem.songNumberId == newItem.songNumberId
 
-    override fun areContentsTheSame(oldItem: FavoriteWithSongNumberWithSongWithBook, newItem: FavoriteWithSongNumberWithSongWithBook): Boolean =
+    override fun areContentsTheSame(oldItem: FavoriteInfo, newItem: FavoriteInfo): Boolean =
       oldItem == newItem
   }
 }

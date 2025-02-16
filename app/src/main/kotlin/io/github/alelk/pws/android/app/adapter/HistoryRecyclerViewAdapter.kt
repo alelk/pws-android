@@ -26,13 +26,16 @@ import androidx.recyclerview.widget.RecyclerView
 import io.github.alelk.pws.android.app.R
 import io.github.alelk.pws.android.app.adapter.HistoryRecyclerViewAdapter.HistoryViewHolder
 import io.github.alelk.pws.database.entity.HistoryWithSongNumberWithSongWithBook
+import io.github.alelk.pws.domain.model.SongNumberId
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
 
 /**
  * History Recycler View Adapter
  *
  * Created by Alex Elkin on 23.05.2016.
  */
-class HistoryRecyclerViewAdapter(private val onItemClickListener: (id: Long) -> Unit) :
+class HistoryRecyclerViewAdapter(private val onItemClickListener: (id: SongNumberId) -> Unit) :
   ListAdapter<HistoryWithSongNumberWithSongWithBook, HistoryViewHolder>(HistoryItemDiffCallback()) {
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryViewHolder {
@@ -52,14 +55,16 @@ class HistoryRecyclerViewAdapter(private val onItemClickListener: (id: Long) -> 
     private val bookDisplayName: TextView = itemView.findViewById(R.id.txt_book_name)
     private val timestamp: TextView = itemView.findViewById(R.id.txt_timestamp)
 
-    fun bind(historyItem: HistoryWithSongNumberWithSongWithBook, onItemClickListener: (id: Long) -> Unit) {
+    fun bind(historyItem: HistoryWithSongNumberWithSongWithBook, onItemClickListener: (id: SongNumberId) -> Unit) {
       songNumber.text = historyItem.songNumber.number.toString()
       songName.text = historyItem.song.name
       bookDisplayName.text = historyItem.book.displayName
       timestamp.text = DateUtils.getRelativeTimeSpanString(
-        historyItem.history.accessTimestamp.time, System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS
+        historyItem.history.accessTimestamp.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds(),
+        System.currentTimeMillis(),
+        DateUtils.SECOND_IN_MILLIS
       )
-      itemView.setOnClickListener { onItemClickListener(historyItem.songNumberId) }
+      itemView.setOnClickListener { onItemClickListener(historyItem.songNumber.id) }
     }
   }
 

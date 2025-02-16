@@ -2,16 +2,17 @@ package io.github.alelk.pws.android.app.model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.github.alelk.pws.database.PwsDatabase
-import io.github.alelk.pws.database.entity.SongSongReferenceDetailsEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.github.alelk.pws.database.PwsDatabase
 import io.github.alelk.pws.database.entity.BookEntity
 import io.github.alelk.pws.database.entity.FavoriteEntity
 import io.github.alelk.pws.database.entity.HistoryEntity
 import io.github.alelk.pws.database.entity.SongEntity
 import io.github.alelk.pws.database.entity.SongNumberEntity
-import io.github.alelk.pws.database.entity.SongNumberTagEntity
+import io.github.alelk.pws.database.entity.SongReferenceDetailsEntity
+import io.github.alelk.pws.database.entity.SongTagEntity
 import io.github.alelk.pws.database.entity.TagEntity
+import io.github.alelk.pws.domain.model.SongNumberId
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,20 +28,19 @@ import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import timber.log.Timber
-import java.util.Date
 import javax.inject.Inject
 
 data class SongInfo(
   val song: SongEntity,
   val songNumber: SongNumberEntity,
+  val book: BookEntity,
   val tags: List<TagEntity>,
   val favorite: FavoriteEntity?,
-  val book: BookEntity,
-  val references: List<SongSongReferenceDetailsEntity>,
+  val references: List<SongReferenceDetailsEntity>,
   val allBookNumbers: List<SongNumberEntity>,
 ) {
   val isFavorite: Boolean get() = favorite != null
-  val songNumberId: Long get() = checkNotNull(songNumber.id) { "song number id cannot be null" }
+  val songNumberId: SongNumberId get() = checkNotNull(songNumber.id) { "song number id cannot be null" }
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -51,13 +51,14 @@ class SongViewModel @Inject constructor(db: PwsDatabase) : ViewModel() {
   private val favoriteDao = db.favoriteDao()
   private val historyDao = db.historyDao()
   private val bookDao = db.bookDao()
-  private val songNumberTagDao = db.songNumberTagDao()
-  private val songReferenceDao = db.songSongReferenceDao()
+  private val songTagDao = db.songTagDao()
+  private val tagDao = db.tagDao()
+  private val songReferenceDao = db.songReferenceDao()
 
-  private val _songNumberId = MutableStateFlow<Long?>(null)
-  val songNumberId: StateFlow<Long?> get() = _songNumberId.asStateFlow()
+  private val _songNumberId = MutableStateFlow<SongNumberId?>(null)
+  val songNumberId: StateFlow<SongNumberId?> get() = _songNumberId.asStateFlow()
 
-  fun setSongNumberId(songNumberId: Long?) {
+  fun setSongNumberId(songNumberId: SongNumberId?) {
     if (_songNumberId.value != songNumberId) {
       _songNumberId.value = songNumberId
       Timber.d("song number id is changed: $songNumberId")
@@ -66,20 +67,26 @@ class SongViewModel @Inject constructor(db: PwsDatabase) : ViewModel() {
 
   val song: StateFlow<SongInfo?> = _songNumberId.filterNotNull()
     .flatMapLatest { songNumberId ->
-      val songFlow = songNumberDao.getSongOfBookByIdFlow(songNumberId)
-      val bookNumbersFlow = bookDao.getBookSongNumbersBySongNumberIdFlow(songNumberId)
-      val tagsFlow = songNumberTagDao.getTagsBySongNumberIdFlow(songNumberId)
-      val referencesFlow = songReferenceDao.getBySongNumberIdFlow(songNumberId)
-
-      combine(songFlow, bookNumbersFlow, tagsFlow, referencesFlow) { songOfBook, bookNumbers, tags, references ->
+      val songFlow = songDao.getByIdFlow(songNumberId.songId).filterNotNull()
+      val songNumberFlow = songNumberDao.getByIdFlow(songNumberId).filterNotNull()
+      val bookFlow = bookDao.getByIdFlow(songNumberId.bookId).filterNotNull()
+      combine(songFlow, songNumberFlow, bookFlow) { song, songNumber, book ->
+        Triple(song, songNumber, book)
+      }
+    }.flatMapLatest { (song, songNumber, book) ->
+      val tagsFlow = tagDao.getBySongIdFlow(songNumber.songId)
+      val favoriteFlow = favoriteDao.getByIdFlow(songNumber.id)
+      val songReferencesFlow = songReferenceDao.getActiveReferredSongsBySongIdFlow(songNumber.songId).mapLatest { it.distinctBy { r -> r.song.id } }
+      val allBookNumbersFlow = songNumberDao.getByBookIdFlow(songNumber.bookId)
+      combine(tagsFlow, favoriteFlow, songReferencesFlow, allBookNumbersFlow) { tags, favorite, songReferences, allBookNumbers ->
         SongInfo(
-          song = songOfBook.song,
-          book = songOfBook.book,
-          songNumber = songOfBook.songNumber,
+          song = song,
+          book = book,
+          songNumber = songNumber,
           tags = tags,
-          favorite = songOfBook.favorite,
-          allBookNumbers = bookNumbers,
-          references = references
+          favorite = favorite,
+          references = songReferences,
+          allBookNumbers = allBookNumbers
         )
       }
     }
@@ -97,7 +104,7 @@ class SongViewModel @Inject constructor(db: PwsDatabase) : ViewModel() {
   val number = song.mapLatest { it?.songNumber?.number }.distinctUntilChanged()
   val tags: Flow<List<TagEntity>?> = song.mapLatest { it?.tags }.distinctUntilChanged()
   val allBookNumbers: Flow<List<SongNumberEntity>?> = song.mapLatest { it?.allBookNumbers }.distinctUntilChanged()
-  val references: Flow<List<SongSongReferenceDetailsEntity>?> = song.mapLatest { it?.references?.distinctBy { r -> r.refSongId } }.distinctUntilChanged()
+  val references: Flow<List<SongReferenceDetailsEntity>?> = song.mapLatest { it?.references }.distinctUntilChanged()
 
   suspend fun update(updateFn: suspend (existing: SongEntity) -> SongEntity) {
     val nextSong = song.value?.song?.let { song ->
@@ -113,12 +120,12 @@ class SongViewModel @Inject constructor(db: PwsDatabase) : ViewModel() {
 
   suspend fun setTags(newSongTags: List<TagEntity>) {
     val songNumberId = songNumberId.value ?: return
-    val existing = songNumberTagDao.getBySongNumberId(songNumberId).toSet()
-    val target = newSongTags.map { SongNumberTagEntity(songNumberId, it.id) }.toSet()
+    val existing = songTagDao.getBySongId(songNumberId.songId).toSet()
+    val target = newSongTags.map { SongTagEntity(songNumberId.songId, it.id) }.toSet()
     val tagsToRemove = existing - target
     val tagsToAdd = target - existing
-    songNumberTagDao.delete(tagsToRemove.toList())
-    songNumberTagDao.insert(tagsToAdd.toList())
+    songTagDao.delete(tagsToRemove.toList())
+    songTagDao.insert(tagsToAdd.toList())
     Timber.d(
       "tags updated for song number id $songNumberId: " +
         "removed: ${tagsToRemove.joinToString(",") { it.tagId.toString() }}; " +
@@ -134,14 +141,19 @@ class SongViewModel @Inject constructor(db: PwsDatabase) : ViewModel() {
   }
 
   suspend fun addToHistory() {
-    song.value?.let { song ->
-      val lastHistoryItem = historyDao.getLast().firstOrNull()
-      if (lastHistoryItem == null || lastHistoryItem.songNumberId != song.songNumberId) {
-        Timber.d("song #${song.song.id} (book ${song.book.externalId}, number ${song.songNumber.number}) added to history.")
-        historyDao.insert(HistoryEntity(songNumberId = song.songNumberId, accessTimestamp = Date()))
-      } else {
-        Timber.d("song #${song.song.id} (book ${song.book.externalId}, number ${song.songNumber.number}) already last in history.")
+    kotlin.runCatching {
+      song.value?.let { song ->
+        val lastHistoryItem = historyDao.getLast().firstOrNull()
+        if (lastHistoryItem == null || lastHistoryItem.songNumberId != song.songNumberId) {
+          Timber.d("song #${song.song.id} (book ${song.book.id}, number ${song.songNumber.number}) added to history.")
+          historyDao.insert(HistoryEntity(songNumberId = song.songNumberId))
+        } else {
+          Timber.d("song #${song.song.id} (book ${song.book.id}, number ${song.songNumber.number}) already last in history.")
+        }
       }
+    }.onFailure { e ->
+      // ignore possible exception because addToHistory is not critical functionality
+      Timber.e(e, "error inserting song #${song.value?.song?.id} to history: ${e.message}")
     }
   }
 }

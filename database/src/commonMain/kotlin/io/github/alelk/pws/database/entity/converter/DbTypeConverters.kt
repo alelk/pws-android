@@ -2,20 +2,24 @@ package io.github.alelk.pws.database.entity.converter
 
 import androidx.room.TypeConverter
 import io.github.alelk.pws.database.entity.SongRefReason
-import io.github.alelk.pws.domain.model.BookExternalId
+import io.github.alelk.pws.domain.model.BibleRef
+import io.github.alelk.pws.domain.model.BookId
 import io.github.alelk.pws.domain.model.Color
+import io.github.alelk.pws.domain.model.Locale
 import io.github.alelk.pws.domain.model.Person
+import io.github.alelk.pws.domain.model.SongId
 import io.github.alelk.pws.domain.model.TagId
 import io.github.alelk.pws.domain.model.Tonality
 import io.github.alelk.pws.domain.model.Version
 import io.github.alelk.pws.domain.model.Year
 import io.github.alelk.pws.domain.model.toTagId
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.format
+import kotlinx.datetime.format.char
 
 const val ENTITY_STRING_ARRAY_DELIMITER = ';'
-const val TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss"
 
 class DbTypeConverters {
 
@@ -29,13 +33,13 @@ class DbTypeConverters {
   fun localeToString(locale: Locale): String = locale.toString()
 
   @TypeConverter
-  fun parseLocale(locale: String): Locale = Locale.forLanguageTag(locale)
+  fun parseLocale(locale: String): Locale = Locale.of(locale)
 
   @TypeConverter
-  fun bookExternalIdToString(id: BookExternalId): String = id.toString()
+  fun bookExternalIdToString(id: BookId): String = id.toString()
 
   @TypeConverter
-  fun parseBookExternalId(id: String): BookExternalId = BookExternalId.parse(id)
+  fun parseBookExternalId(id: String): BookId = BookId.parse(id)
 
   @TypeConverter
   fun personListToString(list: List<Person>): String = list.joinToString(ENTITY_STRING_ARRAY_DELIMITER.toString()) { it.name }
@@ -76,10 +80,10 @@ class DbTypeConverters {
   fun tonalityFromString(tonality: String): Tonality = Tonality.fromIdentifier(tonality)
 
   @TypeConverter
-  fun songRefReasonToString(reason: io.github.alelk.pws.database.entity.SongRefReason): String = reason.identifier
+  fun songRefReasonToString(reason: SongRefReason): String = reason.identifier
 
   @TypeConverter
-  fun stringToSongRefReason(reason: String): io.github.alelk.pws.database.entity.SongRefReason = io.github.alelk.pws.database.entity.SongRefReason.fromIdentifier(reason)
+  fun stringToSongRefReason(reason: String): SongRefReason = SongRefReason.fromIdentifier(reason)
 
   @TypeConverter
   fun tagIdToString(id: TagId): String = id.toString()
@@ -99,11 +103,25 @@ class DbTypeConverters {
   @TypeConverter
   fun parseYear(year: String): Year = Year.parse(year)
 
-  val df = SimpleDateFormat(TIMESTAMP_FORMAT, Locale.US)
+  @TypeConverter
+  fun dateToString(date: LocalDateTime): String = date.format(TIMESTAMP_FORMAT)
 
   @TypeConverter
-  fun dateToString(date: Date): String = df.format(date)
+  fun parseDate(date: String): LocalDateTime = TIMESTAMP_FORMAT.parse(date)
 
   @TypeConverter
-  fun parseDate(date: String): Date = checkNotNull(df.parse(date))
+  fun songIdToLong(id: SongId): Long = id.value
+
+  @TypeConverter
+  fun parseSongId(id: Long): SongId = SongId(id)
+
+  @TypeConverter
+  fun bibleRefToString(bibleRef: BibleRef): String = bibleRef.toString()
+
+  @TypeConverter
+  fun parseBibleRef(bibleRef: String): BibleRef = BibleRef(bibleRef)
+
+  companion object {
+    val TIMESTAMP_FORMAT = LocalDateTime.Format { date(LocalDate.Formats.ISO); char(' '); time(LocalTime.Formats.ISO) }
+  }
 }

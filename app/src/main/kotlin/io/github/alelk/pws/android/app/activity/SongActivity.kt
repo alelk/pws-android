@@ -45,6 +45,7 @@ import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.alelk.pws.android.app.R
+import io.github.alelk.pws.domain.model.SongNumberId
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
@@ -63,9 +64,9 @@ class SongActivity : AppCompatThemedActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_song)
-    val songNumberId = intent.getLongExtra(KEY_SONG_NUMBER_ID, -1L)
+    val songNumberId = intent.getStringExtra(KEY_SONG_NUMBER_ID)?.takeIf { it.isNotBlank() }?.let { SongNumberId.parse(it) }
     Timber.d("song activity created: song number id = $songNumberId")
-    songViewModel.setSongNumberId(songNumberId)
+    if (songNumberId != null) songViewModel.setSongNumberId(songNumberId)
 
     val toolbar = findViewById<Toolbar>(R.id.toolbar_song)
     setSupportActionBar(toolbar)
@@ -100,7 +101,7 @@ class SongActivity : AppCompatThemedActivity() {
       repeatOnLifecycle(Lifecycle.State.STARTED) {
         songViewModel.allBookNumbers.collect { allBookNumbers ->
           val songNumberIds = allBookNumbers?.map { checkNotNull(it.id) { "song number id cannot be null" } }
-          Timber.d("book ${songViewModel.song.value?.book?.externalId} has ${songNumberIds?.size} song numbers")
+          Timber.d("book ${songViewModel.song.value?.book?.id} has ${songNumberIds?.size} song numbers")
           if (songNumberIds != null) {
             (songTextPager.adapter as? SongTextFragmentPagerAdapter)
               ?.let { it.allSongNumberIds = songNumberIds }
@@ -132,7 +133,7 @@ class SongActivity : AppCompatThemedActivity() {
   override fun onOptionsItemSelected(item: MenuItem): Boolean =
     when (item.itemId) {
       R.id.menu_jump -> {
-        val bookId = songViewModel.song.value?.book?.externalId
+        val bookId = songViewModel.song.value?.book?.id
         if (bookId != null)
           JumpToSongByNumberDialogFragment.newInstance(bookId).show(supportFragmentManager, JumpToSongByNumberDialogFragment::class.java.simpleName)
         true
@@ -145,7 +146,7 @@ class SongActivity : AppCompatThemedActivity() {
 
       R.id.menu_edit -> {
         songViewModel.songNumberId.value?.let { songNumberId ->
-          startActivity(Intent(this, SongEditActivity::class.java).putExtra(SongEditActivity.KEY_SONG_NUMBER_ID, songNumberId))
+          startActivity(Intent(this, SongEditActivity::class.java).putExtra(SongEditActivity.KEY_SONG_NUMBER_ID, songNumberId.identifier))
         }
         true
       }
@@ -182,6 +183,6 @@ class SongActivity : AppCompatThemedActivity() {
   override val themeType: ThemeType get() = ThemeType.NO_ACTION_BAR
 
   companion object {
-    const val KEY_SONG_NUMBER_ID = "psalmNumberId"
+    const val KEY_SONG_NUMBER_ID = "songNumberId"
   }
 }

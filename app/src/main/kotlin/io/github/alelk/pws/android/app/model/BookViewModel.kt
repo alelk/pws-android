@@ -7,7 +7,7 @@ import io.github.alelk.pws.database.entity.SongNumberWithSongEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.alelk.pws.database.entity.BookEntity
 import io.github.alelk.pws.database.entity.SongNumberEntity
-import io.github.alelk.pws.domain.model.BookExternalId
+import io.github.alelk.pws.domain.model.BookId
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -33,21 +33,21 @@ class BookViewModel @Inject constructor(database: PwsDatabase) : ViewModel() {
   private val bookDao = database.bookDao()
   private val songNumberDao = database.songNumberDao()
 
-  private val _bookExternalId = MutableStateFlow<BookExternalId?>(null)
-  val bookExternalId = _bookExternalId.asStateFlow()
+  private val _bookId = MutableStateFlow<BookId?>(null)
+  val bookId = _bookId.asStateFlow()
 
-  fun setBookExternalId(bookExternalId: BookExternalId) {
-    if (_bookExternalId.value != bookExternalId) {
-      _bookExternalId.value = bookExternalId
-      Timber.d("book external id is changed: $bookExternalId")
+  fun setBookId(bookId: BookId) {
+    if (_bookId.value != bookId) {
+      _bookId.value = bookId
+      Timber.d("book id is changed: $bookId")
     }
   }
 
   val book: StateFlow<BookInfo?> =
-    _bookExternalId.filterNotNull()
-      .flatMapLatest { bookExternalId ->
-        val bookFlow = bookDao.getByExternalIdFlow(bookExternalId)
-        val songNumbersFlow = songNumberDao.getBookSongsByBookIdFlow(bookExternalId)
+    _bookId.filterNotNull()
+      .flatMapLatest { bookId ->
+        val bookFlow = bookDao.getByIdFlow(bookId)
+        val songNumbersFlow = songNumberDao.getBookSongsByBookIdFlow(bookId)
         combine(bookFlow, songNumbersFlow) { book, songNumbers -> book?.let { BookInfo(book, songNumbers) } }
       }
       .distinctUntilChanged()
