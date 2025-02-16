@@ -14,6 +14,5 @@ value class Year(private val value: Int) {
   companion object {
     const val FORMAT = "yyyy"
     fun parse(year: String) = Year(requireNotNull(year.dropWhile { it == '0' }.toIntOrNull()) { "invalid year: $year" })
-    fun now() = Timestamp.now().year
   }
 }

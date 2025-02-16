@@ -1,18 +1,19 @@
 plugins {
   id("org.jetbrains.kotlin.multiplatform")
   id("maven-publish")
+  id("com.android.library")
 }
 
 kotlin {
   jvm()
   iosArm64()
+  androidTarget()
+
   sourceSets {
-    val commonMain by getting {
-      dependencies {
-      }
-    }
+    val commonMain by getting {}
     val jvmMain by getting {}
     val iosArm64Main by getting {}
+    val androidMain by getting {}
 
     val commonTest by getting {
       dependencies {
@@ -30,6 +31,30 @@ kotlin {
         implementation(libs.kotest.runner.junit5)
       }
     }
+
+    val androidUnitTest by getting {
+      dependencies {
+        runtimeOnly(libs.kotest.runner.junit5)
+      }
+    }
+  }
+}
+
+android {
+  namespace = "io.github.alelk.pws.domain"
+
+  compileSdk = rootProject.extra["sdkVersion"] as Int
+  defaultConfig {
+    minSdk = 21
+  }
+
+  lint {
+    targetSdk = rootProject.extra["sdkVersion"] as Int
+  }
+
+  compileOptions {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
   }
 }
 
