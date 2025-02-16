@@ -1,5 +1,12 @@
 # PWS Android
 
+# [1.15.0](https://github.com/alelk/pws-android/compare/v1.14.0...v1.15.0) (2025-02-16)
+
+
+### Features
+
+* **release:** update app version: v32 ([0d4122e](https://github.com/alelk/pws-android/commit/0d4122efc5eed036f17ee21cdacb06c0a9ef7d49))
+
 # [1.14.0](https://github.com/alelk/pws-android/compare/v1.13.0...v1.14.0) (2025-02-13)
 
 
