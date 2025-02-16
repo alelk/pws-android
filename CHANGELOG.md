@@ -1,5 +1,12 @@
 # PWS Android
 
+# [2.0.0-rc.2](https://github.com/alelk/pws-android/compare/v2.0.0-rc.1...v2.0.0-rc.2) (2025-02-16)
+
+
+### Bug Fixes
+
+* **ci:** fix publish script ([f82807b](https://github.com/alelk/pws-android/commit/f82807b9a26c86d8effc184c90347a52b496ac87))
+
 # [2.0.0-rc.1](https://github.com/alelk/pws-android/compare/v1.15.0...v2.0.0-rc.1) (2025-02-16)
 
 
