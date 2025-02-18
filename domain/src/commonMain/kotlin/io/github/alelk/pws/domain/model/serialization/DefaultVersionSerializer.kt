@@ -1,4 +1,4 @@
-package io.github.alelk.pws.backup.model.serialization
+package io.github.alelk.pws.domain.model.serialization
 
 import io.github.alelk.pws.domain.model.Version
 import kotlinx.serialization.KSerializer
@@ -8,7 +8,7 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
-object VersionSerializer : KSerializer<Version> {
+object DefaultVersionSerializer : KSerializer<Version> {
   override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Version", PrimitiveKind.STRING)
 
   override fun serialize(encoder: Encoder, value: Version) {

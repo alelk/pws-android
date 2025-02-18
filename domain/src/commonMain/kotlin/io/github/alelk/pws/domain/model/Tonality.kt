@@ -1,5 +1,9 @@
 package io.github.alelk.pws.domain.model
 
+import io.github.alelk.pws.domain.model.serialization.DefaultTonalitySerializer
+import kotlinx.serialization.Serializable
+
+@Serializable(with = DefaultTonalitySerializer::class)
 enum class Tonality(val identifier: String) {
   A_MAJOR("a major"),
   A_MINOR("a minor"),

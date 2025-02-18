@@ -1,13 +1,16 @@
 package io.github.alelk.pws.domain.model
 
+import io.github.alelk.pws.domain.model.serialization.DefaultBookIdSerializer
+import kotlinx.serialization.Serializable
 import kotlin.jvm.JvmInline
 
 @JvmInline
+@Serializable(with = DefaultBookIdSerializer::class)
 value class BookId private constructor(val identifier: String) {
 
   init {
     require(pattern.matches(identifier)) {
-      "Book id should contain only letters, digits and '-', '_' symbols; should not start with digit; should not end with '-' or '_'"
+      "book id should contain only letters, digits and '-', '_' symbols; should not start with digit; should not end with '-' or '_'"
     }
   }
 

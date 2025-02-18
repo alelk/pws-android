@@ -1,5 +1,9 @@
 package io.github.alelk.pws.domain.model
 
+import io.github.alelk.pws.domain.model.serialization.DefaultVersionSerializer
+import kotlinx.serialization.Serializable
+
+@Serializable(with = DefaultVersionSerializer::class)
 data class Version(
   val major: Int,
   val minor: Int
