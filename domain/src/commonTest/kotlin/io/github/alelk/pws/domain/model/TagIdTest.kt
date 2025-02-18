@@ -7,35 +7,35 @@ import io.kotest.matchers.string.shouldContain
 import io.kotest.property.Arb
 import io.kotest.property.checkAll
 
-class BookIdTest : FeatureSpec({
-  feature("creating book id") {
+class TagIdTest : FeatureSpec({
+  feature("creating tag id") {
     scenario("from valid string contains latin letters and digits") {
-      BookId.parse("Text-1234").identifier shouldBe "Text-1234"
+      TagId.parse("Text-1234") shouldBe TagId("Text-1234")
     }
 
     scenario("from valid string contains cyrillic") {
-      BookId.parse("Текст_1234").identifier shouldBe "Текст_1234"
+      TagId.parse("Текст_1234") shouldBe TagId("Текст_1234")
     }
 
     scenario("fails when string starts from digit") {
       shouldThrow<IllegalArgumentException> {
-        BookId.parse("1Book")
-      }.message shouldContain "book id should"
+        TagId.parse("1Tag")
+      }.message shouldContain "tag id should"
     }
 
     scenario("fails when string ends with underscore") {
       shouldThrow<IllegalArgumentException> {
-        BookId.parse("Book123_")
-      }.message shouldContain "book id should"
+        TagId.parse("Tag123_")
+      }.message shouldContain "tag id should"
     }
   }
 
-  feature("convert book id to string and parse it back") {
-    scenario("for random book id") {
-      checkAll(Arb.bookId()) { bookId ->
-        val string = bookId.toString()
-        val parsed = BookId.parse(string)
-        parsed shouldBe bookId
+  feature("convert tag id to string and parse it back") {
+    scenario("for random tag id") {
+      checkAll(Arb.tagId()) { tagId ->
+        val string = tagId.toString()
+        val parsed = TagId.parse(string)
+        parsed shouldBe tagId
       }
     }
   }

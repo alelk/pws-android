@@ -1,8 +1,11 @@
 package io.github.alelk.pws.domain.model
 
+import io.github.alelk.pws.domain.model.serialization.DefaultTagIdSerializer
+import kotlinx.serialization.Serializable
 import kotlin.jvm.JvmInline
 
 @JvmInline
+@Serializable(with = DefaultTagIdSerializer::class)
 value class TagId(private val identifier: String) {
   init {
     require(pattern.matches(identifier)) {

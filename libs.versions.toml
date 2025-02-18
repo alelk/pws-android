@@ -12,6 +12,7 @@ navigation = "2.8.7"
 
 room = "2.7.0-beta01"
 
+kotlinx-serialization = "1.8.0"
 kotlinx-datetime = "0.6.2"
 
 kotest = "5.9.1"
@@ -37,7 +38,11 @@ kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutine
 
 # Date Time
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
-#kotlinx-datetime-jvm = { module = "org.jetbrains.kotlinx:kotlinx-datetime-jvm", version.ref = "kotlinx-datetime" }
+
+# Serialization
+kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" } # https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-serialization-core
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" } # https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-serialization-json
+kaml = { module = "com.charleskorn.kaml:kaml", version.ref = "kaml" } # https://search.maven.org/artifact/com.charleskorn.kaml/kaml
 
 # Database
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" } # https://mvnrepository.com/artifact/androidx.room/room-runtime
@@ -48,9 +53,6 @@ sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sql
 
 # Logging
 timber = { module = "com.jakewharton.timber:timber", version = "5.0.1" }
-
-# Yaml
-kaml = { module = "com.charleskorn.kaml:kaml", version.ref = "kaml" } # https://search.maven.org/artifact/com.charleskorn.kaml/kaml
 
 # DI
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" } # https://mvnrepository.com/artifact/com.google.dagger/hilt-android
@@ -69,11 +71,14 @@ flexbox = { group = "com.google.android.flexbox", name = "flexbox", version = "3
 # Navigation
 navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigation" } # https://mvnrepository.com/artifact/androidx.navigation/navigation-fragment
 navigation-ui = { group = "androidx.navigation", name = "navigation-ui", version.ref = "navigation" } # https://mvnrepository.com/artifact/androidx.navigation/navigation-ui
+androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigation-fragment-ktx" }
+androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigation-ui-ktx" }
 
 # Test
 kotest-framework-engine = { module = "io.kotest:kotest-framework-engine", version.ref = "kotest" } # https://search.maven.org/artifact/io.kotest/kotest-framework-engine
 kotest-framework-datatest = { module = "io.kotest:kotest-framework-datatest", version.ref = "kotest" }
 kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" } # https://search.maven.org/artifact/io.kotest/kotest-assertions-core
+kotest-assertions-json = { module = "io.kotest:kotest-assertions-json", version.ref = "kotest" } # https://search.maven.org/artifact/io.kotest/kotest-assertions-json
 kotest-property = { module = "io.kotest:kotest-property", version.ref = "kotest" } # https://search.maven.org/artifact/io.kotest/kotest-property
 kotest-property-datetime = { module = "io.kotest.extensions:kotest-property-datetime", version.ref = "kotest-property-datetime" } # https://central.sonatype.com/artifact/io.kotest.extensions/kotest-property-datetime
 kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
@@ -83,8 +88,6 @@ robolectric = { module = "org.robolectric:robolectric", version = "4.14.1" } # h
 room-testing = { group = "androidx.room", name = "room-testing", version.ref = "room" }
 kotest-runner-android = { group = "br.com.colman", name = "kotest-runner-android", version.ref = "kotest-runner-android" }
 kotest-extensions-android = { group = "br.com.colman", name = "kotest-extensions-android", version.ref = "kotest-extensions-android" }
-androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigation-fragment-ktx" }
-androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigation-ui-ktx" }
 
 [plugins]
 

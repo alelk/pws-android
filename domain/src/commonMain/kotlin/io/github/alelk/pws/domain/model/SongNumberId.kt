@@ -13,13 +13,12 @@ value class SongNumberId private constructor(val identifier: String) {
   override fun toString(): String = identifier
 
   companion object {
-    fun parse(string: String): SongNumberId {
-      val (bookId, songId) = string.split('/')
-      return kotlin.runCatching {
+    fun parse(string: String): SongNumberId =
+      kotlin.runCatching {
+        val (bookId, songId) = string.split('/')
         SongNumberId(BookId.parse(bookId), SongId(songId.toLong()))
-      }.onFailure { e ->
+      }.getOrElse { e ->
         throw IllegalArgumentException("unable to parse song number id from string '$string': expected format 'bookId/songId': ${e.message}", e)
-      }.getOrThrow()
-    }
+      }
   }
 }

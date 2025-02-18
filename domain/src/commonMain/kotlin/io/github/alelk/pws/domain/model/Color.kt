@@ -1,5 +1,9 @@
 package io.github.alelk.pws.domain.model
 
+import io.github.alelk.pws.domain.model.serialization.DefaultColorSerializer
+import kotlinx.serialization.Serializable
+
+@Serializable(with = DefaultColorSerializer::class)
 data class Color(val r: Int, val g: Int, val b: Int) {
   init {
     require(r in 0..255) { "invalid color: red must be between 0 and 255" }

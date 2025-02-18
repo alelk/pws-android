@@ -1,11 +1,5 @@
 package io.github.alelk.pws.backup.model
 
-import io.github.alelk.pws.backup.model.serialization.BibleRefSerializer
-import io.github.alelk.pws.backup.model.serialization.LocaleSerializer
-import io.github.alelk.pws.backup.model.serialization.PersonSerializer
-import io.github.alelk.pws.backup.model.serialization.SongIdSerializer
-import io.github.alelk.pws.backup.model.serialization.TonalitySerializer
-import io.github.alelk.pws.backup.model.serialization.VersionSerializer
 import io.github.alelk.pws.domain.model.BibleRef
 import io.github.alelk.pws.domain.model.Locale
 import io.github.alelk.pws.domain.model.Person
@@ -17,21 +11,14 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Song(
   val number: SongNumber,
-  @Serializable(with = SongIdSerializer::class)
   val id: SongId? = null,
-  @Serializable(with = VersionSerializer::class)
   val version: Version,
-  @Serializable(with = LocaleSerializer::class)
   val locale: Locale,
   val name: String,
   val lyric: String,
-  val tonalities: List<@Serializable(with = TonalitySerializer::class) Tonality>? = null,
-  @Serializable(with = PersonSerializer::class)
+  val tonalities: List<Tonality>? = null,
   val author: Person? = null,
-  @Serializable(with = PersonSerializer::class)
   val translator: Person? = null,
-  @Serializable(with = PersonSerializer::class)
   val composer: Person? = null,
-  @Serializable(with = BibleRefSerializer::class)
   val bibleRef: BibleRef? = null,
 )

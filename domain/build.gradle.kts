@@ -2,6 +2,7 @@ plugins {
   id("org.jetbrains.kotlin.multiplatform")
   id("maven-publish")
   id("com.android.library")
+  alias(libs.plugins.kotlin.serialization)
 }
 
 kotlin {
@@ -10,7 +11,11 @@ kotlin {
   androidTarget()
 
   sourceSets {
-    val commonMain by getting {}
+    val commonMain by getting {
+      dependencies {
+        implementation(libs.kotlinx.serialization.core)
+      }
+    }
     val jvmMain by getting {}
     val iosArm64Main by getting {}
     val androidMain by getting {}
@@ -18,8 +23,10 @@ kotlin {
     val commonTest by getting {
       dependencies {
         implementation(project(":domain:domain-test-fixtures"))
+        implementation(libs.kotlinx.serialization.json)
         implementation(libs.kotest.property)
         implementation(libs.kotest.assertions.core)
+        implementation(libs.kotest.assertions.json)
         implementation(libs.kotest.framework.engine)
         implementation(kotlin("test-common"))
         implementation(kotlin("test-annotations-common"))
