@@ -40,8 +40,8 @@ kotlin {
         implementation(libs.android.material)
         implementation(libs.kotlinx.coroutines.core)
         implementation(libs.kotlinx.coroutines.android)
-        implementation(libs.room.runtime)
-        implementation(libs.room.ktx)
+        runtimeOnly(libs.room.runtime)
+        runtimeOnly(libs.room.ktx)
         implementation(libs.timber)
       }
     }
@@ -58,8 +58,8 @@ kotlin {
     val jvmMain by getting {
       dependencies {
         implementation(libs.kotlinx.coroutines.core)
-        implementation(libs.room.runtime.jvm)
-        implementation(libs.room.ktx)
+        runtimeOnly(libs.room.runtime.jvm)
+        runtimeOnly(libs.room.ktx)
       }
     }
     val jvmTest by getting {
