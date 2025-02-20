@@ -1,3 +1,4 @@
+import org.codehaus.groovy.syntax.Types.ofType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.text.SimpleDateFormat
@@ -15,13 +16,16 @@ plugins {
   alias(libs.plugins.android.application) apply false
   alias(libs.plugins.kotlin.android) apply false
   alias(libs.plugins.hilt) apply false
+  id("maven-publish")
 }
 
 allprojects {
-  buildscript {
+  group = "io.github.alelk.pws"
+  version = versionName
 
+  buildscript {
     dependencies {
-      classpath("com.android.tools.build:gradle:8.8.0")
+      classpath("com.android.tools.build:gradle:8.8.1")
       classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     }
   }
@@ -33,6 +37,27 @@ allprojects {
   tasks.withType<KotlinCompile> {
     compilerOptions {
       jvmTarget.set(JvmTarget.JVM_21)
+    }
+  }
+}
+
+subprojects {
+  apply(plugin = "maven-publish")
+
+  publishing {
+    repositories {
+      mavenLocal {
+        name = "TestLocal"
+        url = rootProject.layout.projectDirectory.file("local-repo").asFile.toURI()
+      }
+      maven {
+        name = "GitHubPackages"
+        url = uri("https://maven.pkg.github.com/alelk/pws-android")
+        credentials {
+          username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_USER") ?: "alelk"
+          password = project.findProperty("gpr.token") as String? ?: System.getenv("GITHUB_TOKEN")
+        }
+      }
     }
   }
 }

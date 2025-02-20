@@ -1,6 +1,5 @@
 plugins {
   id("org.jetbrains.kotlin.multiplatform")
-  id("maven-publish")
   id("com.android.library")
   alias(libs.plugins.kotlin.serialization)
 }
@@ -67,30 +66,4 @@ android {
 
 tasks.withType<Test> {
   useJUnitPlatform()
-}
-
-publishing {
-  val versionName = rootProject.extra["versionName"] as String
-  val isSnapshot by lazy { versionName.endsWith("SNAPSHOT") }
-
-  publications {
-    create<MavenPublication>("gpr") {
-      groupId = "io.github.alelk.pws"
-      artifactId = "pws-domain"
-      version = versionName
-      artifact(tasks.named("jvmJar"))
-      artifact(tasks.named("jvmSourcesJar"))
-    }
-  }
-
-  repositories {
-    maven {
-      name = "GitHubPackages"
-      url = uri("https://maven.pkg.github.com/alelk/pws-android")
-      credentials {
-        username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_USER") ?: "alelk"
-        password = project.findProperty("gpr.token") as String? ?: System.getenv("GITHUB_TOKEN")
-      }
-    }
-  }
 }
