@@ -1,5 +1,19 @@
 # PWS Android
 
+# [2.0.0-rc.4](https://github.com/alelk/pws-android/compare/v2.0.0-rc.3...v2.0.0-rc.4) (2025-02-20)
+
+
+### Features
+
+* **publication:** configure multiplatform github packages publishing ([#69](https://github.com/alelk/pws-android/issues/69)) ([8c2507c](https://github.com/alelk/pws-android/commit/8c2507cbae881be43390a5e5030b7e479c08fa3d))
+
+# [2.0.0-rc.3](https://github.com/alelk/pws-android/compare/v2.0.0-rc.2...v2.0.0-rc.3) (2025-02-18)
+
+
+### Features
+
+* **serialization:** implement domain model serialization ([#68](https://github.com/alelk/pws-android/issues/68)) ([31bb52b](https://github.com/alelk/pws-android/commit/31bb52b615ac0fd9ab303afb61d164a22bcce626))
+
 # [2.0.0-rc.2](https://github.com/alelk/pws-android/compare/v2.0.0-rc.1...v2.0.0-rc.2) (2025-02-16)
 
 
