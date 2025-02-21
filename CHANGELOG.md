@@ -1,5 +1,17 @@
 # PWS Android
 
+# [2.0.0-rc.5](https://github.com/alelk/pws-android/compare/v2.0.0-rc.4...v2.0.0-rc.5) (2025-02-20)
+
+
+### Bug Fixes
+
+* **database:** mark room-ktx dependency as runtime-only ([3158642](https://github.com/alelk/pws-android/commit/31586428b424171603d75b0b94636a05f433aee5))
+
+
+### Features
+
+* **publication:** configure multiplatform github packages publishing ([8969470](https://github.com/alelk/pws-android/commit/8969470af9d68723016c5773788af2ea2fdf7141))
+
 # [2.0.0-rc.4](https://github.com/alelk/pws-android/compare/v2.0.0-rc.3...v2.0.0-rc.4) (2025-02-20)
 
 
