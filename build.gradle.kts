@@ -1,10 +1,9 @@
-import org.codehaus.groovy.syntax.Types.ofType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
-import java.util.Date
 
 val sdkVersion by extra(35)
 val versionCode by extra(32)
