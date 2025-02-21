@@ -1,5 +1,12 @@
 # PWS Android
 
+# [2.0.0-rc.6](https://github.com/alelk/pws-android/compare/v2.0.0-rc.5...v2.0.0-rc.6) (2025-02-21)
+
+
+### Bug Fixes
+
+* **project:** update gradle version & kotlin version ([ead7018](https://github.com/alelk/pws-android/commit/ead70182dcb8ddbfbefa84ba2fcc4c2b76accbb8))
+
 # [2.0.0-rc.5](https://github.com/alelk/pws-android/compare/v2.0.0-rc.4...v2.0.0-rc.5) (2025-02-20)
 
 
