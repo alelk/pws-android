@@ -1,5 +1,12 @@
 # PWS Android
 
+# [2.0.0-rc.8](https://github.com/alelk/pws-android/compare/v2.0.0-rc.7...v2.0.0-rc.8) (2025-02-24)
+
+
+### Bug Fixes
+
+* **database:** remove room ktx dependency from jvmMain ([521e8a8](https://github.com/alelk/pws-android/commit/521e8a87c989847ac363ccfb27844e8afcf70a95))
+
 # [2.0.0-rc.7](https://github.com/alelk/pws-android/compare/v2.0.0-rc.6...v2.0.0-rc.7) (2025-02-24)
 
 
