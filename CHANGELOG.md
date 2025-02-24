@@ -1,5 +1,12 @@
 # PWS Android
 
+# [2.0.0-rc.9](https://github.com/alelk/pws-android/compare/v2.0.0-rc.8...v2.0.0-rc.9) (2025-02-24)
+
+
+### Features
+
+* **database:** update song-references dao: get references by song id ([3851bd9](https://github.com/alelk/pws-android/commit/3851bd96fd059e686666e83baa8cf307e4d1ecf9))
+
 # [2.0.0-rc.8](https://github.com/alelk/pws-android/compare/v2.0.0-rc.7...v2.0.0-rc.8) (2025-02-24)
 
 
