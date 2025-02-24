@@ -1,5 +1,12 @@
 # PWS Android
 
+# [2.0.0-rc.12](https://github.com/alelk/pws-android/compare/v2.0.0-rc.11...v2.0.0-rc.12) (2025-02-24)
+
+
+### Bug Fixes
+
+* **database:** fix song suggestions providing issue ([3b6f1cd](https://github.com/alelk/pws-android/commit/3b6f1cde29974c247465b24790ff720813e6cfe4))
+
 # [2.0.0-rc.11](https://github.com/alelk/pws-android/compare/v2.0.0-rc.10...v2.0.0-rc.11) (2025-02-24)
 
 
