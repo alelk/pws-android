@@ -7,7 +7,9 @@ import androidx.room.Query
 import androidx.room.Update
 import io.github.alelk.pws.database.entity.SongReferenceDetailsEntity
 import io.github.alelk.pws.database.entity.SongReferenceEntity
+import io.github.alelk.pws.domain.model.BookId
 import io.github.alelk.pws.domain.model.SongId
+import io.github.alelk.pws.domain.model.SongNumber
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -36,32 +38,36 @@ interface SongReferenceDao {
   @Query("SELECT * FROM song_references WHERE song_id in (:songIds)")
   suspend fun getBySongIds(songIds: List<SongId>): List<SongReferenceEntity>
 
-//  @Query("SELECT * FROM psalmpsalmreferences WHERE refpsalmid = :refSongId")
-//  suspend fun getByRefSongId(refSongId: Long): List<SongSongReferenceEntity>
-//  @Query(
-//    """
-//    SELECT r.* FROM psalmpsalmreferences r
-//    INNER JOIN psalmnumbers n on n.psalmid = r.refpsalmid
-//    INNER JOIN books b on b._id = n.bookid
-//    WHERE r.psalmid = :songId and n.number = :refSongNumber and b.edition = :refSongBookExternalId
-//    """
-//  )
-//  suspend fun getBySongIdAndRefSongNumber(songId: Long, refSongNumber: Int, refSongBookExternalId: BookId): SongSongReferenceEntity?
-//
-//  @Query(
-//    """
-//    delete from psalmpsalmreferences where _id in (
-//      SELECT r._id FROM psalmpsalmreferences r
-//      INNER JOIN psalmnumbers n on n.psalmid = r.refpsalmid
-//      INNER JOIN books b on b._id = n.bookid
-//      WHERE r.psalmid = :songId and n.number = :refSongNumber and b.edition = :refSongBookExternalId
-//    )
-//    """
-//  )
-//  suspend fun deleteBySongIdAndRefSongNumber(songId: Long, refSongNumber: Int, refSongBookExternalId: BookId)
-//
+  @Query(
+    """
+    SELECT r.* FROM song_references r
+    INNER JOIN song_numbers n on n.song_id = r.ref_song_id
+    WHERE r.song_id = :songId and n.number = :refSongNumber and n.book_id = :refSongBookId
+    """
+  )
+  suspend fun getBySongIdAndRefSongNumber(songId: SongId, refSongNumber: Int, refSongBookId: BookId): SongReferenceEntity?
+
+  suspend fun getBySongIdAndRefSongNumber(songId: SongId, refSongNumber: SongNumber): SongReferenceEntity? =
+    getBySongIdAndRefSongNumber(songId, refSongNumber.number, refSongNumber.bookId)
+
+  @Query(
+    """
+    delete from song_references where (song_id, ref_song_id) in (
+      SELECT r.song_id, r.ref_song_id FROM song_references r
+      INNER JOIN song_numbers n on n.song_id = r.song_id
+      WHERE r.song_id = :songId and n.number = :refSongNumber and n.book_id = :refSongBookId
+    )
+    """
+  )
+  suspend fun deleteBySongIdAndRefSongNumber(songId: Long, refSongNumber: Int, refSongBookId: BookId)
+
+  suspend fun deleteBySongIdAndRefSongNumber(songId: Long, refSongNumber: SongNumber) =
+    deleteBySongIdAndRefSongNumber(songId, refSongNumber.number, refSongNumber.bookId)
+
   @Query("DELETE FROM song_references")
   suspend fun deleteAll()
+
+  // flow
 
   @Query(
     """
