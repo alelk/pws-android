@@ -1,5 +1,12 @@
 # PWS Android
 
+# [2.0.0-rc.13](https://github.com/alelk/pws-android/compare/v2.0.0-rc.12...v2.0.0-rc.13) (2025-02-24)
+
+
+### Bug Fixes
+
+* **app:** reimplement history view model ([2e2e2a3](https://github.com/alelk/pws-android/commit/2e2e2a350c969977af3c25b53d1fe0ae891b6dd7))
+
 # [2.0.0-rc.12](https://github.com/alelk/pws-android/compare/v2.0.0-rc.11...v2.0.0-rc.12) (2025-02-24)
 
 
