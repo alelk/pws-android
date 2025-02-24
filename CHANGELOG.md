@@ -1,5 +1,12 @@
 # PWS Android
 
+# [2.0.0-rc.11](https://github.com/alelk/pws-android/compare/v2.0.0-rc.10...v2.0.0-rc.11) (2025-02-24)
+
+
+### Bug Fixes
+
+* **database:** update song-references dao: use domain song id type in all method signatures ([24ab03c](https://github.com/alelk/pws-android/commit/24ab03c0c2c9c371c6090dea369bb55142aaa065))
+
 # [2.0.0-rc.10](https://github.com/alelk/pws-android/compare/v2.0.0-rc.9...v2.0.0-rc.10) (2025-02-24)
 
 
