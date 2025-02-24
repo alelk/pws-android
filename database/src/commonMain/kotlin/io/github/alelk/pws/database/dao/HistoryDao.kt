@@ -7,7 +7,6 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
 import io.github.alelk.pws.database.entity.HistoryEntity
-import io.github.alelk.pws.database.entity.HistoryWithSongNumberWithSongWithBook
 import io.github.alelk.pws.domain.model.BookId
 import io.github.alelk.pws.domain.model.SongId
 import io.github.alelk.pws.domain.model.SongNumberId
@@ -40,7 +39,7 @@ interface HistoryDao {
 
   @Transaction
   @Query("""SELECT * FROM history ORDER BY access_timestamp DESC""")
-  fun getAllFlow(): Flow<List<HistoryWithSongNumberWithSongWithBook>>
+  fun getAllFlow(): Flow<List<HistoryEntity>>
 
   @Query("DELETE FROM history")
   suspend fun deleteAll()

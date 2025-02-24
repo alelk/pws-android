@@ -38,7 +38,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import io.github.alelk.pws.database.data.Tonality.Companion.getInstanceBySignature
 import io.github.alelk.pws.database.util.PwsSongUtil
 import io.github.alelk.pws.android.app.activity.SongActivity
 import io.github.alelk.pws.android.app.adapter.SongReferencesRecyclerViewAdapter
@@ -51,6 +50,7 @@ import io.github.alelk.pws.android.app.view.TagView
 import com.google.android.flexbox.FlexboxLayout
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.alelk.pws.android.app.R
+import io.github.alelk.pws.android.app.util.labelId
 import io.github.alelk.pws.database.entity.SongEntity
 import io.github.alelk.pws.database.entity.TagEntity
 import io.github.alelk.pws.domain.model.SongNumberId
@@ -155,9 +155,7 @@ class SongTextFragment : Fragment() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) Html.fromHtml(songInfoHtml, Html.FROM_HTML_MODE_COMPACT)
         else Html.fromHtml(songInfoHtml)
 
-    val tonalities = song.tonalities?.joinToString(", ") { tonality ->
-      getInstanceBySignature(tonality.identifier)?.getLabel(requireActivity()) ?: ""
-    }
+    val tonalities = song.tonalities?.joinToString(", ") { requireActivity().getString(it.labelId) }
     this.tonalities.text = tonalities ?: getString(R.string.tonality_not_defined)
   }.onFailure { e -> Timber.e(e, "error updating ui from song #${song.id} info") }
 

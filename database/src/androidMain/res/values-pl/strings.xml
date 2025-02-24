@@ -22,35 +22,4 @@
     <string name="txt_copy_files">Kopiowanie plików bazy danych..\n%1$d z %2$d plików skopiowano</string>
     <string name="txt_fts_setup">Konfigurowanie pełnotekstowego wyszukiwania..\n%1$d z %2$d pieśni przeindeksowano</string>
 
-    <!-- Tonalities -->
-    <string name="c_flat_major">Ces-dur</string>
-    <string name="a_flat_minor">as-moll</string>
-    <string name="g_flat_major">Ges-dur</string>
-    <string name="e_flat_minor">es-moll</string>
-    <string name="d_flat_major">Des-dur</string>
-    <string name="b_flat_minor">b-moll</string>
-    <string name="a_flat_major">As-dur</string>
-    <string name="f_minor">f-moll</string>
-    <string name="e_flat_major">Es-dur</string>
-    <string name="c_minor">c-moll</string>
-    <string name="b_flat_major">B-dur</string>
-    <string name="g_minor">g-moll</string>
-    <string name="f_major">F-dur</string>
-    <string name="d_minor">d-moll</string>
-    <string name="c_major">C-dur</string>
-    <string name="a_minor">a-moll</string>
-    <string name="g_major">G-dur</string>
-    <string name="e_minor">e-moll</string>
-    <string name="d_major">D-dur</string>
-    <string name="b_minor">h-moll</string>
-    <string name="a_major">A-dur</string>
-    <string name="f_sharp_minor">fis-moll</string>
-    <string name="e_major">E-dur</string>
-    <string name="c_sharp_minor">cis-moll</string>
-    <string name="b_major">H-dur</string>
-    <string name="g_sharp_minor">gis-moll</string>
-    <string name="f_sharp_major">Fis-dur</string>
-    <string name="d_sharp_minor">dis-moll</string>
-    <string name="c_sharp_major">Cis-dur</string>
-    <string name="a_sharp_minor">ais-moll</string>
 </resources>

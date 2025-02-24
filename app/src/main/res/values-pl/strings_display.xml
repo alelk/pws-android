@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2018 The P&W Songs Open Source Project
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,92 +15,124 @@
   -->
 
 <resources>
-    <string name="action_settings">Ustawienia</string>
-    <string name="title_activity_song_fullscreen">Pieśń</string>
-    <string name="title_activity_main_settings">Ustawienia</string>
-    <string name="title_activity_song_edit">Edytuj Psalm</string>
+  <string name="action_settings">Ustawienia</string>
+  <string name="title_activity_song_fullscreen">Pieśń</string>
+  <string name="title_activity_main_settings">Ustawienia</string>
+  <string name="title_activity_song_edit">Edytuj Psalm</string>
 
-    <!-- Main activity display strings. -->
-    <string name="txt_main_navigation_header_comment">Biblioteka pieśni chrześcijańskich.</string>
-    <string name="lbl_drawer_main_history">Historia</string>
-    <string name="lbl_drawer_main_home">Główna</string>
-    <string name="lbl_drawer_main_books">Zbiory piosenek</string>
-    <string name="lbl_drawer_main_favorite">Ulubione</string>
-    <string name="lbl_drawer_main_settings">Ustawienia</string>
-    <string name="lbl_drawer_main_system_menu"></string>
+  <!-- Main activity display strings. -->
+  <string name="txt_main_navigation_header_comment">Biblioteka pieśni chrześcijańskich.</string>
+  <string name="lbl_drawer_main_history">Historia</string>
+  <string name="lbl_drawer_main_home">Główna</string>
+  <string name="lbl_drawer_main_books">Zbiory piosenek</string>
+  <string name="lbl_drawer_main_favorite">Ulubione</string>
+  <string name="lbl_drawer_main_settings">Ustawienia</string>
+  <string name="lbl_drawer_main_system_menu"></string>
 
-    <string name="lbl_recent">Ostatnie</string>
-    <string name="lbl_search">Szukaj tekstu pieśni</string>
-    <string name="lbl_search_by_number">Szukaj wg. numeru</string>
-    <string name="lbl_search_by_text">Szukaj wg. tekstu</string>
+  <string name="lbl_recent">Ostatnie</string>
+  <string name="lbl_search">Szukaj tekstu pieśni</string>
+  <string name="lbl_search_by_number">Szukaj wg. numeru</string>
+  <string name="lbl_search_by_text">Szukaj wg. tekstu</string>
 
-    <!-- History fragment display strings. -->
-    <string name="menu_clear_history">Wyczyść historię</string>
+  <!-- History fragment display strings. -->
+  <string name="menu_clear_history">Wyczyść historię</string>
 
-    <!-- Search activity display strings. -->
-    <string name="title_activity_search">Szukaj</string>
-    <string name="lbl_search_widget">Szukaj&#8230;</string>
-    <string name="hint_enter_text">Wpisz dowolny tekst w celu wyszukania pieśni&#8230;</string>
-    <string name="hint_enter_song_number">Wpisz numer pieśni&#8230;</string>
-    <string name="lbl_fts_search_progress">Trwa pełnotekstowe wyszukiwanie&#8230;\n</string>
+  <!-- Search activity display strings. -->
+  <string name="title_activity_search">Szukaj</string>
+  <string name="lbl_search_widget">Szukaj&#8230;</string>
+  <string name="hint_enter_text">Wpisz dowolny tekst w celu wyszukania pieśni&#8230;</string>
+  <string name="hint_enter_song_number">Wpisz numer pieśni&#8230;</string>
+  <string name="lbl_fts_search_progress">Trwa pełnotekstowe wyszukiwanie&#8230;\n</string>
 
-    <!-- Song activity display strings. -->
-    <string name="lbl_chorus">Refren</string>
-    <string name="lbl_author">Słowa</string>
-    <string name="lbl_translator">Tłumaczenie</string>
-    <string name="lbl_music">Muzyka</string>
-    <string name="lbl_references">Odsyłacze</string>
-    <string name="lbl_another_variant" formatted="true">Druga wersja pieśni. Źródło tekstów: %1$d%%</string>
-    <string name="lbl_search_song">Szukaj</string>
-    <string name="lbl_jump_to_number">Przejdź do numeru</string>
-    <string name="lbl_share">Udostępnij</string>
-    <string name="lbl_edit">Edytować</string>
-    <string name="lbl_delete">Usuwać</string>
-    <string name="lbl_song_text_size">Rozmiar tekstu pieśni</string>
-    <string name="sort_by_added_date">Sortuj według daty dodania</string>
-    <string name="sort_by_number">Sortuj według numeru</string>
-    <string name="sort_by_name">Sortuj według nazwy</string>
-    <string name="msg_added_to_favorites">Dodano do ulubionych</string>
-    <string name="msg_removed_from_favorites">Usunięto z ulubionych</string>
+  <!-- Song activity display strings. -->
+  <string name="lbl_chorus">Refren</string>
+  <string name="lbl_author">Słowa</string>
+  <string name="lbl_translator">Tłumaczenie</string>
+  <string name="lbl_music">Muzyka</string>
+  <string name="lbl_references">Odsyłacze</string>
+  <string name="lbl_another_variant" formatted="true">Druga wersja pieśni. Źródło tekstów: %1$d%%</string>
+  <string name="lbl_search_song">Szukaj</string>
+  <string name="lbl_jump_to_number">Przejdź do numeru</string>
+  <string name="lbl_share">Udostępnij</string>
+  <string name="lbl_edit">Edytować</string>
+  <string name="lbl_delete">Usuwać</string>
+  <string name="lbl_song_text_size">Rozmiar tekstu pieśni</string>
+  <string name="sort_by_added_date">Sortuj według daty dodania</string>
+  <string name="sort_by_number">Sortuj według numeru</string>
+  <string name="sort_by_name">Sortuj według nazwy</string>
+  <string name="msg_added_to_favorites">Dodano do ulubionych</string>
+  <string name="msg_removed_from_favorites">Usunięto z ulubionych</string>
 
-    <!-- Edit song activity -->
-    <string name="label_song_name">Nazwa Psalmu</string>
-    <string name="label_song_text">Tekst Psalmu</string>
-    <string name="label_bible_ref">Odniesienie Biblijne</string>
-    <string name="label_song_tonalities">Tonacje Psalmu</string>
-    <string name="btn_save">Zapisz</string>
-    <string name="lbl_edit_song">Edytuj psalm</string>
+  <!-- Edit song activity -->
+  <string name="label_song_name">Nazwa Psalmu</string>
+  <string name="label_song_text">Tekst Psalmu</string>
+  <string name="label_bible_ref">Odniesienie Biblijne</string>
+  <string name="label_song_tonalities">Tonacje Psalmu</string>
+  <string name="btn_save">Zapisz</string>
+  <string name="lbl_edit_song">Edytuj psalm</string>
 
-    <!-- Song fullscreen activity display strings. -->
-    <string name="lbl_add_to_favorites">Dodaj do ulubionych</string>
-    <string name="lbl_remove_from_favorites">Usuń z ulubionych</string>
+  <!-- Song fullscreen activity display strings. -->
+  <string name="lbl_add_to_favorites">Dodaj do ulubionych</string>
+  <string name="lbl_remove_from_favorites">Usuń z ulubionych</string>
 
-    <!-- Search song number dialog display strings. -->
-    <string name="lbl_ok">OK</string>
-    <string name="lbl_cancel">Anuluj</string>
-    <string name="lbl_enter_song_number">Wpisz numer w określonym śpiewniku, którego poszukujesz: </string>
-    <string name="msg_no_song_number_found">Numer nie znaleziono</string>
-    <string name="lbl_done">Gotowe</string>
-    <string name="lbl_error">Błąd</string>
-    <string name="lbl_edit_categories_for_song">Edytuj kategorie dla utworu</string>
+  <!-- Search song number dialog display strings. -->
+  <string name="lbl_ok">OK</string>
+  <string name="lbl_cancel">Anuluj</string>
+  <string name="lbl_enter_song_number">Wpisz numer w określonym śpiewniku, którego poszukujesz: </string>
+  <string name="msg_no_song_number_found">Numer nie znaleziono</string>
+  <string name="lbl_done">Gotowe</string>
+  <string name="lbl_error">Błąd</string>
+  <string name="lbl_edit_categories_for_song">Edytuj kategorie dla utworu</string>
 
-    <!-- Song preferences dialog display strings. -->
-    <string name="lbl_text_size">Rozmiar tekstu:</string>
-    <string name="lbl_expand_song_text">Refren po każdym wersecie</string>
+  <!-- Song preferences dialog display strings. -->
+  <string name="lbl_text_size">Rozmiar tekstu:</string>
+  <string name="lbl_expand_song_text">Refren po każdym wersecie</string>
 
-    <!-- Categories -->
-    <string name="lbl_drawer_main_categories">Kategorie</string>
-    <string name="title_activity_category">Kategoria:</string>
-    <string name="title_activity_category_songs">Songs by category</string>
-    <string name="title_activity_category_edit">Edytuj kategorie</string>
-    <string name="hint_category_name">Nazwa kategorii</string>
-    <string name="lbl_add_category">Dodaj kategorię</string>
-    <string name="lbl_edit_category_name">Edytuj nazwę kategorii</string>
-    <string name="lbl_delete_category">Usuń kategorię</string>
-    <string name="lbl_edit_categories">Edytuj kategorie</string>
-    <string name="btn_edit_categories">Edytuj kategorie</string>
-    <string name="msg_category_name_unique">Nazwa kategorii musi być unikalna</string>
-    <string name="msg_confirm_delete_category">Czy na pewno chcesz usunąć kategorię</string>
+  <!-- Categories -->
+  <string name="lbl_drawer_main_categories">Kategorie</string>
+  <string name="title_activity_category">Kategoria:</string>
+  <string name="title_activity_category_songs">Songs by category</string>
+  <string name="title_activity_category_edit">Edytuj kategorie</string>
+  <string name="hint_category_name">Nazwa kategorii</string>
+  <string name="lbl_add_category">Dodaj kategorię</string>
+  <string name="lbl_edit_category_name">Edytuj nazwę kategorii</string>
+  <string name="lbl_delete_category">Usuń kategorię</string>
+  <string name="lbl_edit_categories">Edytuj kategorie</string>
+  <string name="btn_edit_categories">Edytuj kategorie</string>
+  <string name="msg_category_name_unique">Nazwa kategorii musi być unikalna</string>
+  <string name="msg_confirm_delete_category">Czy na pewno chcesz usunąć kategorię</string>
 
-    <string name="btn_choose_color">Wybierz kolor</string>
+  <string name="btn_choose_color">Wybierz kolor</string>
+
+  <!-- Tonalities -->
+  <string name="c_flat_major">Ces-dur</string>
+  <string name="a_flat_minor">as-moll</string>
+  <string name="g_flat_major">Ges-dur</string>
+  <string name="e_flat_minor">es-moll</string>
+  <string name="d_flat_major">Des-dur</string>
+  <string name="b_flat_minor">b-moll</string>
+  <string name="a_flat_major">As-dur</string>
+  <string name="f_minor">f-moll</string>
+  <string name="e_flat_major">Es-dur</string>
+  <string name="c_minor">c-moll</string>
+  <string name="b_flat_major">B-dur</string>
+  <string name="g_minor">g-moll</string>
+  <string name="f_major">F-dur</string>
+  <string name="d_minor">d-moll</string>
+  <string name="c_major">C-dur</string>
+  <string name="a_minor">a-moll</string>
+  <string name="g_major">G-dur</string>
+  <string name="e_minor">e-moll</string>
+  <string name="d_major">D-dur</string>
+  <string name="b_minor">h-moll</string>
+  <string name="a_major">A-dur</string>
+  <string name="f_sharp_minor">fis-moll</string>
+  <string name="e_major">E-dur</string>
+  <string name="c_sharp_minor">cis-moll</string>
+  <string name="b_major">H-dur</string>
+  <string name="g_sharp_minor">gis-moll</string>
+  <string name="f_sharp_major">Fis-dur</string>
+  <string name="d_sharp_minor">dis-moll</string>
+  <string name="c_sharp_major">Cis-dur</string>
+  <string name="a_sharp_minor">ais-moll</string>
 </resources>

@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import io.github.alelk.pws.database.PwsDatabase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.alelk.pws.domain.model.SongNumberId
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -27,6 +28,7 @@ class FavoritesViewModel @Inject constructor(database: PwsDatabase) : ViewModel(
   private val songNumbersDao = database.songNumberDao()
   private val songsDao = database.songDao()
 
+  @OptIn(ExperimentalCoroutinesApi::class)
   val allFavorites =
     favoritesDao
       .getAllFlow()
@@ -52,7 +54,4 @@ class FavoritesViewModel @Inject constructor(database: PwsDatabase) : ViewModel(
       }
       .distinctUntilChanged()
       .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
-
-  @Deprecated("use toggleFavorite on SongViewModel")
-  suspend fun toggleFavorite(songNumberId: SongNumberId) = favoritesDao.toggleFavorite(songNumberId)
 }
