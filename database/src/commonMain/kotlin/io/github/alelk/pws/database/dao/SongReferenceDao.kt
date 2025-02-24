@@ -59,9 +59,9 @@ interface SongReferenceDao {
     )
     """
   )
-  suspend fun deleteBySongIdAndRefSongNumber(songId: Long, refSongNumber: Int, refSongBookId: BookId)
+  suspend fun deleteBySongIdAndRefSongNumber(songId: SongId, refSongNumber: Int, refSongBookId: BookId)
 
-  suspend fun deleteBySongIdAndRefSongNumber(songId: Long, refSongNumber: SongNumber) =
+  suspend fun deleteBySongIdAndRefSongNumber(songId: SongId, refSongNumber: SongNumber) =
     deleteBySongIdAndRefSongNumber(songId, refSongNumber.number, refSongNumber.bookId)
 
   @Query("DELETE FROM song_references")
