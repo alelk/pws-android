@@ -1,5 +1,12 @@
 # PWS Android
 
+# [2.0.0-rc.7](https://github.com/alelk/pws-android/compare/v2.0.0-rc.6...v2.0.0-rc.7) (2025-02-24)
+
+
+### Bug Fixes
+
+* **database:** add database-test-fixtures module ([c61f9b8](https://github.com/alelk/pws-android/commit/c61f9b8145beb820ddbee11f5305a7270e4c8c0d))
+
 # [2.0.0-rc.6](https://github.com/alelk/pws-android/compare/v2.0.0-rc.5...v2.0.0-rc.6) (2025-02-21)
 
 
