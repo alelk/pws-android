@@ -1,7 +1,7 @@
-package io.github.alelk.pws.database.util
+package io.github.alelk.pws.android.app.util
 
 import android.text.TextUtils
-import io.github.alelk.pws.database.util.LocalizedStringsProvider.getResource
+import io.github.alelk.pws.android.app.util.LocalizedStringsProvider.getResource
 import java.util.Locale
 
 /**

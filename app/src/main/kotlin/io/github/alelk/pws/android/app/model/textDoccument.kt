@@ -1,6 +1,6 @@
 package io.github.alelk.pws.android.app.model
 
-import io.github.alelk.pws.database.util.PwsSongUtil
+import io.github.alelk.pws.android.app.util.PwsSongUtil
 import java.util.Locale
 
 val SongInfo.textDocument: String

@@ -1,4 +1,4 @@
-package io.github.alelk.pws.database.util
+package io.github.alelk.pws.android.app.util
 
 import android.util.Log
 import java.util.Locale

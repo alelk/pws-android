@@ -38,7 +38,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import io.github.alelk.pws.database.util.PwsSongUtil
+import io.github.alelk.pws.android.app.util.PwsSongUtil
 import io.github.alelk.pws.android.app.activity.SongActivity
 import io.github.alelk.pws.android.app.adapter.SongReferencesRecyclerViewAdapter
 import io.github.alelk.pws.android.app.adapter.SongTextFragmentPagerAdapter

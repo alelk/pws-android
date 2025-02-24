@@ -1,4 +1,4 @@
-package io.github.alelk.pws.database.util
+package io.github.alelk.pws.android.app.util
 
 import io.kotest.core.spec.style.FeatureSpec
 import io.kotest.matchers.shouldBe
@@ -36,7 +36,8 @@ class PwsSongHtmlBuilderTest : FeatureSpec({
         |<font color='#7aaf83'> 3 </font><br> Verse 3 Line 1<br> Verse 3 Line 2<br>
         |""".trimMargin().split('\n').joinToString("")
 
-      val html = PwsSongHtmlBuilder(Locale.forLanguageTag("en")).buildHtml(song, false)
+      val html = PwsSongHtmlBuilder(Locale.forLanguageTag("en"))
+        .buildHtml(song, false)
       html shouldBe expectedHtml
     }
 
@@ -49,7 +50,8 @@ class PwsSongHtmlBuilderTest : FeatureSpec({
         |<font color='#7aaf83'> 3 </font><br> Verse 3 Line 1<br> Verse 3 Line 2<br>
         |""".trimMargin().split('\n').joinToString("")
 
-      val html = PwsSongHtmlBuilder(Locale.forLanguageTag("en")).buildHtml(song, true)
+      val html = PwsSongHtmlBuilder(Locale.forLanguageTag("en"))
+        .buildHtml(song, true)
       html shouldBe expectedHtml
     }
   }
@@ -100,7 +102,8 @@ class PwsSongHtmlBuilderTest : FeatureSpec({
         |<font color='#888888'><i> [Chorus 1]</i></font><br>
         |""".trimMargin().split('\n').joinToString("")
 
-      val html = PwsSongHtmlBuilder(Locale.forLanguageTag("en")).buildHtml(song, false)
+      val html = PwsSongHtmlBuilder(Locale.forLanguageTag("en"))
+        .buildHtml(song, false)
       html shouldBe expectedHtml
     }
 
@@ -117,7 +120,8 @@ class PwsSongHtmlBuilderTest : FeatureSpec({
         |<font color='#999999'>Chorus 1</font><br> Chorus 1 Line 1<br> Chorus 1 Line 2<br> <br>
         |""".trimMargin().split('\n').joinToString("")
 
-      val html = PwsSongHtmlBuilder(Locale.forLanguageTag("en")).buildHtml(song, true)
+      val html = PwsSongHtmlBuilder(Locale.forLanguageTag("en"))
+        .buildHtml(song, true)
       html shouldBe expectedHtml
     }
   }

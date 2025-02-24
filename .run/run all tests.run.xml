@@ -16,6 +16,7 @@
           <option value=":database:testRuDebugUnitTest" />
           <option value=":backup:jvmTest" />
           <option value=":app:testRuDebugUnitTest" />
+          <option value=":app:test" />
         </list>
       </option>
       <option name="vmOptions" />
