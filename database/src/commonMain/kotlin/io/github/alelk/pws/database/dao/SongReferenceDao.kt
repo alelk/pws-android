@@ -5,9 +5,8 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import io.github.alelk.pws.database.entity.SongEntity
-import io.github.alelk.pws.database.entity.SongReferenceEntity
 import io.github.alelk.pws.database.entity.SongReferenceDetailsEntity
+import io.github.alelk.pws.database.entity.SongReferenceEntity
 import io.github.alelk.pws.domain.model.SongId
 import kotlinx.coroutines.flow.Flow
 
@@ -31,22 +30,14 @@ interface SongReferenceDao {
   @Query("SELECT count(*) FROM song_references")
   suspend fun count(): Int
 
-  //
-//  @Query("SELECT * FROM psalmpsalmreferences WHERE _id in (:ids)")
-//  suspend fun getByIds(ids: List<Long>): List<SongSongReferenceEntity>
-//
-//  @Query("SELECT * FROM psalmpsalmreferences WHERE psalmid = :songId ORDER BY priority DESC")
-//  suspend fun getBySongId(songId: Long): List<SongSongReferenceEntity>
-//
-//  @Query("SELECT * FROM psalmpsalmreferences WHERE psalmid in (:songIds)")
-//  suspend fun getBySongIds(songIds: List<Long>): List<SongSongReferenceEntity>
-//
+  @Query("SELECT * FROM song_references WHERE song_id = :songId ORDER BY priority DESC")
+  suspend fun getBySongId(songId: SongId): List<SongReferenceEntity>
+
+  @Query("SELECT * FROM song_references WHERE song_id in (:songIds)")
+  suspend fun getBySongIds(songIds: List<SongId>): List<SongReferenceEntity>
+
 //  @Query("SELECT * FROM psalmpsalmreferences WHERE refpsalmid = :refSongId")
 //  suspend fun getByRefSongId(refSongId: Long): List<SongSongReferenceEntity>
-//
-//  @Query("SELECT * FROM psalmpsalmreferences WHERE psalmid = :songId and refpsalmid = :refSongId")
-//  suspend fun getBySongIdAndRefSongId(songId: Long, refSongId: Long): SongSongReferenceEntity?
-//
 //  @Query(
 //    """
 //    SELECT r.* FROM psalmpsalmreferences r
