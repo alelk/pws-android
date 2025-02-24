@@ -27,10 +27,10 @@ kotlin {
     val commonTest by getting {
       dependencies {
         implementation(project(":domain:domain-test-fixtures"))
+        implementation(project(":database:database-test-fixtures"))
         implementation(libs.kotest.assertions.core)
         implementation(libs.kotest.framework.engine)
         implementation(libs.kotest.property)
-        implementation(libs.kotest.property.datetime)
         implementation(kotlin("test-common"))
         implementation(kotlin("test-annotations-common"))
       }

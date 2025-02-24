@@ -6,7 +6,6 @@ import io.github.alelk.pws.domain.model.songId
 import io.github.alelk.pws.domain.model.tagId
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
-import io.kotest.property.arbitrary.removeEdgecases
 
 fun Arb.Companion.songTagEntity(
   songId: Arb<SongId> = Arb.songId(),

@@ -10,11 +10,11 @@ import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.removeEdgecases
 
 fun Arb.Companion.songSongReferenceEntity(
-  songId: Arb<SongId> = Arb.songId().removeEdgecases(),
-  refSongId: Arb<SongId> = Arb.songId().removeEdgecases(),
-  reason: Arb<SongRefReason> = Arb.enum(),
-  volume: Arb<Int> = Arb.int(min = 1, max = 100),
-  priority: Arb<Int> = Arb.int(min = 1, max = 1000)
+    songId: Arb<SongId> = Arb.songId().removeEdgecases(),
+    refSongId: Arb<SongId> = Arb.songId().removeEdgecases(),
+    reason: Arb<SongRefReason> = Arb.enum(),
+    volume: Arb<Int> = Arb.int(min = 1, max = 100),
+    priority: Arb<Int> = Arb.int(min = 1, max = 1000)
 ): Arb<SongReferenceEntity> =
   arbitrary {
     val songId1 = songId.bind()
