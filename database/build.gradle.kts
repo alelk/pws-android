@@ -59,7 +59,6 @@ kotlin {
       dependencies {
         implementation(libs.kotlinx.coroutines.core)
         runtimeOnly(libs.room.runtime.jvm)
-        runtimeOnly(libs.room.ktx)
       }
     }
     val jvmTest by getting {
