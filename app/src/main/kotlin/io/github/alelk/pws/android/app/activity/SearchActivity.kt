@@ -30,6 +30,9 @@ import io.github.alelk.pws.android.app.fragment.SearchResultsFragment
 import io.github.alelk.pws.android.app.model.SearchSongViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.alelk.pws.android.app.R
+import io.github.alelk.pws.domain.model.BookId
+import io.github.alelk.pws.domain.model.SongId
+import io.github.alelk.pws.domain.model.SongNumberId
 
 @AndroidEntryPoint
 class SearchActivity : AppCompatThemedActivity() {
@@ -66,14 +69,11 @@ class SearchActivity : AppCompatThemedActivity() {
       }
     } else if (Intent.ACTION_VIEW == intent.action) {
       val data = intent.data ?: return
-      val n = data.lastPathSegment ?: return
-      val songNumberId = n.toLong()
-      if (songNumberId != -1L) {
-        val intentSongView = Intent(applicationContext, SongActivity::class.java).apply {
-          putExtra(SongActivity.KEY_SONG_NUMBER_ID, songNumberId)
-        }
-        startActivity(intentSongView)
+      val songNumberId = SongNumberId.parse(data.lastPathSegment ?: return)
+      val intentSongView = Intent(applicationContext, SongActivity::class.java).apply {
+        putExtra(SongActivity.KEY_SONG_NUMBER_ID, songNumberId.toString())
       }
+      startActivity(intentSongView)
     }
   }
 

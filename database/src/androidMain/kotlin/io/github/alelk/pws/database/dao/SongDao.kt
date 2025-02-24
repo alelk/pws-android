@@ -13,10 +13,10 @@ actual interface SongDao : SongDaoBase {
   @Query(
     """
     SELECT
-      (sn.book_id | '/' | sn.song_id) AS ${SearchManager.SUGGEST_COLUMN_INTENT_DATA_ID},
+      (sn.book_id || '/' || sn.song_id) AS ${SearchManager.SUGGEST_COLUMN_INTENT_DATA_ID},
       s.name AS ${SearchManager.SUGGEST_COLUMN_TEXT_1},
       group_concat(b.display_short_name, ' | ') AS ${SearchManager.SUGGEST_COLUMN_TEXT_2},
-      (sn.book_id | '/' | sn.song_id) AS ${BaseColumns._ID}
+      (sn.book_id || '/' || sn.song_id) AS ${BaseColumns._ID}
     FROM books AS b
     INNER JOIN book_statistic AS bs ON b.id = bs.id
     INNER JOIN song_numbers AS sn ON sn.book_id = b.id
@@ -32,12 +32,12 @@ actual interface SongDao : SongDaoBase {
   @Query(
     """
     SELECT
-      (sn.book_id | '/' | sn.song_id) AS ${BaseColumns._ID},
+      (sn.book_id || '/' || sn.song_id) AS ${BaseColumns._ID},
       sn.number AS song_number,
       group_concat(b.display_short_name, ', ') AS ${SearchManager.SUGGEST_COLUMN_TEXT_2},
       s.name AS ${SearchManager.SUGGEST_COLUMN_TEXT_1},
       s.rowid AS song_id,
-      (sn.book_id | '/' | sn.song_id) AS ${SearchManager.SUGGEST_COLUMN_INTENT_DATA_ID}
+      (sn.book_id || '/' || sn.song_id) AS ${SearchManager.SUGGEST_COLUMN_INTENT_DATA_ID}
     FROM books AS b
     INNER JOIN book_statistic AS bs ON b.id = bs.id
     INNER JOIN song_numbers AS sn ON sn.book_id = b.id
