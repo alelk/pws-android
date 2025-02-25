@@ -43,7 +43,6 @@ class PwsDatabaseHelper(private val mContext: Context) : SQLiteOpenHelper(
           .setSmallIcon(R.drawable.ic_data_usage_black)
           .setTicker(mContext.getString(R.string.txt_title_database_init))
         copyDatabase()
-        applyMigrations()
         if (!isDatabaseExists) {
           Log.e(
             LOG_TAG,
@@ -72,66 +71,6 @@ class PwsDatabaseHelper(private val mContext: Context) : SQLiteOpenHelper(
 
   override fun onCreate(db: SQLiteDatabase) {
     Log.e(LOG_TAG, "${this::onCreate.name}: This method should be never called.")
-  }
-
-  override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-    Log.i(LOG_TAG, "${this::onUpgrade.name}: oldVersion: $oldVersion. newVersion: $newVersion")
-    for (version in oldVersion + 1..newVersion) {
-      val scriptPath = "db/migrations/${version}.sql"
-      executeScript(scriptPath, db, this::onUpgrade.name)
-    }
-  }
-
-
-  override fun onDowngrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-    Log.i(LOG_TAG, "${this::onDowngrade.name}: oldVersion: $oldVersion. newVersion: $newVersion")
-    for (version in oldVersion downTo newVersion + 1) {
-      val scriptPath = "db/rollbacks/${version}.sql"
-      executeScript(scriptPath, db, this::onDowngrade.name)
-    }
-  }
-
-  private fun executeScript(
-    scriptPath: String,
-    db: SQLiteDatabase,
-    logMethodName: String
-  ) {
-    val sqlScript = readSqlScriptFromFile(scriptPath)
-    if (sqlScript.isNotEmpty()) {
-      db.beginTransaction()
-      try {
-        val commands = sqlScript.split(";").map { it.trim() }.filter { it.isNotEmpty() }
-        commands.forEach { command ->
-          db.execSQL(command)
-        }
-        db.setTransactionSuccessful()
-      } catch (e: SQLException) {
-        Log.e(LOG_TAG, "$logMethodName: Error while performing $scriptPath", e)
-      } finally {
-        db.endTransaction()
-        Log.i(LOG_TAG, "$logMethodName: $scriptPath executed successfully")
-      }
-    }
-  }
-
-  private fun readSqlScriptFromFile(fileName: String): String {
-    val stringBuilder = StringBuilder()
-    try {
-      mContext.assets.open(fileName).use { inputStream ->
-        BufferedReader(InputStreamReader(inputStream)).use { reader ->
-          var line: String?
-          while (reader.readLine().also { line = it } != null) {
-            val trimmedLine = line!!.trim()
-            if (trimmedLine.isNotEmpty() && !trimmedLine.startsWith("--")) {
-              stringBuilder.append(line).append("\n")
-            }
-          }
-        }
-      }
-    } catch (e: IOException) {
-      e.printStackTrace()
-    }
-    return stringBuilder.toString()
   }
 
   @Throws(IOException::class)
@@ -168,30 +107,6 @@ class PwsDatabaseHelper(private val mContext: Context) : SQLiteOpenHelper(
     }
   }.onFailure { e ->
     Log.e(LOG_TAG, "error copying database file from assets: ${e.message}", e)
-  }
-
-  private fun applyMigrations() {
-    val METHOD_NAME = "applyMigrations"
-    val database = openDatabase(dbPath, SQLiteDatabase.OPEN_READWRITE)
-    if (database == null) {
-      Log.e(LOG_TAG, "$METHOD_NAME: Could not open database + $dbPath")
-      return
-    }
-
-    try {
-      val migrationFiles = mContext.assets.list("db/migrations")?.filter { fileName ->
-        val versionNumber = fileName.replace(".sql", "").toIntOrNull()
-        versionNumber != null && versionNumber <= DATABASE_VERSION
-      }
-      migrationFiles?.sorted()?.forEach { fileName ->
-        val scriptPath = "db/migrations/$fileName"
-        executeScript(scriptPath, database, METHOD_NAME)
-      }
-    } catch (e: IOException) {
-      Log.e(LOG_TAG, "$METHOD_NAME: Error applying migration files", e)
-    } finally {
-      database.close()
-    }
   }
 
   private fun openPreviousDatabaseIfExists(): SQLiteDatabase? {
