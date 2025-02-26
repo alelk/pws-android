@@ -10,12 +10,15 @@ fun File.unzip(destDirectory: File) {
   }
   require(destDirectory.isDirectory) { "expected directory: $destDirectory" }
   ZipFile(this).use { zip ->
-    zip.entries().asSequence().forEach { entry ->
-      zip.getInputStream(entry).use { input ->
-        val filePath = destDirectory.resolve(entry.name)
-        if (entry.isDirectory) filePath.mkdir()
-        else input.copyTo(FileOutputStream(filePath))
+    zip.entries().asSequence()
+      .filterNot { it.name.startsWith("__MACOSX") }
+      .filterNot { it.name.startsWith("._") }
+      .forEach { entry ->
+        zip.getInputStream(entry).use { input ->
+          val filePath = destDirectory.resolve(entry.name)
+          if (entry.isDirectory) filePath.mkdir()
+          else input.copyTo(FileOutputStream(filePath))
+        }
       }
-    }
   }
 }

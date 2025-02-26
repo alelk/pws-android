@@ -73,6 +73,9 @@ class PwsDatabaseHelper(private val mContext: Context) : SQLiteOpenHelper(
     Log.e(LOG_TAG, "${this::onCreate.name}: This method should be never called.")
   }
 
+  override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
+  }
+
   @Throws(IOException::class)
   private fun copyDatabase() = kotlin.runCatching {
     val am = mContext.assets
