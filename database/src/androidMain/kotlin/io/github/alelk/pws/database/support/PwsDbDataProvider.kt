@@ -11,4 +11,7 @@ interface PwsDbDataProvider {
 
   /** Get songs history. */
   suspend fun getHistory(): Result<List<HistoryItem>>
+
+  /** Get edited songs. */
+  suspend fun getEditedSongs(): Result<List<SongChange>>
 }

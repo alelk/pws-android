@@ -3,9 +3,13 @@ package io.github.alelk.pws.database.support
 import br.com.colman.kotest.FeatureSpec
 import br.com.colman.kotest.android.extensions.robolectric.RobolectricTest
 import io.github.alelk.pws.database.withSqliteDb
+import io.github.alelk.pws.domain.model.BibleRef
 import io.github.alelk.pws.domain.model.BookId
 import io.github.alelk.pws.domain.model.SongNumber
+import io.github.alelk.pws.domain.model.Tonality
+import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldContain
 import kotlinx.datetime.LocalDateTime
 import timber.log.Timber
 import java.io.File
@@ -45,6 +49,24 @@ class PwsDb1xDataProviderTest : FeatureSpec({
         history.getOrThrow().run {
           size shouldBe 14
           first() shouldBe HistoryItem(SongNumber(BookId.parse("PV3300"), 2), LocalDateTime.parse("2025-02-25T18:03:02"))
+        }
+      }
+
+      scenario("get edited songs") {
+        val songs = dbProvider.getEditedSongs()
+        songs.isSuccess shouldBe true
+        songs.getOrThrow().run {
+          size shouldBe 17
+          distinctBy { it.lyric } shouldHaveSize 5
+          single { it.number == SongNumber(BookId.parse("PV800"), 11) }.run {
+            lyric shouldContain "This song is edited (text + bible ref)."
+            bibleRef shouldBe BibleRef("Edited Bible Ref")
+          }
+          single { it.number == SongNumber(BookId.parse("PV3300"), 16) }.run {
+            lyric shouldContain "This song is edited (empty bible reference + tonality)"
+            tonalities shouldBe listOf(Tonality.C_MINOR)
+            bibleRef shouldBe null
+          }
         }
       }
 
