@@ -10,4 +10,8 @@ data class SongChange(
   val lyric: String,
   val tonalities: List<Tonality>? = null,
   val bibleRef: BibleRef? = null,
-)
+) {
+  init {
+    require(lyric.isNotBlank()) { "song $number lyric should not be blank" }
+  }
+}

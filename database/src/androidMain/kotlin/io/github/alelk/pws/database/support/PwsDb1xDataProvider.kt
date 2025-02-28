@@ -5,7 +5,9 @@ import android.database.sqlite.SQLiteDatabase
 import androidx.core.database.getStringOrNull
 import io.github.alelk.pws.domain.model.BibleRef
 import io.github.alelk.pws.domain.model.BookId
+import io.github.alelk.pws.domain.model.Color
 import io.github.alelk.pws.domain.model.SongNumber
+import io.github.alelk.pws.domain.model.TagId
 import io.github.alelk.pws.domain.model.Tonality
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.toList
@@ -86,7 +88,57 @@ class PwsDb1xDataProvider(val db: SQLiteDatabase) : PwsDbDataProvider {
         tonalities = tonalities?.split(';')?.map { Tonality.fromIdentifier(it.trim()) },
         bibleRef = bibleRef?.takeIf { it.isNotBlank() }?.let(::BibleRef)
       )
-    }.map { it.filter { s -> s.lyric.isNotBlank() } }
+    }
+
+  /** Get song tags.
+   *
+   * Database versions:
+   * - 1.8.0 (6, 7, 8, 9, 10)
+   */
+  override suspend fun getTags(): Result<List<Tag>> =
+    db.fetchData(
+      dbVersion = 6..10,
+      collectionName = "tags",
+      table =
+      """
+        |tags as t inner join song_number_tags snt on t.id = snt.tag_id 
+        |inner join psalmnumbers pn on snt.song_number_id = pn._id 
+        |inner join books b on pn.bookid = b._id
+        |""".trimMargin(),
+      columns = arrayOf("t.id as id", "t.name as name", "t.color as color", "t.predefined as predefined", "b.edition as book_id", "pn.number as song_number"),
+    ) { cursor ->
+      val tagId = cursor.getString(cursor.getColumnIndexOrThrow("id"))
+      val tagName = cursor.getString(cursor.getColumnIndexOrThrow("name"))
+      val tagColor = cursor.getString(cursor.getColumnIndexOrThrow("color"))
+      val predefined = cursor.getString(cursor.getColumnIndexOrThrow("predefined"))
+      val bookId = cursor.getString(cursor.getColumnIndexOrThrow("book_id"))
+      val songNumber = cursor.getInt(cursor.getColumnIndexOrThrow("song_number"))
+      Tag(
+        id = TagId.parse(tagId),
+        name = tagName,
+        color = Color.parse(tagColor.trim()),
+        predefined = predefined == "1" || predefined.toBoolean(),
+        songNumbers = mapOf(BookId.parse(bookId.trim()) to setOf(songNumber))
+      )
+    }.map { tags ->
+      tags
+        .groupBy { it.id }
+        .mapNotNull { (_, values) ->
+          runCatching {
+            val tag = values.first()
+            check(values.all { it.id == tag.id }) { "impossible state" }
+            check(values.all { it.name == tag.name }) { "expected all tag ${tag.id} to have name '${tag.name}'" }
+            check(values.all { it.color == tag.color }) { "expected all tag ${tag.id} to have color ${tag.color}" }
+            check(values.all { it.predefined == tag.predefined }) { "expected all tag ${tag.id} to be predefined=${tag.predefined}" }
+            val songNumbers =
+              values
+                .flatMap { it.songNumbers.toList() }
+                .groupBy { (bookId, _) -> bookId }
+                .mapValues { (_, values) -> values.flatMap { (_, numbers) -> numbers }.toSet() }
+            tag.copy(songNumbers = songNumbers)
+          }.getOrNull()
+        }
+    }
 }
 
 private suspend fun <T> SQLiteDatabase.fetchData(
