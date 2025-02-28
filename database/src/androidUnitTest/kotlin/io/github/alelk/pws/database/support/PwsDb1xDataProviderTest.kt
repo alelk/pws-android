@@ -5,7 +5,12 @@ import br.com.colman.kotest.android.extensions.robolectric.RobolectricTest
 import io.github.alelk.pws.database.withSqliteDb
 import io.github.alelk.pws.domain.model.BibleRef
 import io.github.alelk.pws.domain.model.BookId
+import io.github.alelk.pws.domain.model.Color
+import io.github.alelk.pws.domain.model.Prayer
+import io.github.alelk.pws.domain.model.Pv3300
+import io.github.alelk.pws.domain.model.Pv800
 import io.github.alelk.pws.domain.model.SongNumber
+import io.github.alelk.pws.domain.model.TagId
 import io.github.alelk.pws.domain.model.Tonality
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
@@ -48,7 +53,7 @@ class PwsDb1xDataProviderTest : FeatureSpec({
         history.isSuccess shouldBe true
         history.getOrThrow().run {
           size shouldBe 14
-          first() shouldBe HistoryItem(SongNumber(BookId.parse("PV3300"), 2), LocalDateTime.parse("2025-02-25T18:03:02"))
+          first() shouldBe HistoryItem(SongNumber(BookId.Pv3300, 2), LocalDateTime.parse("2025-02-25T18:03:02"))
         }
       }
 
@@ -58,11 +63,11 @@ class PwsDb1xDataProviderTest : FeatureSpec({
         songs.getOrThrow().run {
           size shouldBe 17
           distinctBy { it.lyric } shouldHaveSize 5
-          single { it.number == SongNumber(BookId.parse("PV800"), 11) }.run {
+          single { it.number == SongNumber(BookId.Pv800, 11) }.run {
             lyric shouldContain "This song is edited (text + bible ref)."
             bibleRef shouldBe BibleRef("Edited Bible Ref")
           }
-          single { it.number == SongNumber(BookId.parse("PV3300"), 16) }.run {
+          single { it.number == SongNumber(BookId.Pv3300, 16) }.run {
             lyric shouldContain "This song is edited (empty bible reference + tonality)"
             tonalities shouldBe listOf(Tonality.C_MINOR)
             bibleRef shouldBe null
@@ -70,6 +75,25 @@ class PwsDb1xDataProviderTest : FeatureSpec({
         }
       }
 
+      scenario("get tags") {
+        val tags = dbProvider.getTags()
+        tags.isSuccess shouldBe true
+        tags.getOrThrow().run {
+          size shouldBe 31
+          filter { it.predefined } shouldHaveSize 30
+          single { !it.predefined }.let { customTag ->
+            customTag.name shouldBe "Custom-Category"
+            customTag.predefined shouldBe false
+            customTag.id shouldBe TagId.parse("custom-00001")
+            customTag.color shouldBe Color.parse("#6dc950")
+            customTag.songNumbers shouldBe mapOf(BookId.Pv3300 to (20..22).toSet())
+          }
+          single { it.id == TagId.Prayer }.let { tag ->
+            tag.predefined shouldBe true
+            tag.songNumbers shouldBe mapOf(BookId.Pv3300 to (22..50).toSet())
+          }
+        }
+      }
     }
   }
 })

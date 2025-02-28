@@ -14,4 +14,7 @@ interface PwsDbDataProvider {
 
   /** Get edited songs. */
   suspend fun getEditedSongs(): Result<List<SongChange>>
+
+  /** Get song tags. */
+  suspend fun getTags(): Result<List<Tag>>
 }
