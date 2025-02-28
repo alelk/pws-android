@@ -1,13 +1,12 @@
 package io.github.alelk.pws.database.support
 
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import androidx.core.database.getStringOrNull
 import io.github.alelk.pws.domain.model.BibleRef
 import io.github.alelk.pws.domain.model.BookId
 import io.github.alelk.pws.domain.model.SongNumber
 import io.github.alelk.pws.domain.model.Tonality
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.toList
 import kotlinx.datetime.LocalDate
@@ -28,40 +27,16 @@ class PwsDb1xDataProvider(val db: SQLiteDatabase) : PwsDbDataProvider {
    * - 1.2.0 (3, 4, 5)
    * - 1.8.0 (6, 7, 8, 9, 10)
    */
-  override suspend fun getFavorites(): Result<List<SongNumber>> = kotlin.runCatching {
-    Timber.i("get favorites from pws database version=${db.version}, path=${db.path}...")
-    val songNumbers = db.query(
-      false,
-      "favorites as f inner join psalmnumbers as pn on f.psalmnumberid=pn._id inner join books as b on pn.bookid=b._id",
-      arrayOf("f.position as position", "pn.number as number", "b.edition as edition"),
-      null, null, null, null, null, null
-    ).use { cursor ->
-      if (!cursor.moveToFirst()) {
-        emptyList()
-      } else
-        flow {
-          do {
-            val songNumber = kotlin.runCatching {
-              val bookId = cursor.getString(cursor.getColumnIndexOrThrow("edition"))
-              val songNumber = cursor.getInt(cursor.getColumnIndexOrThrow("number"))
-              SongNumber(BookId.parse(bookId), songNumber)
-            }
-            emit(songNumber)
-          } while (cursor.moveToNext())
-        }.toList()
-          .also { Timber.i("${it.filter { v -> v.isSuccess }.size} favorites fetched from pws database version=${db.version}, path=${db.path}") }
+  override suspend fun getFavorites(): Result<List<SongNumber>> =
+    db.fetchData(
+      collectionName = "favorites",
+      table = "favorites as f inner join psalmnumbers as pn on f.psalmnumberid=pn._id inner join books as b on pn.bookid=b._id",
+      columns = arrayOf("f.position as position", "pn.number as number", "b.edition as edition")
+    ) { cursor ->
+      val bookId = cursor.getString(cursor.getColumnIndexOrThrow("edition"))
+      val songNumber = cursor.getInt(cursor.getColumnIndexOrThrow("number"))
+      SongNumber(BookId.parse(bookId), songNumber)
     }
-    val errors = songNumbers.mapNotNull { it.exceptionOrNull() }.distinctBy { it.message }
-    if (errors.isNotEmpty()) {
-      Timber.e(
-        errors.first(),
-        "error fetching favorites from pws database version=${db.version}, path=${db.path}: ${errors.joinToString(",") { it.message.toString() }}"
-      )
-    }
-    songNumbers.mapNotNull { it.getOrNull() }
-  }.onFailure { exc ->
-    Timber.e(exc, "error fetching favorites from pws database version=${db.version}, path=${db.path}: ${exc.message}")
-  }
 
   val TIMESTAMP_FORMAT = LocalDateTime.Format { date(LocalDate.Formats.ISO); char(' '); time(LocalTime.Formats.ISO) }
 
@@ -73,97 +48,83 @@ class PwsDb1xDataProvider(val db: SQLiteDatabase) : PwsDbDataProvider {
    * - 1.2.0 (3, 4, 5)
    * - 1.8.0 (6, 7, 8, 9, 10)
    */
-  override suspend fun getHistory(): Result<List<HistoryItem>> = kotlin.runCatching {
-    Timber.i("get history from pws database version=${db.version}, path=${db.path}...")
-    val historyItems = db.query(
-      false,
-      "history as h inner join psalmnumbers as pn on h.psalmnumberid=pn._id inner join books as b on pn.bookid=b._id",
-      arrayOf("h.accesstimestamp as accesstimestamp", "pn.number as number", "b.edition as edition"),
-      null, null, null, null, null, null
-    ).use { cursor ->
-      if (!cursor.moveToFirst()) {
-        emptyList()
-      } else
-        flow {
-          do {
-            val historyItem = kotlin.runCatching {
-              val bookId = cursor.getString(cursor.getColumnIndexOrThrow("edition"))
-              val songNumber = cursor.getInt(cursor.getColumnIndexOrThrow("number"))
-              val timestamp = cursor.getString(cursor.getColumnIndexOrThrow("accesstimestamp"))
-              HistoryItem(SongNumber(BookId.parse(bookId), songNumber), TIMESTAMP_FORMAT.parse(timestamp))
-            }
-            emit(historyItem)
-          } while (cursor.moveToNext())
-        }.toList()
-          .also { Timber.i("${it.filter { v -> v.isSuccess }.size} history items fetched from pws database version=${db.version}, path=${db.path}") }
+  override suspend fun getHistory(): Result<List<HistoryItem>> =
+    db.fetchData(
+      collectionName = "history",
+      table = "history as h inner join psalmnumbers as pn on h.psalmnumberid=pn._id inner join books as b on pn.bookid=b._id",
+      columns = arrayOf("h.accesstimestamp as accesstimestamp", "pn.number as number", "b.edition as edition"),
+    ) { cursor ->
+      val bookId = cursor.getString(cursor.getColumnIndexOrThrow("edition"))
+      val songNumber = cursor.getInt(cursor.getColumnIndexOrThrow("number"))
+      val timestamp = cursor.getString(cursor.getColumnIndexOrThrow("accesstimestamp"))
+      HistoryItem(SongNumber(BookId.parse(bookId), songNumber), TIMESTAMP_FORMAT.parse(timestamp))
     }
-    val errors = historyItems.mapNotNull { it.exceptionOrNull() }.distinctBy { it.message }
-    if (errors.isNotEmpty()) {
-      Timber.e(
-        errors.first(),
-        "error fetching history from pws database version=${db.version}, path=${db.path}: " +
-          errors.take(3).joinToString(",") { it.message.toString() }
-      )
-    }
-    historyItems.mapNotNull { it.getOrNull() }
-  }.onFailure { exc ->
-    Timber.e(
-      exc,
-      "error fetching history from pws database version=${db.version}, path=${db.path}: ${exc.message}"
-    )
-  }
 
   /** Get history.
    *
    * Database versions:
+   * - 1.2.0 (3, 4, 5)
    * - 1.8.0 (6, 7, 8, 9, 10)
    */
   override suspend fun getEditedSongs(): Result<List<SongChange>> =
-    // todo: посмотреть, начиная с какой версии была возможность редактировать текст песен
-    if (db.version < 6) {
-      Timber.i("skip fetching songs from pws database version=${db.version}, path=${db.path} (song editing wasn't supported yet)")
-      Result.success(emptyList())
-    } else kotlin.runCatching {
-      Timber.i("get edited songs from pws database version=${db.version}, path=${db.path}...")
-      val songItems = db.query(
-        false,
-        "psalms as p inner join psalmnumbers as pn on pn.psalmid=p._id inner join books b on pn.bookid=b._id",
-        arrayOf("p.text as text", "p.bibleref as bibleref", "p.tonalities as tonalities", "pn.number as number", "b.edition as edition"),
-        "p.edited=?", arrayOf(1.toString()), null, null, null, null
-      ).use { cursor ->
-        if (!cursor.moveToFirst()) {
-          emptyList()
-        } else
-          flow {
-            do {
-              val songChange = kotlin.runCatching {
-                val bookId = cursor.getString(cursor.getColumnIndexOrThrow("edition"))
-                val songNumber = cursor.getInt(cursor.getColumnIndexOrThrow("number"))
-                val tonalities = cursor.getStringOrNull(cursor.getColumnIndexOrThrow("tonalities"))
-                val lyric = cursor.getString(cursor.getColumnIndexOrThrow("text"))
-                val bibleRef = cursor.getStringOrNull(cursor.getColumnIndexOrThrow("bibleref"))
-                SongChange(
-                  SongNumber(BookId.parse(bookId), songNumber),
-                  lyric = lyric,
-                  tonalities = tonalities?.split(';')?.map { Tonality.fromIdentifier(it.trim()) },
-                  bibleRef = bibleRef?.takeIf { it.isNotBlank() }?.let(::BibleRef)
-                )
-              }
-              emit(songChange)
-            } while (cursor.moveToNext())
-          }.toList().distinct()
-            .also { Timber.i("${it.filter { v -> v.isSuccess }.size} edited songs fetched from pws database version=${db.version}, path=${db.path}") }
-      }
-      val errors = songItems.mapNotNull { it.exceptionOrNull() }.distinctBy { it.message }
+    db.fetchData(
+      dbVersion = 4..10,
+      collectionName = "edited songs",
+      table = "psalms as p inner join psalmnumbers as pn on pn.psalmid=p._id inner join books b on pn.bookid=b._id",
+      columns = arrayOf("p.text as text", "p.bibleref as bibleref", "p.tonalities as tonalities", "pn.number as number", "b.edition as edition"),
+      selection = "p.edited=?",
+      selectionArgs = arrayOf(1.toString()),
+    ) { cursor ->
+      val bookId = cursor.getString(cursor.getColumnIndexOrThrow("edition"))
+      val songNumber = cursor.getInt(cursor.getColumnIndexOrThrow("number"))
+      val tonalities = cursor.getStringOrNull(cursor.getColumnIndexOrThrow("tonalities"))
+      val lyric = cursor.getString(cursor.getColumnIndexOrThrow("text"))
+      val bibleRef = cursor.getStringOrNull(cursor.getColumnIndexOrThrow("bibleref"))
+      SongChange(
+        SongNumber(BookId.parse(bookId), songNumber),
+        lyric = lyric,
+        tonalities = tonalities?.split(';')?.map { Tonality.fromIdentifier(it.trim()) },
+        bibleRef = bibleRef?.takeIf { it.isNotBlank() }?.let(::BibleRef)
+      )
+    }.map { it.filter { s -> s.lyric.isNotBlank() } }
+}
+
+private suspend fun <T> SQLiteDatabase.fetchData(
+  collectionName: String,
+  table: String,
+  columns: Array<String>,
+  selection: String? = null,
+  selectionArgs: Array<String>? = null,
+  dbVersion: IntRange = 1..10,
+  extractor: (cursor: Cursor) -> T
+): Result<List<T>> =
+  kotlin.runCatching {
+    if (this.version !in dbVersion) {
+      Timber.d("skip fetching '$collectionName' from pws database version=$version, path=$path (supported database version: $dbVersion)")
+      emptyList()
+    } else {
+      Timber.i("get '$collectionName' from pws database version=$version, path=$path ...")
+      val entities =
+        query(false, table, columns, selection, selectionArgs, null, null, null, null)
+          .use { cursor ->
+            if (!cursor.moveToFirst()) emptyList()
+            else flow {
+              do {
+                val data = kotlin.runCatching { extractor(cursor) }
+                emit(data)
+              } while (cursor.moveToNext())
+            }.toList()
+              .distinct()
+              .also { Timber.i("${it.filter { v -> v.isSuccess }.size} '$collectionName' fetched from pws database version=$version, path=$path") }
+          }
+      val errors = entities.mapNotNull { it.exceptionOrNull() }.distinctBy { it.message }
       if (errors.isNotEmpty()) {
         Timber.e(
           errors.first(),
-          "error fetching edited songs from pws database version=${db.version}, path=${db.path}: " +
+          "error fetching '$collectionName' from pws database version=$version, path=$path: " +
             errors.take(3).joinToString(",") { it.message.toString() }
         )
       }
-      songItems.mapNotNull { it.getOrNull() }.filter { it.lyric.isNotBlank() }
-    }.onFailure { exc -> Timber.e(exc, "error fetching edited songs from pws database version=${db.version}, path=${db.path}: ${exc.message}") }
-
-
-}
+      entities.mapNotNull { it.getOrNull() }
+    }
+  }.onFailure { exc -> Timber.e(exc, "error fetching '$collectionName' from pws database version=$version, path=$path: ${exc.message}") }
