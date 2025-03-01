@@ -156,7 +156,7 @@ class SongTextFragment : Fragment() {
         else Html.fromHtml(songInfoHtml)
 
     val tonalities = song.tonalities?.joinToString(", ") { requireActivity().getString(it.labelId) }
-    this.tonalities.text = tonalities ?: getString(R.string.tonality_not_defined)
+    this.tonalities.text = tonalities ?: "---"
   }.onFailure { e -> Timber.e(e, "error updating ui from song #${song.id} info") }
 
   /** Update ui for song tags */

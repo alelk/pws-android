@@ -1,6 +1,6 @@
 package io.github.alelk.pws.android.app.util
 
-import io.github.alelk.pws.database.R
+import io.github.alelk.pws.android.app.R
 import io.github.alelk.pws.domain.model.Tonality
 
 val Tonality.labelId: Int

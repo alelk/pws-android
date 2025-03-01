@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2018 The P&W Songs Open Source Project
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,92 +16,124 @@
 
 <resources>
 
-    <string name="action_settings">Settings</string>
-    <string name="title_activity_song_fullscreen">Song</string>
-    <string name="title_activity_main_settings">Settings</string>
-    <string name="title_activity_song_edit">Edit Song</string>
+  <string name="action_settings">Settings</string>
+  <string name="title_activity_song_fullscreen">Song</string>
+  <string name="title_activity_main_settings">Settings</string>
+  <string name="title_activity_song_edit">Edit Song</string>
 
-    <!-- Main activity display strings. -->
-    <string name="txt_main_navigation_header_comment">The library of the Christian songs.</string>
-    <string name="lbl_drawer_main_history">History</string>
-    <string name="lbl_drawer_main_home">Home</string>
-    <string name="lbl_drawer_main_books">Hymns</string>
-    <string name="lbl_drawer_main_favorite">Favorite</string>
-    <string name="lbl_drawer_main_settings">Settings</string>
-    <string name="lbl_drawer_main_system_menu"></string>
+  <!-- Main activity display strings. -->
+  <string name="txt_main_navigation_header_comment">The library of the Christian songs.</string>
+  <string name="lbl_drawer_main_history">History</string>
+  <string name="lbl_drawer_main_home">Home</string>
+  <string name="lbl_drawer_main_books">Hymns</string>
+  <string name="lbl_drawer_main_favorite">Favorite</string>
+  <string name="lbl_drawer_main_settings">Settings</string>
+  <string name="lbl_drawer_main_system_menu"></string>
 
-    <string name="lbl_recent">Recent</string>
-    <string name="lbl_search">Search song</string>
-    <string name="lbl_search_by_number">Number</string>
-    <string name="lbl_search_by_text">Text</string>
+  <string name="lbl_recent">Recent</string>
+  <string name="lbl_search">Search song</string>
+  <string name="lbl_search_by_number">Number</string>
+  <string name="lbl_search_by_text">Text</string>
 
-    <!-- History fragment display strings. -->
-    <string name="menu_clear_history">Clear history</string>
+  <!-- History fragment display strings. -->
+  <string name="menu_clear_history">Clear history</string>
 
-    <!-- Search activity display strings. -->
-    <string name="title_activity_search">Search</string>
-    <string name="lbl_search_widget">Search&#8230;</string>
-    <string name="hint_enter_text">Type any text to search song&#8230;</string>
-    <string name="hint_enter_song_number">Enter song number&#8230;</string>
-    <string name="lbl_fts_search_progress">Full-text search is in progress..\n</string>
+  <!-- Search activity display strings. -->
+  <string name="title_activity_search">Search</string>
+  <string name="lbl_search_widget">Search&#8230;</string>
+  <string name="hint_enter_text">Type any text to search song&#8230;</string>
+  <string name="hint_enter_song_number">Enter song number&#8230;</string>
+  <string name="lbl_fts_search_progress">Full-text search is in progress..\n</string>
 
-    <!-- Song activity display strings. -->
-    <string name="lbl_chorus">Chorus</string>
-    <string name="lbl_author">Author</string>
-    <string name="lbl_translator">Translator</string>
-    <string name="lbl_music">Music</string>
-    <string name="lbl_references">References</string>
-    <string name="lbl_another_variant">The another song edition.\nLyrics similarity: %1$d%%</string>
-    <string name="lbl_search_song">Search song</string>
-    <string name="lbl_jump_to_number">Jump to the number</string>
-    <string name="lbl_share">Share</string>
-    <string name="lbl_edit">Edit</string>
-    <string name="lbl_delete">Delete</string>
-    <string name="lbl_song_text_size">Text size</string>
-    <string name="sort_by_added_date">Sort by added date</string>
-    <string name="sort_by_number">Sort by number</string>
-    <string name="sort_by_name">Sort by name</string>
-    <string name="msg_added_to_favorites">Added to favorites.</string>
-    <string name="msg_removed_from_favorites">Removed from favorites.</string>
+  <!-- Song activity display strings. -->
+  <string name="lbl_chorus">Chorus</string>
+  <string name="lbl_author">Author</string>
+  <string name="lbl_translator">Translator</string>
+  <string name="lbl_music">Music</string>
+  <string name="lbl_references">References</string>
+  <string name="lbl_another_variant">The another song edition.\nLyrics similarity: %1$d%%</string>
+  <string name="lbl_search_song">Search song</string>
+  <string name="lbl_jump_to_number">Jump to the number</string>
+  <string name="lbl_share">Share</string>
+  <string name="lbl_edit">Edit</string>
+  <string name="lbl_delete">Delete</string>
+  <string name="lbl_song_text_size">Text size</string>
+  <string name="sort_by_added_date">Sort by added date</string>
+  <string name="sort_by_number">Sort by number</string>
+  <string name="sort_by_name">Sort by name</string>
+  <string name="msg_added_to_favorites">Added to favorites.</string>
+  <string name="msg_removed_from_favorites">Removed from favorites.</string>
 
-    <!-- Edit song activity -->
-    <string name="label_song_name">Song Name</string>
-    <string name="label_song_text">Song Text</string>
-    <string name="label_bible_ref">Bible Reference</string>
-    <string name="label_song_tonalities">Song Tonalities</string>
-    <string name="btn_save">Save</string>
-    <string name="lbl_edit_song">Edit song</string>
+  <!-- Edit song activity -->
+  <string name="label_song_name">Song Name</string>
+  <string name="label_song_text">Song Text</string>
+  <string name="label_bible_ref">Bible Reference</string>
+  <string name="label_song_tonalities">Song Tonalities</string>
+  <string name="btn_save">Save</string>
+  <string name="lbl_edit_song">Edit song</string>
 
-    <!-- Song fullscreen activity display strings. -->
-    <string name="lbl_add_to_favorites">Add to favorites</string>
-    <string name="lbl_remove_from_favorites">Remove from favorites</string>
+  <!-- Song fullscreen activity display strings. -->
+  <string name="lbl_add_to_favorites">Add to favorites</string>
+  <string name="lbl_remove_from_favorites">Remove from favorites</string>
 
-    <!-- Search song number dialog display strings. -->
-    <string name="lbl_ok">OK</string>
-    <string name="lbl_cancel">Cancel</string>
-    <string name="lbl_enter_song_number">Please enter song number: </string>
-    <string name="msg_no_song_number_found">No song found.</string>
-    <string name="lbl_done">Done</string>
-    <string name="lbl_error">Error</string>
+  <!-- Search song number dialog display strings. -->
+  <string name="lbl_ok">OK</string>
+  <string name="lbl_cancel">Cancel</string>
+  <string name="lbl_enter_song_number">Please enter song number: </string>
+  <string name="msg_no_song_number_found">No song found.</string>
+  <string name="lbl_done">Done</string>
+  <string name="lbl_error">Error</string>
 
-    <!-- Song preferences dialog display strings. -->
-    <string name="lbl_text_size">Text size:</string>
-    <string name="lbl_expand_song_text">Chorus after each verse</string>
+  <!-- Song preferences dialog display strings. -->
+  <string name="lbl_text_size">Text size:</string>
+  <string name="lbl_expand_song_text">Chorus after each verse</string>
 
-    <!-- Categories -->
-    <string name="title_activity_category">Categories</string>
-    <string name="title_activity_category_songs">Category:</string>
-    <string name="title_activity_category_edit">Edit Categories</string>
-    <string name="lbl_drawer_main_categories">Categories</string>
-    <string name="hint_category_name">Category Name</string>
-    <string name="lbl_edit_categories_for_song">Edit categories for song</string>
-    <string name="msg_confirm_delete_category">Are you sure you want to delete the category</string>
-    <string name="msg_category_name_unique">Category name must be unique</string>
-    <string name="lbl_add_category">Add category</string>
-    <string name="lbl_edit_category_name">Edit category name</string>
-    <string name="lbl_delete_category">Delete category</string>
-    <string name="lbl_edit_categories">Edit Categories</string>
-    <string name="btn_edit_categories">Edit categories</string>
+  <!-- Categories -->
+  <string name="title_activity_category">Categories</string>
+  <string name="title_activity_category_songs">Category:</string>
+  <string name="title_activity_category_edit">Edit Categories</string>
+  <string name="lbl_drawer_main_categories">Categories</string>
+  <string name="hint_category_name">Category Name</string>
+  <string name="lbl_edit_categories_for_song">Edit categories for song</string>
+  <string name="msg_confirm_delete_category">Are you sure you want to delete the category</string>
+  <string name="msg_category_name_unique">Category name must be unique</string>
+  <string name="lbl_add_category">Add category</string>
+  <string name="lbl_edit_category_name">Edit category name</string>
+  <string name="lbl_delete_category">Delete category</string>
+  <string name="lbl_edit_categories">Edit Categories</string>
+  <string name="btn_edit_categories">Edit categories</string>
 
-    <string name="btn_choose_color">Choose color</string>
+  <string name="btn_choose_color">Choose color</string>
+
+  <!-- Tonalities -->
+  <string name="c_flat_major">C-flat major</string>
+  <string name="a_flat_minor">A-flat minor</string>
+  <string name="g_flat_major">G-flat major</string>
+  <string name="e_flat_minor">E-flat minor</string>
+  <string name="d_flat_major">D-flat major</string>
+  <string name="b_flat_minor">B-flat minor</string>
+  <string name="a_flat_major">A-flat major</string>
+  <string name="f_minor">F minor</string>
+  <string name="e_flat_major">E-flat major</string>
+  <string name="c_minor">C minor</string>
+  <string name="b_flat_major">B-flat major</string>
+  <string name="g_minor">G minor</string>
+  <string name="f_major">F major</string>
+  <string name="d_minor">D minor</string>
+  <string name="c_major">C major</string>
+  <string name="a_minor">A minor</string>
+  <string name="g_major">G major</string>
+  <string name="e_minor">E minor</string>
+  <string name="d_major">D major</string>
+  <string name="b_minor">B minor</string>
+  <string name="a_major">A major</string>
+  <string name="f_sharp_minor">F-sharp minor</string>
+  <string name="e_major">E major</string>
+  <string name="c_sharp_minor">C-sharp minor</string>
+  <string name="b_major">B major</string>
+  <string name="g_sharp_minor">G-sharp minor</string>
+  <string name="f_sharp_major">F-sharp major</string>
+  <string name="d_sharp_minor">D-sharp minor</string>
+  <string name="c_sharp_major">C-sharp major</string>
+  <string name="a_sharp_minor">A-sharp minor</string>
 </resources>

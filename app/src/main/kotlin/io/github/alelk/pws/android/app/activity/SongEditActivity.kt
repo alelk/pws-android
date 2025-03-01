@@ -75,12 +75,12 @@ class SongEditActivity : AppCompatThemedActivity() {
     songLyricEdit.setText(song.song.lyric)
     bibleRefEdit.setText(song.song.bibleRef?.text)
 
-    val tonalities = Tonality.entries.map { it.identifier } + resources.getString(R.string.tonality_not_defined)
+    val tonalities = Tonality.entries.map { it.identifier } + "---"
     val tonalitiesAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, tonalities)
     tonalitiesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
     songTonalitiesSpinner.adapter = tonalitiesAdapter
 
-    val currentTonality = song.song.tonalities?.firstOrNull()?.identifier ?: resources.getString(R.string.tonality_not_defined)
+    val currentTonality = song.song.tonalities?.firstOrNull()?.identifier ?: "---"
     songTonalitiesSpinner.setSelection(tonalities.indexOf(currentTonality))
   }
 
@@ -90,7 +90,7 @@ class SongEditActivity : AppCompatThemedActivity() {
     val bibleRef = findViewById<EditText>(R.id.bibleRefEdit).text.toString().takeIf { it.isNotBlank() }?.let { BibleRef(it) }
     val tonality = findViewById<Spinner>(R.id.songTonalitiesSpinner).selectedItem.toString()
 
-    val nextTonality = if (tonality != getString(R.string.tonality_not_defined)) Tonality.fromIdentifier(tonality) else null
+    val nextTonality = if (tonality != "---") Tonality.fromIdentifier(tonality) else null
 
     songViewModel.update { it.copy(name = name, lyric = lyric, bibleRef = bibleRef, tonalities = listOfNotNull(nextTonality)) }
 
