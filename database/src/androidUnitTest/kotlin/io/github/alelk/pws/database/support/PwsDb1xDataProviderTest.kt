@@ -28,11 +28,11 @@ class PwsDb1xDataProviderTest : FeatureSpec({
   }
 
   val expectedV180Favorites = listOf(
-    SongNumber(BookId.parse("PV3300"), 1),
-    SongNumber(BookId.parse("PV3300"), 3),
-    SongNumber(BookId.parse("PV3300"), 5),
-    SongNumber(BookId.parse("PV3300"), 7),
-    SongNumber(BookId.parse("PV3300"), 9),
+    SongNumber(BookId.Pv3300, 1),
+    SongNumber(BookId.Pv3300, 3),
+    SongNumber(BookId.Pv3300, 5),
+    SongNumber(BookId.Pv3300, 7),
+    SongNumber(BookId.Pv3300, 9),
   )
 
   feature("fetch data from database v1.8.0 (v6)") {
