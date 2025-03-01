@@ -1,5 +1,14 @@
 # PWS Android
 
+# [2.0.0-rc.14](https://github.com/alelk/pws-android/compare/v2.0.0-rc.13...v2.0.0-rc.14) (2025-03-01)
+
+
+### Features
+
+* **database:** implement pws 1x migration data provider ([eae4eff](https://github.com/alelk/pws-android/commit/eae4eff8cde3de549d345d9971774cd279a26321))
+* **database:** implement user data migration from previous database v1x ([9e71939](https://github.com/alelk/pws-android/commit/9e719399dca634364449c23fa74a1b9f6a510440))
+* **database:** pws db 1x data provider: fetch tags ([5aefd59](https://github.com/alelk/pws-android/commit/5aefd595185918b3115bb5f69f8a31f99cb35260))
+
 # [2.0.0-rc.13](https://github.com/alelk/pws-android/compare/v2.0.0-rc.12...v2.0.0-rc.13) (2025-02-24)
 
 
