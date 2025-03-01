@@ -4,4 +4,8 @@ import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
-class PwsApplication: Application()
+class PwsApplication : Application() {
+  override fun onCreate() {
+    super.onCreate()
+  }
+}

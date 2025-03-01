@@ -19,6 +19,9 @@ interface SongTagDao : Pageable<SongTagEntity> {
   @Insert(onConflict = OnConflictStrategy.ABORT)
   suspend fun insert(songNumberTags: List<SongTagEntity>)
 
+  @Insert(onConflict = OnConflictStrategy.IGNORE)
+  suspend fun insertIfMissing(songNumberTags: List<SongTagEntity>)
+
   @Query("SELECT * FROM song_tags WHERE song_id = :songId and tag_id = :tagId")
   suspend fun getById(songId: SongId, tagId: TagId): SongTagEntity?
 
