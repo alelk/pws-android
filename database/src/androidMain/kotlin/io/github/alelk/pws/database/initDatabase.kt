@@ -22,8 +22,9 @@ internal fun initDatabase(context: Context) {
     check(fileList.isNotEmpty()) { "no database files found in asset directory $ASSETS_DB_FOLDER" }
     val zipFile = dbFolder.resolve(dbFile.name + "z")
     runCatching {
+      if (zipFile.exists()) zipFile.delete()
       FileOutputStream(zipFile).use { zipOutputStream ->
-        val filenamePrefix = "$ASSETS_DB_FOLDER/${DATABASE_NAME}z"
+        val filenamePrefix = "${DATABASE_NAME}z"
         for (i in 1..fileList.filter { it.contains(filenamePrefix) }.size) {
           val filename = "$ASSETS_DB_FOLDER/${DATABASE_NAME}z.$i"
           am.open(filename).use { inputStream -> inputStream.copyTo(zipOutputStream, bufferSize = 1024) }
