@@ -24,6 +24,7 @@ import android.view.View
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import io.github.alelk.pws.android.app.activity.base.AppCompatThemedActivity
@@ -35,7 +36,12 @@ import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.alelk.pws.android.app.R
 import io.github.alelk.pws.database.BuildConfig
+import io.github.alelk.pws.database.PwsDatabase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
+import javax.inject.Inject
 
 @AndroidEntryPoint
 open class MainActivity : AppCompatThemedActivity() {
@@ -43,6 +49,9 @@ open class MainActivity : AppCompatThemedActivity() {
   private val drawerLayout by lazy { findViewById<DrawerLayout>(R.id.layout_main_drawer) }
   private val navController by lazy { (supportFragmentManager.findFragmentById(R.id.app_nav_host_fragment) as NavHostFragment).navController }
   private val navigationView by lazy { findViewById<NavigationView>(R.id.nav_view) }
+
+  @Inject
+  lateinit var database: PwsDatabase
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -79,18 +88,22 @@ open class MainActivity : AppCompatThemedActivity() {
           appBar.setExpanded(true, true)
           collapsingToolbarLayout.title = getString(R.string.lbl_drawer_main_home)
         }
+
         R.id.booksFragment -> {
           appBar.setExpanded(false, true)
           collapsingToolbarLayout.title = getString(R.string.lbl_drawer_main_books)
         }
+
         R.id.historyFragment -> {
           appBar.setExpanded(false, true)
           collapsingToolbarLayout.title = getString(R.string.lbl_drawer_main_history)
         }
+
         R.id.favoritesFragment -> {
           appBar.setExpanded(false, true)
           collapsingToolbarLayout.title = getString(R.string.lbl_drawer_main_favorite)
         }
+
         else -> {
           appBar.setExpanded(false, true)
         }
@@ -100,6 +113,13 @@ open class MainActivity : AppCompatThemedActivity() {
     if (BuildConfig.DEBUG) {
       Timber.plant(Timber.DebugTree())
     }
+
+//    lifecycleScope.launch {
+//      withContext(Dispatchers.IO) {
+//        // import data from previous database version
+//        migrateDataFromPrevDatabase(applicationContext, database)
+//      }
+//    }
   }
 
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -122,7 +142,7 @@ open class MainActivity : AppCompatThemedActivity() {
       R.id.btn_search_song_number, R.id.fab_search_number -> {
         val intentSearchNumber = Intent(baseContext, SearchActivity::class.java)
         intentSearchNumber.putExtra(
-            SearchActivity.KEY_INPUT_TYPE,
+          SearchActivity.KEY_INPUT_TYPE,
           InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
         )
         startActivity(intentSearchNumber)
@@ -131,7 +151,7 @@ open class MainActivity : AppCompatThemedActivity() {
       R.id.btn_search_song_text, R.id.fab_search_text -> {
         val intentSearchText = Intent(baseContext, SearchActivity::class.java)
         intentSearchText.putExtra(
-            SearchActivity.KEY_INPUT_TYPE,
+          SearchActivity.KEY_INPUT_TYPE,
           InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_AUTO_COMPLETE
         )
         startActivity(intentSearchText)

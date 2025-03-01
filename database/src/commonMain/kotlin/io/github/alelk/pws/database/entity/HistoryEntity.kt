@@ -23,7 +23,8 @@ private fun currentDateTime() = Clock.System.now().toLocalDateTime(TimeZone.curr
   indices = [
     Index(name = "idx_history_song_id", value = ["song_id"]),
     Index(name = "idx_history_book_id", value = ["book_id"]),
-    Index(name = "ids_history_book_id_song_id", value = ["book_id", "song_id"])
+    Index(name = "ids_history_book_id_song_id", value = ["book_id", "song_id"]),
+    Index(name = "ids_history_book_id_song_id_access_timestamp", value = ["book_id", "song_id", "access_timestamp"], unique = true),
   ]
 )
 data class HistoryEntity(
