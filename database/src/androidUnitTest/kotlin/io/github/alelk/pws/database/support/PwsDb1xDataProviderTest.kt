@@ -2,6 +2,7 @@ package io.github.alelk.pws.database.support
 
 import br.com.colman.kotest.FeatureSpec
 import br.com.colman.kotest.android.extensions.robolectric.RobolectricTest
+import io.github.alelk.pws.database.setupTimberForTest
 import io.github.alelk.pws.database.withSqliteDb
 import io.github.alelk.pws.domain.model.BibleRef
 import io.github.alelk.pws.domain.model.BookId
@@ -16,18 +17,13 @@ import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import kotlinx.datetime.LocalDateTime
-import timber.log.Timber
 import java.io.File
 
 @RobolectricTest(sdk = 34)
 class PwsDb1xDataProviderTest : FeatureSpec({
 
   beforeContainer {
-    Timber.plant(object : Timber.Tree() {
-      override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
-        println("$tag: $message")
-      }
-    })
+    setupTimberForTest()
   }
 
   val expectedV180Favorites = listOf(
