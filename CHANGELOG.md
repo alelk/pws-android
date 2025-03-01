@@ -1,5 +1,12 @@
 # PWS Android
 
+## [2.0.1](https://github.com/alelk/pws-android/compare/v2.0.0...v2.0.1) (2025-03-01)
+
+
+### Bug Fixes
+
+* **search:** fix song search issue: search by song name; search from song activity ([#73](https://github.com/alelk/pws-android/issues/73)) ([8ea0ae5](https://github.com/alelk/pws-android/commit/8ea0ae5cfa6efd95de27494e9f850c07678390ae))
+
 # [2.0.0](https://github.com/alelk/pws-android/compare/v1.15.0...v2.0.0) (2025-03-01)
 
 
