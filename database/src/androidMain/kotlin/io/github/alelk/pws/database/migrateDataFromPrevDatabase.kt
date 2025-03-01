@@ -24,7 +24,7 @@ internal suspend fun migrateDataFromPrevDatabase(context: Context, currentDataba
             Timber.i("imported all user data from previous database $dbFile, delete file...")
             dbFile.delete()
           }.getOrThrow()
-      }
+      } else Timber.d("no previous database $dbFile found")
     }.onFailure { e ->
       Timber.e(e, "error migrating data from previous database $dbName: ${e.message}")
     }
