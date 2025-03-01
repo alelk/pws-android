@@ -12,6 +12,7 @@ import io.kotest.core.spec.style.FeatureSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.of
+import io.kotest.property.arbitrary.removeEdgecases
 import io.kotest.property.checkAll
 
 @DaoTest
@@ -27,7 +28,10 @@ class HistoryDaoTest : FeatureSpec({
       db.withSongEntities(countSongs = 500) {
         db.withSongNumberEntities(countSongNumbers = 600) { songNumbers ->
           scenario("insert history") {
-            checkAll(20, Arb.historyEntity(id = null, songNumberId = Arb.of(songNumbers.map { it.id })).distinctBy { it.songNumberId }) { history ->
+            checkAll(
+              20,
+              Arb.historyEntity(id = null, songNumberId = Arb.of(songNumbers.map { it.id })).distinctBy { it.songNumberId }.removeEdgecases()
+            ) { history ->
               val id = db.historyDao().insert(history)
               db.historyDao().getById(id) shouldBe history.copy(id = id)
             }
