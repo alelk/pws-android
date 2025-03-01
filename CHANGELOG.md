@@ -1,5 +1,12 @@
 # PWS Android
 
+# [2.0.0-rc.15](https://github.com/alelk/pws-android/compare/v2.0.0-rc.14...v2.0.0-rc.15) (2025-03-01)
+
+
+### Bug Fixes
+
+* **database:** add pws debug-ru database v2.0.0 ([ed6e9f7](https://github.com/alelk/pws-android/commit/ed6e9f7b111a14824b1175e912ff5d01191dfb3b))
+
 # [2.0.0-rc.14](https://github.com/alelk/pws-android/compare/v2.0.0-rc.13...v2.0.0-rc.14) (2025-03-01)
 
 
