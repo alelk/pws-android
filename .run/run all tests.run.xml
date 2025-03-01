@@ -11,10 +11,12 @@
       <option name="taskNames">
         <list>
           <option value=":domain:jvmTest" />
+          <option value="domain:testDebugUnitTest" />
           <option value=":database:jvmTest" />
-          <option value=":backup:jvmTest" />
           <option value=":database:testRuDebugUnitTest" />
+          <option value=":backup:jvmTest" />
           <option value=":app:testRuDebugUnitTest" />
+          <option value=":app:test" />
         </list>
       </option>
       <option name="vmOptions" />

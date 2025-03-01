@@ -13,6 +13,7 @@ kotlin {
     publishLibraryVariants("ruRelease")
   }
   jvm()
+  iosArm64()
 
   sourceSets {
     val commonMain by getting {
@@ -20,11 +21,13 @@ kotlin {
         implementation(project(":domain"))
         implementation(libs.room.runtime)
         implementation(libs.kotlinx.coroutines.core)
+        implementation(libs.kotlinx.datetime)
       }
     }
     val commonTest by getting {
       dependencies {
         implementation(project(":domain:domain-test-fixtures"))
+        implementation(project(":database:database-test-fixtures"))
         implementation(libs.kotest.assertions.core)
         implementation(libs.kotest.framework.engine)
         implementation(libs.kotest.property)
@@ -37,8 +40,8 @@ kotlin {
         implementation(libs.android.material)
         implementation(libs.kotlinx.coroutines.core)
         implementation(libs.kotlinx.coroutines.android)
-        implementation(libs.room.runtime)
-        implementation(libs.room.ktx)
+        runtimeOnly(libs.room.runtime)
+        runtimeOnly(libs.room.ktx)
         implementation(libs.timber)
       }
     }
@@ -55,8 +58,7 @@ kotlin {
     val jvmMain by getting {
       dependencies {
         implementation(libs.kotlinx.coroutines.core)
-        implementation(libs.room.runtime.jvm)
-        implementation(libs.room.ktx)
+        runtimeOnly(libs.room.runtime.jvm)
       }
     }
     val jvmTest by getting {
@@ -65,6 +67,8 @@ kotlin {
         implementation(libs.sqlite.bundled)
       }
     }
+    val iosArm64Main by getting {}
+    val iosArm64Test by getting {}
   }
 
   targets.withType<KotlinAndroidTarget> {
@@ -86,15 +90,15 @@ tasks.withType<Test> {
 android {
   compileSdk = rootProject.extra["sdkVersion"] as Int
 
-  signingConfigs {
-    create("release-ru") {
-      keyAlias = project.findProperty("android.release.keyAliasRu") as String?
-      keyPassword = project.findProperty("android.release.keyPassword") as String?
-      storeFile =
-        (project.findProperty("android.release.keystorePath") as String?)?.let(::file)
-      storePassword = project.findProperty("android.release.storePassword") as String?
-    }
-  }
+//  signingConfigs {
+//    create("release-ru") {
+//      keyAlias = project.findProperty("android.release.keyAliasRu") as String?
+//      keyPassword = project.findProperty("android.release.keyPassword") as String?
+//      storeFile =
+//        (project.findProperty("android.release.keystorePath") as String?)?.let(::file)
+//      storePassword = project.findProperty("android.release.storePassword") as String?
+//    }
+//  }
 
   defaultConfig {
     resValue("string", "db_authority", "com.alelk.pws.database")
@@ -111,7 +115,7 @@ android {
     getByName("release") {
       isMinifyEnabled = false
       proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
-      signingConfig = signingConfigs.getByName("release-ru")
+      //signingConfig = signingConfigs.getByName("release-ru")
     }
     getByName("debug") {
       isMinifyEnabled = false
@@ -146,31 +150,5 @@ android {
   }
   ksp {
     arg("room.generateKotlin", "true")
-  }
-}
-
-publishing {
-  val versionName = rootProject.extra["versionName"] as String
-  val isSnapshot by lazy { versionName.endsWith("SNAPSHOT") }
-
-  publications {
-    create<MavenPublication>("gpr") {
-      groupId = "io.github.alelk.pws"
-      artifactId = "pws-database"
-      version = versionName
-      artifact(tasks.named("jvmJar"))
-      artifact(tasks.named("jvmSourcesJar"))
-    }
-  }
-
-  repositories {
-    maven {
-      name = "GitHubPackages"
-      url = uri("https://maven.pkg.github.com/alelk/pws-android")
-      credentials {
-        username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_USER") ?: "alelk"
-        password = project.findProperty("gpr.token") as String? ?: System.getenv("GITHUB_TOKEN")
-      }
-    }
   }
 }

@@ -6,6 +6,6 @@ import androidx.room.Relation
 data class SongNumberWithSongEntity(
   @Embedded
   val songNumber: SongNumberEntity,
-  @Relation(parentColumn = "psalmid", entityColumn = "_id")
+  @Relation(parentColumn = "song_id", entityColumn = "id")
   val song: SongEntity,
 )

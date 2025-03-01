@@ -1,8 +1,10 @@
 package io.github.alelk.pws.backup.model
 
-import io.github.alelk.pws.backup.model.serialization.LocalDateTimeSerializer
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.Serializable
-import java.time.LocalDateTime
 
 @Serializable
 data class Backup(
@@ -16,8 +18,7 @@ data class Backup(
 
   @Serializable
   data class Metadata(
-    @Serializable(with = LocalDateTimeSerializer::class)
-    val createdAt: LocalDateTime = LocalDateTime.now()
+    val createdAt: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
   ) {
     val version: Int = 1
   }

@@ -5,8 +5,8 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import io.github.alelk.pws.database.entity.SongNumberWithSongWithBookWithFavorite
 import io.github.alelk.pws.database.entity.TagEntity
+import io.github.alelk.pws.domain.model.SongId
 import io.github.alelk.pws.domain.model.TagId
 import kotlinx.coroutines.flow.Flow
 
@@ -17,7 +17,7 @@ fun TagId.Companion.createCustomTag(number: Int) = parse("$customTagPrefix${numb
 fun TagEntity.isCustomTag(): Boolean = this.id.customTagNumber() != null
 
 @Dao
-interface TagDao : Pageable1<TagEntity> {
+interface TagDao : Pageable<TagEntity> {
   @Insert(onConflict = OnConflictStrategy.ABORT)
   suspend fun insert(tag: TagEntity)
 
@@ -45,15 +45,15 @@ interface TagDao : Pageable1<TagEntity> {
   @Query("SELECT * FROM tags WHERE predefined = 0 ORDER BY priority, id")
   suspend fun getAllNotPredefined(): List<TagEntity>
 
-  @Query(
-    """
-    SELECT pn.*
-    FROM song_number_tags  snt
-    INNER JOIN psalmnumbers pn on snt.song_number_id = pn._id
-    WHERE snt.tag_id = :tagId
-    """
-  )
-  fun getTagSongsFlow(tagId: TagId): Flow<List<SongNumberWithSongWithBookWithFavorite>>
+//  @Query(
+//    """
+//    SELECT sn.*
+//    FROM song_number_tags  snt
+//    INNER JOIN psalmnumbers pn on snt.song_number_id = pn._id
+//    WHERE snt.tag_id = :tagId
+//    """
+//  )
+//  fun getTagSongsFlow(tagId: TagId): Flow<List<SongNumberWithSongWithBookWithFavorite>>
 
   suspend fun getLastCustomTag() =
     getAllNotPredefined()
@@ -82,4 +82,7 @@ interface TagDao : Pageable1<TagEntity> {
 
   @Query("SELECT * FROM tags ORDER BY priority, id")
   fun getAllFlow(): Flow<List<TagEntity>>
+
+  @Query("SELECT t.* FROM tags t INNER JOIN song_tags st ON t.id = st.tag_id WHERE st.song_id = :songId ORDER BY t.predefined, t.priority DESC")
+  fun getBySongIdFlow(songId: SongId): Flow<List<TagEntity>>
 }

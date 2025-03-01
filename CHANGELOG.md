@@ -1,5 +1,120 @@
 # PWS Android
 
+# [2.0.0-rc.15](https://github.com/alelk/pws-android/compare/v2.0.0-rc.14...v2.0.0-rc.15) (2025-03-01)
+
+
+### Bug Fixes
+
+* **database:** add pws debug-ru database v2.0.0 ([ed6e9f7](https://github.com/alelk/pws-android/commit/ed6e9f7b111a14824b1175e912ff5d01191dfb3b))
+
+# [2.0.0-rc.14](https://github.com/alelk/pws-android/compare/v2.0.0-rc.13...v2.0.0-rc.14) (2025-03-01)
+
+
+### Features
+
+* **database:** implement pws 1x migration data provider ([eae4eff](https://github.com/alelk/pws-android/commit/eae4eff8cde3de549d345d9971774cd279a26321))
+* **database:** implement user data migration from previous database v1x ([9e71939](https://github.com/alelk/pws-android/commit/9e719399dca634364449c23fa74a1b9f6a510440))
+* **database:** pws db 1x data provider: fetch tags ([5aefd59](https://github.com/alelk/pws-android/commit/5aefd595185918b3115bb5f69f8a31f99cb35260))
+
+# [2.0.0-rc.13](https://github.com/alelk/pws-android/compare/v2.0.0-rc.12...v2.0.0-rc.13) (2025-02-24)
+
+
+### Bug Fixes
+
+* **app:** reimplement history view model ([2e2e2a3](https://github.com/alelk/pws-android/commit/2e2e2a350c969977af3c25b53d1fe0ae891b6dd7))
+
+# [2.0.0-rc.12](https://github.com/alelk/pws-android/compare/v2.0.0-rc.11...v2.0.0-rc.12) (2025-02-24)
+
+
+### Bug Fixes
+
+* **database:** fix song suggestions providing issue ([3b6f1cd](https://github.com/alelk/pws-android/commit/3b6f1cde29974c247465b24790ff720813e6cfe4))
+
+# [2.0.0-rc.11](https://github.com/alelk/pws-android/compare/v2.0.0-rc.10...v2.0.0-rc.11) (2025-02-24)
+
+
+### Bug Fixes
+
+* **database:** update song-references dao: use domain song id type in all method signatures ([24ab03c](https://github.com/alelk/pws-android/commit/24ab03c0c2c9c371c6090dea369bb55142aaa065))
+
+# [2.0.0-rc.10](https://github.com/alelk/pws-android/compare/v2.0.0-rc.9...v2.0.0-rc.10) (2025-02-24)
+
+
+### Features
+
+* **database:** update song-references dao: get references by song id and ref song number ([b8b1b63](https://github.com/alelk/pws-android/commit/b8b1b6367181b172e8480f4cf1f5df7520e8bb29))
+
+# [2.0.0-rc.9](https://github.com/alelk/pws-android/compare/v2.0.0-rc.8...v2.0.0-rc.9) (2025-02-24)
+
+
+### Features
+
+* **database:** update song-references dao: get references by song id ([3851bd9](https://github.com/alelk/pws-android/commit/3851bd96fd059e686666e83baa8cf307e4d1ecf9))
+
+# [2.0.0-rc.8](https://github.com/alelk/pws-android/compare/v2.0.0-rc.7...v2.0.0-rc.8) (2025-02-24)
+
+
+### Bug Fixes
+
+* **database:** remove room ktx dependency from jvmMain ([521e8a8](https://github.com/alelk/pws-android/commit/521e8a87c989847ac363ccfb27844e8afcf70a95))
+
+# [2.0.0-rc.7](https://github.com/alelk/pws-android/compare/v2.0.0-rc.6...v2.0.0-rc.7) (2025-02-24)
+
+
+### Bug Fixes
+
+* **database:** add database-test-fixtures module ([c61f9b8](https://github.com/alelk/pws-android/commit/c61f9b8145beb820ddbee11f5305a7270e4c8c0d))
+
+# [2.0.0-rc.6](https://github.com/alelk/pws-android/compare/v2.0.0-rc.5...v2.0.0-rc.6) (2025-02-21)
+
+
+### Bug Fixes
+
+* **project:** update gradle version & kotlin version ([ead7018](https://github.com/alelk/pws-android/commit/ead70182dcb8ddbfbefa84ba2fcc4c2b76accbb8))
+
+# [2.0.0-rc.5](https://github.com/alelk/pws-android/compare/v2.0.0-rc.4...v2.0.0-rc.5) (2025-02-20)
+
+
+### Bug Fixes
+
+* **database:** mark room-ktx dependency as runtime-only ([3158642](https://github.com/alelk/pws-android/commit/31586428b424171603d75b0b94636a05f433aee5))
+
+
+### Features
+
+* **publication:** configure multiplatform github packages publishing ([8969470](https://github.com/alelk/pws-android/commit/8969470af9d68723016c5773788af2ea2fdf7141))
+
+# [2.0.0-rc.4](https://github.com/alelk/pws-android/compare/v2.0.0-rc.3...v2.0.0-rc.4) (2025-02-20)
+
+
+### Features
+
+* **publication:** configure multiplatform github packages publishing ([#69](https://github.com/alelk/pws-android/issues/69)) ([8c2507c](https://github.com/alelk/pws-android/commit/8c2507cbae881be43390a5e5030b7e479c08fa3d))
+
+# [2.0.0-rc.3](https://github.com/alelk/pws-android/compare/v2.0.0-rc.2...v2.0.0-rc.3) (2025-02-18)
+
+
+### Features
+
+* **serialization:** implement domain model serialization ([#68](https://github.com/alelk/pws-android/issues/68)) ([31bb52b](https://github.com/alelk/pws-android/commit/31bb52b615ac0fd9ab303afb61d164a22bcce626))
+
+# [2.0.0-rc.2](https://github.com/alelk/pws-android/compare/v2.0.0-rc.1...v2.0.0-rc.2) (2025-02-16)
+
+
+### Bug Fixes
+
+* **ci:** fix publish script ([f82807b](https://github.com/alelk/pws-android/commit/f82807b9a26c86d8effc184c90347a52b496ac87))
+
+# [2.0.0-rc.1](https://github.com/alelk/pws-android/compare/v1.15.0...v2.0.0-rc.1) (2025-02-16)
+
+
+* feat!: new pre-release ([13a6f2f](https://github.com/alelk/pws-android/commit/13a6f2f57c8e3aeee925913267a3dcaa16dec64b))
+
+
+### BREAKING CHANGES
+
+* database schema has changed
+
 # [1.15.0](https://github.com/alelk/pws-android/compare/v1.14.0...v1.15.0) (2025-02-16)
 
 

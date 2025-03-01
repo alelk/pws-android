@@ -47,7 +47,7 @@ class BackupPreferenceFragment : PreferenceFragmentCompat() {
               val tempFile = File(context?.cacheDir, "temp_backup.pws")
               val backup = viewModel.getBackup()
               withContext(Dispatchers.IO) {
-                backupService.write(backup, tempFile)
+                outputStream.bufferedWriter().use { it.write(backupService.writeAsString(backup)) }
                 tempFile.inputStream().copyTo(outputStream)
               }
               Toast.makeText(context, R.string.export_success, Toast.LENGTH_SHORT).show()
@@ -68,7 +68,7 @@ class BackupPreferenceFragment : PreferenceFragmentCompat() {
         coroutineScope.launch {
           context?.contentResolver?.openInputStream(uri)?.use { inputStream ->
             try {
-              val backup = withContext(Dispatchers.IO) { backupService.read(inputStream) }
+              val backup = withContext(Dispatchers.IO) { backupService.readFromString(inputStream.bufferedReader().use { it.readText() }) }
               viewModel.restoreBackup(backup)
               Toast.makeText(context, R.string.import_success, Toast.LENGTH_SHORT).show()
             } catch (e: Throwable) {

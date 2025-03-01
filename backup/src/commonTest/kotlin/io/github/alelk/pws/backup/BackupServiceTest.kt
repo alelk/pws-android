@@ -6,30 +6,29 @@ import io.github.alelk.pws.backup.model.Song
 import io.github.alelk.pws.backup.model.SongNumber
 import io.github.alelk.pws.backup.model.Tag
 import io.github.alelk.pws.domain.model.BibleRef
-import io.github.alelk.pws.domain.model.BookExternalId
+import io.github.alelk.pws.domain.model.BookId
 import io.github.alelk.pws.domain.model.Color
+import io.github.alelk.pws.domain.model.Locale
 import io.github.alelk.pws.domain.model.Person
-import io.github.alelk.pws.domain.model.TagId
+import io.github.alelk.pws.domain.model.SongId
 import io.github.alelk.pws.domain.model.Tonality
 import io.github.alelk.pws.domain.model.Version
 import io.kotest.core.spec.style.StringSpec
-import io.kotest.engine.spec.tempfile
 import io.kotest.matchers.shouldBe
-import java.time.LocalDateTime
-import java.util.Locale
+import kotlinx.datetime.LocalDateTime
 
 class BackupServiceTest : StringSpec({
 
-  val book1Id = BookExternalId.parse("book-1")
-  val book2Id = BookExternalId.parse("book-2")
+  val book1Id = BookId.parse("book-1")
+  val book2Id = BookId.parse("book-2")
   val backup1 = Backup(
-    metadata = Backup.Metadata(createdAt = LocalDateTime.parse("2025-01-01T07:31:00")),
+    metadata = Backup.Metadata(createdAt = LocalDateTime.parse("2025-01-01T07:31:05")),
     songs = listOf(
       Song(
         number = SongNumber(book1Id, 1),
-        id = 100L,
+        id = SongId(100L),
         version = Version(1, 1),
-        locale = Locale.forLanguageTag("en"),
+        locale = Locale.of("en"),
         name = "Song 1",
         lyric = "Verse 1 Line 1\nVerse 1 Line 2\n\nVerse 2 Line 1\nVerse 2 Line 2",
         tonalities = listOf(Tonality.B_MAJOR, Tonality.A_MINOR),
@@ -64,7 +63,7 @@ class BackupServiceTest : StringSpec({
   )
   val backup1Text = """
     |metadata:
-    |  createdAt: "2025-01-01T07:31:00"
+    |  createdAt: "2025-01-01T07:31:05"
     |  version: 1
     |songs:
     |- number:
@@ -122,25 +121,6 @@ class BackupServiceTest : StringSpec({
 
   "read backup from text" {
     val bkp = BackupService().readFromString(backup1Text)
-    bkp shouldBe backup1
-  }
-
-  val file = tempfile()
-
-  "write backup to file" {
-    BackupService().write(backup1, file)
-    file.readText() shouldBe backup1Text
-  }
-
-  "read backup from file" {
-    file.writeText(backup1Text)
-    val bkp = BackupService().read(file)
-    bkp shouldBe backup1
-  }
-
-  "read backup from input stream" {
-    file.writeText(backup1Text)
-    val bkp = BackupService().read(file.inputStream())
     bkp shouldBe backup1
   }
 })

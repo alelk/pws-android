@@ -90,17 +90,17 @@ class GeneralPreferenceFragment : PreferenceFragmentCompat() {
   }
 
   private fun initBookPreferences(bookPreferences: PreferenceCategory, books: List<BookStatisticWithBookEntity>) {
-    Timber.d("book preferences: ${books.joinToString(", ") { "${it.book.externalId}->${it.bookStatistic.userPreference}" }}")
+    Timber.d("book preferences: ${books.joinToString(", ") { "${it.book.id}->${it.bookStatistic.priority}" }}")
     bookPreferences.removeAll()
     books.forEach { book ->
       val pref = SwitchPreference(requireContext()).apply {
-        key = book.book.externalId.toString()
+        key = book.book.id.toString()
         title = book.book.displayName
-        isChecked = (book.bookStatistic.userPreference ?: 0) > 0
+        isChecked = (book.bookStatistic.priority ?: 0) > 0
         setOnPreferenceChangeListener { _, _ ->
           viewLifecycleOwner.lifecycleScope.launch {
-            bookStatisticViewModel.update(book.book.externalId) {
-              it.bookStatistic.copy(userPreference = if ((it.bookStatistic.userPreference ?: 0) > 0) 0 else 1)
+            bookStatisticViewModel.update(book.book.id) {
+              it.bookStatistic.copy(priority = if ((it.bookStatistic.priority ?: 0) > 0) 0 else 1)
             }
           }
           true

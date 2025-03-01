@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2018 The P&W Songs Open Source Project
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,93 +16,125 @@
 
 <resources>
 
-    <string name="action_settings">Налаштування</string>
-    <string name="title_activity_song_fullscreen">Пісня</string>
-    <string name="title_activity_main_settings">Налаштування</string>
-    <string name="title_activity_song_edit">Редагування псалму</string>
+  <string name="action_settings">Налаштування</string>
+  <string name="title_activity_song_fullscreen">Пісня</string>
+  <string name="title_activity_main_settings">Налаштування</string>
+  <string name="title_activity_song_edit">Редагування псалму</string>
 
-    <!-- Main activity display strings. -->
-    <string name="txt_main_navigation_header_comment">Бібліотека християнських пісень.</string>
-    <string name="lbl_drawer_main_history">Історія</string>
-    <string name="lbl_drawer_main_home">Головна</string>
-    <string name="lbl_drawer_main_books">Збірники пісень</string>
-    <string name="lbl_drawer_main_favorite">Обране</string>
-    <string name="lbl_drawer_main_settings">Налаштування</string>
-    <string name="lbl_drawer_main_system_menu"></string>
+  <!-- Main activity display strings. -->
+  <string name="txt_main_navigation_header_comment">Бібліотека християнських пісень.</string>
+  <string name="lbl_drawer_main_history">Історія</string>
+  <string name="lbl_drawer_main_home">Головна</string>
+  <string name="lbl_drawer_main_books">Збірники пісень</string>
+  <string name="lbl_drawer_main_favorite">Обране</string>
+  <string name="lbl_drawer_main_settings">Налаштування</string>
+  <string name="lbl_drawer_main_system_menu"></string>
 
-    <string name="lbl_recent">Останні</string>
-    <string name="lbl_search">Пошук тексту пісні</string>
-    <string name="lbl_search_by_number">Знайти по номеру</string>
-    <string name="lbl_search_by_text">Пошук по тексту</string>
+  <string name="lbl_recent">Останні</string>
+  <string name="lbl_search">Пошук тексту пісні</string>
+  <string name="lbl_search_by_number">Знайти по номеру</string>
+  <string name="lbl_search_by_text">Пошук по тексту</string>
 
-    <!-- History fragment display strings. -->
-    <string name="menu_clear_history">Видалити історію</string>
+  <!-- History fragment display strings. -->
+  <string name="menu_clear_history">Видалити історію</string>
 
-    <!-- Search activity display strings. -->
-    <string name="title_activity_search">Пошук</string>
-    <string name="lbl_search_widget">Пошук&#8230;</string>
-    <string name="hint_enter_text">Введіть будь який текст для пошуку пісні&#8230;</string>
-    <string name="hint_enter_song_number">Введіть номер пісні&#8230;</string>
-    <string name="lbl_fts_search_progress">Виконується повнотекстовий пошук&#8230;\n</string>
+  <!-- Search activity display strings. -->
+  <string name="title_activity_search">Пошук</string>
+  <string name="lbl_search_widget">Пошук&#8230;</string>
+  <string name="hint_enter_text">Введіть будь який текст для пошуку пісні&#8230;</string>
+  <string name="hint_enter_song_number">Введіть номер пісні&#8230;</string>
+  <string name="lbl_fts_search_progress">Виконується повнотекстовий пошук&#8230;\n</string>
 
-    <!-- Song activity display strings. -->
-    <string name="lbl_chorus">Приспів</string>
-    <string name="lbl_author">Слова</string>
-    <string name="lbl_translator">Переклад</string>
-    <string name="lbl_music">Музика</string>
-    <string name="lbl_references">Посилання</string>
-    <string name="lbl_another_variant" formatted="true">Друга версія пісні.\nСхожість текстів: %1$d%%</string>
-    <string name="lbl_search_song">Знайти</string>
-    <string name="lbl_jump_to_number">Перейти по номеру</string>
-    <string name="lbl_share">Поділитися</string>
-    <string name="lbl_edit">Редагувати</string>
-    <string name="lbl_delete">Видалити</string>
-    <string name="lbl_song_text_size">Розмір тексту</string>
-    <string name="sort_by_added_date">Сортувати за датою додавання</string>
-    <string name="sort_by_number">Сортувати за номером</string>
-    <string name="sort_by_name">Сортувати за назвою</string>
-    <string name="msg_added_to_favorites">Додано до обраного.</string>
-    <string name="msg_removed_from_favorites">Видалено з обраного.</string>
+  <!-- Song activity display strings. -->
+  <string name="lbl_chorus">Приспів</string>
+  <string name="lbl_author">Слова</string>
+  <string name="lbl_translator">Переклад</string>
+  <string name="lbl_music">Музика</string>
+  <string name="lbl_references">Посилання</string>
+  <string name="lbl_another_variant" formatted="true">Друга версія пісні.\nСхожість текстів: %1$d%%</string>
+  <string name="lbl_search_song">Знайти</string>
+  <string name="lbl_jump_to_number">Перейти по номеру</string>
+  <string name="lbl_share">Поділитися</string>
+  <string name="lbl_edit">Редагувати</string>
+  <string name="lbl_delete">Видалити</string>
+  <string name="lbl_song_text_size">Розмір тексту</string>
+  <string name="sort_by_added_date">Сортувати за датою додавання</string>
+  <string name="sort_by_number">Сортувати за номером</string>
+  <string name="sort_by_name">Сортувати за назвою</string>
+  <string name="msg_added_to_favorites">Додано до обраного.</string>
+  <string name="msg_removed_from_favorites">Видалено з обраного.</string>
 
-    <!-- Edit song activity -->
-    <string name="label_song_name">Назва псалму</string>
-    <string name="label_song_text">Текст псалму</string>
-    <string name="label_bible_ref">Біблійне посилання</string>
-    <string name="label_song_tonalities">Тональності псалму</string>
-    <string name="btn_save">Зберегти</string>
-    <string name="lbl_edit_song">Редагувати псалом</string>
+  <!-- Edit song activity -->
+  <string name="label_song_name">Назва псалму</string>
+  <string name="label_song_text">Текст псалму</string>
+  <string name="label_bible_ref">Біблійне посилання</string>
+  <string name="label_song_tonalities">Тональності псалму</string>
+  <string name="btn_save">Зберегти</string>
+  <string name="lbl_edit_song">Редагувати псалом</string>
 
 
-    <!-- Song fullscreen activity display strings. -->
-    <string name="lbl_add_to_favorites">Додати до обраного</string>
-    <string name="lbl_remove_from_favorites">Видалити з обраного</string>
+  <!-- Song fullscreen activity display strings. -->
+  <string name="lbl_add_to_favorites">Додати до обраного</string>
+  <string name="lbl_remove_from_favorites">Видалити з обраного</string>
 
-    <!-- Search song number dialog display strings. -->
-    <string name="lbl_ok">OK</string>
-    <string name="lbl_cancel">Відміна</string>
-    <string name="lbl_enter_song_number">Введіть номер в даному збірнику, на який бажаєте перейти: </string>
-    <string name="msg_no_song_number_found">Номер не знайдено</string>
-    <string name="lbl_done">Готово</string>
-    <string name="lbl_error">Помилка</string>
+  <!-- Search song number dialog display strings. -->
+  <string name="lbl_ok">OK</string>
+  <string name="lbl_cancel">Відміна</string>
+  <string name="lbl_enter_song_number">Введіть номер в даному збірнику, на який бажаєте перейти: </string>
+  <string name="msg_no_song_number_found">Номер не знайдено</string>
+  <string name="lbl_done">Готово</string>
+  <string name="lbl_error">Помилка</string>
 
-    <!-- Song preferences dialog display strings. -->
-    <string name="lbl_text_size">Розмір тексту:</string>
-    <string name="lbl_expand_song_text">Приспів після кожного куплета</string>
+  <!-- Song preferences dialog display strings. -->
+  <string name="lbl_text_size">Розмір тексту:</string>
+  <string name="lbl_expand_song_text">Приспів після кожного куплета</string>
 
-    <!-- Categories -->
-    <string name="title_activity_category">Категорії</string>
-    <string name="title_activity_category_songs">Категорія:</string>
-    <string name="title_activity_category_edit">Редагувати категорії</string>
-    <string name="lbl_drawer_main_categories">Категорії</string>
-    <string name="hint_category_name">Назва категорії</string>
-    <string name="lbl_edit_categories_for_song">Редагувати категорії для пісні</string>
-    <string name="msg_confirm_delete_category">Ви впевнені, що хочете видалити категорію</string>
-    <string name="msg_category_name_unique">Назва категорії має бути унікальною</string>
-    <string name="lbl_add_category">Додати категорію</string>
-    <string name="lbl_edit_category_name">Змінити назву категорії</string>
-    <string name="lbl_delete_category">Видалити категорію</string>
-    <string name="lbl_edit_categories">Редагувати категорії</string>
-    <string name="btn_edit_categories">Редагувати категорії</string>
+  <!-- Categories -->
+  <string name="title_activity_category">Категорії</string>
+  <string name="title_activity_category_songs">Категорія:</string>
+  <string name="title_activity_category_edit">Редагувати категорії</string>
+  <string name="lbl_drawer_main_categories">Категорії</string>
+  <string name="hint_category_name">Назва категорії</string>
+  <string name="lbl_edit_categories_for_song">Редагувати категорії для пісні</string>
+  <string name="msg_confirm_delete_category">Ви впевнені, що хочете видалити категорію</string>
+  <string name="msg_category_name_unique">Назва категорії має бути унікальною</string>
+  <string name="lbl_add_category">Додати категорію</string>
+  <string name="lbl_edit_category_name">Змінити назву категорії</string>
+  <string name="lbl_delete_category">Видалити категорію</string>
+  <string name="lbl_edit_categories">Редагувати категорії</string>
+  <string name="btn_edit_categories">Редагувати категорії</string>
 
-    <string name="btn_choose_color">Вибрати колір</string>
+  <string name="btn_choose_color">Вибрати колір</string>
+
+  <!-- Tonalities -->
+  <string name="c_flat_major">до-бемоль мажор</string>
+  <string name="a_flat_minor">ля-бемоль мінор</string>
+  <string name="g_flat_major">соль-бемоль мажор</string>
+  <string name="e_flat_minor">мі-бемоль мінор</string>
+  <string name="d_flat_major">ре-бемоль мажор</string>
+  <string name="b_flat_minor">сі-бемоль мінор</string>
+  <string name="a_flat_major">ля-бемоль мажор</string>
+  <string name="f_minor">фа мінор</string>
+  <string name="e_flat_major">мі-бемоль мажор</string>
+  <string name="c_minor">до-мінор</string>
+  <string name="b_flat_major">сі-бемоль мажор</string>
+  <string name="g_minor">соль-мінор</string>
+  <string name="f_major">фа мажор</string>
+  <string name="d_minor">ре мінор</string>
+  <string name="c_major">до мажор</string>
+  <string name="a_minor">ля мінор</string>
+  <string name="g_major">соль мажор</string>
+  <string name="e_minor">мі мінор</string>
+  <string name="d_major">ре мажор</string>
+  <string name="b_minor">сі мінор</string>
+  <string name="a_major">ля мажор</string>
+  <string name="f_sharp_minor">фа-дієз мінор</string>
+  <string name="e_major">мі мажор</string>
+  <string name="c_sharp_minor">до-дієз мінор</string>
+  <string name="b_major">сі мажор</string>
+  <string name="g_sharp_minor">соль-дієз мінор</string>
+  <string name="f_sharp_major">фа-дієз мажор</string>
+  <string name="d_sharp_minor">ре-дієз мінор</string>
+  <string name="c_sharp_major">до-дієз мажор</string>
+  <string name="a_sharp_minor">ля-дієз мінор</string>
 </resources>

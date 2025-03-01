@@ -22,3 +22,4 @@ local.properties
 /backup/build
 
 /output
+/local-repo

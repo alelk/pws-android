@@ -4,20 +4,19 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.ViewModel
-import io.github.alelk.pws.database.PwsDatabase
-import io.github.alelk.pws.android.app.theme.AppTheme
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.github.alelk.pws.android.app.theme.AppTheme
 import io.github.alelk.pws.backup.model.Backup
+import io.github.alelk.pws.backup.model.BookPreference
 import io.github.alelk.pws.backup.model.Song
 import io.github.alelk.pws.backup.model.SongNumber
 import io.github.alelk.pws.backup.model.Tag
-import io.github.alelk.pws.database.entity.SongNumberTagEntity
+import io.github.alelk.pws.database.PwsDatabase
+import io.github.alelk.pws.database.entity.SongTagEntity
 import io.github.alelk.pws.database.entity.TagEntity
-import io.github.alelk.pws.domain.model.BibleRef
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -29,17 +28,16 @@ class BackupViewModel @Inject constructor(
 
   private val bookStatisticDao = db.bookStatisticDao()
   private val favoriteDao = db.favoriteDao()
-  private val categoryDao = db.tagDao()
   private val songDao = db.songDao()
   private val tagDao = db.tagDao()
-  private val songNumberTagDao = db.songNumberTagDao()
+  private val songTagDao = db.songTagDao()
   private val songNumberDao = db.songNumberDao()
 
   suspend fun getBackup(): Backup {
-    val favorites = favoriteDao.getAllFlow().first().map { f -> SongNumber(f.book.externalId, f.songNumber.number) }
+    val favorites = favoriteDao.getAllFavoritesWithSongNumberFlow().first().map { (f, sn) -> SongNumber(f.bookId, sn.number) }
     val editedSongs = songDao.getAllEdited().map { s ->
       Song(
-        number = SongNumber(s.book.externalId, s.songNumber.number),
+        number = SongNumber(s.book.id, s.songNumber.number),
         id = s.song.id,
         name = s.song.name,
         locale = s.song.locale,
@@ -49,16 +47,16 @@ class BackupViewModel @Inject constructor(
         author = s.song.author,
         translator = s.song.translator,
         composer = s.song.composer,
-        bibleRef = s.song.bibleRef?.let(::BibleRef)
+        bibleRef = s.song.bibleRef
       )
     }.toList()
-    val customTags = categoryDao.getAllNotPredefined().map { t ->
-      val tagSongs = songNumberDao.getAllByTagId(t.id).map { SongNumber(it.book.externalId, it.songNumber.number) }.toSet()
+    val customTags = tagDao.getAllNotPredefined().map { t ->
+      val tagSongs = songNumberDao.getAllByTagId(t.id).map { SongNumber(it.bookId, it.number) }.toSet()
       Tag(name = t.name, color = t.color, songs = tagSongs)
     }
     val bookPreferences = bookStatisticDao.getAllActive().mapNotNull {
-      it.bookStatistic.userPreference?.let { pref ->
-        io.github.alelk.pws.backup.model.BookPreference(it.book.externalId, pref)
+      it.bookStatistic.priority?.let { pref ->
+        BookPreference(it.book.id, pref)
       }
     }
 
@@ -76,15 +74,15 @@ class BackupViewModel @Inject constructor(
   suspend fun restoreBackup(backup: Backup) {
     // restore edited songs
     backup.songs?.forEach { song ->
-      val songNumber = songNumberDao.getByBookExternalIdAndSongNumber(song.number.bookId, song.number.number)
+      val songNumber = songNumberDao.getByBookIdAndSongNumber(song.number.bookId, song.number.number)
       if (songNumber != null) {
         val updatedSong =
-          songDao.getById(songNumber.first.songId)
+          songDao.getById(songNumber.songId)
             ?.copy(
               name = song.name,
               lyric = song.lyric,
               tonalities = song.tonalities,
-              bibleRef = song.bibleRef?.text,
+              bibleRef = song.bibleRef,
               author = song.author,
               translator = song.translator,
               composer = song.composer,
@@ -102,9 +100,9 @@ class BackupViewModel @Inject constructor(
 
     // restore favorites
     backup.favorites?.forEach { favorite ->
-      val sn = songNumberDao.getByBookExternalIdAndSongNumber(favorite.bookId, favorite.number)
+      val sn = songNumberDao.getByBookIdAndSongNumber(favorite.bookId, favorite.number)
       if (sn != null) {
-        favoriteDao.addToFavorites(checkNotNull(sn.first.id))
+        favoriteDao.addToFavorites(sn.id)
       } else {
         Timber.e("song number not found for favorite: bookId=${favorite.bookId}, number=${favorite.number}")
       }
@@ -112,45 +110,37 @@ class BackupViewModel @Inject constructor(
 
     // restore tags
     backup.tags?.forEach { tag ->
-      val existingTag = categoryDao.getAllByName(tag.name).firstOrNull()
+      val existingTag = tagDao.getAllByName(tag.name).firstOrNull()
       val tagEntity = if (existingTag == null) {
         // create new tag if it doesn't exist
-        val newTag = TagEntity(
-          id = tagDao.getNextCustomTagId(),
-          name = tag.name,
-          color = tag.color,
-          predefined = false,
-          priority = 0
-        )
-        categoryDao.insert(newTag)
+        val newTag = TagEntity(id = tagDao.getNextCustomTagId(), name = tag.name, color = tag.color, predefined = false, priority = 0)
+        tagDao.insert(newTag)
         newTag
       } else {
         // update existing tag
         val updatedTag = existingTag.copy(color = tag.color)
-        categoryDao.update(updatedTag)
+        tagDao.update(updatedTag)
         updatedTag
       }
       // add tag songs
-      tag.songs.forEach { songNumber ->
-        val sn = songNumberDao.getByBookExternalIdAndSongNumber(songNumber.bookId, songNumber.number)
-        if (sn != null) {
-          if (songNumberTagDao.getById(checkNotNull(sn.first.id), tagEntity.id) == null) {
-            val songNumberTagEntity = SongNumberTagEntity(
-              songNumberId = checkNotNull(sn.first.id),
-              tagId = tagEntity.id
-            )
-            songNumberTagDao.insert(songNumberTagEntity)
+      tag.songs.mapNotNull { songNumber ->
+        songNumberDao.getByBookIdAndSongNumber(songNumber.bookId, songNumber.number)
+          ?.songId
+          .also {
+            if (it == null) Timber.e("Song number not found for tag assignment: bookId=${songNumber.bookId}, number=${songNumber.number}")
           }
-        } else {
-          Timber.e("Song number not found for tag assignment: bookShortName=${songNumber.bookId}, number=${songNumber.number}")
+      }.distinct().forEach { songId ->
+        if (songTagDao.getById(songId, tagEntity.id) == null) {
+          val songTagEntity = SongTagEntity(songId = songId, tagId = tagEntity.id)
+          songTagDao.insert(songTagEntity)
         }
       }
     }
 
     // restore book preferences
     backup.bookPreferences?.forEach { bookPreference ->
-      bookStatisticDao.getBookStatisticWithBookByBookExternalId(bookPreference.bookId)?.let {
-        val updatedBookStatistic = it.bookStatistic.copy(userPreference = bookPreference.preference)
+      bookStatisticDao.getById(bookPreference.bookId)?.let {
+        val updatedBookStatistic = it.copy(priority = bookPreference.preference)
         bookStatisticDao.update(updatedBookStatistic)
       }
     }

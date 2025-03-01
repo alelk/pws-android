@@ -1,18 +1,17 @@
 package io.github.alelk.pws.database.entity
 
 import androidx.room.*
+import io.github.alelk.pws.domain.model.BookId
 
 @Entity(
-  tableName = "bookstatistic",
+  tableName = "book_statistic",
   foreignKeys = [
-    ForeignKey(entity = BookEntity::class, parentColumns = ["_id"], childColumns = ["bookid"], onDelete = ForeignKey.CASCADE)
-  ],
-  indices = [Index(name = "idx_bookstatistic_bookid", value = ["bookid"], unique = true)]
+    ForeignKey(entity = BookEntity::class, parentColumns = ["id"], childColumns = ["id"], onDelete = ForeignKey.CASCADE, onUpdate = ForeignKey.NO_ACTION)
+  ]
 )
 data class BookStatisticEntity(
-  @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "_id") val id: Long? = null,
-  @ColumnInfo(name = "bookid") val bookId: Long,
-  @ColumnInfo(name = "userpref") val userPreference: Int?,
+  @PrimaryKey @ColumnInfo(name = "id") val id: BookId,
+  @ColumnInfo(name = "priority") val priority: Int?,
   @ColumnInfo(name = "readings") val readings: Int? = null,
   @ColumnInfo(name = "rating") val rating: Int? = null
 )

@@ -2,9 +2,9 @@ name: Android CI
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master" , "next" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "master", "next" ]
 
 jobs:
   build:
@@ -29,38 +29,33 @@ jobs:
 
       - name: Build ruDebug & ukDebug
         run: |
-          ./gradlew buildRuDebug buildUkDebug testRuDebug :domain:jvmTest :backup:jvmTest :database:jvmTest
+          ./gradlew buildRuDebug buildUkDebug testRuDebug :domain:jvmTest domain:testDebugUnitTest :backup:jvmTest :database:jvmTest :database:testRuDebugUnitTest
 
-      - name: Run Additional Tests
-        run: |
-          ./gradlew testRuDebugUnitTest testUkDebugUnitTest --stacktrace
-
-      - name: Publish Test Results
+      - name: Upload Test Results
         if: always()
-        uses: EnricoMi/publish-unit-test-result-action@v2
+        uses: actions/upload-artifact@v4
         with:
-          files: |
-            domain/build/test-results/**/*.xml
-            database/build/test-results/**/*.xml
-            backup/build/test-results/**/*.xml
-            app/build/test-results/**/*.xml
+          name: test-results
+          path: |
+            app/build/reports/tests/
+            app/build/test-results/
           retention-days: 14
 
       - name: Set up Node 20
         uses: actions/setup-node@v4
         with:
           node-version: '20.18.0'
-        if: success() && github.ref == 'refs/heads/master'
+        if: success() && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/next')
 
       - name: Install Semantic Release plugins
         run: npm install --global semantic-release@24.1.2 @semantic-release/changelog@6.0.3 @semantic-release/git@10.0.1 @semantic-release/github@9.2.5 @semantic-release/exec@6.0.3
-        if: success() && github.ref == 'refs/heads/master'
+        if: success() && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/next')
 
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release
-        if: success() && github.ref == 'refs/heads/master'
+        if: success() && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/next')
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -68,4 +63,4 @@ jobs:
           name: APP Version
           path: app.version
           retention-days: 30
-        if: success() && github.ref == 'refs/heads/master'
+        if: success() && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/next')

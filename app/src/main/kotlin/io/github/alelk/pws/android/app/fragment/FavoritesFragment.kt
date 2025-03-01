@@ -34,8 +34,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import io.github.alelk.pws.android.app.R
 import io.github.alelk.pws.android.app.activity.SongActivity
 import io.github.alelk.pws.android.app.adapter.FavoritesRecyclerViewAdapter
+import io.github.alelk.pws.android.app.model.FavoriteInfo
 import io.github.alelk.pws.android.app.model.FavoritesViewModel
-import io.github.alelk.pws.database.entity.FavoriteWithSongNumberWithSongWithBook
+import io.github.alelk.pws.domain.model.SongNumberId
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -76,9 +77,9 @@ class FavoritesFragment @Inject constructor() : Fragment() {
     val recyclerView = v.findViewById<RecyclerView>(R.id.rv_favorites)
     recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-    mFavoritesAdapter = FavoritesRecyclerViewAdapter { songNumberId: Long ->
+    mFavoritesAdapter = FavoritesRecyclerViewAdapter { songNumberId: SongNumberId ->
       val intentSongView = Intent(requireActivity(), SongActivity::class.java)
-      intentSongView.putExtra(SongActivity.KEY_SONG_NUMBER_ID, songNumberId)
+      intentSongView.putExtra(SongActivity.KEY_SONG_NUMBER_ID, songNumberId.toString())
       startActivity(intentSongView)
     }
     recyclerView.adapter = mFavoritesAdapter
@@ -97,18 +98,18 @@ class FavoritesFragment @Inject constructor() : Fragment() {
         favoritesViewModel.allFavorites.collectLatest { favorites ->
           when (sortOrder) {
             SORT_BY_NUMBER -> {
-              if (isAscending) updateUI(favorites.sortedBy { it.songNumber.number })
-              else updateUI(favorites.sortedByDescending { it.songNumber.number })
+              if (isAscending) updateUI(favorites.sortedBy { it.songNumber })
+              else updateUI(favorites.sortedByDescending { it.songNumber })
             }
 
             SORT_BY_NAME -> {
-              if (isAscending) updateUI(favorites.sortedBy { it.song.name })
-              else updateUI(favorites.sortedByDescending { it.song.name })
+              if (isAscending) updateUI(favorites.sortedBy { it.songName })
+              else updateUI(favorites.sortedByDescending { it.songName })
             }
 
             SORT_BY_ADDED_DATE -> {
-              if (isAscending) updateUI(favorites.sortedBy { it.favorite.position })
-              else updateUI(favorites.sortedByDescending { it.favorite.position })
+              if (isAscending) updateUI(favorites.sortedBy { it.position })
+              else updateUI(favorites.sortedByDescending { it.position })
             }
           }
         }
@@ -116,7 +117,7 @@ class FavoritesFragment @Inject constructor() : Fragment() {
     }
   }
 
-  private fun updateUI(favorites: List<FavoriteWithSongNumberWithSongWithBook>) {
+  private fun updateUI(favorites: List<FavoriteInfo>) {
     mFavoritesAdapter?.submitList(favorites)
   }
 
@@ -127,7 +128,7 @@ class FavoritesFragment @Inject constructor() : Fragment() {
       apply()
     }
   }
-  
+
   private fun updateSortAndRefresh(newSortOrder: Int, defaultAscending: Boolean) {
     if (sortOrder == newSortOrder) {
       isAscending = !isAscending

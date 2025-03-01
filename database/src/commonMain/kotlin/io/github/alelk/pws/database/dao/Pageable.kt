@@ -3,8 +3,7 @@ package io.github.alelk.pws.database.dao
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-// todo: rename
-interface Pageable1<E> {
+interface Pageable<E> {
 
   suspend fun getAll(limit: Int, offset: Int = 0): List<E>
 
