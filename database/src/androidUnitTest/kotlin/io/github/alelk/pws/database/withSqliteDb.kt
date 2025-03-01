@@ -26,3 +26,15 @@ inline fun <T> withSqliteDb(dbZipFile: File, patches: List<TestDbPatch> = emptyL
     if (targetFile.exists()) targetFile.delete()
   }
 }
+
+inline fun <T> withPwsDb(
+  dbZipFile: File = File("src/androidUnitTest/resources/test-db/v11/pws.2.0.0.dbz"),
+  patches: List<TestDbPatch> = emptyList(),
+  readOnly: Boolean = false,
+  body: (db: PwsDatabase) -> T
+): T =
+  withSqliteDb(dbZipFile, patches, readOnly) { db ->
+    db.close()
+    println("open pws database ${db.path}...")
+    body(pwsDbForTest(inMemory = false, db.path))
+  }
