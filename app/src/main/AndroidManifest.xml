@@ -59,7 +59,7 @@
       android:theme="@style/Theme.AppTheme.NoActionBar">
       <meta-data
         android:name="android.app.default_searchable"
-        android:value="com.alelk.pws.pwapp.activity.SearchActivity" />
+        android:value="io.github.alelk.pws.android.app.activity.SearchActivity" />
     </activity>
     <activity
       android:name="io.github.alelk.pws.android.app.activity.SongEditActivity"
