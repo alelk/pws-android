@@ -9,7 +9,9 @@ DEST_PACKAGE_UK="$DEST_DIR/pws-app-release-$APP_VERSION-uk"
 rm -rf ./.gradle/buildOutputCleanup
 rm -rf ./.gradle/configuration-cache
 
-./gradlew bundleRuRelease bundleUkRelease assembleRuRelease assembleUkRelease
+./gradlew :domain:jvmTest domain:testDebugUnitTest :database:jvmTest :database:testRuDebugUnitTest \
+  :backup:jvmTest :app:testRuDebugUnitTest :app:test \
+  bundleRuRelease bundleUkRelease assembleRuRelease assembleUkRelease
 
 mkdir $DEST_DIR
 cp app/build/outputs/bundle/ruRelease/app-ru-release.aab "$DEST_PACKAGE_RU.aab"

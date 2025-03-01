@@ -54,7 +54,7 @@ class BooksRecyclerViewAdapter(
     fun bind(book: BookWithSongNumbersEntity, onItemClickListener: (book: BookWithSongNumbersEntity) -> Unit) {
       bookName.text = book.book.displayName
       bookShortName.text = book.book.name
-      bookNumber.text = book.book.id.toString()
+      bookNumber.text = book.book.displayShortName
       itemView.setOnClickListener { onItemClickListener(book) }
     }
   }
