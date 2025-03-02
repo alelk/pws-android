@@ -1,5 +1,13 @@
 # PWS Android
 
+## [2.0.2](https://github.com/alelk/pws-android/compare/v2.0.1...v2.0.2) (2025-03-02)
+
+
+### Bug Fixes
+
+* **app:** fix books fragment issue: display book short name ([30bc993](https://github.com/alelk/pws-android/commit/30bc9937b8842f556f30db940a086db8ea874fea))
+* **database:** rebuild database 2.0.0 files ([d2b9758](https://github.com/alelk/pws-android/commit/d2b9758f84efe98237adb7e28124a3d15bcf4447))
+
 ## [2.0.1](https://github.com/alelk/pws-android/compare/v2.0.0...v2.0.1) (2025-03-01)
 
 
