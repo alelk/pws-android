@@ -90,16 +90,6 @@ tasks.withType<Test> {
 android {
   compileSdk = rootProject.extra["sdkVersion"] as Int
 
-//  signingConfigs {
-//    create("release-ru") {
-//      keyAlias = project.findProperty("android.release.keyAliasRu") as String?
-//      keyPassword = project.findProperty("android.release.keyPassword") as String?
-//      storeFile =
-//        (project.findProperty("android.release.keystorePath") as String?)?.let(::file)
-//      storePassword = project.findProperty("android.release.storePassword") as String?
-//    }
-//  }
-
   defaultConfig {
     resValue("string", "db_authority", "com.alelk.pws.database")
     buildConfigField("String", "DB_AUTHORITY", "\"com.alelk.pws.database\"")

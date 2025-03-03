@@ -2,7 +2,6 @@ package io.github.alelk.pws.database
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
-import io.github.alelk.pws.database.PwsDatabaseProvider.DATABASE_NAME
 import io.github.alelk.pws.database.entity.HistoryEntity
 import io.github.alelk.pws.database.entity.SongTagEntity
 import io.github.alelk.pws.database.entity.TagEntity
@@ -32,7 +31,7 @@ internal suspend fun migrateDataFromPrevDatabase(context: Context, currentDataba
 
 internal suspend fun SQLiteDatabase.migrateDataTo(currentDatabase: PwsDatabase): Result<Unit> =
   kotlin.runCatching {
-    Timber.i("found previous database $path ($version), migrate user data to $DATABASE_NAME...")
+    Timber.i("found previous database $path ($version), migrate user data to...")
     val dataProvider = PwsDb1xDataProvider(this)
     val favorites = dataProvider.getFavorites()
     val history = dataProvider.getHistory()
@@ -46,6 +45,7 @@ internal suspend fun SQLiteDatabase.migrateDataTo(currentDatabase: PwsDatabase):
         .flatMap { (bookId, sn) -> currentDatabase.songNumberDao().getByBookIdAndSongNumbers(bookId, sn) }
 
     // upsert favorites
+    Timber.i("upsert favorites from $path...")
     favorites.onSuccess { songNumbers ->
       val songNumberIds = getSongNumberEntities(songNumbers).map { it.id }
       val countUpserted = songNumberIds.map { id ->
@@ -53,7 +53,7 @@ internal suspend fun SQLiteDatabase.migrateDataTo(currentDatabase: PwsDatabase):
           currentDatabase.favoriteDao().addToFavorites(id)
         }.onFailure { e -> Timber.e("error upserting song $id to favorite: ${e.message}") }
       }.count { it.isSuccess }
-      Timber.i("$countUpserted of ${songNumbers.size} favorites upserted to database $DATABASE_NAME")
+      Timber.i("$countUpserted of ${songNumbers.size} favorites upserted")
     }
 
     // upsert history only if there is the first app starting after app upgrade
@@ -70,7 +70,7 @@ internal suspend fun SQLiteDatabase.migrateDataTo(currentDatabase: PwsDatabase):
             currentDatabase.historyDao().insert(entity)
           }.onFailure { e -> Timber.e("error upserting history item $entity to history: ${e.message}") }
         }.count { it.isSuccess }
-        Timber.i("$countUpserted of ${historyItems.size} history records upserted to database $DATABASE_NAME")
+        Timber.i("$countUpserted of ${historyItems.size} history records upserted")
       }
     }
 
