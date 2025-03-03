@@ -1,5 +1,12 @@
 # PWS Android
 
+# [2.0.0-rc.16](https://github.com/alelk/pws-android/compare/v2.0.0-rc.15...v2.0.0-rc.16) (2025-03-03)
+
+
+### Bug Fixes
+
+* **build:** enable cross platform ios compilation ([37d7134](https://github.com/alelk/pws-android/commit/37d7134e733e039bbf78c0f6deba8d9e3d1d7d16))
+
 # [2.0.0-rc.15](https://github.com/alelk/pws-android/compare/v2.0.0-rc.14...v2.0.0-rc.15) (2025-03-01)
 
 
