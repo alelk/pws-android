@@ -69,7 +69,16 @@ kotlin {
         implementation(libs.sqlite.bundled)
       }
     }
-    val iosArm64Main by getting {}
+    val iosArm64Main by getting {
+      dependencies {
+        implementation(libs.room.runtime)
+      }
+    }
+    val iosSimulatorArm64Main by getting {
+      dependencies {
+        implementation(libs.room.runtime)
+      }
+    }
     val iosArm64Test by getting {}
   }
 
