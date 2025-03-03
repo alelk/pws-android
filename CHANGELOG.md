@@ -1,5 +1,12 @@
 # PWS Android
 
+## [2.0.3-rc.2](https://github.com/alelk/pws-android/compare/v2.0.3-rc.1...v2.0.3-rc.2) (2025-03-03)
+
+
+### Bug Fixes
+
+* **build:** add target iosSimulatorArm64 ([96e3482](https://github.com/alelk/pws-android/commit/96e34822d06cdfc5e58e73c5d4d18fc62f354a02))
+
 ## [2.0.3-rc.1](https://github.com/alelk/pws-android/compare/v2.0.2...v2.0.3-rc.1) (2025-03-03)
 
 
