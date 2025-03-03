@@ -4,13 +4,13 @@ kotlin = "2.1.10"
 kotlinx-coroutines = "1.10.1"
 ksp = "1.0.30" # https://central.sonatype.com/artifact/com.google.devtools.ksp/com.google.devtools.ksp.gradle.plugin/versions
 
-hilt = "2.54"
+hilt = "2.55"
 
-android-application = "8.8.1"
+android-application = "8.8.2"
 android-material = "1.12.0"
-navigation = "2.8.7"
+navigation = "2.8.8"
 
-room = "2.7.0-beta01"
+room = "2.7.0-rc01"
 
 kotlinx-serialization = "1.8.0"
 kotlinx-datetime = "0.6.2"
@@ -20,12 +20,12 @@ kotest-property-datetime = "2.0.0"
 kotest-runner-android = "1.1.1"
 kotest-extensions-android = "0.1.5"
 
-sqlite-bundled = "2.5.0-beta01"
+sqlite-bundled = "2.5.0-rc01"
 
 
 kaml = "0.67.0"
-navigation-fragment-ktx = "2.8.7"
-navigation-ui-ktx = "2.8.7"
+navigation-fragment-ktx = "2.8.8"
+navigation-ui-ktx = "2.8.8"
 
 [libraries]
 
