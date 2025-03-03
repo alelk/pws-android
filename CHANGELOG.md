@@ -1,5 +1,12 @@
 # PWS Android
 
+## [2.0.3-rc.3](https://github.com/alelk/pws-android/compare/v2.0.3-rc.2...v2.0.3-rc.3) (2025-03-03)
+
+
+### Bug Fixes
+
+* **build:** add target iosX64 ([5bdb7db](https://github.com/alelk/pws-android/commit/5bdb7dbf4aa7d28d6a6a4d73f4eca30e09e4c2e3))
+
 ## [2.0.3-rc.2](https://github.com/alelk/pws-android/compare/v2.0.3-rc.1...v2.0.3-rc.2) (2025-03-03)
 
 
