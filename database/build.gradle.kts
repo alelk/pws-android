@@ -13,11 +13,17 @@ kotlin {
     publishLibraryVariants("ruRelease")
   }
   jvm()
+
   iosX64()
   iosArm64()
   iosSimulatorArm64()
 
   sourceSets {
+
+    all {
+      languageSettings.optIn("kotlin.experimental.ExperimentalObjCName")
+    }
+
     val commonMain by getting {
       dependencies {
         implementation(project(":domain"))
@@ -69,16 +75,9 @@ kotlin {
         implementation(libs.sqlite.bundled)
       }
     }
-    val iosArm64Main by getting {
-      dependencies {
-        implementation(libs.room.runtime)
-      }
-    }
-    val iosSimulatorArm64Main by getting {
-      dependencies {
-        implementation(libs.room.runtime)
-      }
-    }
+    val iosX64Main by getting {}
+    val iosArm64Main by getting {}
+    val iosSimulatorArm64Main by getting {}
     val iosArm64Test by getting {}
   }
 
@@ -92,6 +91,11 @@ kotlin {
 dependencies {
   add("kspAndroid", libs.room.compiler)
   add("kspJvm", libs.room.compiler)
+
+  // todo: fix native compilation
+  // add("kspIosSimulatorArm64", libs.room.compiler)
+  // add("kspIosX64", libs.room.compiler)
+  // add("kspIosArm64", libs.room.compiler)
 }
 
 tasks.withType<Test> {
