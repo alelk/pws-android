@@ -1,5 +1,6 @@
 package io.github.alelk.pws.database
 
+import androidx.room.ConstructedBy
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
@@ -43,6 +44,7 @@ import io.github.alelk.pws.database.entity.converter.DbTypeConverters
   exportSchema = false
 )
 @TypeConverters(DbTypeConverters::class)
+@ConstructedBy(PwsDatabaseConstructor::class)
 abstract class PwsDatabase : RoomDatabase() {
   abstract fun bookDao(): BookDao
   abstract fun bookStatisticDao(): BookStatisticDao

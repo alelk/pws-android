@@ -2,7 +2,7 @@
 
 kotlin = "2.1.10"
 kotlinx-coroutines = "1.10.1"
-ksp = "1.0.30" # https://central.sonatype.com/artifact/com.google.devtools.ksp/com.google.devtools.ksp.gradle.plugin/versions
+ksp = "1.0.31" # https://central.sonatype.com/artifact/com.google.devtools.ksp/com.google.devtools.ksp.gradle.plugin/versions
 
 hilt = "2.55"
 
@@ -59,7 +59,7 @@ hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt"
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" } # https://mvnrepository.com/artifact/com.google.dagger/hilt-compiler
 
 # Preferences
-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version = "1.1.2" } # https://mvnrepository.com/artifact/androidx.datastore/datastore-preferences
+datastore-preferences = { module = "androidx.datastore:datastore-preferences", version = "1.1.3" } # https://mvnrepository.com/artifact/androidx.datastore/datastore-preferences
 
 preference-ktx = { group = "androidx.preference", name = "preference-ktx", version = "1.2.1" }
 lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version = "2.8.7" }
