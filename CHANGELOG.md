@@ -1,5 +1,12 @@
 # PWS Android
 
+# [2.1.0-rc.1](https://github.com/alelk/pws-android/compare/v2.0.4-rc.2...v2.1.0-rc.1) (2025-03-06)
+
+
+### Features
+
+* **app:** add link to rustore download for 'ru' flavor ([0dbed7d](https://github.com/alelk/pws-android/commit/0dbed7d053f0da6dc544e9bae132a5623b0b698a))
+
 ## [2.0.4-rc.2](https://github.com/alelk/pws-android/compare/v2.0.4-rc.1...v2.0.4-rc.2) (2025-03-05)
 
 
