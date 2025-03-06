@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2018 The P&W Songs Open Source Project
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,33 +16,40 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single" android:id="@+id/drawer_main_group1">
-        <item
-            android:id="@+id/readNowFragment"
-            android:icon="@drawable/ic_book_black_24dp"
-            android:title="@string/lbl_drawer_main_home" />
-        <item
-          android:id="@+id/booksFragment"
-          android:icon="@drawable/ic_library_books_black_24dp"
-          android:title="@string/lbl_drawer_main_books" />
-        <item
-            android:id="@+id/historyFragment"
-            android:icon="@drawable/ic_history_black_24dp"
-            android:title="@string/lbl_drawer_main_history" />
-        <item
-            android:id="@+id/favoritesFragment"
-            android:icon="@drawable/ic_favorite_border_white_24dp"
-            android:title="@string/lbl_drawer_main_favorite" />
-        <item
-          android:id="@+id/tagsActivity"
-          android:icon="@drawable/ic_category_border_white_24dp"
-          android:title="@string/lbl_drawer_main_categories" />
-    </group>
+  <group
+    android:id="@+id/drawer_main_group1"
+    android:checkableBehavior="single">
+    <item
+      android:id="@+id/readNowFragment"
+      android:icon="@drawable/ic_book_black_24dp"
+      android:title="@string/lbl_drawer_main_home" />
+    <item
+      android:id="@+id/booksFragment"
+      android:icon="@drawable/ic_library_books_black_24dp"
+      android:title="@string/lbl_drawer_main_books" />
+    <item
+      android:id="@+id/historyFragment"
+      android:icon="@drawable/ic_history_black_24dp"
+      android:title="@string/lbl_drawer_main_history" />
+    <item
+      android:id="@+id/favoritesFragment"
+      android:icon="@drawable/ic_favorite_border_white_24dp"
+      android:title="@string/lbl_drawer_main_favorite" />
+    <item
+      android:id="@+id/tagsActivity"
+      android:icon="@drawable/ic_category_border_white_24dp"
+      android:title="@string/lbl_drawer_main_categories" />
+  </group>
 
-    <group android:id="@+id/drawer_main_group2">
-        <item
-            android:id="@+id/mainSettingsActivity"
-            android:icon="@drawable/ic_settings_black_24dp"
-            android:title="@string/lbl_drawer_main_settings" />
-    </group>
+  <group android:id="@+id/drawer_main_group2">
+    <item
+      android:id="@+id/mainSettingsActivity"
+      android:icon="@drawable/ic_settings_black_24dp"
+      android:title="@string/lbl_drawer_main_settings" />
+    <item
+      android:id="@+id/goToRustore"
+      android:icon="@drawable/ic_arrow_downward"
+      android:visible="false"
+      android:title="Скачать с RuStore" />
+  </group>
 </menu>

@@ -16,6 +16,7 @@
 package io.github.alelk.pws.android.app.activity
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.text.InputType
 import android.view.Menu
@@ -24,23 +25,21 @@ import android.view.View
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
-import io.github.alelk.pws.android.app.activity.base.AppCompatThemedActivity
-import io.github.alelk.pws.android.app.theme.ThemeType
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.alelk.pws.android.app.R
+import io.github.alelk.pws.android.app.activity.base.AppCompatThemedActivity
+import io.github.alelk.pws.android.app.theme.ThemeType
 import io.github.alelk.pws.database.BuildConfig
 import io.github.alelk.pws.database.PwsDatabase
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.Date
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -108,18 +107,28 @@ open class MainActivity : AppCompatThemedActivity() {
           appBar.setExpanded(false, true)
         }
       }
+
+      if (BuildConfig.FLAVOR == "ru") kotlin.runCatching {
+        val sdf = SimpleDateFormat("yyyy-MM-dd", java.util.Locale.ENGLISH)
+        if (Date() > sdf.parse("2025-06-15"))
+          navigationView.menu.findItem(R.id.goToRustore)?.let {
+            it.isVisible = true
+            it.setOnMenuItemClickListener {
+              startActivity(
+                Intent(
+                  Intent.ACTION_VIEW,
+                  Uri.parse("https://www.rustore.ru/catalog/app/io.github.alelk.pws.app")
+                )
+              )
+              true
+            }
+          }
+      }
     }
 
     if (BuildConfig.DEBUG) {
       Timber.plant(Timber.DebugTree())
     }
-
-//    lifecycleScope.launch {
-//      withContext(Dispatchers.IO) {
-//        // import data from previous database version
-//        migrateDataFromPrevDatabase(applicationContext, database)
-//      }
-//    }
   }
 
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
