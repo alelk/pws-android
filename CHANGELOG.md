@@ -1,5 +1,18 @@
 # PWS Android
 
+# [2.1.0](https://github.com/alelk/pws-android/compare/v2.0.3...v2.1.0) (2025-03-06)
+
+
+### Bug Fixes
+
+* **build:** update library dependencies ([2f364d3](https://github.com/alelk/pws-android/commit/2f364d3ea80351376a33f1d69f2d4b270b1597a5))
+* **build:** update library dependencies ([#76](https://github.com/alelk/pws-android/issues/76)) ([27c6e7f](https://github.com/alelk/pws-android/commit/27c6e7ff5e80916671c1d7fa5b87e6211344c74b))
+
+
+### Features
+
+* **app:** add link to rustore download for 'ru' flavor ([0dbed7d](https://github.com/alelk/pws-android/commit/0dbed7d053f0da6dc544e9bae132a5623b0b698a))
+
 # [2.1.0-rc.1](https://github.com/alelk/pws-android/compare/v2.0.4-rc.2...v2.1.0-rc.1) (2025-03-06)
 
 
