@@ -11,9 +11,11 @@ import io.github.alelk.pws.backup.model.BookPreference
 import io.github.alelk.pws.backup.model.Song
 import io.github.alelk.pws.backup.model.SongNumber
 import io.github.alelk.pws.backup.model.Tag
+import io.github.alelk.pws.database.BuildConfig
 import io.github.alelk.pws.database.PwsDatabase
 import io.github.alelk.pws.database.entity.SongTagEntity
 import io.github.alelk.pws.database.entity.TagEntity
+import io.github.alelk.pws.domain.model.Locale
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
@@ -33,7 +35,7 @@ class BackupViewModel @Inject constructor(
   private val songTagDao = db.songTagDao()
   private val songNumberDao = db.songNumberDao()
 
-  suspend fun getBackup(): Backup {
+  suspend fun getBackup(source: String? = null): Backup {
     val favorites = favoriteDao.getAllFavoritesWithSongNumberFlow().first().map { (f, sn) -> SongNumber(f.bookId, sn.number) }
     val editedSongs = songDao.getAllEdited().map { s ->
       Song(
@@ -68,7 +70,19 @@ class BackupViewModel @Inject constructor(
       setting(AppPreferenceKeys.SONG_TEXT_EXPANDED),
       setting(AppPreferenceKeys.APP_THEME),
     ).toMap()
-    return Backup(songs = editedSongs, favorites = favorites, tags = customTags, bookPreferences = bookPreferences, settings = settings)
+
+    @Suppress("KotlinConstantConditions")
+    val locale = when (BuildConfig.FLAVOR) {
+      "ru" -> Locale.RU
+      "uk" -> Locale.UK
+      "en" -> Locale.EN
+      else -> null
+    }
+
+    return Backup(
+      metadata = Backup.Metadata(defaultLocale = locale, source = source),
+      songs = editedSongs, favorites = favorites, tags = customTags, bookPreferences = bookPreferences, settings = settings
+    )
   }
 
   suspend fun restoreBackup(backup: Backup) {

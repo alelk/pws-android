@@ -1,5 +1,6 @@
 package io.github.alelk.pws.backup.model
 
+import io.github.alelk.pws.domain.model.Locale
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
@@ -16,10 +17,18 @@ data class Backup(
   val settings: Map<String, String>? = null
 ) {
 
+  /** Backup metadata.
+   *
+   * @property createdAt timestamp of backup
+   * @property defaultLocale default locale of songs
+   * @property version version of backup specification
+   */
   @Serializable
   data class Metadata(
-    val createdAt: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+    val createdAt: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
+    val defaultLocale: Locale? = null,
+    val source: String? = null
   ) {
-    val version: Int = 1
+    val version: Int = 2
   }
 }

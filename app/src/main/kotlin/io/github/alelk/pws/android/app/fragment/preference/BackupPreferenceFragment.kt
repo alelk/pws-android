@@ -41,17 +41,15 @@ class BackupPreferenceFragment : PreferenceFragmentCompat() {
         coroutineScope.launch {
           context?.contentResolver?.openOutputStream(uri)?.use { outputStream ->
             try {
-              // We need a temporary file to store the exported user data before copying it to the output stream.
-              // This is because the export process involves writing data to a file, and using a temporary file
-              // allows us to handle the data safely and efficiently before transferring it to the final destination.
-              val tempFile = File(context?.cacheDir, "temp_backup.pws")
-              val backup = viewModel.getBackup()
+              val source =
+                requireActivity().packageManager.getPackageInfo(requireActivity().packageName, 0).let { pi ->
+                  "${pi.packageName}/${pi.versionName}"
+                }
+              val backup = viewModel.getBackup(source)
               withContext(Dispatchers.IO) {
                 outputStream.bufferedWriter().use { it.write(backupService.writeAsString(backup)) }
-                tempFile.inputStream().copyTo(outputStream)
               }
               Toast.makeText(context, R.string.export_success, Toast.LENGTH_SHORT).show()
-              tempFile.delete()
             } catch (e: Throwable) {
               Timber.e(e, "Failed to export backup")
               Toast.makeText(context, R.string.export_failed, Toast.LENGTH_SHORT).show()

@@ -22,7 +22,7 @@ class BackupServiceTest : StringSpec({
   val book1Id = BookId.parse("book-1")
   val book2Id = BookId.parse("book-2")
   val backup1 = Backup(
-    metadata = Backup.Metadata(createdAt = LocalDateTime.parse("2025-01-01T07:31:05")),
+    metadata = Backup.Metadata(createdAt = LocalDateTime.parse("2025-01-01T07:31:05"), defaultLocale = Locale.RU, source = "source-1"),
     songs = listOf(
       Song(
         number = SongNumber(book1Id, 1),
@@ -64,7 +64,9 @@ class BackupServiceTest : StringSpec({
   val backup1Text = """
     |metadata:
     |  createdAt: "2025-01-01T07:31:05"
-    |  version: 1
+    |  defaultLocale: "ru"
+    |  source: "source-1"
+    |  version: 2
     |songs:
     |- number:
     |    bookId: "book-1"
