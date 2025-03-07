@@ -6,7 +6,7 @@ ksp = "1.0.31" # https://central.sonatype.com/artifact/com.google.devtools.ksp/c
 
 hilt = "2.55"
 
-android-application = "8.8.2"
+android-application = "8.9.0"
 android-material = "1.12.0"
 navigation = "2.8.8"
 
