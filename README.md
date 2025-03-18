@@ -7,6 +7,7 @@
 
 | Date       | Tag                                                                  | UK Release                 | RU Release                               |
 |------------|----------------------------------------------------------------------|----------------------------|------------------------------------------|
+| 2025-03-02 | [v2.1.0](https://github.com/alelk/pws-android/releases/tag/v2.1.0)   | -                          | 36 (2.1.0-mar-18-2025)                   |
 | 2025-03-02 | [v2.0.2](https://github.com/alelk/pws-android/releases/tag/v2.0.2)   | 35 (2.0.2-mar-2-2025-uk)   | 35 (2.0.2-mar-2-2025)                    |
 | 2025-02-16 | [v1.15.0](https://github.com/alelk/pws-android/releases/tag/v1.15.0) | 32 (1.15.0-feb-16-2025-uk) | 32 (1.15.0-feb-16-2025)                  |
 | 2025-02-04 | [v1.11.4](https://github.com/alelk/pws-android/releases/tag/v1.11.4) | 31 (1.11.4-feb-4-2025-uk)  | 31 (1.11.4-feb-4-2025)                   |
