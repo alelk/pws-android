@@ -8,9 +8,9 @@ hilt = "2.55"
 
 android-application = "8.9.0"
 android-material = "1.12.0"
-navigation = "2.8.8"
+navigation = "2.8.9"
 
-room = "2.7.0-rc01"
+room = "2.7.0-rc02"
 
 kotlinx-serialization = "1.8.0"
 kotlinx-datetime = "0.6.2"
@@ -20,12 +20,12 @@ kotest-property-datetime = "2.0.0"
 kotest-runner-android = "1.1.1"
 kotest-extensions-android = "0.1.5"
 
-sqlite-bundled = "2.5.0-rc01"
+sqlite-bundled = "2.5.0-rc02"
 
 
 kaml = "0.67.0"
-navigation-fragment-ktx = "2.8.8"
-navigation-ui-ktx = "2.8.8"
+navigation-fragment-ktx = "2.8.9"
+navigation-ui-ktx = "2.8.9"
 
 [libraries]
 

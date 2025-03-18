@@ -91,11 +91,9 @@ kotlin {
 dependencies {
   add("kspAndroid", libs.room.compiler)
   add("kspJvm", libs.room.compiler)
-
-  // todo: fix native compilation
-  // add("kspIosSimulatorArm64", libs.room.compiler)
-  // add("kspIosX64", libs.room.compiler)
-  // add("kspIosArm64", libs.room.compiler)
+  add("kspIosSimulatorArm64", libs.room.compiler)
+  add("kspIosX64", libs.room.compiler)
+  add("kspIosArm64", libs.room.compiler)
 }
 
 tasks.withType<Test> {
