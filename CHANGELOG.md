@@ -1,5 +1,13 @@
 # PWS Android
 
+## [2.1.1-rc.3](https://github.com/alelk/pws-android/compare/v2.1.1-rc.2...v2.1.1-rc.3) (2025-10-01)
+
+
+### Bug Fixes
+
+* **backup:** fix backups ([44045ad](https://github.com/alelk/pws-android/commit/44045ad92f7ee70ae0165c57a7f4ef01c9c84bcd))
+* **database:** fix database native build ([aa5feef](https://github.com/alelk/pws-android/commit/aa5feef5b6122076232a1970ea225770753d116a))
+
 ## [2.1.1-rc.2](https://github.com/alelk/pws-android/compare/v2.1.1-rc.1...v2.1.1-rc.2) (2025-03-18)
 
 
