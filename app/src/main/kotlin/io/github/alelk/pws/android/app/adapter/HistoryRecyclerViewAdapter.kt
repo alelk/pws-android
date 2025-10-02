@@ -29,6 +29,7 @@ import io.github.alelk.pws.android.app.model.HistoryInfo
 import io.github.alelk.pws.domain.model.SongNumberId
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
+import kotlin.time.ExperimentalTime
 
 /**
  * History Recycler View Adapter
@@ -55,6 +56,7 @@ class HistoryRecyclerViewAdapter(private val onItemClickListener: (id: SongNumbe
     private val bookDisplayName: TextView = itemView.findViewById(R.id.txt_book_name)
     private val timestamp: TextView = itemView.findViewById(R.id.txt_timestamp)
 
+    @OptIn(ExperimentalTime::class)
     fun bind(historyItem: HistoryInfo, onItemClickListener: (id: SongNumberId) -> Unit) {
       songNumber.text = historyItem.songNumber.toString()
       songName.text = historyItem.songName

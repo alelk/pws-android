@@ -11,11 +11,13 @@ import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.constant
 import io.kotest.property.arbitrary.long
 import io.kotest.property.arbitrary.removeEdgecases
-import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
+@OptIn(ExperimentalTime::class)
 fun Arb.Companion.historyEntity(
   id: Arb<Long?>? = Arb.long(min = 0, max = 1_000_000_000).removeEdgecases(),
   bookId: Arb<BookId> = Arb.bookId(),

@@ -61,6 +61,7 @@ kotlin {
         implementation(libs.androidx.test.core)
         implementation(libs.kotest.runner.android)
         implementation(libs.kotest.extensions.android)
+        implementation(libs.robolectric)
       }
     }
     val jvmMain by getting {
@@ -106,7 +107,7 @@ android {
   defaultConfig {
     resValue("string", "db_authority", "com.alelk.pws.database")
     buildConfigField("String", "DB_AUTHORITY", "\"com.alelk.pws.database\"")
-    minSdk = 21
+    minSdk = 23
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
 
@@ -154,4 +155,11 @@ android {
   ksp {
     arg("room.generateKotlin", "true")
   }
+
+//  testOptions {
+//    unitTests {
+//      isIncludeAndroidResources = true
+//    }
+//    execution = "ANDROIDX_TEST_ORCHESTRATOR"
+//  }
 }
