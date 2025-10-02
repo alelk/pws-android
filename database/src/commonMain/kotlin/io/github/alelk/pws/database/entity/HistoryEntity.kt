@@ -4,11 +4,13 @@ import androidx.room.*
 import io.github.alelk.pws.domain.model.BookId
 import io.github.alelk.pws.domain.model.SongId
 import io.github.alelk.pws.domain.model.SongNumberId
-import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
+@OptIn(ExperimentalTime::class)
 private fun currentDateTime() = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
 
 @Entity(

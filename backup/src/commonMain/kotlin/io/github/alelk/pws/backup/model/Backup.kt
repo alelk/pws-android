@@ -1,11 +1,11 @@
 package io.github.alelk.pws.backup.model
 
 import io.github.alelk.pws.domain.model.Locale
-import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.Serializable
+import kotlin.time.ExperimentalTime
 
 @Serializable
 data class Backup(
@@ -24,8 +24,8 @@ data class Backup(
    * @property version version of backup specification
    */
   @Serializable
-  data class Metadata(
-    val createdAt: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
+  data class Metadata @OptIn(ExperimentalTime::class) constructor(
+    val createdAt: LocalDateTime = kotlin.time.Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
     val defaultLocale: Locale? = null,
     val source: String? = null
   ) {
