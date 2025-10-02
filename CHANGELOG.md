@@ -1,5 +1,12 @@
 # PWS Android
 
+## [2.1.1-rc.4](https://github.com/alelk/pws-android/compare/v2.1.1-rc.3...v2.1.1-rc.4) (2025-10-02)
+
+
+### Bug Fixes
+
+* **project:** update dependencies ([#78](https://github.com/alelk/pws-android/issues/78)) ([7e5a911](https://github.com/alelk/pws-android/commit/7e5a911875c9ba76fb0b422e6e83f16d10ed6fc4))
+
 ## [2.1.1-rc.3](https://github.com/alelk/pws-android/compare/v2.1.1-rc.2...v2.1.1-rc.3) (2025-10-01)
 
 
