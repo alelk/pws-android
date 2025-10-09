@@ -5,7 +5,7 @@
   android:layout_height="match_parent"
   android:orientation="vertical"
   android:fitsSystemWindows="true"
-  tools:context="io.github.alelk.pws.android.app.activity.TagsActivity">
+  tools:context="io.github.alelk.pws.android.app.feature.tags.TagsActivity">
 
   <androidx.recyclerview.widget.RecyclerView
     android:id="@+id/categories_recycler_view"
