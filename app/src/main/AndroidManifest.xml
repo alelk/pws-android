@@ -16,9 +16,6 @@
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-  <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
   <application
     android:name="io.github.alelk.pws.android.app.PwsApplication"
     android:allowBackup="true"
@@ -27,7 +24,7 @@
     android:supportsRtl="true"
     android:theme="@style/Theme.AppTheme">
     <activity
-      android:name="io.github.alelk.pws.android.app.activity.MainActivity"
+      android:name="io.github.alelk.pws.android.app.feature.home.MainActivity"
       android:exported="true"
       android:theme="@style/Theme.AppTheme.Launcher">
       <intent-filter>
@@ -39,7 +36,7 @@
       </intent-filter>
     </activity>
     <activity
-      android:name="io.github.alelk.pws.android.app.activity.SearchActivity"
+      android:name="io.github.alelk.pws.android.app.feature.search.SearchActivity"
       android:exported="false"
       android:label="@string/title_activity_search"
       android:launchMode="singleTop"
@@ -53,33 +50,33 @@
         android:resource="@xml/searchable" />
     </activity>
     <activity
-      android:name="io.github.alelk.pws.android.app.activity.SongActivity"
+      android:name="io.github.alelk.pws.android.app.feature.songs.SongActivity"
       android:label=""
-      android:parentActivityName="io.github.alelk.pws.android.app.activity.MainActivity"
+      android:parentActivityName="io.github.alelk.pws.android.app.feature.home.MainActivity"
       android:theme="@style/Theme.AppTheme.NoActionBar">
       <meta-data
         android:name="android.app.default_searchable"
         android:value="io.github.alelk.pws.android.app.activity.SearchActivity" />
     </activity>
     <activity
-      android:name="io.github.alelk.pws.android.app.activity.SongEditActivity"
+      android:name="io.github.alelk.pws.android.app.feature.songs.SongEditActivity"
       android:configChanges="orientation|keyboardHidden|screenSize"
       android:label="@string/title_activity_song_edit"
-      android:parentActivityName="io.github.alelk.pws.android.app.activity.SongActivity"
+      android:parentActivityName="io.github.alelk.pws.android.app.feature.songs.SongActivity"
       android:theme="@style/Theme.AppTheme.NoActionBar"
       android:windowSoftInputMode="adjustResize" />
     <activity
-      android:name="io.github.alelk.pws.android.app.activity.TagsActivity"
+      android:name="io.github.alelk.pws.android.app.feature.tags.TagsActivity"
       android:label="@string/title_activity_category"
-      android:parentActivityName="io.github.alelk.pws.android.app.activity.MainActivity" />
+      android:parentActivityName="io.github.alelk.pws.android.app.feature.home.MainActivity" />
     <activity
-      android:name="io.github.alelk.pws.android.app.activity.TagSongsActivity"
+      android:name="io.github.alelk.pws.android.app.feature.tags.TagSongsActivity"
       android:label="@string/title_activity_category_songs"
-      android:parentActivityName="io.github.alelk.pws.android.app.activity.TagsActivity" />
+      android:parentActivityName="io.github.alelk.pws.android.app.feature.tags.TagsActivity" />
     <activity
-      android:name="io.github.alelk.pws.android.app.activity.MainSettingsActivity"
+      android:name="io.github.alelk.pws.android.app.feature.preference.MainSettingsActivity"
       android:label="@string/title_activity_main_settings"
-      android:parentActivityName="io.github.alelk.pws.android.app.activity.MainActivity" />
+      android:parentActivityName="io.github.alelk.pws.android.app.feature.home.MainActivity" />
 
     <provider
       android:name="io.github.alelk.pws.database.provider.PwsDataProvider"

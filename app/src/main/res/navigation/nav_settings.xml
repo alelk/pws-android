@@ -6,22 +6,22 @@
 
   <fragment
     android:id="@+id/rootPreferenceFragment"
-    android:name="io.github.alelk.pws.android.app.fragment.preference.RootPreferenceFragment"
+    android:name="io.github.alelk.pws.android.app.feature.preference.RootPreferenceFragment"
     android:label="Settings" />
 
   <fragment
     android:id="@+id/generalPreferenceFragment"
-    android:name="io.github.alelk.pws.android.app.fragment.preference.GeneralPreferenceFragment"
+    android:name="io.github.alelk.pws.android.app.feature.preference.GeneralPreferenceFragment"
     android:label="General Settings" />
 
   <fragment
     android:id="@+id/backupPreferenceFragment"
-    android:name="io.github.alelk.pws.android.app.fragment.preference.BackupPreferenceFragment"
+    android:name="io.github.alelk.pws.android.app.feature.preference.BackupPreferenceFragment"
     android:label="@string/pref_header_import_export" />
 
   <fragment
     android:id="@+id/aboutPreferenceFragment"
-    android:name="io.github.alelk.pws.android.app.fragment.preference.AboutPreferenceFragment"
+    android:name="io.github.alelk.pws.android.app.feature.preference.AboutPreferenceFragment"
     android:label="@string/pref_header_about" />
 
 </navigation>
