@@ -1,5 +1,12 @@
 # PWS Android
 
+## [2.1.1-rc.5](https://github.com/alelk/pws-android/compare/v2.1.1-rc.4...v2.1.1-rc.5) (2025-10-09)
+
+
+### Bug Fixes
+
+* **project:** app module packages refactoring ([31fafba](https://github.com/alelk/pws-android/commit/31fafba013580671443a6355a535c0dcceeecd30))
+
 ## [2.1.1-rc.4](https://github.com/alelk/pws-android/compare/v2.1.1-rc.3...v2.1.1-rc.4) (2025-10-02)
 
 
