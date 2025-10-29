@@ -1,5 +1,12 @@
 # PWS Android
 
+# [2.2.0-rc.2](https://github.com/alelk/pws-android/compare/v2.2.0-rc.1...v2.2.0-rc.2) (2025-10-29)
+
+
+### Bug Fixes
+
+* **database:** fix database issue: when tag is updated, all tag's song references deleting ([6237db2](https://github.com/alelk/pws-android/commit/6237db2e12a9da22f4e5b73aa14eb262e4cdd23b))
+
 # [2.2.0-rc.1](https://github.com/alelk/pws-android/compare/v2.1.1-rc.5...v2.2.0-rc.1) (2025-10-29)
 
 
