@@ -1,5 +1,12 @@
 # PWS Android
 
+# [2.2.0-rc.1](https://github.com/alelk/pws-android/compare/v2.1.1-rc.5...v2.2.0-rc.1) (2025-10-29)
+
+
+### Features
+
+* **database:** implement database migrator for pws db v2.0.0 ([0df77c4](https://github.com/alelk/pws-android/commit/0df77c4c3c063444f3eb20982d7a639c983c4519))
+
 ## [2.1.1-rc.5](https://github.com/alelk/pws-android/compare/v2.1.1-rc.4...v2.1.1-rc.5) (2025-10-09)
 
 
