@@ -18,7 +18,7 @@ mkdir resized
 mkdir resized/hdpi
 mkdir resized/xhdpi
 for img in *.jpg; do
-  magick "$img" -resize 480x300^ -gravity center -extent 480x300 "resized/hdpi/$img"
-  magick "$img" -resize 768x480^ -gravity center -extent 768x480 "resized/xhdpi/$img"
+  magick "$img" -resize 480x300^ -gravity center -extent 480x300 "resized/hdpi/${img%.jpg}.png"
+  magick "$img" -resize 768x480^ -gravity center -extent 768x480 "resized/xhdpi/${img%.jpg}.png"
 done
 ```
