@@ -13,26 +13,23 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.format.char
 
-class PwsDb1xDataProvider(val db: SQLiteDatabase) : PwsDbDataProvider {
+class PwsDb2xDataProvider(val db: SQLiteDatabase) : PwsDbDataProvider {
 
-  override val dbVersions: IntRange = 1..10
+  override val dbVersions: IntRange = 11..11
 
   /** Get favorites.
    *
    * Database versions:
-   * - 0.9.1 (1)
-   * - 1.1.0 (2)
-   * - 1.2.0 (3, 4, 5)
-   * - 1.8.0 (6, 7, 8, 9, 10)
+   * - 2.0.0 (11)
    */
   override suspend fun getFavorites(): Result<List<SongNumber>> =
     db.fetchData(
+      dbVersion = 11..11,
       collectionName = "favorites",
-      table = "favorites as f inner join psalmnumbers as pn on f.psalmnumberid=pn._id inner join books as b on pn.bookid=b._id",
-      columns = arrayOf("f.position as position", "pn.number as number", "b.edition as edition"),
-      dbVersion = 1..10
+      table = "favorites as f inner join song_numbers as sn on f.song_id=sn.song_id and f.book_id=sn.book_id",
+      columns = arrayOf("f.position as position", "sn.number as number", "f.book_id as book_id")
     ) { cursor ->
-      val bookId = cursor.getString(cursor.getColumnIndexOrThrow("edition"))
+      val bookId = cursor.getString(cursor.getColumnIndexOrThrow("book_id"))
       val songNumber = cursor.getInt(cursor.getColumnIndexOrThrow("number"))
       SongNumber(BookId.parse(bookId), songNumber)
     }
@@ -42,43 +39,39 @@ class PwsDb1xDataProvider(val db: SQLiteDatabase) : PwsDbDataProvider {
   /** Get history.
    *
    * Database versions:
-   * - 0.9.1 (1)
-   * - 1.1.0 (2)
-   * - 1.2.0 (3, 4, 5)
-   * - 1.8.0 (6, 7, 8, 9, 10)
+   * - 2.0.0 (11)
    */
   override suspend fun getHistory(): Result<List<HistoryItem>> =
     db.fetchData(
+      dbVersion = 11..11,
       collectionName = "history",
-      table = "history as h inner join psalmnumbers as pn on h.psalmnumberid=pn._id inner join books as b on pn.bookid=b._id",
-      columns = arrayOf("h.accesstimestamp as accesstimestamp", "pn.number as number", "b.edition as edition"),
-      dbVersion = 1..10
+      table = "history as h inner join song_numbers as sn on h.song_id=sn.song_id and h.book_id=sn.book_id",
+      columns = arrayOf("h.access_timestamp as access_timestamp", "sn.number as number", "h.book_id as book_id"),
     ) { cursor ->
-      val bookId = cursor.getString(cursor.getColumnIndexOrThrow("edition"))
+      val bookId = cursor.getString(cursor.getColumnIndexOrThrow("book_id"))
       val songNumber = cursor.getInt(cursor.getColumnIndexOrThrow("number"))
-      val timestamp = cursor.getString(cursor.getColumnIndexOrThrow("accesstimestamp"))
+      val timestamp = cursor.getString(cursor.getColumnIndexOrThrow("access_timestamp"))
       HistoryItem(SongNumber(BookId.parse(bookId), songNumber), TIMESTAMP_FORMAT.parse(timestamp))
     }
 
   /** Get edited songs.
    *
    * Database versions:
-   * - 1.2.0 (3, 4, 5)
-   * - 1.8.0 (6, 7, 8, 9, 10)
+   * - 2.0.0 (11)
    */
   override suspend fun getEditedSongs(): Result<List<SongChange>> =
     db.fetchData(
       dbVersion = 4..10,
       collectionName = "edited songs",
-      table = "psalms as p inner join psalmnumbers as pn on pn.psalmid=p._id inner join books b on pn.bookid=b._id",
-      columns = arrayOf("p.text as text", "p.bibleref as bibleref", "p.tonalities as tonalities", "pn.number as number", "b.edition as edition"),
+      table = "songs as s inner join song_numbers as sn on sn.song_id=s.id",
+      columns = arrayOf("s.lyric as lyric", "s.bibleref as bibleref", "s.tonalities as tonalities", "s.number as number", "sn.book_id as book_id"),
       selection = "p.edited=?",
       selectionArgs = arrayOf(1.toString()),
     ) { cursor ->
-      val bookId = cursor.getString(cursor.getColumnIndexOrThrow("edition"))
+      val bookId = cursor.getString(cursor.getColumnIndexOrThrow("book_id"))
       val songNumber = cursor.getInt(cursor.getColumnIndexOrThrow("number"))
       val tonalities = cursor.getStringOrNull(cursor.getColumnIndexOrThrow("tonalities"))
-      val lyric = cursor.getString(cursor.getColumnIndexOrThrow("text"))
+      val lyric = cursor.getString(cursor.getColumnIndexOrThrow("lyric"))
       val bibleRef = cursor.getStringOrNull(cursor.getColumnIndexOrThrow("bibleref"))
       SongChange(
         SongNumber(BookId.parse(bookId), songNumber),
@@ -91,7 +84,7 @@ class PwsDb1xDataProvider(val db: SQLiteDatabase) : PwsDbDataProvider {
   /** Get song tags.
    *
    * Database versions:
-   * - 1.8.0 (6, 7, 8, 9, 10)
+   * - 2.0.0 (11)
    */
   override suspend fun getTags(): Result<List<Tag>> =
     db.fetchData(
@@ -99,11 +92,11 @@ class PwsDb1xDataProvider(val db: SQLiteDatabase) : PwsDbDataProvider {
       collectionName = "tags",
       table =
       """
-        |tags as t inner join song_number_tags snt on t.id = snt.tag_id 
-        |inner join psalmnumbers pn on snt.song_number_id = pn._id 
-        |inner join books b on pn.bookid = b._id
+        |tags as t inner join song_tags st on t.id = st.tag_id 
+        |inner join songs s on s.id = st.song_id 
+        |inner join song_numbers sn on s.id = sn.song_id
         |""".trimMargin(),
-      columns = arrayOf("t.id as id", "t.name as name", "t.color as color", "t.predefined as predefined", "b.edition as book_id", "pn.number as song_number"),
+      columns = arrayOf("t.id as id", "t.name as name", "t.color as color", "t.predefined as predefined", "sn.book_id as book_id", "sn.number as song_number"),
     ) { cursor ->
       val tagId = cursor.getString(cursor.getColumnIndexOrThrow("id"))
       val tagName = cursor.getString(cursor.getColumnIndexOrThrow("name"))
@@ -138,3 +131,4 @@ class PwsDb1xDataProvider(val db: SQLiteDatabase) : PwsDbDataProvider {
         }
     }
 }
+
