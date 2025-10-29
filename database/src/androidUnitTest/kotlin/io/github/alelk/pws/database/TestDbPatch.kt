@@ -8,7 +8,7 @@ interface TestDbPatch {
   val targetVersion: Int? get() = null
   fun apply(db: SQLiteDatabase)
 
-  object InsertCustomTags : TestDbPatch {
+  object V1xInsertCustomTags : TestDbPatch {
     override fun apply(db: SQLiteDatabase) {
       db.transaction(exclusive = true) {
         db.execSQL(

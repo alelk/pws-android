@@ -6,6 +6,7 @@ import io.github.alelk.pws.database.entity.HistoryEntity
 import io.github.alelk.pws.database.entity.SongTagEntity
 import io.github.alelk.pws.database.entity.TagEntity
 import io.github.alelk.pws.database.support.PwsDb1xDataProvider
+import io.github.alelk.pws.database.support.PwsDb2xDataProvider
 import io.github.alelk.pws.domain.model.SongNumber
 import timber.log.Timber
 
@@ -32,7 +33,9 @@ internal suspend fun migrateDataFromPrevDatabase(context: Context, currentDataba
 internal suspend fun SQLiteDatabase.migrateDataTo(currentDatabase: PwsDatabase): Result<Unit> =
   kotlin.runCatching {
     Timber.i("found previous database $path ($version), migrate user data to...")
-    val dataProvider = PwsDb1xDataProvider(this)
+    val dataProviders = listOf(PwsDb1xDataProvider(this), PwsDb2xDataProvider(this))
+    val dataProvider = dataProviders.find { this.version in it.dbVersions }
+    checkNotNull(dataProvider) { "no data provider found for database version $version" }
     val favorites = dataProvider.getFavorites()
     val history = dataProvider.getHistory()
     val editedSongs = dataProvider.getEditedSongs()
