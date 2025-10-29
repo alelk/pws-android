@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Upsert
 import io.github.alelk.pws.database.entity.TagEntity
 import io.github.alelk.pws.domain.model.SongId
 import io.github.alelk.pws.domain.model.TagId
@@ -24,10 +25,10 @@ interface TagDao : Pageable<TagEntity> {
   @Insert(onConflict = OnConflictStrategy.ABORT)
   suspend fun insert(tags: List<TagEntity>)
 
-  @Insert(onConflict = OnConflictStrategy.REPLACE)
+  @Upsert
   suspend fun update(tag: TagEntity)
 
-  @Insert(onConflict = OnConflictStrategy.REPLACE)
+  @Upsert
   suspend fun update(tags: List<TagEntity>)
 
   @Query("SELECT * FROM tags WHERE id = :id")
