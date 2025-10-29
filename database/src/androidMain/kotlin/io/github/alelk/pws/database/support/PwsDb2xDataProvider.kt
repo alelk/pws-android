@@ -1,6 +1,8 @@
 package io.github.alelk.pws.database.support
 
 import android.database.sqlite.SQLiteDatabase
+import androidx.core.database.getIntOrNull
+import androidx.core.database.getShortOrNull
 import androidx.core.database.getStringOrNull
 import io.github.alelk.pws.domain.model.BibleRef
 import io.github.alelk.pws.domain.model.BookId
@@ -61,11 +63,11 @@ class PwsDb2xDataProvider(val db: SQLiteDatabase) : PwsDbDataProvider {
    */
   override suspend fun getEditedSongs(): Result<List<SongChange>> =
     db.fetchData(
-      dbVersion = 4..10,
+      dbVersion = 11..11,
       collectionName = "edited songs",
       table = "songs as s inner join song_numbers as sn on sn.song_id=s.id",
-      columns = arrayOf("s.lyric as lyric", "s.bibleref as bibleref", "s.tonalities as tonalities", "s.number as number", "sn.book_id as book_id"),
-      selection = "p.edited=?",
+      columns = arrayOf("s.lyric as lyric", "s.bibleref as bibleref", "s.tonalities as tonalities", "sn.number as number", "sn.book_id as book_id"),
+      selection = "s.edited=?",
       selectionArgs = arrayOf(1.toString()),
     ) { cursor ->
       val bookId = cursor.getString(cursor.getColumnIndexOrThrow("book_id"))
@@ -76,7 +78,7 @@ class PwsDb2xDataProvider(val db: SQLiteDatabase) : PwsDbDataProvider {
       SongChange(
         SongNumber(BookId.parse(bookId), songNumber),
         lyric = lyric,
-        tonalities = tonalities?.split(';')?.map { Tonality.fromIdentifier(it.trim()) },
+        tonalities = tonalities?.split(';')?.filter { it.isNotBlank() }?.map { Tonality.fromIdentifier(it.trim()) },
         bibleRef = bibleRef?.takeIf { it.isNotBlank() }?.let(::BibleRef)
       )
     }
@@ -88,13 +90,13 @@ class PwsDb2xDataProvider(val db: SQLiteDatabase) : PwsDbDataProvider {
    */
   override suspend fun getTags(): Result<List<Tag>> =
     db.fetchData(
-      dbVersion = 6..10,
+      dbVersion = 11..11,
       collectionName = "tags",
       table =
-      """
-        |tags as t inner join song_tags st on t.id = st.tag_id 
-        |inner join songs s on s.id = st.song_id 
-        |inner join song_numbers sn on s.id = sn.song_id
+        """
+        |tags as t left join song_tags st on t.id = st.tag_id 
+        |left join songs s on st.song_id = s.id  
+        |left join song_numbers sn on st.song_id = sn.song_id
         |""".trimMargin(),
       columns = arrayOf("t.id as id", "t.name as name", "t.color as color", "t.predefined as predefined", "sn.book_id as book_id", "sn.number as song_number"),
     ) { cursor ->
@@ -102,14 +104,14 @@ class PwsDb2xDataProvider(val db: SQLiteDatabase) : PwsDbDataProvider {
       val tagName = cursor.getString(cursor.getColumnIndexOrThrow("name"))
       val tagColor = cursor.getString(cursor.getColumnIndexOrThrow("color"))
       val predefined = cursor.getString(cursor.getColumnIndexOrThrow("predefined"))
-      val bookId = cursor.getString(cursor.getColumnIndexOrThrow("book_id"))
-      val songNumber = cursor.getInt(cursor.getColumnIndexOrThrow("song_number"))
+      val bookId = cursor.getStringOrNull(cursor.getColumnIndexOrThrow("book_id"))
+      val songNumber = cursor.getIntOrNull(cursor.getColumnIndexOrThrow("song_number"))
       Tag(
         id = TagId.parse(tagId),
         name = tagName,
         color = Color.parse(tagColor.trim()),
         predefined = predefined == "1" || predefined.toBoolean(),
-        songNumbers = mapOf(BookId.parse(bookId.trim()) to setOf(songNumber))
+        songNumbers = if (bookId != null && songNumber != null) mapOf(BookId.parse(bookId.trim()) to setOf(songNumber)) else mapOf()
       )
     }.map { tags ->
       tags
