@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="run domain tests (jvm + android)" type="GradleRunConfiguration" factoryName="Gradle">
+  <configuration default="false" name="run domain tests (jvm + android + js)" type="GradleRunConfiguration" factoryName="Gradle">
     <ExternalSystemSettings>
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -12,6 +12,10 @@
         <list>
           <option value=":domain:jvmTest" />
           <option value=":domain:testDebugUnitTest" />
+          <option value=":domain:jsBrowserTest" />
+          <option value="domain:domain-test-fixtures:jsBrowserTest" />
+          <option value="domain:jsNodeTest" />
+          <option value="domain:domain-test-fixtures:jsNodeTest" />
         </list>
       </option>
       <option name="vmOptions" />
