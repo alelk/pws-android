@@ -30,7 +30,7 @@ import io.github.alelk.pws.android.app.feature.preference.AppPreferencesViewMode
 import io.github.alelk.pws.android.app.feature.tags.TagView
 import io.github.alelk.pws.database.entity.SongEntity
 import io.github.alelk.pws.database.entity.TagEntity
-import io.github.alelk.pws.domain.model.SongNumberId
+import io.github.alelk.pws.domain.core.ids.SongNumberId
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay

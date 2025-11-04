@@ -5,11 +5,9 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Transaction
 import io.github.alelk.pws.database.entity.SongTagEntity
-import io.github.alelk.pws.domain.model.SongId
-import io.github.alelk.pws.domain.model.TagId
-import kotlinx.coroutines.flow.Flow
+import io.github.alelk.pws.domain.core.ids.SongId
+import io.github.alelk.pws.domain.core.ids.TagId
 
 @Dao
 interface SongTagDao : Pageable<SongTagEntity> {

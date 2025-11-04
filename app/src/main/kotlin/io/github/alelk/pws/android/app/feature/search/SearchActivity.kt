@@ -14,7 +14,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import io.github.alelk.pws.android.app.R
 import io.github.alelk.pws.android.app.AppCompatThemedActivity
 import io.github.alelk.pws.android.app.feature.songs.SongActivity
-import io.github.alelk.pws.domain.model.SongNumberId
+import io.github.alelk.pws.domain.core.ids.SongNumberId
 
 @AndroidEntryPoint
 class SearchActivity : AppCompatThemedActivity() {

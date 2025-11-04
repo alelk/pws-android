@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
-import io.github.alelk.pws.domain.model.SongId
+import io.github.alelk.pws.domain.core.ids.SongId
 
 enum class SongRefReason(val identifier: String) {
   Variation("variation");

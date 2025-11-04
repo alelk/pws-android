@@ -1,6 +1,6 @@
 package io.github.alelk.pws.database.support
 
-import io.github.alelk.pws.domain.model.SongNumber
+import io.github.alelk.pws.domain.core.SongNumber
 
 interface PwsDbDataProvider {
   /** PWS database versions supported by this provider. */

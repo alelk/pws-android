@@ -1,11 +1,11 @@
 package io.github.alelk.pws.backup.model
 
 import com.charleskorn.kaml.Yaml
-import io.github.alelk.pws.domain.model.BookId
-import io.github.alelk.pws.domain.model.Color
-import io.github.alelk.pws.domain.model.Locale
-import io.github.alelk.pws.domain.model.Pv3300
-import io.github.alelk.pws.domain.model.Pv800
+import io.github.alelk.pws.domain.core.ids.BookId
+import io.github.alelk.pws.domain.core.Color
+import io.github.alelk.pws.domain.core.Locale
+import io.github.alelk.pws.domain.core.ids.Pv3300
+import io.github.alelk.pws.domain.core.ids.Pv800
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldHaveSize

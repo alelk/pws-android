@@ -1,8 +1,8 @@
 package io.github.alelk.pws.database.support
 
-import io.github.alelk.pws.domain.model.BookId
-import io.github.alelk.pws.domain.model.Color
-import io.github.alelk.pws.domain.model.TagId
+import io.github.alelk.pws.domain.core.ids.BookId
+import io.github.alelk.pws.domain.core.Color
+import io.github.alelk.pws.domain.core.ids.TagId
 
 data class Tag(
   val id: TagId,

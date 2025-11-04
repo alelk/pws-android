@@ -1,6 +1,6 @@
 package io.github.alelk.pws.backup.model
 
-import io.github.alelk.pws.domain.model.Locale
+import io.github.alelk.pws.domain.core.Locale
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime

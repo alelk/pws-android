@@ -1,11 +1,11 @@
 package io.github.alelk.pws.backup.model
 
-import io.github.alelk.pws.domain.model.BibleRef
-import io.github.alelk.pws.domain.model.Locale
-import io.github.alelk.pws.domain.model.Person
-import io.github.alelk.pws.domain.model.SongId
-import io.github.alelk.pws.domain.model.Tonality
-import io.github.alelk.pws.domain.model.Version
+import io.github.alelk.pws.domain.bible.BibleRef
+import io.github.alelk.pws.domain.core.Locale
+import io.github.alelk.pws.domain.person.Person
+import io.github.alelk.pws.domain.core.ids.SongId
+import io.github.alelk.pws.domain.tonality.Tonality
+import io.github.alelk.pws.domain.core.Version
 import kotlinx.serialization.Serializable
 
 @Serializable

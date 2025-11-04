@@ -1,7 +1,7 @@
 package io.github.alelk.pws.database.entity
 
-import io.github.alelk.pws.domain.model.BookId
-import io.github.alelk.pws.domain.model.bookId
+import io.github.alelk.pws.domain.core.ids.BookId
+import io.github.alelk.pws.domain.core.ids.bookId
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.int

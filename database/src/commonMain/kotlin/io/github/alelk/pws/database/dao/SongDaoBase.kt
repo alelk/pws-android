@@ -7,8 +7,8 @@ import androidx.room.Query
 import androidx.room.Update
 import io.github.alelk.pws.database.entity.SongEntity
 import io.github.alelk.pws.database.entity.SongNumberWithSongWithBookEntity
-import io.github.alelk.pws.domain.model.SongId
-import io.github.alelk.pws.domain.model.TagId
+import io.github.alelk.pws.domain.core.ids.SongId
+import io.github.alelk.pws.domain.core.ids.TagId
 import kotlinx.coroutines.flow.Flow
 
 interface SongDaoBase : Pageable<SongEntity> {

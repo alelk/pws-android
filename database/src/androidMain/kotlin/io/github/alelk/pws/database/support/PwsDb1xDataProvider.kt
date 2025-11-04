@@ -2,12 +2,12 @@ package io.github.alelk.pws.database.support
 
 import android.database.sqlite.SQLiteDatabase
 import androidx.core.database.getStringOrNull
-import io.github.alelk.pws.domain.model.BibleRef
-import io.github.alelk.pws.domain.model.BookId
-import io.github.alelk.pws.domain.model.Color
-import io.github.alelk.pws.domain.model.SongNumber
-import io.github.alelk.pws.domain.model.TagId
-import io.github.alelk.pws.domain.model.Tonality
+import io.github.alelk.pws.domain.bible.BibleRef
+import io.github.alelk.pws.domain.core.ids.BookId
+import io.github.alelk.pws.domain.core.Color
+import io.github.alelk.pws.domain.core.SongNumber
+import io.github.alelk.pws.domain.core.ids.TagId
+import io.github.alelk.pws.domain.tonality.Tonality
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime

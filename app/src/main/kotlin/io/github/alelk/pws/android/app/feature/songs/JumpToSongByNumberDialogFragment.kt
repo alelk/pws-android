@@ -16,7 +16,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import io.github.alelk.pws.android.app.R
 import io.github.alelk.pws.android.app.databinding.DialogSearchSongNumberBinding
 import io.github.alelk.pws.android.app.feature.books.BookViewModel
-import io.github.alelk.pws.domain.model.BookId
+import io.github.alelk.pws.domain.core.ids.BookId
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch

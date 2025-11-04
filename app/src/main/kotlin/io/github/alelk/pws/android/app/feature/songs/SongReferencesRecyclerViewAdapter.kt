@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import io.github.alelk.pws.android.app.R
 import io.github.alelk.pws.database.entity.SongRefReason
 import io.github.alelk.pws.database.entity.SongReferenceDetailsEntity
-import io.github.alelk.pws.domain.model.SongNumberId
+import io.github.alelk.pws.domain.core.ids.SongNumberId
 
 /**
  * Song References Recycler View Adapter

@@ -1,11 +1,11 @@
 package io.github.alelk.pws.database.entity
 
-import io.github.alelk.pws.domain.model.BookId
-import io.github.alelk.pws.domain.model.SongId
-import io.github.alelk.pws.domain.model.SongNumberId
-import io.github.alelk.pws.domain.model.bookId
-import io.github.alelk.pws.domain.model.songId
-import io.github.alelk.pws.domain.model.songNumberId
+import io.github.alelk.pws.domain.core.ids.BookId
+import io.github.alelk.pws.domain.core.ids.SongId
+import io.github.alelk.pws.domain.core.ids.SongNumberId
+import io.github.alelk.pws.domain.core.ids.bookId
+import io.github.alelk.pws.domain.core.ids.songId
+import io.github.alelk.pws.domain.core.ids.songNumberId
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.int

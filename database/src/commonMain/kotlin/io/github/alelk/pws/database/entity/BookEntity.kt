@@ -3,11 +3,11 @@ package io.github.alelk.pws.database.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import io.github.alelk.pws.domain.model.BookId
-import io.github.alelk.pws.domain.model.Locale
-import io.github.alelk.pws.domain.model.Person
-import io.github.alelk.pws.domain.model.Version
-import io.github.alelk.pws.domain.model.Year
+import io.github.alelk.pws.domain.core.ids.BookId
+import io.github.alelk.pws.domain.core.Locale
+import io.github.alelk.pws.domain.person.Person
+import io.github.alelk.pws.domain.core.Version
+import io.github.alelk.pws.domain.core.Year
 
 @Entity(tableName = "books")
 data class BookEntity(

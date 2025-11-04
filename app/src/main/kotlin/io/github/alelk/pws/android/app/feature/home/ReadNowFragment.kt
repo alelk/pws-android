@@ -18,7 +18,7 @@ import io.github.alelk.pws.android.app.R
 import io.github.alelk.pws.android.app.feature.history.HistoryRecyclerViewAdapter
 import io.github.alelk.pws.android.app.feature.history.HistoryViewModel
 import io.github.alelk.pws.android.app.feature.songs.SongActivity
-import io.github.alelk.pws.domain.model.SongNumberId
+import io.github.alelk.pws.domain.core.ids.SongNumberId
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject

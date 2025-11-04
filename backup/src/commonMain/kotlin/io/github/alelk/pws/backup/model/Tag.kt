@@ -1,7 +1,7 @@
 package io.github.alelk.pws.backup.model
 
-import io.github.alelk.pws.domain.model.BookId
-import io.github.alelk.pws.domain.model.Color
+import io.github.alelk.pws.domain.core.ids.BookId
+import io.github.alelk.pws.domain.core.Color
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

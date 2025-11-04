@@ -1,9 +1,9 @@
 package io.github.alelk.pws.database.entity
 
-import io.github.alelk.pws.domain.model.SongId
-import io.github.alelk.pws.domain.model.TagId
-import io.github.alelk.pws.domain.model.songId
-import io.github.alelk.pws.domain.model.tagId
+import io.github.alelk.pws.domain.core.ids.SongId
+import io.github.alelk.pws.domain.core.ids.TagId
+import io.github.alelk.pws.domain.core.ids.songId
+import io.github.alelk.pws.domain.core.ids.tagId
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 

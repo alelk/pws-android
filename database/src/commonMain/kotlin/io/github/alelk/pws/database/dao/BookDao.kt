@@ -9,8 +9,8 @@ import androidx.room.Transaction
 import io.github.alelk.pws.database.entity.BookEntity
 import io.github.alelk.pws.database.entity.BookWithSongNumbersEntity
 import io.github.alelk.pws.database.entity.SongNumberEntity
-import io.github.alelk.pws.domain.model.BookId
-import io.github.alelk.pws.domain.model.SongId
+import io.github.alelk.pws.domain.core.ids.BookId
+import io.github.alelk.pws.domain.core.ids.SongId
 import kotlinx.coroutines.flow.Flow
 
 @Dao

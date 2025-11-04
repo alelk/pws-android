@@ -12,7 +12,7 @@ import io.github.alelk.pws.database.entity.SongNumberEntity
 import io.github.alelk.pws.database.entity.SongReferenceDetailsEntity
 import io.github.alelk.pws.database.entity.SongTagEntity
 import io.github.alelk.pws.database.entity.TagEntity
-import io.github.alelk.pws.domain.model.SongNumberId
+import io.github.alelk.pws.domain.core.ids.SongNumberId
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow

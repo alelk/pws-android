@@ -5,7 +5,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.alelk.pws.database.PwsDatabase
 import io.github.alelk.pws.database.entity.BookStatisticEntity
 import io.github.alelk.pws.database.entity.BookStatisticWithBookEntity
-import io.github.alelk.pws.domain.model.BookId
+import io.github.alelk.pws.domain.core.ids.BookId
 import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
 import javax.inject.Inject

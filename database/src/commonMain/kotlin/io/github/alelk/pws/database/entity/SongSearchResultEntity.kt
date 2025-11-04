@@ -1,8 +1,8 @@
 package io.github.alelk.pws.database.entity
 
-import io.github.alelk.pws.domain.model.BookId
-import io.github.alelk.pws.domain.model.SongId
-import io.github.alelk.pws.domain.model.SongNumberId
+import io.github.alelk.pws.domain.core.ids.BookId
+import io.github.alelk.pws.domain.core.ids.SongId
+import io.github.alelk.pws.domain.core.ids.SongNumberId
 
 data class SongSearchResultEntity(
   val songId: SongId,

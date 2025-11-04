@@ -10,7 +10,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import io.github.alelk.pws.android.app.R
 import io.github.alelk.pws.database.entity.TagEntity
-import io.github.alelk.pws.domain.model.TagId
+import io.github.alelk.pws.domain.core.ids.TagId
 import yuku.ambilwarna.AmbilWarnaDialog
 import kotlin.random.Random
 
@@ -98,13 +98,13 @@ class TagDialog(private val context: Context) {
       .show()
   }
 
-  fun showSelectColorDialog(selectedColor: io.github.alelk.pws.domain.model.Color, onResult: (color: io.github.alelk.pws.domain.model.Color) -> Unit) {
+  fun showSelectColorDialog(selectedColor: io.github.alelk.pws.domain.core.Color, onResult: (color: io.github.alelk.pws.domain.core.Color) -> Unit) {
     AmbilWarnaDialog(
         context, Color.parseColor(selectedColor.toString()),
         object : AmbilWarnaDialog.OnAmbilWarnaListener {
             override fun onCancel(dialog: AmbilWarnaDialog) = Unit
             override fun onOk(dialog: AmbilWarnaDialog, color: Int) = onResult(
-                io.github.alelk.pws.domain.model.Color.Companion.parse(
+                io.github.alelk.pws.domain.core.Color.Companion.parse(
                     String.format(
                         "#%06X",
                         0xFFFFFF and color
@@ -114,9 +114,9 @@ class TagDialog(private val context: Context) {
         }).show()
   }
 
-  private fun getRandomColor(): io.github.alelk.pws.domain.model.Color {
+  private fun getRandomColor(): io.github.alelk.pws.domain.core.Color {
     val random = Random.Default
     val color = Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256))
-    return io.github.alelk.pws.domain.model.Color.Companion.parse(String.format("#%06X", 0xFFFFFF and color))
+    return io.github.alelk.pws.domain.core.Color.Companion.parse(String.format("#%06X", 0xFFFFFF and color))
   }
 }

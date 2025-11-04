@@ -1,8 +1,8 @@
 package io.github.alelk.pws.database.support
 
-import io.github.alelk.pws.domain.model.BibleRef
-import io.github.alelk.pws.domain.model.SongNumber
-import io.github.alelk.pws.domain.model.Tonality
+import io.github.alelk.pws.domain.bible.BibleRef
+import io.github.alelk.pws.domain.core.SongNumber
+import io.github.alelk.pws.domain.tonality.Tonality
 
 /** Changes of edited song. */
 data class SongChange(

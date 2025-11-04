@@ -7,8 +7,8 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Upsert
 import io.github.alelk.pws.database.entity.TagEntity
-import io.github.alelk.pws.domain.model.SongId
-import io.github.alelk.pws.domain.model.TagId
+import io.github.alelk.pws.domain.core.ids.SongId
+import io.github.alelk.pws.domain.core.ids.TagId
 import kotlinx.coroutines.flow.Flow
 
 private const val customTagPrefix = "custom-"

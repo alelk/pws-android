@@ -4,8 +4,8 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import io.github.alelk.pws.domain.model.Color
-import io.github.alelk.pws.domain.model.TagId
+import io.github.alelk.pws.domain.core.Color
+import io.github.alelk.pws.domain.core.ids.TagId
 
 @Entity(
   tableName = "tags",

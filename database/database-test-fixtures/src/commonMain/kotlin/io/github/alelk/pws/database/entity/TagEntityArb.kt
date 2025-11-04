@@ -1,9 +1,9 @@
 package io.github.alelk.pws.database.entity
 
-import io.github.alelk.pws.domain.model.Color
-import io.github.alelk.pws.domain.model.TagId
-import io.github.alelk.pws.domain.model.tagId
-import io.github.alelk.pws.domain.model.color
+import io.github.alelk.pws.domain.core.Color
+import io.github.alelk.pws.domain.core.ids.TagId
+import io.github.alelk.pws.domain.core.ids.tagId
+import io.github.alelk.pws.domain.core.color
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.Codepoint
 import io.kotest.property.arbitrary.arbitrary

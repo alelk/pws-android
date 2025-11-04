@@ -16,7 +16,7 @@ import io.github.alelk.pws.database.BuildConfig
 import io.github.alelk.pws.database.PwsDatabase
 import io.github.alelk.pws.database.entity.SongTagEntity
 import io.github.alelk.pws.database.entity.TagEntity
-import io.github.alelk.pws.domain.model.Locale
+import io.github.alelk.pws.domain.core.Locale
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map

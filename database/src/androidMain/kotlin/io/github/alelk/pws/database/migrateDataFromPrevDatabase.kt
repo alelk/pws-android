@@ -7,7 +7,7 @@ import io.github.alelk.pws.database.entity.SongTagEntity
 import io.github.alelk.pws.database.entity.TagEntity
 import io.github.alelk.pws.database.support.PwsDb1xDataProvider
 import io.github.alelk.pws.database.support.PwsDb2xDataProvider
-import io.github.alelk.pws.domain.model.SongNumber
+import io.github.alelk.pws.domain.core.SongNumber
 import timber.log.Timber
 
 internal val DATABASE_PREV_NAMES = arrayOf("pws.1.8.0.db", "pws.1.2.0.db", "pws.1.1.0.db", "pws.0.9.1.db")

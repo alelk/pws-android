@@ -8,7 +8,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import io.github.alelk.pws.database.entity.BookStatisticEntity
 import io.github.alelk.pws.database.entity.BookStatisticWithBookEntity
-import io.github.alelk.pws.domain.model.BookId
+import io.github.alelk.pws.domain.core.ids.BookId
 import kotlinx.coroutines.flow.Flow
 
 @Dao

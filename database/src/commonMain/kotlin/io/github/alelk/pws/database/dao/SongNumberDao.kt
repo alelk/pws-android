@@ -10,10 +10,10 @@ import androidx.room.Update
 import io.github.alelk.pws.database.entity.BookEntity
 import io.github.alelk.pws.database.entity.SongNumberEntity
 import io.github.alelk.pws.database.entity.SongNumberWithSongEntity
-import io.github.alelk.pws.domain.model.BookId
-import io.github.alelk.pws.domain.model.SongId
-import io.github.alelk.pws.domain.model.SongNumberId
-import io.github.alelk.pws.domain.model.TagId
+import io.github.alelk.pws.domain.core.ids.BookId
+import io.github.alelk.pws.domain.core.ids.SongId
+import io.github.alelk.pws.domain.core.ids.SongNumberId
+import io.github.alelk.pws.domain.core.ids.TagId
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged

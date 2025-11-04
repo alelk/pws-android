@@ -1,7 +1,7 @@
 package io.github.alelk.pws.database.entity
 
 import androidx.room.*
-import io.github.alelk.pws.domain.model.BookId
+import io.github.alelk.pws.domain.core.ids.BookId
 
 @Entity(
   tableName = "book_statistic",

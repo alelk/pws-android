@@ -7,9 +7,9 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
 import io.github.alelk.pws.database.entity.HistoryEntity
-import io.github.alelk.pws.domain.model.BookId
-import io.github.alelk.pws.domain.model.SongId
-import io.github.alelk.pws.domain.model.SongNumberId
+import io.github.alelk.pws.domain.core.ids.BookId
+import io.github.alelk.pws.domain.core.ids.SongId
+import io.github.alelk.pws.domain.core.ids.SongNumberId
 import kotlinx.coroutines.flow.Flow
 
 @Dao

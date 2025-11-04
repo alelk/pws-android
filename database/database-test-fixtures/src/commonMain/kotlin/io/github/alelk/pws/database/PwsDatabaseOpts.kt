@@ -11,8 +11,8 @@ import io.github.alelk.pws.database.entity.songEntity
 import io.github.alelk.pws.database.entity.songNumberEntity
 import io.github.alelk.pws.database.entity.tagEntity
 import io.github.alelk.pws.domain.distinctBy
-import io.github.alelk.pws.domain.model.BookId
-import io.github.alelk.pws.domain.model.SongId
+import io.github.alelk.pws.domain.core.ids.BookId
+import io.github.alelk.pws.domain.core.ids.SongId
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.list
 import io.kotest.property.arbitrary.next
