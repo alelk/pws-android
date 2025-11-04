@@ -9,7 +9,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import io.github.alelk.pws.android.app.R
-import io.github.alelk.pws.database.entity.TagEntity
+import io.github.alelk.pws.database.tag.TagEntity
 import io.github.alelk.pws.domain.core.ids.TagId
 import yuku.ambilwarna.AmbilWarnaDialog
 import kotlin.random.Random

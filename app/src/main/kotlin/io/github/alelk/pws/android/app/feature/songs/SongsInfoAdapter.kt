@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import io.github.alelk.pws.android.app.R
-import io.github.alelk.pws.database.entity.SongNumberWithSongWithBookEntity
+import io.github.alelk.pws.database.song.SongNumberWithSongWithBookEntity
 
 class SongsInfoAdapter(
   private val onSongSelected: (SongNumberWithSongWithBookEntity) -> Unit

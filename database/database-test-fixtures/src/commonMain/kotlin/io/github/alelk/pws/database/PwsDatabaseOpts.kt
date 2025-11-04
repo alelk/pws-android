@@ -2,14 +2,14 @@ package io.github.alelk.pws.database
 
 import androidx.room.exclusiveTransaction
 import androidx.room.useWriterConnection
-import io.github.alelk.pws.database.entity.BookEntity
-import io.github.alelk.pws.database.entity.SongEntity
-import io.github.alelk.pws.database.entity.SongNumberEntity
-import io.github.alelk.pws.database.entity.TagEntity
-import io.github.alelk.pws.database.entity.bookEntity
-import io.github.alelk.pws.database.entity.songEntity
-import io.github.alelk.pws.database.entity.songNumberEntity
-import io.github.alelk.pws.database.entity.tagEntity
+import io.github.alelk.pws.database.book.BookEntity
+import io.github.alelk.pws.database.song.SongEntity
+import io.github.alelk.pws.database.song_number.SongNumberEntity
+import io.github.alelk.pws.database.tag.TagEntity
+import io.github.alelk.pws.database.book.bookEntity
+import io.github.alelk.pws.database.song.songEntity
+import io.github.alelk.pws.database.song_number.songNumberEntity
+import io.github.alelk.pws.database.tag.tagEntity
 import io.github.alelk.pws.domain.distinctBy
 import io.github.alelk.pws.domain.core.ids.BookId
 import io.github.alelk.pws.domain.core.ids.SongId

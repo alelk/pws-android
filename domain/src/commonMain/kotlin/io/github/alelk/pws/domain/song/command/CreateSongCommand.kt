@@ -1,6 +1,6 @@
 package io.github.alelk.pws.domain.song.command
 
-import io.github.alelk.pws.domain.bible.BibleRef
+import io.github.alelk.pws.domain.core.BibleRef
 import io.github.alelk.pws.domain.core.Locale
 import io.github.alelk.pws.domain.core.NonEmptyString
 import io.github.alelk.pws.domain.core.Version

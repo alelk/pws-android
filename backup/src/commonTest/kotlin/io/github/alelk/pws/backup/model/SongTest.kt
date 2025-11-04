@@ -3,7 +3,7 @@ package io.github.alelk.pws.backup.model
 import com.charleskorn.kaml.MultiLineStringStyle
 import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.YamlConfiguration
-import io.github.alelk.pws.domain.bible.BibleRef
+import io.github.alelk.pws.domain.core.BibleRef
 import io.github.alelk.pws.domain.core.ids.BookId
 import io.github.alelk.pws.domain.core.Locale
 import io.github.alelk.pws.domain.person.Person

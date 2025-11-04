@@ -1,6 +1,6 @@
 package io.github.alelk.pws.database.support
 
-import io.github.alelk.pws.domain.bible.BibleRef
+import io.github.alelk.pws.domain.core.BibleRef
 import io.github.alelk.pws.domain.core.SongNumber
 import io.github.alelk.pws.domain.tonality.Tonality
 

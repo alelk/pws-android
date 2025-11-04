@@ -6,26 +6,25 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.execSQL
 import androidx.room.useWriterConnection
-import io.github.alelk.pws.database.dao.BookDao
-import io.github.alelk.pws.database.dao.BookStatisticDao
-import io.github.alelk.pws.database.dao.FavoriteDao
-import io.github.alelk.pws.database.dao.HistoryDao
-import io.github.alelk.pws.database.dao.SongDao
-import io.github.alelk.pws.database.dao.SongNumberDao
-import io.github.alelk.pws.database.dao.SongTagDao
-import io.github.alelk.pws.database.dao.SongReferenceDao
-import io.github.alelk.pws.database.dao.TagDao
-import io.github.alelk.pws.database.entity.BookEntity
-import io.github.alelk.pws.database.entity.BookStatisticEntity
-import io.github.alelk.pws.database.entity.FavoriteEntity
-import io.github.alelk.pws.database.entity.HistoryEntity
-import io.github.alelk.pws.database.entity.SongEntity
-import io.github.alelk.pws.database.entity.SongFtsEntity
-import io.github.alelk.pws.database.entity.SongNumberEntity
-import io.github.alelk.pws.database.entity.SongTagEntity
-import io.github.alelk.pws.database.entity.SongReferenceEntity
-import io.github.alelk.pws.database.entity.TagEntity
-import io.github.alelk.pws.database.entity.converter.DbTypeConverters
+import io.github.alelk.pws.database.book.BookDao
+import io.github.alelk.pws.database.book_statistic.BookStatisticDao
+import io.github.alelk.pws.database.favorite.FavoriteDao
+import io.github.alelk.pws.database.history.HistoryDao
+import io.github.alelk.pws.database.song.SongDao
+import io.github.alelk.pws.database.song_number.SongNumberDao
+import io.github.alelk.pws.database.song_tag.SongTagDao
+import io.github.alelk.pws.database.song_reference.SongReferenceDao
+import io.github.alelk.pws.database.tag.TagDao
+import io.github.alelk.pws.database.book.BookEntity
+import io.github.alelk.pws.database.book_statistic.BookStatisticEntity
+import io.github.alelk.pws.database.favorite.FavoriteEntity
+import io.github.alelk.pws.database.history.HistoryEntity
+import io.github.alelk.pws.database.song.SongEntity
+import io.github.alelk.pws.database.song.SongFtsEntity
+import io.github.alelk.pws.database.song_number.SongNumberEntity
+import io.github.alelk.pws.database.song_tag.SongTagEntity
+import io.github.alelk.pws.database.song_reference.SongReferenceEntity
+import io.github.alelk.pws.database.tag.TagEntity
 
 @Database(
   version = 11,

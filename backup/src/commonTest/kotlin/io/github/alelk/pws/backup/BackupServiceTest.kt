@@ -5,7 +5,7 @@ import io.github.alelk.pws.backup.model.BookPreference
 import io.github.alelk.pws.backup.model.Song
 import io.github.alelk.pws.backup.model.SongNumber
 import io.github.alelk.pws.backup.model.Tag
-import io.github.alelk.pws.domain.bible.BibleRef
+import io.github.alelk.pws.domain.core.BibleRef
 import io.github.alelk.pws.domain.core.ids.BookId
 import io.github.alelk.pws.domain.core.Color
 import io.github.alelk.pws.domain.core.Locale

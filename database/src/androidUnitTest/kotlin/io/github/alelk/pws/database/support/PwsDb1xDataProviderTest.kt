@@ -5,7 +5,7 @@ import br.com.colman.kotest.android.extensions.robolectric.RobolectricTest
 import io.github.alelk.pws.database.TestDbPatch
 import io.github.alelk.pws.database.setupTimberForTest
 import io.github.alelk.pws.database.withSqliteDb
-import io.github.alelk.pws.domain.bible.BibleRef
+import io.github.alelk.pws.domain.core.BibleRef
 import io.github.alelk.pws.domain.core.ids.BookId
 import io.github.alelk.pws.domain.core.Color
 import io.github.alelk.pws.domain.core.ids.Prayer

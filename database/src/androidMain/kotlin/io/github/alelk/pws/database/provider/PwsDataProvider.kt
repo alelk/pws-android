@@ -8,7 +8,7 @@ import android.database.Cursor
 import android.net.Uri
 import io.github.alelk.pws.database.BuildConfig
 import io.github.alelk.pws.database.PwsDatabaseProvider
-import io.github.alelk.pws.database.dao.SongDao
+import io.github.alelk.pws.database.song.SongDao
 import timber.log.Timber
 
 /** Pws data provider

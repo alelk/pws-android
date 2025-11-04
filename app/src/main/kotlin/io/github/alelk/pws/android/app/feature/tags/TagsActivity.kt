@@ -16,7 +16,7 @@ import io.github.alelk.pws.android.app.R
 import io.github.alelk.pws.android.app.AppCompatThemedActivity
 import io.github.alelk.pws.android.app.feature.tags.TagsAdapter
 import io.github.alelk.pws.android.app.feature.tags.TagDialog
-import io.github.alelk.pws.database.entity.TagEntity
+import io.github.alelk.pws.database.tag.TagEntity
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch

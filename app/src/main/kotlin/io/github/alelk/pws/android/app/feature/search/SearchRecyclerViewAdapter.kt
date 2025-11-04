@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import io.github.alelk.pws.android.app.R
-import io.github.alelk.pws.database.entity.SongSearchResultEntity
+import io.github.alelk.pws.database.song.SongSearchResultEntity
 import io.github.alelk.pws.domain.core.ids.SongNumberId
 
 /**

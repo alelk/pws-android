@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.alelk.pws.database.PwsDatabase
-import io.github.alelk.pws.database.entity.SongNumberWithSongWithBookEntity
-import io.github.alelk.pws.database.entity.TagEntity
+import io.github.alelk.pws.database.song.SongNumberWithSongWithBookEntity
+import io.github.alelk.pws.database.tag.TagEntity
 import io.github.alelk.pws.domain.core.ids.TagId
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted

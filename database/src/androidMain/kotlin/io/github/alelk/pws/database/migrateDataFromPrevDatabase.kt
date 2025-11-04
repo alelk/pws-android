@@ -2,9 +2,9 @@ package io.github.alelk.pws.database
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
-import io.github.alelk.pws.database.entity.HistoryEntity
-import io.github.alelk.pws.database.entity.SongTagEntity
-import io.github.alelk.pws.database.entity.TagEntity
+import io.github.alelk.pws.database.history.HistoryEntity
+import io.github.alelk.pws.database.song_tag.SongTagEntity
+import io.github.alelk.pws.database.tag.TagEntity
 import io.github.alelk.pws.database.support.PwsDb1xDataProvider
 import io.github.alelk.pws.database.support.PwsDb2xDataProvider
 import io.github.alelk.pws.domain.core.SongNumber

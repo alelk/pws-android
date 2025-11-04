@@ -14,8 +14,8 @@ import io.github.alelk.pws.backup.model.SongNumber
 import io.github.alelk.pws.backup.model.Tag
 import io.github.alelk.pws.database.BuildConfig
 import io.github.alelk.pws.database.PwsDatabase
-import io.github.alelk.pws.database.entity.SongTagEntity
-import io.github.alelk.pws.database.entity.TagEntity
+import io.github.alelk.pws.database.song_tag.SongTagEntity
+import io.github.alelk.pws.database.tag.TagEntity
 import io.github.alelk.pws.domain.core.Locale
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull

@@ -7,7 +7,7 @@ import android.view.View
 import com.google.android.flexbox.FlexboxLayout
 import io.github.alelk.pws.android.app.R
 import io.github.alelk.pws.android.app.feature.tags.TagView
-import io.github.alelk.pws.database.entity.TagEntity
+import io.github.alelk.pws.database.tag.TagEntity
 import java.util.SortedSet
 
 class EditSongTagsDialog(private val activity: Activity) {

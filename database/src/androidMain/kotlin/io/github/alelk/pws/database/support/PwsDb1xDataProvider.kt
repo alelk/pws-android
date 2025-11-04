@@ -2,7 +2,7 @@ package io.github.alelk.pws.database.support
 
 import android.database.sqlite.SQLiteDatabase
 import androidx.core.database.getStringOrNull
-import io.github.alelk.pws.domain.bible.BibleRef
+import io.github.alelk.pws.domain.core.BibleRef
 import io.github.alelk.pws.domain.core.ids.BookId
 import io.github.alelk.pws.domain.core.Color
 import io.github.alelk.pws.domain.core.SongNumber

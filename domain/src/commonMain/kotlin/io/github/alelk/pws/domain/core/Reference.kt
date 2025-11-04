@@ -24,7 +24,9 @@ sealed class Reference
 data class BibleRef(
   @SerialName("value")
   val text: String
-) : Reference()
+) : Reference() {
+  override fun toString(): String = text
+}
 
 @ConsistentCopyVisibility
 @Serializable
