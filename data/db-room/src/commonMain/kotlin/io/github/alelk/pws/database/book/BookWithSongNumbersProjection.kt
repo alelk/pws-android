@@ -4,7 +4,7 @@ import androidx.room.Embedded
 import androidx.room.Relation
 import io.github.alelk.pws.database.song_number.SongNumberEntity
 
-data class BookWithSongNumbersEntity(
+data class BookWithSongNumbersProjection(
     @Embedded
   val book: BookEntity,
     @Relation(parentColumn = "id", entityColumn = "book_id")

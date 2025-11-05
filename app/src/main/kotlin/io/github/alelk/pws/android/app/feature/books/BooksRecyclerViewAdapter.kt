@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import io.github.alelk.pws.android.app.R
-import io.github.alelk.pws.database.book.BookWithSongNumbersEntity
+import io.github.alelk.pws.database.book.BookWithSongNumbersProjection
 
 /**
  * Books Recycler View Adapter
@@ -16,8 +16,8 @@ import io.github.alelk.pws.database.book.BookWithSongNumbersEntity
  * Created by Mykhailo Dmytriakha on 05.03.2024.
  */
 class BooksRecyclerViewAdapter(
-  private val onItemClickListener: (bookNumberId: BookWithSongNumbersEntity) -> Unit
-) : ListAdapter<BookWithSongNumbersEntity, BooksRecyclerViewAdapter.BooksViewHolder>(BookDiffCallback()) {
+  private val onItemClickListener: (bookNumberId: BookWithSongNumbersProjection) -> Unit
+) : ListAdapter<BookWithSongNumbersProjection, BooksRecyclerViewAdapter.BooksViewHolder>(BookDiffCallback()) {
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BooksViewHolder {
     val view = LayoutInflater.from(parent.context)
@@ -35,7 +35,7 @@ class BooksRecyclerViewAdapter(
     private val bookShortName: TextView = itemView.findViewById(R.id.txt_book_short_name)
     private val bookNumber: TextView = itemView.findViewById(R.id.txt_book_number)
 
-    fun bind(book: BookWithSongNumbersEntity, onItemClickListener: (book: BookWithSongNumbersEntity) -> Unit) {
+    fun bind(book: BookWithSongNumbersProjection, onItemClickListener: (book: BookWithSongNumbersProjection) -> Unit) {
       bookName.text = book.book.displayName
       bookShortName.text = book.book.name
       bookNumber.text = book.book.displayShortName
@@ -43,12 +43,12 @@ class BooksRecyclerViewAdapter(
     }
   }
 
-  class BookDiffCallback : DiffUtil.ItemCallback<BookWithSongNumbersEntity>() {
-    override fun areItemsTheSame(oldItem: BookWithSongNumbersEntity, newItem: BookWithSongNumbersEntity): Boolean {
+  class BookDiffCallback : DiffUtil.ItemCallback<BookWithSongNumbersProjection>() {
+    override fun areItemsTheSame(oldItem: BookWithSongNumbersProjection, newItem: BookWithSongNumbersProjection): Boolean {
       return oldItem.book.id == newItem.book.id
     }
 
-    override fun areContentsTheSame(oldItem: BookWithSongNumbersEntity, newItem: BookWithSongNumbersEntity): Boolean {
+    override fun areContentsTheSame(oldItem: BookWithSongNumbersProjection, newItem: BookWithSongNumbersProjection): Boolean {
       return oldItem == newItem
     }
   }

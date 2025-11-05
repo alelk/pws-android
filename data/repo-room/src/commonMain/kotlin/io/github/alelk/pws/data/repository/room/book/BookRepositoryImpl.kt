@@ -1,0 +1,28 @@
+package io.github.alelk.pws.data.repository.room.book
+
+import io.github.alelk.pws.database.book.BookDao
+import io.github.alelk.pws.domain.book.model.BookDetail
+import io.github.alelk.pws.domain.book.model.BookSummary
+import io.github.alelk.pws.domain.book.query.BookQuery
+import io.github.alelk.pws.domain.book.query.BookSort
+import io.github.alelk.pws.domain.book.repository.BookRepository
+import io.github.alelk.pws.domain.core.ids.BookId
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
+
+class BookRepositoryImpl(
+  val bookDao: BookDao
+) : BookRepository {
+  override fun observeBook(id: BookId): Flow<BookDetail?> =
+    bookDao.observeBookDetail(id).map { it?.toDomain() }
+
+  override fun observeBooks(query: BookQuery, sort: BookSort): Flow<List<BookSummary>> =
+    bookDao
+      .observeBooksSummary(locale = query.locale, minPriority = query.maxPriority, maxPriority = query.maxPriority)
+      .distinctUntilChanged()
+      .map { books -> books.map { it.toDomain() } }
+
+
+  override suspend fun get(id: BookId): BookDetail? = bookDao.getBookDetail(id)?.toDomain()
+}

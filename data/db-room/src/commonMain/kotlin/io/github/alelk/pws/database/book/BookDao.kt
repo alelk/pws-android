@@ -5,26 +5,80 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Transaction
 import io.github.alelk.pws.database.core.Pageable
-import io.github.alelk.pws.database.book.BookWithSongNumbersEntity
 import io.github.alelk.pws.database.song_number.SongNumberEntity
+import io.github.alelk.pws.domain.core.Locale
 import io.github.alelk.pws.domain.core.ids.BookId
 import io.github.alelk.pws.domain.core.ids.SongId
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface BookDao : Pageable<BookEntity> {
-  @Insert(onConflict = OnConflictStrategy.Companion.ABORT)
+
+  @Query(
+    """
+      SELECT 
+        b.id as id, b.version as version, b.locale as locale, b.name as name, b.display_short_name as display_short_name, b.display_name as display_name,
+        b.release_date as release_date, b.authors as authors, b.creators as creators, b.reviewers as reviewers, b.editors as editors,
+        b.description as description, b.preface as preface,
+        count(sn.number) as count_songs, (sn.book_id || '/' || first(sn.song_id)), bs.priority as priority
+      FROM books b
+      INNER JOIN book_statistic bs on bs.id=b.id
+      INNER JOIN song_numbers sn on sn.book_id=b.id
+      WHERE b.id = :bookId
+      GROUP BY b.id
+      ORDER BY sn.number
+    """
+  )
+  fun observeBookDetail(bookId: BookId): Flow<BookDetailProjection?>
+
+  @Query(
+    """
+      SELECT 
+        b.id as id, b.version as version, b.locale as locale, b.name as name, b.display_short_name as display_short_name, b.display_name as display_name,
+        count(sn.number) as count_songs, (sn.book_id || '/' || first(sn.song_id)), bs.priority as priority
+      FROM books b
+      INNER JOIN book_statistic bs on bs.id=b.id
+      INNER JOIN song_numbers sn on sn.book_id=b.id
+      WHERE 
+        (:locale IS NULL OR b.locale = :locale) 
+        AND (:minPriority IS NULL OR bs.priority >= :minPriority) 
+        AND (:maxPriority IS NULL OR bs.priority <= :maxPriority)
+      GROUP BY b.id
+      ORDER BY bs.priority DESC, sn.number
+    """
+  )
+  fun observeBooksSummary(locale: Locale? = null, minPriority: Int? = null, maxPriority: Int? = null): Flow<List<BookSummaryProjection>>
+
+  @Query(
+    """
+      SELECT 
+        b.id as id, b.version as version, b.locale as locale, b.name as name, b.display_short_name as display_short_name, b.display_name as display_name,
+        b.release_date as release_date, b.authors as authors, b.creators as creators, b.reviewers as reviewers, b.editors as editors,
+        b.description as description, b.preface as preface,
+        count(sn.number) as count_songs, (sn.book_id || '/' || first(sn.song_id)), bs.priority as priority
+      FROM books b
+      INNER JOIN book_statistic bs on bs.id=b.id
+      INNER JOIN song_numbers sn on sn.book_id=b.id
+      WHERE b.id = :bookId
+      GROUP BY b.id
+      ORDER BY sn.number
+    """
+  )
+  suspend fun getBookDetail(bookId: BookId): BookDetailProjection?
+
+  ///
+
+  @Insert(onConflict = OnConflictStrategy.ABORT)
   suspend fun insert(book: BookEntity)
 
-  @Insert(onConflict = OnConflictStrategy.Companion.ABORT)
+  @Insert(onConflict = OnConflictStrategy.ABORT)
   suspend fun insert(books: List<BookEntity>)
 
-  @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
+  @Insert(onConflict = OnConflictStrategy.REPLACE)
   suspend fun update(book: BookEntity)
 
-  @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
+  @Insert(onConflict = OnConflictStrategy.REPLACE)
   suspend fun update(books: List<BookEntity>)
 
   @Query("SELECT * FROM books WHERE id = :id")
@@ -57,7 +111,7 @@ interface BookDao : Pageable<BookEntity> {
   fun getByIdsFlow(bookIds: List<BookId>): Flow<List<BookEntity>>
 
   @Query("""SELECT b.* FROM books b INNER JOIN book_statistic bs on bs.id=b.id WHERE bs.priority > 0""")
-  fun getAllActiveFlow(): Flow<List<BookWithSongNumbersEntity>>
+  fun getAllActiveFlow(): Flow<List<BookWithSongNumbersProjection>>
 
   @Query(
     """
