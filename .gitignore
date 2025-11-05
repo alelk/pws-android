@@ -10,6 +10,11 @@ app/src/uk/assets
 local.properties
 .kotlin/errors*
 
+/data/android-database/build
+/data/room-database/build
+/data/build
+/data/room-database/database-test-fixtures/build
+
 # build results (apk)
 /app/*/release/
 
