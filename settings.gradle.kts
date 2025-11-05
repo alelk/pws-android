@@ -7,6 +7,7 @@ include(
   ":data:db-android",
   ":data:db-room:db-room-test-fixtures",
   ":data:repo-room",
+  ":features",
   ":app"
 )
 
