@@ -28,9 +28,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import io.github.alelk.pws.android.app.R
 import io.github.alelk.pws.android.app.feature.preference.AppPreferencesViewModel
 import io.github.alelk.pws.android.app.feature.tags.TagView
-import io.github.alelk.pws.database.entity.SongEntity
-import io.github.alelk.pws.database.entity.TagEntity
-import io.github.alelk.pws.domain.model.SongNumberId
+import io.github.alelk.pws.database.song.SongEntity
+import io.github.alelk.pws.database.tag.TagEntity
+import io.github.alelk.pws.domain.core.ids.SongNumberId
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay

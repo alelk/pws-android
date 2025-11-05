@@ -14,8 +14,8 @@ import io.github.alelk.pws.android.app.R
 import io.github.alelk.pws.android.app.AppCompatThemedActivity
 import io.github.alelk.pws.android.app.feature.songs.SongsInfoAdapter
 import io.github.alelk.pws.android.app.feature.songs.SongActivity
-import io.github.alelk.pws.database.entity.SongNumberWithSongWithBookEntity
-import io.github.alelk.pws.domain.model.TagId
+import io.github.alelk.pws.database.song.SongNumberWithSongWithBookEntity
+import io.github.alelk.pws.domain.core.ids.TagId
 
 @AndroidEntryPoint
 class TagSongsActivity : AppCompatThemedActivity() {

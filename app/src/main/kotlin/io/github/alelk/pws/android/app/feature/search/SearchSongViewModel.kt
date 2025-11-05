@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.alelk.pws.database.PwsDatabase
-import io.github.alelk.pws.database.dao.SongDao
-import io.github.alelk.pws.database.entity.SongSearchResultEntity
+import io.github.alelk.pws.database.song.SongDao
+import io.github.alelk.pws.database.song.SongSearchResultEntity
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

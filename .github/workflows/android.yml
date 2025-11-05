@@ -29,7 +29,7 @@ jobs:
 
       - name: Build ruDebug & ukDebug
         run: |
-          ./gradlew buildRuDebug buildUkDebug testRuDebug :domain:jvmTest domain:testDebugUnitTest :backup:jvmTest :database:jvmTest :database:testRuDebugUnitTest
+          ./gradlew buildRuDebug buildUkDebug testRuDebug :domain:jvmTest :domain:testDebugUnitTest :domain:jsBrowserTest :domain:jsNodeTest :domain:domain-test-fixtures:jsBrowserTest :domain:domain-test-fixtures:jsNodeTest :backup:jvmTest :data:db-room:jvmTest :data:db-room:testDebugUnitTest :data:db-android:testRuDebugUnitTest
 
       - name: Upload Test Results
         if: always()

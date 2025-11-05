@@ -17,7 +17,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import io.github.alelk.pws.android.app.R
 import io.github.alelk.pws.android.app.feature.books.BookStatisticViewModel
 import io.github.alelk.pws.android.app.core.theme.AppTheme
-import io.github.alelk.pws.database.entity.BookStatisticWithBookEntity
+import io.github.alelk.pws.database.book_statistic.BookStatisticWithBookEntity
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber

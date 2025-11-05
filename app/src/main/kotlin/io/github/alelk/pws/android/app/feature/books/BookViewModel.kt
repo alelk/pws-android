@@ -3,11 +3,11 @@ package io.github.alelk.pws.android.app.feature.books
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.alelk.pws.database.PwsDatabase
-import io.github.alelk.pws.database.entity.SongNumberWithSongEntity
+import io.github.alelk.pws.database.song_number.SongNumberWithSongEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.github.alelk.pws.database.entity.BookEntity
-import io.github.alelk.pws.database.entity.SongNumberEntity
-import io.github.alelk.pws.domain.model.BookId
+import io.github.alelk.pws.database.book.BookEntity
+import io.github.alelk.pws.database.song_number.SongNumberEntity
+import io.github.alelk.pws.domain.core.ids.BookId
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

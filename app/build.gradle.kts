@@ -90,7 +90,7 @@ android {
 
 dependencies {
   implementation(project(":domain"))
-  implementation(project(":database"))
+  implementation(project(":data:db-android"))
   implementation(project(":backup"))
 
   implementation(libs.preference.ktx)

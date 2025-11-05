@@ -1,7 +1,7 @@
 package io.github.alelk.pws.android.app.feature.songs
 
 import io.github.alelk.pws.android.app.R
-import io.github.alelk.pws.domain.model.Tonality
+import io.github.alelk.pws.domain.tonality.Tonality
 
 val Tonality.labelId: Int
   get() =

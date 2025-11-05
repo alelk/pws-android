@@ -19,7 +19,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import io.github.alelk.pws.android.app.R
 import io.github.alelk.pws.android.app.feature.songs.SongActivity
 import io.github.alelk.pws.android.app.feature.favorites.FavoritesRecyclerViewAdapter
-import io.github.alelk.pws.domain.model.SongNumberId
+import io.github.alelk.pws.domain.core.ids.SongNumberId
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

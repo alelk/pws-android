@@ -10,8 +10,8 @@
       </option>
       <option name="taskNames">
         <list>
-          <option value=":database:testRuDebugUnitTest" />
-          <option value=":database:jvmTest" />
+          <option value=":data:db-room:testDebugUnitTest" />
+          <option value=":data:db-room:jvmTest" />
         </list>
       </option>
       <option name="vmOptions" />

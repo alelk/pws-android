@@ -4,7 +4,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import io.github.alelk.pws.android.app.feature.songs.SongTextFragment
-import io.github.alelk.pws.domain.model.SongNumberId
+import io.github.alelk.pws.domain.core.ids.SongNumberId
 
 /**
  * Song Text Fragment State Pager Adapter

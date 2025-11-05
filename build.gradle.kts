@@ -61,10 +61,6 @@ subprojects {
   }
 }
 
-tasks.register<Delete>("clean") {
-  delete(rootProject.layout.buildDirectory)
-}
-
 fun getDate(): String {
   val df = SimpleDateFormat("MMM-d-yyyy", Locale.ENGLISH)
   df.timeZone = TimeZone.getTimeZone("UTC")

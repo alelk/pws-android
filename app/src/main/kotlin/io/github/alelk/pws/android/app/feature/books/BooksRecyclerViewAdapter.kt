@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import io.github.alelk.pws.android.app.R
-import io.github.alelk.pws.database.entity.BookWithSongNumbersEntity
+import io.github.alelk.pws.database.book.BookWithSongNumbersEntity
 
 /**
  * Books Recycler View Adapter

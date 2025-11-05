@@ -1,6 +1,6 @@
 package io.github.alelk.pws.backup.model
 
-import io.github.alelk.pws.domain.model.BookId
+import io.github.alelk.pws.domain.core.ids.BookId
 import kotlinx.serialization.Serializable
 
 @Serializable

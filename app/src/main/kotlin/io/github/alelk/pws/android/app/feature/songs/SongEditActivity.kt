@@ -15,9 +15,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import io.github.alelk.pws.android.app.R
 import io.github.alelk.pws.android.app.AppCompatThemedActivity
 import io.github.alelk.pws.android.app.feature.songs.SongTextFragment
-import io.github.alelk.pws.domain.model.BibleRef
-import io.github.alelk.pws.domain.model.SongNumberId
-import io.github.alelk.pws.domain.model.Tonality
+import io.github.alelk.pws.domain.core.BibleRef
+import io.github.alelk.pws.domain.core.ids.SongNumberId
+import io.github.alelk.pws.domain.tonality.Tonality
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch

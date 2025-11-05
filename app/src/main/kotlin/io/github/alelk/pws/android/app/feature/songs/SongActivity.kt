@@ -22,7 +22,7 @@ import io.github.alelk.pws.android.app.AppCompatThemedActivity
 import io.github.alelk.pws.android.app.feature.tags.EditSongTagsDialog
 import io.github.alelk.pws.android.app.feature.tags.TagsViewModel
 import io.github.alelk.pws.android.app.core.theme.ThemeType
-import io.github.alelk.pws.domain.model.SongNumberId
+import io.github.alelk.pws.domain.core.ids.SongNumberId
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch

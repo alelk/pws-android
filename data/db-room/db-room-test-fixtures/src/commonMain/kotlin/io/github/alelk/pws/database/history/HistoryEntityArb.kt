@@ -1,0 +1,34 @@
+package io.github.alelk.pws.database.history
+
+import io.github.alelk.pws.domain.core.ids.BookId
+import io.github.alelk.pws.domain.core.ids.SongId
+import io.github.alelk.pws.domain.core.ids.SongNumberId
+import io.github.alelk.pws.domain.core.ids.bookId
+import io.github.alelk.pws.domain.core.ids.songId
+import io.github.alelk.pws.domain.core.ids.songNumberId
+import io.kotest.property.Arb
+import io.kotest.property.arbitrary.arbitrary
+import io.kotest.property.arbitrary.constant
+import io.kotest.property.arbitrary.long
+import io.kotest.property.arbitrary.removeEdgecases
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
+
+@OptIn(ExperimentalTime::class)
+fun Arb.Companion.historyEntity(
+  id: Arb<Long?>? = Arb.long(min = 0, max = 1_000_000_000).removeEdgecases(),
+  bookId: Arb<BookId> = Arb.bookId(),
+  songId: Arb<SongId> = Arb.songId(),
+  songNumberId: Arb<SongNumberId> = Arb.songNumberId(bookId, songId),
+  // todo: library compatibility issue: accessTimestamp: Arb<LocalDateTime> = Arb.datetime(yearRange = 2025..2050),
+  accessTimestamp: Arb<LocalDateTime> = Arb.constant(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()))
+): Arb<HistoryEntity> = arbitrary {
+  HistoryEntity(
+    id = id?.bind() ?: 0,
+    songNumberId = songNumberId.bind(),
+    accessTimestamp = accessTimestamp.bind()
+  )
+}
