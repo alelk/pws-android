@@ -14,7 +14,7 @@ class ObserveBookWithSongsUseCase(
 ) {
   operator fun invoke(bookId: BookId): Flow<BookWithSongs?> =
     combine(
-      bookRepository.observeBook(bookId),
-      songRepository.observeSongsInBook(bookId)
+      bookRepository.observe(bookId),
+      songRepository.observeAllInBook(bookId)
     ) { book, songs -> book?.let { BookWithSongs(it, songs) } }
 }

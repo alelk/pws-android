@@ -15,9 +15,9 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.alelk.pws.android.app.R
-import io.github.alelk.pws.android.app.feature.books.BookStatisticViewModel
 import io.github.alelk.pws.android.app.core.theme.AppTheme
-import io.github.alelk.pws.database.book_statistic.BookStatisticWithBookEntity
+import io.github.alelk.pws.android.app.feature.books.BooksViewModel
+import io.github.alelk.pws.domain.book.model.BookSummary
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -30,7 +30,7 @@ import timber.log.Timber
 @AndroidEntryPoint
 class GeneralPreferenceFragment : PreferenceFragmentCompat() {
 
-  private val bookStatisticViewModel: BookStatisticViewModel by viewModels()
+  private val booksViewModel: BooksViewModel by viewModels()
   private val appPreferencesViewModel: AppPreferencesViewModel by viewModels()
 
   override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -45,8 +45,8 @@ class GeneralPreferenceFragment : PreferenceFragmentCompat() {
     viewLifecycleOwner.lifecycleScope.launch {
       viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
         launch {
-          bookStatisticViewModel.bookStatistic.collectLatest { bookWithStatisticList ->
-            initBookPreferences(bookPreference, bookWithStatisticList)
+          booksViewModel.allBooks.collectLatest { books ->
+            initBookPreferences(bookPreference, books)
           }
         }
         launch {
@@ -72,19 +72,17 @@ class GeneralPreferenceFragment : PreferenceFragmentCompat() {
     }
   }
 
-  private fun initBookPreferences(bookPreferences: PreferenceCategory, books: List<BookStatisticWithBookEntity>) {
-    Timber.Forest.d("book preferences: ${books.joinToString(", ") { "${it.book.id}->${it.bookStatistic.priority}" }}")
+  private fun initBookPreferences(bookPreferences: PreferenceCategory, books: List<BookSummary>) {
+    Timber.Forest.d("book preferences: ${books.joinToString(", ") { "${it.id}->${it.priority}" }}")
     bookPreferences.removeAll()
     books.forEach { book ->
       val pref = SwitchPreference(requireContext()).apply {
-        key = book.book.id.toString()
-        title = book.book.displayName
-        isChecked = (book.bookStatistic.priority ?: 0) > 0
+        key = book.id.toString()
+        title = book.displayName.value
+        isChecked = book.enabled
         setOnPreferenceChangeListener { _, _ ->
           viewLifecycleOwner.lifecycleScope.launch {
-            bookStatisticViewModel.update(book.book.id) {
-              it.bookStatistic.copy(priority = if ((it.bookStatistic.priority ?: 0) > 0) 0 else 1)
-            }
+            booksViewModel.setBookEnabled(book.id, !book.enabled)
           }
           true
         }

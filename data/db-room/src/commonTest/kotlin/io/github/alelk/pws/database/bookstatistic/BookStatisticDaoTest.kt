@@ -1,4 +1,4 @@
-package io.github.alelk.pws.database.book_statistic
+package io.github.alelk.pws.database.bookstatistic
 
 import io.github.alelk.pws.database.PwsDatabase
 import io.github.alelk.pws.database.clean

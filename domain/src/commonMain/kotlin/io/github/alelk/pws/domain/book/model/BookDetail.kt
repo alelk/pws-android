@@ -22,7 +22,7 @@ data class BookDetail(
     val editors: List<Person>? = null,
     val description: String? = null,
     val preface: String? = null,
-    val firstSongNumberId: SongNumberId,
+    val firstSongNumberId: SongNumberId?,
     val countSongs: Int,
     val enabled: Boolean = true,
     val priority: Int = 0,

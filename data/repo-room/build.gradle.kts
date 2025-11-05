@@ -19,7 +19,7 @@ kotlin {
     val commonMain by getting {
       dependencies {
         api(project(":domain"))
-        api(project(":data:db-room"))
+        implementation(project(":data:db-room"))
       }
     }
     val commonTest by getting {

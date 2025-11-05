@@ -7,7 +7,7 @@ import androidx.room.TypeConverters
 import androidx.room.execSQL
 import androidx.room.useWriterConnection
 import io.github.alelk.pws.database.book.BookDao
-import io.github.alelk.pws.database.book_statistic.BookStatisticDao
+import io.github.alelk.pws.database.bookstatistic.BookStatisticDao
 import io.github.alelk.pws.database.favorite.FavoriteDao
 import io.github.alelk.pws.database.history.HistoryDao
 import io.github.alelk.pws.database.song.SongDao
@@ -16,7 +16,7 @@ import io.github.alelk.pws.database.song_tag.SongTagDao
 import io.github.alelk.pws.database.song_reference.SongReferenceDao
 import io.github.alelk.pws.database.tag.TagDao
 import io.github.alelk.pws.database.book.BookEntity
-import io.github.alelk.pws.database.book_statistic.BookStatisticEntity
+import io.github.alelk.pws.database.bookstatistic.BookStatisticEntity
 import io.github.alelk.pws.database.favorite.FavoriteEntity
 import io.github.alelk.pws.database.history.HistoryEntity
 import io.github.alelk.pws.database.song.SongEntity

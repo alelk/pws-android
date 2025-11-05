@@ -1,5 +1,6 @@
-package io.github.alelk.pws.database.book_statistic
+package io.github.alelk.pws.database.bookstatistic
 
+import io.github.alelk.pws.database.bookstatistic.BookStatisticEntity
 import io.github.alelk.pws.domain.core.ids.BookId
 import io.github.alelk.pws.domain.core.ids.bookId
 import io.kotest.property.Arb
@@ -13,10 +14,10 @@ fun Arb.Companion.bookStatisticEntity(
   readings: Arb<Int?> = Arb.int(min = 0, max = 1000).orNull(),
   rating: Arb<Int?> = Arb.int(min = 1, max = 5).orNull()
 ): Arb<BookStatisticEntity> = arbitrary {
-  BookStatisticEntity(
-    id = id.bind(),
-    priority = userPreference.bind(),
-    readings = readings.bind(),
-    rating = rating.bind()
-  )
+    BookStatisticEntity(
+        id = id.bind(),
+        priority = userPreference.bind(),
+        readings = readings.bind(),
+        rating = rating.bind()
+    )
 }
