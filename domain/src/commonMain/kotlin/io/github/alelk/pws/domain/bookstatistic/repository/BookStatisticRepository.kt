@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface BookStatisticRepository {
   fun observe(id: BookId): Flow<BookStatisticDetail?>
-  fun observeMany(query: BookStatisticQuery = BookStatisticQuery.Companion.Empty): Flow<List<BookStatisticDetail>>
+  fun observeMany(query: BookStatisticQuery = BookStatisticQuery.Empty): Flow<List<BookStatisticDetail>>
 
   suspend fun get(id: BookId): BookStatisticDetail?
 

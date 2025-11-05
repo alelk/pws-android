@@ -1,4 +1,4 @@
-package io.github.alelk.pws.database.book_statistic
+package io.github.alelk.pws.database.bookstatistic
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

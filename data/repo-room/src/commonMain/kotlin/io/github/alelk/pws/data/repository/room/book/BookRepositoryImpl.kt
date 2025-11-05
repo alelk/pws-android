@@ -15,10 +15,10 @@ import kotlinx.coroutines.flow.map
 class BookRepositoryImpl(
   val bookDao: BookDao
 ) : BookRepository {
-  override fun observeBook(id: BookId): Flow<BookDetail?> =
+  override fun observe(id: BookId): Flow<BookDetail?> =
     bookDao.observeBookDetail(id).map { it?.toDomain() }
 
-  override fun observeBooks(query: BookQuery, sort: BookSort): Flow<List<BookSummary>> =
+  override fun observeMany(query: BookQuery, sort: BookSort): Flow<List<BookSummary>> =
     bookDao
       .observeBooksSummary(locale = query.locale, minPriority = query.minPriority, maxPriority = query.maxPriority)
       .distinctUntilChanged()

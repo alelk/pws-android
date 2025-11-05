@@ -7,10 +7,13 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import io.github.alelk.pws.data.repository.room.book.BookRepositoryImpl
+import io.github.alelk.pws.data.repository.room.bookstatistic.BookStatisticRepositoryImpl
 import io.github.alelk.pws.database.PwsDatabase
 import io.github.alelk.pws.database.PwsDatabaseProvider
 import io.github.alelk.pws.domain.book.repository.BookRepository
 import io.github.alelk.pws.domain.book.usecase.ObserveBooksUseCase
+import io.github.alelk.pws.domain.bookstatistic.repository.BookStatisticRepository
+import io.github.alelk.pws.domain.bookstatistic.usecase.UpdateBookStatisticUseCase
 import javax.inject.Singleton
 
 @Module
@@ -22,10 +25,16 @@ object AppModule {
   fun provideDatabase(@ApplicationContext context: Context): PwsDatabase = PwsDatabaseProvider.getDatabase(context)
 
   @Provides
-  @Singleton
   fun provideBookRepository(database: PwsDatabase): BookRepository = BookRepositoryImpl(database.bookDao())
 
   @Provides
+  fun provideBookStatisticRepository(database: PwsDatabase): BookStatisticRepository = BookStatisticRepositoryImpl(database.bookStatisticDao())
+
+  @Provides
   fun provideObserveBooksUseCase(bookRepository: BookRepository): ObserveBooksUseCase = ObserveBooksUseCase(bookRepository)
+
+  @Provides
+  fun provideUpdateBookStatisticUseCase(bookStatisticRepository: BookStatisticRepository): UpdateBookStatisticUseCase =
+    UpdateBookStatisticUseCase(bookStatisticRepository)
 
 }

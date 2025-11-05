@@ -9,5 +9,5 @@ import kotlinx.coroutines.flow.Flow
 class ObserveBooksUseCase(private val bookRepository: BookRepository) {
 
   operator fun invoke(query: BookQuery = BookQuery.Empty, sort: BookSort = BookSort.ByPriorityDesc): Flow<List<BookSummary>> =
-    bookRepository.observeBooks(query, sort)
+    bookRepository.observeMany(query, sort)
 }
