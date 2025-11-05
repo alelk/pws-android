@@ -10,6 +10,7 @@ import io.github.alelk.pws.data.repository.room.book.BookRepositoryImpl
 import io.github.alelk.pws.database.PwsDatabase
 import io.github.alelk.pws.database.PwsDatabaseProvider
 import io.github.alelk.pws.domain.book.repository.BookRepository
+import io.github.alelk.pws.domain.book.usecase.ObserveBooksUseCase
 import javax.inject.Singleton
 
 @Module
@@ -23,5 +24,8 @@ object AppModule {
   @Provides
   @Singleton
   fun provideBookRepository(database: PwsDatabase): BookRepository = BookRepositoryImpl(database.bookDao())
+
+  @Provides
+  fun provideObserveBooksUseCase(bookRepository: BookRepository): ObserveBooksUseCase = ObserveBooksUseCase(bookRepository)
 
 }

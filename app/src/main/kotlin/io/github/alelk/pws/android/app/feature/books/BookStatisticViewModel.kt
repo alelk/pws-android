@@ -21,9 +21,9 @@ class BookStatisticViewModel @Inject constructor(database: PwsDatabase) : ViewMo
     if (existing != null) {
       val bookStatistic = updateFn(existing)
       bookStatisticDao.update(bookStatistic)
-      Timber.Forest.d("book statistic updated: bookId={}, userpref={}", bookStatistic.id, bookStatistic.priority)
+      Timber.d("book statistic updated: bookId={${bookStatistic.id}, userpref=${bookStatistic.priority}")
     } else {
-      Timber.Forest.d("no book statistic item fond by book id $bookId")
+      Timber.d("no book statistic item fond by book id $bookId")
     }
   }
 }
