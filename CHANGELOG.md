@@ -1,5 +1,12 @@
 # PWS Android
 
+# [2.2.0-rc.3](https://github.com/alelk/pws-android/compare/v2.2.0-rc.2...v2.2.0-rc.3) (2025-11-05)
+
+
+### Features
+
+* **domain, database:** domain refactoring; database module refactoring ([#82](https://github.com/alelk/pws-android/issues/82)) ([842da76](https://github.com/alelk/pws-android/commit/842da769a158886e40590e9d95f57e7b10cfab93))
+
 # [2.2.0-rc.2](https://github.com/alelk/pws-android/compare/v2.2.0-rc.1...v2.2.0-rc.2) (2025-10-29)
 
 
