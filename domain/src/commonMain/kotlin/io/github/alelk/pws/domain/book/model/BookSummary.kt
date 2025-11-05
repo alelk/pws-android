@@ -14,7 +14,7 @@ data class BookSummary(
     val displayShortName: NonEmptyString,
     val displayName: NonEmptyString,
     val countSongs: Int,
-    val firstSongNumberId: SongNumberId,
+    val firstSongNumberId: SongNumberId?,
     val enabled: Boolean,
     val priority: Int,
 )

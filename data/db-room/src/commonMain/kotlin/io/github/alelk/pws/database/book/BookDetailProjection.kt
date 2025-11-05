@@ -23,6 +23,6 @@ data class BookDetailProjection(
   @ColumnInfo(name = "description") val description: String? = null,
   @ColumnInfo(name = "preface") val preface: String? = null,
   @ColumnInfo(name = "count_songs") val countSongs: Int,
-  @ColumnInfo(name = "first_song_number_id") val firstSongNumberId: SongNumberId,
+  @ColumnInfo(name = "first_song_number_id") val firstSongNumberId: SongNumberId?,
   @ColumnInfo(name = "priority") val priority: Int,
 )

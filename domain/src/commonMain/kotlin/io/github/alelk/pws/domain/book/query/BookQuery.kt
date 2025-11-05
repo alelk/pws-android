@@ -3,20 +3,24 @@ package io.github.alelk.pws.domain.book.query
 import io.github.alelk.pws.domain.core.Locale
 
 /** Query parameters for filtering books. All fields optional. */
-data class BookQuery(
+@ConsistentCopyVisibility
+data class BookQuery private constructor(
   val locale: Locale? = null,
-  val enabled: Boolean? = null,
   val minPriority: Int? = null,
   val maxPriority: Int? = null
 ) {
-  init {
-    if (maxPriority != null && maxPriority <= 0) require(enabled == null || !enabled) { "enabled must be null or false when maxPriority is <= 0" }
-    if (minPriority != null && minPriority > 0) require(enabled == null || enabled) { "enabled must be null or true when minPriority is > 0" }
-  }
+  constructor(
+    locale: Locale? = null,
+    enabled: Boolean? = null,
+    minPriority: Int? = null,
+    maxPriority: Int? = null
+  ) : this(
+    locale = locale,
+    minPriority = if (enabled == true) 1 else minPriority,
+    maxPriority = if (enabled == false) 0 else maxPriority
+  )
 
-  fun isEmpty(): Boolean = locale == null && enabled == null && minPriority == null && maxPriority == null
-
-  fun normalize(): BookQuery = copy(minPriority = if (enabled == true) 1 else minPriority, maxPriority = if (enabled == false) 0 else maxPriority)
+  fun isEmpty(): Boolean = locale == null && minPriority == null && maxPriority == null
 
   companion object {
     val Empty = BookQuery()

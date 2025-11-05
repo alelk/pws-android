@@ -91,6 +91,7 @@ android {
 dependencies {
   implementation(project(":domain"))
   implementation(project(":data:db-android"))
+  implementation(project(":data:repo-room"))
   implementation(project(":backup"))
 
   implementation(libs.preference.ktx)

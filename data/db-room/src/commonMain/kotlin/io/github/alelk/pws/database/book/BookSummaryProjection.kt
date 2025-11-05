@@ -14,6 +14,6 @@ data class BookSummaryProjection(
   @ColumnInfo(name = "display_short_name") val displayShortName: String,
   @ColumnInfo(name = "display_name") val displayName: String,
   @ColumnInfo(name = "count_songs") val countSongs: Int,
-  @ColumnInfo(name = "first_song_number_id") val firstSongNumberId: SongNumberId,
+  @ColumnInfo(name = "first_song_number_id") val firstSongNumberId: SongNumberId?,
   @ColumnInfo(name = "priority") val priority: Int,
 )

@@ -5,6 +5,7 @@ import io.github.alelk.pws.domain.book.model.BookDetail
 import io.github.alelk.pws.domain.book.model.BookSummary
 import io.github.alelk.pws.domain.book.query.BookQuery
 import io.github.alelk.pws.domain.book.query.BookSort
+import io.github.alelk.pws.domain.book.query.bookSummaryComparator
 import io.github.alelk.pws.domain.book.repository.BookRepository
 import io.github.alelk.pws.domain.core.ids.BookId
 import kotlinx.coroutines.flow.Flow
@@ -19,9 +20,10 @@ class BookRepositoryImpl(
 
   override fun observeBooks(query: BookQuery, sort: BookSort): Flow<List<BookSummary>> =
     bookDao
-      .observeBooksSummary(locale = query.locale, minPriority = query.maxPriority, maxPriority = query.maxPriority)
+      .observeBooksSummary(locale = query.locale, minPriority = query.minPriority, maxPriority = query.maxPriority)
       .distinctUntilChanged()
       .map { books -> books.map { it.toDomain() } }
+      .map { books -> books.sortedWith(sort.bookSummaryComparator) }
 
 
   override suspend fun get(id: BookId): BookDetail? = bookDao.getBookDetail(id)?.toDomain()
