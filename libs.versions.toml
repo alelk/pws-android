@@ -26,6 +26,8 @@ robolectric = "4.16"
 
 sqlite-bundled = "2.6.1"
 
+compose = "1.7.5"
+composeCompiler = "1.5.15"
 
 kaml = "0.97.0"
 navigation-fragment-ktx = "2.9.5"
@@ -78,6 +80,16 @@ navigation-ui = { group = "androidx.navigation", name = "navigation-ui", version
 androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigation-fragment-ktx" }
 androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigation-ui-ktx" }
 
+# Compose
+compose-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "compose" }
+compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "compose" }
+compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "compose" }
+compose-material = { group = "androidx.compose.material", name = "material", version.ref = "compose" }
+compose-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "compose" }
+compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "compose" }
+compose-activity = { group = "androidx.activity", name = "activity-compose", version = "1.9.3" }
+lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version = "2.9.0" }
+
 # Test
 kotest-framework-engine = { module = "io.kotest:kotest-framework-engine", version.ref = "kotest" } # https://search.maven.org/artifact/io.kotest/kotest-framework-engine
 kotest-framework-datatest = { module = "io.kotest:kotest-framework-datatest", version.ref = "kotest-framework-datatest" } # https://search.maven.org/artifact/io.kotest/kotest-framework-datatest
@@ -101,3 +113,4 @@ kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref 
 kotest-multiplatform = { id = "io.kotest.multiplatform", version.ref = "kotest-multiplatform" } # https://plugins.gradle.org/plugin/io.kotest.multiplatform
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" } # https://plugins.gradle.org/plugin/org.jetbrains.kotlin.plugin.serialization
 hilt = { id = "com.google.dagger.hilt.android", version = "2.57.2" } # https://mvnrepository.com/artifact/com.google.dagger.hilt.android/com.google.dagger.hilt.android.gradle.plugin
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

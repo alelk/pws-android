@@ -3,6 +3,7 @@ plugins {
   id("org.jetbrains.kotlin.android")
   alias(libs.plugins.hilt)
   id("kotlin-kapt")
+  alias(libs.plugins.kotlin.compose)
 }
 
 
@@ -86,6 +87,13 @@ android {
   viewBinding {
     enable = true
   }
+
+  buildFeatures {
+    compose = true
+  }
+  composeOptions {
+    kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
+  }
 }
 
 dependencies {
@@ -111,6 +119,16 @@ dependencies {
   // DI
   implementation(libs.hilt.android)
   kapt(libs.hilt.compiler)
+
+  // Jetpack Compose
+  implementation(libs.compose.ui)
+  implementation(libs.compose.material)
+  implementation(libs.compose.foundation)
+  implementation(libs.compose.runtime)
+  implementation(libs.compose.activity)
+  implementation(libs.lifecycle.runtime.compose)
+  debugImplementation(libs.compose.ui.tooling)
+  implementation(libs.compose.ui.tooling.preview)
 
   // Test dependencies
   testImplementation(libs.kotest.runner.junit5)
