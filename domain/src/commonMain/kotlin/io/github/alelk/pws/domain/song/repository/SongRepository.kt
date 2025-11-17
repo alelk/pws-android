@@ -9,6 +9,4 @@ import kotlinx.coroutines.flow.Flow
 interface SongRepository {
   fun observe(id: SongId): Flow<SongDetail?>
   fun observeAllInBook(bookId: BookId): Flow<Map<Int, SongSummary>>
-  suspend fun get(id: SongId): SongDetail?
-  suspend fun delete(id: SongId)
 }

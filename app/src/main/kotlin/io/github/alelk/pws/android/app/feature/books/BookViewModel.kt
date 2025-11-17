@@ -22,11 +22,13 @@ import kotlinx.coroutines.flow.stateIn
 import timber.log.Timber
 import javax.inject.Inject
 
+@Deprecated("")
 data class BookInfo(
   val book: BookEntity,
   val songs: List<SongNumberWithSongEntity>
 )
 
+@Deprecated("")
 @HiltViewModel
 @OptIn(ExperimentalCoroutinesApi::class)
 class BookViewModel @Inject constructor(database: PwsDatabase) : ViewModel() {
@@ -36,6 +38,7 @@ class BookViewModel @Inject constructor(database: PwsDatabase) : ViewModel() {
   private val _bookId = MutableStateFlow<BookId?>(null)
   val bookId = _bookId.asStateFlow()
 
+  @Deprecated("")
   fun setBookId(bookId: BookId) {
     if (_bookId.value != bookId) {
       _bookId.value = bookId
@@ -43,6 +46,7 @@ class BookViewModel @Inject constructor(database: PwsDatabase) : ViewModel() {
     }
   }
 
+  @Deprecated("")
   val book: StateFlow<BookInfo?> =
     _bookId.filterNotNull()
       .flatMapLatest { bookId ->
@@ -54,6 +58,7 @@ class BookViewModel @Inject constructor(database: PwsDatabase) : ViewModel() {
       .mapLatest { it?.let { book -> book.copy(songs = book.songs.sortedBy { s -> s.songNumber.number }) } }
       .stateIn(viewModelScope, SharingStarted.Lazily, null)
 
+  @Deprecated("")
   val songNumbers: StateFlow<List<SongNumberEntity>?> =
     book.mapLatest { it?.songs?.map { s -> s.songNumber } }.distinctUntilChanged()
       .stateIn(viewModelScope, SharingStarted.Lazily, null)

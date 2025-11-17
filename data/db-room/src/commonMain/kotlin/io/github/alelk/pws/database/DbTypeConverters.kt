@@ -12,6 +12,7 @@ import io.github.alelk.pws.domain.core.ids.TagId
 import io.github.alelk.pws.domain.tonality.Tonality
 import io.github.alelk.pws.domain.core.Version
 import io.github.alelk.pws.domain.core.Year
+import io.github.alelk.pws.domain.core.ids.SongNumberId
 import io.github.alelk.pws.domain.core.ids.toTagId
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
@@ -119,6 +120,12 @@ class DbTypeConverters {
 
   @TypeConverter
   fun parseBibleRef(bibleRef: String): BibleRef = BibleRef(bibleRef)
+
+  @TypeConverter
+  fun parseSongNumberId(songNumberId: String): SongNumberId = SongNumberId.parse(songNumberId)
+
+  @TypeConverter
+  fun songNumberIdToString(songNumberId: SongNumberId): String = songNumberId.toString()
 
   companion object {
     val TIMESTAMP_FORMAT = LocalDateTime.Format { date(LocalDate.Formats.ISO); char(' '); time(LocalTime.Formats.ISO) }

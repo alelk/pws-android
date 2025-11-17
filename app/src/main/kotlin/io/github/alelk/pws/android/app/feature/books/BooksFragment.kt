@@ -34,23 +34,23 @@ class BooksFragment @Inject constructor() : Fragment() {
   private val bookViewModel: BooksViewModel by viewModels()
 
   override fun onCreateView(
-      inflater: LayoutInflater,
-      container: ViewGroup?,
-      savedInstanceState: Bundle?
+    inflater: LayoutInflater,
+    container: ViewGroup?,
+    savedInstanceState: Bundle?
   ): View? {
     val view = inflater.inflate(R.layout.fragment_books, container, false)
     val recyclerView = view.findViewById<RecyclerView>(R.id.rv_books)
     val layoutManager = LinearLayoutManager(requireContext())
     recyclerView.layoutManager = layoutManager
     booksAdapter = BooksRecyclerViewAdapter { book ->
-        val intent = Intent(requireActivity(), SongActivity::class.java)
-        book.songNumbers.minByOrNull { it.number }?.id?.let {
-            intent.putExtra(
-                SongActivity.Companion.KEY_SONG_NUMBER_ID,
-                it.toString()
-            )
-        }
-        startActivity(intent)
+      val intent = Intent(requireActivity(), SongActivity::class.java)
+      book.firstSongNumberId?.let {
+        intent.putExtra(
+          SongActivity.KEY_SONG_NUMBER_ID,
+          it.toString()
+        )
+      }
+      startActivity(intent)
     }
     recyclerView.adapter = booksAdapter
     viewLifecycleOwner.lifecycleScope.launch {

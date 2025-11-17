@@ -171,7 +171,7 @@ class BackupViewModel @Inject constructor(
     backup.bookPreferences?.forEach { bookPreference ->
       bookStatisticDao.getById(bookPreference.bookId)?.let {
         val updatedBookStatistic = it.copy(priority = bookPreference.preference)
-        bookStatisticDao.update(updatedBookStatistic)
+        bookStatisticDao.upsert(updatedBookStatistic)
       }
     }
 

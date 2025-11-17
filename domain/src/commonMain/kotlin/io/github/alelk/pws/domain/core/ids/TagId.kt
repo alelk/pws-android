@@ -5,7 +5,7 @@ import kotlin.jvm.JvmInline
 
 @JvmInline
 @Serializable(with = TagIdSerializer::class)
-value class TagId(private val identifier: String) {
+value class TagId(private val identifier: String): Comparable<TagId> {
   init {
     require(pattern.matches(identifier)) {
       "tag id should contain only letters, digits and '-', '_' symbols; should not start with digit; should not end with '-' or '_'"
@@ -19,6 +19,8 @@ value class TagId(private val identifier: String) {
   }
 
   override fun toString(): String = identifier
+
+  override fun compareTo(other: TagId): Int = this.identifier.compareTo(other.identifier)
 }
 
 fun String.toTagId(): TagId = TagId(this)
