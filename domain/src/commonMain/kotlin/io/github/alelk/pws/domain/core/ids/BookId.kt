@@ -5,7 +5,7 @@ import kotlin.jvm.JvmInline
 
 @JvmInline
 @Serializable(with = BookIdSerializer::class)
-value class BookId private constructor(val identifier: String) {
+value class BookId private constructor(val identifier: String) : Comparable<BookId> {
 
   init {
     require(pattern.matches(identifier)) {
@@ -20,4 +20,6 @@ value class BookId private constructor(val identifier: String) {
   }
 
   override fun toString(): String = identifier
+
+  override fun compareTo(other: BookId): Int = identifier.compareTo(other.identifier)
 }

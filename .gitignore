@@ -38,3 +38,4 @@ yarn-debug.log*
 
 # Misc
 *.log
+/data/db-android/test-db/
