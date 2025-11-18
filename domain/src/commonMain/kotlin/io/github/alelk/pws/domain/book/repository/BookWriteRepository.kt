@@ -7,5 +7,5 @@ interface BookWriteRepository {
 
   suspend fun create(bookCommand: CreateBookCommand)
 
-  suspend fun update(bookCommand: UpdateBookCommand)
+  suspend fun update(bookCommand: UpdateBookCommand): Boolean
 }

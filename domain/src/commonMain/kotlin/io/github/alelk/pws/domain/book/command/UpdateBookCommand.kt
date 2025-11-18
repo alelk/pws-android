@@ -3,6 +3,7 @@ package io.github.alelk.pws.domain.book.command
 import io.github.alelk.pws.domain.core.Locale
 import io.github.alelk.pws.domain.core.NonEmptyString
 import io.github.alelk.pws.domain.core.OptionalField
+import io.github.alelk.pws.domain.core.Version
 import io.github.alelk.pws.domain.core.Year
 import io.github.alelk.pws.domain.core.ids.BookId
 
@@ -16,6 +17,9 @@ data class UpdateBookCommand(
   val releaseDate: OptionalField<Year?> = OptionalField.Unchanged,
   val description: OptionalField<String?> = OptionalField.Unchanged,
   val preface: OptionalField<String?> = OptionalField.Unchanged,
-  val expectedVersion: Long? = null
+  val version: Version? = null,
+  val expectedVersion: Version? = null,
+  val enabled: Boolean? = null,
+  val priority: Int? = null
 )
 
