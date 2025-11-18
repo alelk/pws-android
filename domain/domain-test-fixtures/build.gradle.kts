@@ -1,5 +1,3 @@
-import shadow.bundletool.com.android.tools.r8.internal.no
-
 plugins {
   id("org.jetbrains.kotlin.multiplatform")
 }
@@ -19,9 +17,9 @@ kotlin {
   sourceSets {
     val commonMain by getting {
       dependencies {
-        implementation(project(":domain"))
+        api(project(":domain"))
         implementation(libs.kotest.assertions.core)
-        implementation(libs.kotest.property)
+        api(libs.kotest.property)
       }
     }
   }

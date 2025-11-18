@@ -21,5 +21,18 @@ data class UpdateBookCommand(
   val expectedVersion: Version? = null,
   val enabled: Boolean? = null,
   val priority: Int? = null
-)
+) {
+
+  fun hasChanges(): Boolean =
+    locale != null ||
+      name != null ||
+      displayShortName != null ||
+      displayName != null ||
+      version != null ||
+      enabled != null ||
+      priority != null ||
+      releaseDate is OptionalField.Set ||
+      description is OptionalField.Set ||
+      preface is OptionalField.Set
+}
 
