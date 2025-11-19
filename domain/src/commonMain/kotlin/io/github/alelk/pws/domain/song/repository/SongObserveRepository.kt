@@ -6,7 +6,7 @@ import io.github.alelk.pws.domain.song.model.SongDetail
 import io.github.alelk.pws.domain.song.model.SongSummary
 import kotlinx.coroutines.flow.Flow
 
-interface SongRepository {
+interface SongObserveRepository {
   fun observe(id: SongId): Flow<SongDetail?>
   fun observeAllInBook(bookId: BookId): Flow<Map<Int, SongSummary>>
 }
