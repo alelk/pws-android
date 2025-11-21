@@ -7,9 +7,9 @@ import io.github.alelk.pws.domain.core.OptionalField
 import io.github.alelk.pws.domain.core.Version
 import io.github.alelk.pws.domain.core.Year
 import io.github.alelk.pws.domain.core.ids.SongId
+import io.github.alelk.pws.domain.tonality.Tonality
 import io.github.alelk.pws.domain.person.Person
 import io.github.alelk.pws.domain.song.lyric.Lyric
-import io.github.alelk.pws.domain.tonality.Tonality
 
 /** Patch-like update for Song. */
 data class UpdateSongCommand(
