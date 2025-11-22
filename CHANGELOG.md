@@ -1,5 +1,22 @@
 # PWS Android
 
+# [2.2.0-rc.4](https://github.com/alelk/pws-android/compare/v2.2.0-rc.3...v2.2.0-rc.4) (2025-11-22)
+
+
+### Bug Fixes
+
+* **domain:** fix CreateSongCommand ([fe362f4](https://github.com/alelk/pws-android/commit/fe362f4389749d6a5cdebf9ad809598662355ad7))
+* fix build issues ([1a808b4](https://github.com/alelk/pws-android/commit/1a808b4991c0b5c9b8e707946bffedc2cf9b3249))
+
+
+### Features
+
+* **domain:** add book and song use cases ([35e3411](https://github.com/alelk/pws-android/commit/35e3411bb8d16d1b9b4376545e0ebfe603c8d2c0))
+* **domain:** add hasChanges() method into UpdateBookCommand model ([bafb5b8](https://github.com/alelk/pws-android/commit/bafb5b86776662de17350e900e0151397e0ba404))
+* **domain:** add interfaces: Song repositories ([c509dfb](https://github.com/alelk/pws-android/commit/c509dfb4b4d568f2287245901d96f34634e19305))
+* **domain:** add song use cases ([21e4daf](https://github.com/alelk/pws-android/commit/21e4daf2815e746be63bcf748ec4c9dda4be6bfb))
+* **domain:** book repository interfaces refactoring ([42f1e57](https://github.com/alelk/pws-android/commit/42f1e574cb257ba9fd9f95b561cebabbbf39e157))
+
 # [2.2.0-rc.3](https://github.com/alelk/pws-android/compare/v2.2.0-rc.2...v2.2.0-rc.3) (2025-11-17)
 
 
