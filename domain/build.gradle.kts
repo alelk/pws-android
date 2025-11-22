@@ -30,10 +30,10 @@ kotlin {
     commonTest.dependencies {
       implementation(project(":domain:domain-test-fixtures"))
       implementation(libs.kotlinx.serialization.json)
+      implementation(libs.kotest.framework.engine)
       implementation(libs.kotest.property)
       implementation(libs.kotest.assertions.core)
       implementation(libs.kotest.assertions.json)
-      implementation(libs.kotest.framework.engine)
       implementation(kotlin("test-common"))
       implementation(kotlin("test-annotations-common"))
     }

@@ -123,7 +123,7 @@ interface BookDao : Pageable<BookEntity> {
       ORDER BY bs.priority DESC, sn.number
     """
   )
-  fun getBooksSummary(locale: Locale? = null, minPriority: Int? = null, maxPriority: Int? = null): List<BookSummaryProjection>
+  suspend fun getBooksSummary(locale: Locale? = null, minPriority: Int? = null, maxPriority: Int? = null): List<BookSummaryProjection>
 
   @Deprecated("Use observeBookDetail instead")
   @Query("SELECT * FROM books WHERE id = :bookId")
