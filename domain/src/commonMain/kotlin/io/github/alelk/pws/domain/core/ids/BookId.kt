@@ -9,7 +9,8 @@ value class BookId private constructor(val identifier: String) : Comparable<Book
 
   init {
     require(pattern.matches(identifier)) {
-      "book id should contain only letters, digits and '-', '_' symbols; should not start with digit; should not end with '-' or '_'"
+      "book id should contain only letters, digits and '-', '_' symbols; should not start with digit; should not end with '-' or '_', " +
+        "but provided '$identifier'"
     }
   }
 
