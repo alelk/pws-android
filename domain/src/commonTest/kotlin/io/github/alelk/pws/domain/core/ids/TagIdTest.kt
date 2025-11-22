@@ -32,7 +32,7 @@ class TagIdTest : FeatureSpec({
 
   feature("convert tag id to string and parse it back") {
     scenario("for random tag id") {
-        checkAll(Arb.Companion.tagId()) { tagId ->
+        checkAll(Arb.tagId()) { tagId ->
             val string = tagId.toString()
             val parsed = TagId.parse(string)
             parsed shouldBe tagId

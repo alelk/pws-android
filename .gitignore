@@ -24,7 +24,7 @@ local.properties
 captures/
 output/
 app/*/release/
-data/db-android/test-data
+data/db-android/test-db
 local-repo/
 
 # Assets (if not needed in VCS)

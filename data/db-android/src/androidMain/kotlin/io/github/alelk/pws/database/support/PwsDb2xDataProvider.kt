@@ -132,4 +132,3 @@ class PwsDb2xDataProvider(val db: SQLiteDatabase) : PwsDbDataProvider {
         }
     }
 }
-

@@ -86,6 +86,7 @@ kotest-assertions-json = { module = "io.kotest:kotest-assertions-json", version.
 kotest-property = { module = "io.kotest:kotest-property", version.ref = "kotest" } # https://search.maven.org/artifact/io.kotest/kotest-property
 kotest-property-datetime = { module = "io.kotest.extensions:kotest-property-datetime", version.ref = "kotest-property-datetime" } # https://central.sonatype.com/artifact/io.kotest.extensions/kotest-property-datetime
 kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
+
 androidx-test-runner = { group = "androidx.test", name = "runner", version = "1.7.0" } # https://mvnrepository.com/artifact/androidx.test/runner
 androidx-test-core = { group = "androidx.test", name = "core", version = "1.7.0" } # https://mvnrepository.com/artifact/androidx.test/core
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" } # https://mvnrepository.com/artifact/org.robolectric/robolectric

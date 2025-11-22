@@ -105,6 +105,26 @@ interface BookDao : Pageable<BookEntity> {
   )
   suspend fun getBookDetail(bookId: BookId): BookDetailProjection?
 
+  @Query(
+    """
+      SELECT 
+        b.id as id, b.version as version, b.locale as locale, b.name as name, b.display_short_name as display_short_name, b.display_name as display_name,
+        count(sn.number) as count_songs, 
+        (SELECT (sn2.book_id || '/' || sn2.song_id) FROM song_numbers sn2 WHERE sn2.book_id = b.id ORDER BY sn2.number LIMIT 1) AS first_song_number_id, 
+        bs.priority as priority
+      FROM books b
+      INNER JOIN book_statistic bs on bs.id=b.id
+      LEFT OUTER JOIN song_numbers sn on sn.book_id=b.id
+      WHERE 
+        (:locale IS NULL OR b.locale = :locale) 
+        AND (:minPriority IS NULL OR bs.priority >= :minPriority) 
+        AND (:maxPriority IS NULL OR bs.priority <= :maxPriority)
+      GROUP BY b.id
+      ORDER BY bs.priority DESC, sn.number
+    """
+  )
+  suspend fun getBooksSummary(locale: Locale? = null, minPriority: Int? = null, maxPriority: Int? = null): List<BookSummaryProjection>
+
   @Deprecated("Use observeBookDetail instead")
   @Query("SELECT * FROM books WHERE id = :bookId")
   fun getByIdFlow(bookId: BookId): Flow<BookEntity?>
