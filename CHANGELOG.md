@@ -1,5 +1,12 @@
 # PWS Android
 
+# [2.2.0-rc.8](https://github.com/alelk/pws-android/compare/v2.2.0-rc.7...v2.2.0-rc.8) (2025-11-25)
+
+
+### Features
+
+* **domain:** Update Song use cases and repositories ([288e2ce](https://github.com/alelk/pws-android/commit/288e2cec36fa593bf4245b36bc3caefb83e6751b))
+
 # [2.2.0-rc.7](https://github.com/alelk/pws-android/compare/v2.2.0-rc.6...v2.2.0-rc.7) (2025-11-25)
 
 
