@@ -1,5 +1,12 @@
 # PWS Android
 
+# [2.2.0-rc.6](https://github.com/alelk/pws-android/compare/v2.2.0-rc.5...v2.2.0-rc.6) (2025-11-25)
+
+
+### Features
+
+* **domain:** Update book repositories and use cases ([023fb36](https://github.com/alelk/pws-android/commit/023fb36b9a690f31f6ab34fe72c9d0393929efdc))
+
 # [2.2.0-rc.5](https://github.com/alelk/pws-android/compare/v2.2.0-rc.4...v2.2.0-rc.5) (2025-11-22)
 
 
