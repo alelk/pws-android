@@ -1,5 +1,12 @@
 # PWS Android
 
+# [2.2.0-rc.7](https://github.com/alelk/pws-android/compare/v2.2.0-rc.6...v2.2.0-rc.7) (2025-11-25)
+
+
+### Features
+
+* **domain:** Update OptionalField api: add forEach method ([8db2dd8](https://github.com/alelk/pws-android/commit/8db2dd8f48006880852be02d2ec808f83aa2bc41))
+
 # [2.2.0-rc.6](https://github.com/alelk/pws-android/compare/v2.2.0-rc.5...v2.2.0-rc.6) (2025-11-25)
 
 
