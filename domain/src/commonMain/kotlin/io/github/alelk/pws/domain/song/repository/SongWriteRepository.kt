@@ -2,18 +2,17 @@ package io.github.alelk.pws.domain.song.repository
 
 import io.github.alelk.pws.domain.core.ids.SongId
 import io.github.alelk.pws.domain.song.command.CreateSongCommand
+import io.github.alelk.pws.domain.song.command.CreateSongResult
 import io.github.alelk.pws.domain.song.command.UpdateSongCommand
+import io.github.alelk.pws.domain.song.command.UpdateSongResult
 
-/**
- * Mutation operations for Song aggregate.
- * All methods return Boolean when the underlying entity existed and was modified, unless noted otherwise.
- */
+/** Mutation operations for Song aggregate. */
 interface SongWriteRepository {
-  /** Create a new song. Throws if id already exists or preconditions fail. */
-  suspend fun create(command: CreateSongCommand)
+  /** Create a new song. */
+  suspend fun create(command: CreateSongCommand): CreateSongResult
 
-  /** Patch/update semantics; returns true if applied, false if song not found or version check failed. */
-  suspend fun update(command: UpdateSongCommand): Boolean
+  /** Patch/update semantics. */
+  suspend fun update(command: UpdateSongCommand): UpdateSongResult
 
   /** Delete song by id; returns true if existed. */
   suspend fun delete(id: SongId): Boolean
