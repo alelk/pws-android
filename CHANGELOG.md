@@ -1,5 +1,12 @@
 # PWS Android
 
+# [2.2.0-rc.9](https://github.com/alelk/pws-android/compare/v2.2.0-rc.8...v2.2.0-rc.9) (2025-11-26)
+
+
+### Features
+
+* **domain:** Add song number use cases ([2de61b3](https://github.com/alelk/pws-android/commit/2de61b376ba7a08ad85ab023aa3ed370d017ea7a))
+
 # [2.2.0-rc.8](https://github.com/alelk/pws-android/compare/v2.2.0-rc.7...v2.2.0-rc.8) (2025-11-25)
 
 
