@@ -1,5 +1,12 @@
 # PWS Android
 
+# [2.2.0-rc.10](https://github.com/alelk/pws-android/compare/v2.2.0-rc.9...v2.2.0-rc.10) (2025-11-26)
+
+
+### Bug Fixes
+
+* **test:** Add song number link arb ([d20d4d2](https://github.com/alelk/pws-android/commit/d20d4d2769ade11d82ec78374d24b7827c739398))
+
 # [2.2.0-rc.9](https://github.com/alelk/pws-android/compare/v2.2.0-rc.8...v2.2.0-rc.9) (2025-11-26)
 
 
