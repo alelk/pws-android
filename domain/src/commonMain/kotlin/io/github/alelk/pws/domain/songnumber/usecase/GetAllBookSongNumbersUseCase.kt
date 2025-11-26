@@ -11,6 +11,6 @@ class GetAllBookSongNumbersUseCase(
 ) {
   suspend operator fun invoke(bookId: BookId): List<SongNumberLink> =
     txRunner.inRoTransaction {
-      readRepository.getAllByBookId(bookId)
+      readRepository.getAllByBookId(bookId).sortedBy { it.number }
     }
 }
