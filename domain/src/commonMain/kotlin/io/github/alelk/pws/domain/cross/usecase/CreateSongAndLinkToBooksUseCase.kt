@@ -1,10 +1,10 @@
 package io.github.alelk.pws.domain.cross.usecase
 
 import io.github.alelk.pws.domain.core.SongNumber
+import io.github.alelk.pws.domain.core.ids.SongId
+import io.github.alelk.pws.domain.core.result.CreateResourceResult
 import io.github.alelk.pws.domain.core.transaction.TransactionRunner
 import io.github.alelk.pws.domain.song.command.CreateSongCommand
-import io.github.alelk.pws.domain.song.model.SongDetail
-import io.github.alelk.pws.domain.song.repository.SongReadRepository
 import io.github.alelk.pws.domain.song.repository.SongWriteRepository
 import io.github.alelk.pws.domain.songnumber.model.SongNumberLink
 import io.github.alelk.pws.domain.songnumber.repository.SongNumberWriteRepository
@@ -18,34 +18,41 @@ import io.github.alelk.pws.domain.songnumber.repository.SongNumberWriteRepositor
  *  1. Validate uniqueness of (bookId, number) per book among provided assignments.
  *  2. Create song.
  *  3. Link song to each book/number.
- *  4. Read back SongDetail.
  */
 class CreateSongAndLinkToBooksUseCase(
   private val songWriteRepository: SongWriteRepository,
-  private val songReadRepository: SongReadRepository,
   private val songNumberWriteRepository: SongNumberWriteRepository,
   private val txRunner: TransactionRunner
 ) {
-  suspend operator fun invoke(command: CreateSongCommand, assignments: Collection<SongNumber>): SongDetail =
+  suspend operator fun invoke(command: CreateSongCommand, assignments: Collection<SongNumber>): CreateResourceResult<SongId> =
     txRunner.inRwTransaction {
-      // 1. Uniqueness validation per book (SongNumber constructor already validates number > 0).
       assignments
         .groupBy { it.bookId }
         .forEach { (bookId, list) ->
           val duplicates = list.groupBy { it.number }.filter { it.value.size > 1 }.keys
-          require(duplicates.isEmpty()) { "duplicate numbers for book $bookId: ${duplicates.joinToString()}" }
+          if (duplicates.isNotEmpty())
+            return@inRwTransaction CreateResourceResult
+              .ValidationError(command.id, "Duplicate song numbers for book $bookId: ${duplicates.joinToString()}")
         }
 
-      // 2. Create song.
-      songWriteRepository.create(command)
+      val songCreateResult = songWriteRepository.create(command)
+      if (songCreateResult !is CreateResourceResult.Success) return@inRwTransaction songCreateResult
 
-      // 3. Link song to books.
-      assignments.forEach { sn ->
-        songNumberWriteRepository.create(sn.bookId, SongNumberLink(command.id, sn.number))
+      for (assignment in assignments) {
+        when (val r = songNumberWriteRepository.create(assignment.bookId, SongNumberLink(command.id, assignment.number))) {
+          is CreateResourceResult.Success<*> ->
+            continue
+
+          is CreateResourceResult.ValidationError<*> ->
+            return@inRwTransaction CreateResourceResult.ValidationError(command.id, r.message)
+
+          is CreateResourceResult.AlreadyExists<*> ->
+            return@inRwTransaction CreateResourceResult.ValidationError(command.id, "illegal state: song number already exists: $assignment")
+
+          is CreateResourceResult.UnknownError<*> ->
+            return@inRwTransaction CreateResourceResult.UnknownError(command.id, r.exception, r.message)
+        }
       }
-
-      // 4. Read back detail.
-      songReadRepository.get(command.id)
-        ?: error("Song created but not found: ${command.id}")
+      songCreateResult
     }
 }
