@@ -1,5 +1,12 @@
 # PWS Android
 
+# [2.2.0-rc.11](https://github.com/alelk/pws-android/compare/v2.2.0-rc.10...v2.2.0-rc.11) (2025-11-27)
+
+
+### Features
+
+* **domain:** Reimplement song creation use case ([c73eb32](https://github.com/alelk/pws-android/commit/c73eb32779446e1deaa3c2099fe5e086c8a78f6f))
+
 # [2.2.0-rc.10](https://github.com/alelk/pws-android/compare/v2.2.0-rc.9...v2.2.0-rc.10) (2025-11-26)
 
 
