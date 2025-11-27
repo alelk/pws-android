@@ -1,5 +1,12 @@
 # PWS Android
 
+# [2.2.0-rc.12](https://github.com/alelk/pws-android/compare/v2.2.0-rc.11...v2.2.0-rc.12) (2025-11-27)
+
+
+### Features
+
+* **domain:** Improve optional field api: add getOrElse helper method ([3652819](https://github.com/alelk/pws-android/commit/3652819a316557b942de5067728bb804925c49f3))
+
 # [2.2.0-rc.11](https://github.com/alelk/pws-android/compare/v2.2.0-rc.10...v2.2.0-rc.11) (2025-11-27)
 
 
