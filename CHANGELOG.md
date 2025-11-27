@@ -1,5 +1,12 @@
 # PWS Android
 
+# [2.2.0-rc.13](https://github.com/alelk/pws-android/compare/v2.2.0-rc.12...v2.2.0-rc.13) (2025-11-27)
+
+
+### Features
+
+* **domain:** Reimplement CreateResourcesResult domain model. ([680b786](https://github.com/alelk/pws-android/commit/680b786f32c21b209cad531801371e9520bf5756))
+
 # [2.2.0-rc.12](https://github.com/alelk/pws-android/compare/v2.2.0-rc.11...v2.2.0-rc.12) (2025-11-27)
 
 
