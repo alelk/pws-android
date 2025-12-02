@@ -1,5 +1,12 @@
 # PWS Android
 
+# [2.2.0-rc.14](https://github.com/alelk/pws-android/compare/v2.2.0-rc.13...v2.2.0-rc.14) (2025-12-02)
+
+
+### Bug Fixes
+
+* **build:** Fix intellij idea build. ([fda8995](https://github.com/alelk/pws-android/commit/fda8995903b4eac17b35194a0506626d1bddc708))
+
 # [2.2.0-rc.13](https://github.com/alelk/pws-android/compare/v2.2.0-rc.12...v2.2.0-rc.13) (2025-11-27)
 
 
