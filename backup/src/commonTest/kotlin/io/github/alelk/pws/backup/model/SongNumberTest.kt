@@ -1,7 +1,7 @@
 package io.github.alelk.pws.backup.model
 
 import com.charleskorn.kaml.Yaml
-import io.github.alelk.pws.domain.model.BookId
+import io.github.alelk.pws.domain.core.ids.BookId
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 

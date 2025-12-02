@@ -1,5 +1,6 @@
 package io.github.alelk.pws.android.app.util
 
+import io.github.alelk.pws.android.app.feature.songs.PwsSongHtmlBuilder
 import io.kotest.core.spec.style.FeatureSpec
 import io.kotest.matchers.shouldBe
 import java.util.Locale

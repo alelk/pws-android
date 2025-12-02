@@ -1,31 +1,35 @@
 [versions]
 
-kotlin = "2.1.10"
-kotlinx-coroutines = "1.10.1"
-ksp = "1.0.31" # https://central.sonatype.com/artifact/com.google.devtools.ksp/com.google.devtools.ksp.gradle.plugin/versions
+kotlin = "2.2.20"
+kotlinx-coroutines = "1.10.2"
+ksp = "2.0.3" # https://central.sonatype.com/artifact/com.google.devtools.ksp/com.google.devtools.ksp.gradle.plugin/versions
 
-hilt = "2.55"
+hilt = "2.57.2"
 
-android-application = "8.8.2"
-android-material = "1.12.0"
-navigation = "2.8.8"
+android-application = "8.12.0"
+android-material = "1.13.0"
+navigation = "2.9.5"
 
-room = "2.7.0-rc01"
+room = "2.8.1"
 
-kotlinx-serialization = "1.8.0"
-kotlinx-datetime = "0.6.2"
+kotlinx-serialization = "1.9.0"
+kotlinx-datetime = "0.7.1"
 
 kotest = "5.9.1"
 kotest-property-datetime = "2.0.0"
 kotest-runner-android = "1.1.1"
 kotest-extensions-android = "0.1.5"
+kotest-multiplatform = "5.9.1"
+kotest-framework-datatest = "5.9.1"
 
-sqlite-bundled = "2.5.0-rc01"
+robolectric = "4.16"
+
+sqlite-bundled = "2.6.1"
 
 
-kaml = "0.67.0"
-navigation-fragment-ktx = "2.8.8"
-navigation-ui-ktx = "2.8.8"
+kaml = "0.97.0"
+navigation-fragment-ktx = "2.9.5"
+navigation-ui-ktx = "2.9.5"
 
 [libraries]
 
@@ -59,12 +63,12 @@ hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt"
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" } # https://mvnrepository.com/artifact/com.google.dagger/hilt-compiler
 
 # Preferences
-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version = "1.1.3" } # https://mvnrepository.com/artifact/androidx.datastore/datastore-preferences
+datastore-preferences = { module = "androidx.datastore:datastore-preferences", version = "1.1.7" } # https://mvnrepository.com/artifact/androidx.datastore/datastore-preferences
 
 preference-ktx = { group = "androidx.preference", name = "preference-ktx", version = "1.2.1" }
-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version = "2.8.7" }
-material = { group = "com.google.android.material", name = "material", version = "1.12.0" }
-appcompat = { group = "androidx.appcompat", name = "appcompat", version = "1.7.0" }
+lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version = "2.9.4" }
+material = { group = "com.google.android.material", name = "material", version = "1.13.0" }
+appcompat = { group = "androidx.appcompat", name = "appcompat", version = "1.7.1" }
 ambilwarna = { group = "com.github.yukuku", name = "ambilwarna", version = "2.0.1" }
 flexbox = { group = "com.google.android.flexbox", name = "flexbox", version = "3.0.0" }
 
@@ -76,24 +80,25 @@ androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation
 
 # Test
 kotest-framework-engine = { module = "io.kotest:kotest-framework-engine", version.ref = "kotest" } # https://search.maven.org/artifact/io.kotest/kotest-framework-engine
-kotest-framework-datatest = { module = "io.kotest:kotest-framework-datatest", version.ref = "kotest" }
+kotest-framework-datatest = { module = "io.kotest:kotest-framework-datatest", version.ref = "kotest-framework-datatest" } # https://search.maven.org/artifact/io.kotest/kotest-framework-datatest
 kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" } # https://search.maven.org/artifact/io.kotest/kotest-assertions-core
 kotest-assertions-json = { module = "io.kotest:kotest-assertions-json", version.ref = "kotest" } # https://search.maven.org/artifact/io.kotest/kotest-assertions-json
 kotest-property = { module = "io.kotest:kotest-property", version.ref = "kotest" } # https://search.maven.org/artifact/io.kotest/kotest-property
 kotest-property-datetime = { module = "io.kotest.extensions:kotest-property-datetime", version.ref = "kotest-property-datetime" } # https://central.sonatype.com/artifact/io.kotest.extensions/kotest-property-datetime
 kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
-androidx-test-runner = { group = "androidx.test", name = "runner", version = "1.6.2" } # https://mvnrepository.com/artifact/androidx.test/runner
-androidx-test-core = { group = "androidx.test", name = "core", version = "1.6.1" } # https://mvnrepository.com/artifact/androidx.test/core
-robolectric = { module = "org.robolectric:robolectric", version = "4.14.1" } # https://mvnrepository.com/artifact/org.robolectric/robolectric
+
+androidx-test-runner = { group = "androidx.test", name = "runner", version = "1.7.0" } # https://mvnrepository.com/artifact/androidx.test/runner
+androidx-test-core = { group = "androidx.test", name = "core", version = "1.7.0" } # https://mvnrepository.com/artifact/androidx.test/core
+robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" } # https://mvnrepository.com/artifact/org.robolectric/robolectric
 room-testing = { group = "androidx.room", name = "room-testing", version.ref = "room" }
 kotest-runner-android = { group = "br.com.colman", name = "kotest-runner-android", version.ref = "kotest-runner-android" }
-kotest-extensions-android = { group = "br.com.colman", name = "kotest-extensions-android", version.ref = "kotest-extensions-android" }
+kotest-extensions-android = { group = "br.com.colman", name = "kotest-extensions-android", version.ref = "kotest-extensions-android" } # https://search.maven.org/artifact/br.com.colman/kotest-extensions-android
 
 [plugins]
 
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-android-application = { id = "com.android.application", version.ref = "android-application" }
-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
-kotest-multiplatform = { id = "io.kotest.multiplatform", version.ref = "kotest" }
+android-application = { id = "com.android.application", version.ref = "android-application" } # https://mvnrepository.com/artifact/com.android.tools.build/gradle
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" } # https://plugins.gradle.org/plugin/org.jetbrains.kotlin.multiplatform
+kotest-multiplatform = { id = "io.kotest.multiplatform", version.ref = "kotest-multiplatform" } # https://plugins.gradle.org/plugin/io.kotest.multiplatform
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" } # https://plugins.gradle.org/plugin/org.jetbrains.kotlin.plugin.serialization
-hilt = { id = "com.google.dagger.hilt.android", version = "2.55" } # https://mvnrepository.com/artifact/com.google.dagger.hilt.android/com.google.dagger.hilt.android.gradle.plugin
+hilt = { id = "com.google.dagger.hilt.android", version = "2.57.2" } # https://mvnrepository.com/artifact/com.google.dagger.hilt.android/com.google.dagger.hilt.android.gradle.plugin

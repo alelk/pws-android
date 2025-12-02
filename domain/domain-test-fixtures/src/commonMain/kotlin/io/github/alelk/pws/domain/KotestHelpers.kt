@@ -14,7 +14,7 @@ fun <A, K> Arb<A>.distinctBy(attempts: Int = 100, selector: (A) -> K) = object :
   override fun sample(rs: RandomSource): Sample<A> {
     var iterations = 0
     return generateSequence {
-      if (iterations++ < attempts) this@distinctBy.sample(rs) else null
+      if ((iterations++) < attempts) this@distinctBy.sample(rs) else null
     }.filter { seen.add(selector(it.value)) }
       .first()
   }

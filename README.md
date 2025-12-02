@@ -29,6 +29,16 @@
 | 2016-12-28 |                                                                      |                            | 5 (1.0.2-dec-28-2016)                    |
 
 
+## Development
+
+#### Local maven publication
+
+Specify [app version](app.version).
+
+```shell
+./gradlew :domain:publishToMavenLocal :domain:domain-test-fixtures:publishToMavenLocal
+```
+
 ## Contributors ✨
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):

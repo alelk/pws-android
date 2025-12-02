@@ -27,7 +27,7 @@ android {
   defaultConfig {
     applicationId = "com.alelk.pws.pwapp"
     resValue("string", "db_authority", "com.alelk.pws.database")
-    minSdk = 21
+    minSdk = 23
     targetSdk = rootProject.extra["sdkVersion"] as Int
     versionCode = rootProject.extra["versionCode"] as Int
     versionName = "${rootProject.extra["versionName"]}-${rootProject.extra["versionNameSuffix"]}"
@@ -90,7 +90,8 @@ android {
 
 dependencies {
   implementation(project(":domain"))
-  implementation(project(":database"))
+  implementation(project(":data:db-android"))
+  implementation(project(":data:repo-room"))
   implementation(project(":backup"))
 
   implementation(libs.preference.ktx)

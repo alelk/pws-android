@@ -1,25 +1,41 @@
-.gradle
-app/src/ru/assets
-app/src/uk/assets
-/local.properties
-/.idea
-.DS_Store
-/build
-/captures
+# Gradle
+.gradle/
+build/
+*/build/
+!*/src/**/build/
+
+# IntelliJ IDEA
+.idea/
 *.iml
+
+# macOS
+.DS_Store
+
+# Local configuration
 local.properties
+/local.properties
+
+# Kotlin
+.kotlinc/
+.kotlin/
 .kotlin/errors*
 
-# build results (apk)
-/app/*/release/
+# Android
+captures/
+output/
+app/*/release/
+data/db-android/test-db
+local-repo/
 
-/database/test-data
+# Assets (if not needed in VCS)
+app/src/ru/assets/
+app/src/uk/assets/
 
-.kotlin
+# Yarn
+node_modules/
+yarn-error.log
+yarn-debug.log*
 
-/domain/build
-/domain/domain-test-fixtures/build
-/backup/build
-
-/output
-/local-repo
+# Misc
+*.log
+/data/db-android/test-db/

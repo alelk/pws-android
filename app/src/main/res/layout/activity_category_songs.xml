@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:fitsSystemWindows="true"
-    tools:context="io.github.alelk.pws.android.app.activity.TagSongsActivity">
+    tools:context="io.github.alelk.pws.android.app.feature.tags.TagSongsActivity">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/category_songs_recycler_view"

@@ -10,40 +10,40 @@ kotlin {
   iosArm64()
   iosSimulatorArm64()
   androidTarget()
+  js(IR) {
+    outputModuleName = "pws-domain"
+    browser()
+    nodejs()
+    binaries.executable()
+  }
 
   sourceSets {
-    val commonMain by getting {
-      dependencies {
-        implementation(libs.kotlinx.serialization.core)
-      }
-    }
-    val jvmMain by getting {}
-    val iosArm64Main by getting {}
-    val androidMain by getting {}
-
-    val commonTest by getting {
-      dependencies {
-        implementation(project(":domain:domain-test-fixtures"))
-        implementation(libs.kotlinx.serialization.json)
-        implementation(libs.kotest.property)
-        implementation(libs.kotest.assertions.core)
-        implementation(libs.kotest.assertions.json)
-        implementation(libs.kotest.framework.engine)
-        implementation(kotlin("test-common"))
-        implementation(kotlin("test-annotations-common"))
-      }
+    commonMain.dependencies {
+      implementation(libs.kotlinx.serialization.core)
+      implementation(libs.kotlinx.coroutines.core)
     }
 
-    val jvmTest by getting {
-      dependencies {
-        implementation(libs.kotest.runner.junit5)
-      }
+    jvmMain.dependencies {}
+    iosArm64Main.dependencies {}
+    androidMain.dependencies {}
+
+    commonTest.dependencies {
+      implementation(project(":domain:domain-test-fixtures"))
+      implementation(libs.kotlinx.serialization.json)
+      implementation(libs.kotest.framework.engine)
+      implementation(libs.kotest.property)
+      implementation(libs.kotest.assertions.core)
+      implementation(libs.kotest.assertions.json)
+      implementation(kotlin("test-common"))
+      implementation(kotlin("test-annotations-common"))
     }
 
-    val androidUnitTest by getting {
-      dependencies {
-        runtimeOnly(libs.kotest.runner.junit5)
-      }
+    jvmTest.dependencies {
+      implementation(libs.kotest.runner.junit5)
+    }
+
+    androidUnitTest.dependencies {
+      runtimeOnly(libs.kotest.runner.junit5)
     }
   }
 }

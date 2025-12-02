@@ -5,7 +5,7 @@
   android:layout_width="match_parent"
   android:layout_height="match_parent"
   android:fitsSystemWindows="true"
-  tools:context="io.github.alelk.pws.android.app.activity.SongActivity">
+  tools:context="io.github.alelk.pws.android.app.feature.songs.SongActivity">
 
   <com.google.android.material.appbar.AppBarLayout
     android:id="@+id/appbar_song"
