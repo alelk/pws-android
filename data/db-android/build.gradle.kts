@@ -13,8 +13,8 @@ kotlin {
   sourceSets {
     val androidMain by getting {
       dependencies {
-        implementation(project(":domain"))
-        api(project(":data:db-room"))
+        implementation(libs.pws.domain)
+        api(libs.pws.dbRoom)
         implementation(libs.android.material)
         implementation(libs.kotlinx.datetime)
         implementation(libs.kotlinx.coroutines.core)
@@ -24,7 +24,7 @@ kotlin {
     }
     val androidUnitTest by getting {
       dependencies {
-        implementation(project(":data:db-room:db-room-test-fixtures"))
+        implementation(libs.pws.dbRoomTestFixtures)
         implementation(libs.kotest.runner.junit5)
         implementation(libs.kotest.property)
         implementation(libs.kotest.assertions.core)

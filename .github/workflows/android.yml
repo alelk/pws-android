@@ -29,17 +29,13 @@ jobs:
 
       - name: Build ruDebug & ukDebug
         run: |
-          ./gradlew buildRuDebug buildUkDebug testRuDebug :domain:jvmTest :domain:testDebugUnitTest :domain:jsBrowserTest :domain:jsNodeTest :domain:domain-test-fixtures:jsBrowserTest :domain:domain-test-fixtures:jsNodeTest :backup:jvmTest :data:db-room:jvmTest :data:db-room:testDebugUnitTest :data:db-android:testRuDebugUnitTest
+          ./gradlew buildRuDebug buildUkDebug testRuDebug :data:db-android:testRuDebugUnitTest :app:testRuDebugUnitTest :app:test
 
-      - name: Upload Test Results
-        if: always()
-        uses: actions/upload-artifact@v4
+      - name: Publish Test Results
+        uses: mikepenz/action-junit-report@v4
+        if: success() || failure()
         with:
-          name: test-results
-          path: |
-            app/build/reports/tests/
-            app/build/test-results/
-          retention-days: 14
+          report_paths: '**/build/test-results/test/TEST-*.xml'
 
       - name: Set up Node 20
         uses: actions/setup-node@v4

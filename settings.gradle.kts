@@ -1,12 +1,6 @@
-rootProject.name = "pws-android" // sanitized (was "P&W Songs for Android") to satisfy npm package name rules: lowercase, no spaces, no ampersand
+rootProject.name = "pws-android"
 include(
-  ":domain",
-  ":domain:domain-test-fixtures",
-  ":backup",
-  ":data:db-room",
   ":data:db-android",
-  ":data:db-room:db-room-test-fixtures",
-  ":data:repo-room",
   ":app"
 )
 
@@ -15,9 +9,6 @@ pluginManagement {
     gradlePluginPortal()
     mavenCentral()
     google()
-  }
-
-  plugins {
   }
 }
 

@@ -19,44 +19,24 @@ plugins {
 }
 
 allprojects {
-  group = "io.github.alelk.pws"
+  group = "io.github.alelk.pws.android"
   version = versionName
 
-  buildscript {
-    dependencies {
-      classpath("com.android.tools.build:gradle:8.12.0")
-      classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-    }
-  }
   repositories {
     google()
     mavenCentral()
+    maven {
+      url = uri("https://maven.pkg.github.com/alelk/pws-core")
+      credentials {
+        username = findProperty("gpr.user") as String? ?: System.getenv("GITHUB_USER") ?: "alelk"
+        password = findProperty("gpr.token") as String? ?: System.getenv("GITHUB_TOKEN")
+      }
+    }
   }
 
   tasks.withType<KotlinCompile> {
     compilerOptions {
       jvmTarget.set(JvmTarget.JVM_21)
-    }
-  }
-}
-
-subprojects {
-  apply(plugin = "maven-publish")
-
-  publishing {
-    repositories {
-      mavenLocal {
-        name = "TestLocal"
-        url = rootProject.layout.projectDirectory.file("local-repo").asFile.toURI()
-      }
-      maven {
-        name = "GitHubPackages"
-        url = uri("https://maven.pkg.github.com/alelk/pws-android")
-        credentials {
-          username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_USER") ?: "alelk"
-          password = project.findProperty("gpr.token") as String? ?: System.getenv("GITHUB_TOKEN")
-        }
-      }
     }
   }
 }

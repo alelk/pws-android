@@ -89,10 +89,10 @@ android {
 }
 
 dependencies {
-  implementation(project(":domain"))
+  implementation(libs.pws.domain)
   implementation(project(":data:db-android"))
-  implementation(project(":data:repo-room"))
-  implementation(project(":backup"))
+  implementation(libs.pws.repoRoom)
+  implementation(libs.pws.backup)
 
   implementation(libs.preference.ktx)
   implementation(libs.lifecycle.viewmodel.ktx)

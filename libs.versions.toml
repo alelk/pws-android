@@ -1,22 +1,21 @@
 [versions]
 
-kotlin = "2.2.20"
+pws = "1.2.2"
+
+kotlin = "2.2.21"
 kotlinx-coroutines = "1.10.2"
-ksp = "2.0.3" # https://central.sonatype.com/artifact/com.google.devtools.ksp/com.google.devtools.ksp.gradle.plugin/versions
 
 hilt = "2.57.2"
 
-android-application = "8.12.0"
+android-application = "8.12.3"
 android-material = "1.13.0"
-navigation = "2.9.5"
+navigation = "2.9.6"
 
-room = "2.8.1"
+room = "2.8.4"
 
-kotlinx-serialization = "1.9.0"
 kotlinx-datetime = "0.7.1"
 
 kotest = "5.9.1"
-kotest-property-datetime = "2.0.0"
 kotest-runner-android = "1.1.1"
 kotest-extensions-android = "0.1.5"
 kotest-multiplatform = "5.9.1"
@@ -24,14 +23,19 @@ kotest-framework-datatest = "5.9.1"
 
 robolectric = "4.16"
 
-sqlite-bundled = "2.6.1"
-
 
 kaml = "0.97.0"
-navigation-fragment-ktx = "2.9.5"
-navigation-ui-ktx = "2.9.5"
+navigation-fragment-ktx = "2.9.6"
+navigation-ui-ktx = "2.9.6"
 
 [libraries]
+
+# PWS Libraries
+pws-domain = { module = "io.github.alelk.pws.domain:domain", version.ref = "pws" }
+pws-dbRoom = { module = "io.github.alelk.pws.data:db-room", version.ref = "pws" }
+pws-dbRoomTestFixtures = { module = "io.github.alelk.pws.data:db-room-test-fixtures", version.ref = "pws" }
+pws-repoRoom = { module = "io.github.alelk.pws.data:repo-room", version.ref = "pws" }
+pws-backup = { module = "io.github.alelk.pws.backup:backup", version.ref = "pws" }
 
 # Android
 android-material = { module = "com.google.android.material:material", version.ref = "android-material" }
@@ -43,17 +47,8 @@ kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutine
 # Date Time
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
 
-# Serialization
-kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" } # https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-serialization-core
-kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" } # https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-serialization-json
-kaml = { module = "com.charleskorn.kaml:kaml", version.ref = "kaml" } # https://search.maven.org/artifact/com.charleskorn.kaml/kaml
-
 # Database
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" } # https://mvnrepository.com/artifact/androidx.room/room-runtime
-room-runtime-jvm = { module = "androidx.room:room-runtime-jvm", version.ref = "room" } # https://mvnrepository.com/artifact/androidx.room/room-runtime-jvm
-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" } # https://mvnrepository.com/artifact/androidx.room/room-compiler
-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" } # https://mvnrepository.com/artifact/androidx.room/room-ktx
-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite-bundled" } # https://mvnrepository.com/artifact/androidx.sqlite/sqlite-bundled
 
 # Logging
 timber = { module = "com.jakewharton.timber:timber", version = "5.0.1" }
@@ -79,15 +74,11 @@ androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navi
 androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigation-ui-ktx" }
 
 # Test
-kotest-framework-engine = { module = "io.kotest:kotest-framework-engine", version.ref = "kotest" } # https://search.maven.org/artifact/io.kotest/kotest-framework-engine
 kotest-framework-datatest = { module = "io.kotest:kotest-framework-datatest", version.ref = "kotest-framework-datatest" } # https://search.maven.org/artifact/io.kotest/kotest-framework-datatest
 kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" } # https://search.maven.org/artifact/io.kotest/kotest-assertions-core
-kotest-assertions-json = { module = "io.kotest:kotest-assertions-json", version.ref = "kotest" } # https://search.maven.org/artifact/io.kotest/kotest-assertions-json
 kotest-property = { module = "io.kotest:kotest-property", version.ref = "kotest" } # https://search.maven.org/artifact/io.kotest/kotest-property
-kotest-property-datetime = { module = "io.kotest.extensions:kotest-property-datetime", version.ref = "kotest-property-datetime" } # https://central.sonatype.com/artifact/io.kotest.extensions/kotest-property-datetime
 kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
 
-androidx-test-runner = { group = "androidx.test", name = "runner", version = "1.7.0" } # https://mvnrepository.com/artifact/androidx.test/runner
 androidx-test-core = { group = "androidx.test", name = "core", version = "1.7.0" } # https://mvnrepository.com/artifact/androidx.test/core
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" } # https://mvnrepository.com/artifact/org.robolectric/robolectric
 room-testing = { group = "androidx.room", name = "room-testing", version.ref = "room" }
@@ -98,7 +89,5 @@ kotest-extensions-android = { group = "br.com.colman", name = "kotest-extensions
 
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 android-application = { id = "com.android.application", version.ref = "android-application" } # https://mvnrepository.com/artifact/com.android.tools.build/gradle
-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" } # https://plugins.gradle.org/plugin/org.jetbrains.kotlin.multiplatform
 kotest-multiplatform = { id = "io.kotest.multiplatform", version.ref = "kotest-multiplatform" } # https://plugins.gradle.org/plugin/io.kotest.multiplatform
-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" } # https://plugins.gradle.org/plugin/org.jetbrains.kotlin.plugin.serialization
 hilt = { id = "com.google.dagger.hilt.android", version = "2.57.2" } # https://mvnrepository.com/artifact/com.google.dagger.hilt.android/com.google.dagger.hilt.android.gradle.plugin
