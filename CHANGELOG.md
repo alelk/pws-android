@@ -1,5 +1,12 @@
 # PWS Android
 
+## [2.2.1-rc.1](https://github.com/alelk/pws-android/compare/v2.2.0...v2.2.1-rc.1) (2025-12-03)
+
+
+### Bug Fixes
+
+* Update android gradle plugin version ([c27263d](https://github.com/alelk/pws-android/commit/c27263dd5131ecc83b5710a878eaeaaeef80f4b0))
+
 # [2.2.0](https://github.com/alelk/pws-android/compare/v2.1.0...v2.2.0) (2025-12-03)
 
 
