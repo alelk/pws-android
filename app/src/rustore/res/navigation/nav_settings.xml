@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:id="@+id/nav_settings"
+  app:startDestination="@id/rootPreferenceFragment">
+
+  <fragment
+    android:id="@+id/rootPreferenceFragment"
+    android:name="io.github.alelk.pws.android.app.feature.preference.RootPreferenceFragment"
+    android:label="Settings" />
+
+  <fragment
+    android:id="@+id/generalPreferenceFragment"
+    android:name="io.github.alelk.pws.android.app.feature.preference.GeneralPreferenceFragment"
+    android:label="General Settings" />
+
+  <fragment
+    android:id="@+id/backupPreferenceFragment"
+    android:name="io.github.alelk.pws.android.app.feature.preference.BackupPreferenceFragment"
+    android:label="@string/pref_header_import_export" />
+
+  <fragment
+    android:id="@+id/aboutPreferenceFragment"
+    android:name="io.github.alelk.pws.android.app.feature.preference.AboutPreferenceFragment"
+    android:label="@string/pref_header_about" />
+
+  <activity
+    android:id="@+id/paymentActiviy"
+    android:name="io.github.alelk.pws.android.app.feature.payment.PaymentActivity"
+    android:label="@string/screen_payments_title" />
+
+</navigation>
+

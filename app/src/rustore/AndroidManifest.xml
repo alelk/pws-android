@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+  <uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+  <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
+  <application>
+
+    <!-- Override MainActivity with RuStore-specific version -->
+    <activity
+      android:name="io.github.alelk.pws.android.app.rustore.MainActivity"
+      android:exported="true"
+      android:launchMode="singleTop"
+      android:theme="@style/Theme.AppTheme.Launcher"
+      tools:replace="android:name">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <action android:name="android.intent.action.SENDTO" />
+        <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data android:scheme="io.github.alelk.pws.app" />
+      </intent-filter>
+    </activity>
+
+    <activity
+      android:name="io.github.alelk.pws.android.app.feature.payment.PaymentActivity"
+      android:label="Payment"
+      android:parentActivityName="io.github.alelk.pws.android.app.rustore.MainActivity">
+    </activity>
+
+    <!-- Rustore pay SDK -->
+    <meta-data
+      android:name="sdk_pay_scheme_value"
+      android:value="io.github.alelk.pws.app" />
+    <meta-data
+      android:name="console_app_id_value"
+      android:value="@string/CONSOLE_APPLICATION_ID" />
+  </application>
+
+</manifest>
+

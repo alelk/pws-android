@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- Payments -->
+  <string name="screen_payments_title">Покупки</string>
+  <string name="payment_products_title">Доступные опции</string>
+  <string name="payment_active_purchases_title">Ваши активные подписки</string>
+  <string name="payment_products_empty">Не удалось загрузить продукты.</string>
+  <string name="payment_auth_prompt_title">Авторизуйтесь в RuStore</string>
+  <string name="payment_auth_prompt_description">Если у вас уже есть активная подписка на приложение, авторизуйтесь в своем аккаунте RuStore.</string>
+  <string name="payment_auth_button">Войти в RuStore</string>
+  <string name="payment_active_purchase_valid_until">Действует до %1$s</string>
+  <string name="payment_multiple_subscriptions_title">Обнаружено несколько активных подписок</string>
+  <string name="payment_multiple_subscriptions_description">Проверьте свои подписки в RuStore и отмените ненужные, чтобы избежать двойного списания средств. Должна остаться активной только одна подписка.</string>
+  <string name="error_auth_check_failed">Не удалось проверить статус авторизации.</string>
+  <string name="error_products_loading_failed">Ошибка при загрузке списка продуктов.</string>
+  <string name="error_purchases_loading_failed">Ошибка при загрузке ваших покупок.</string>
+  <string name="error_purchase_failed">Во время покупки произошла ошибка.</string>
+  <string name="error_authorization_required">Для этого действия требуется авторизация.</string>
+  <string name="error_no_rustore_app">Приложение RuStore не установлено.</string>
+  <string name="info_purchase_cancelled">Покупка отменена.</string>
+  <string name="payment_purchase_id">ID заказа: %1$s</string>
+</resources>
+
