@@ -31,6 +31,8 @@ jobs:
           cache: gradle
 
       - name: Build ruDebug & ukDebug
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           ./gradlew buildRuDebug buildUkDebug testRuDebug :data:db-android:testRuDebugUnitTest :app:testRuDebugUnitTest :app:test
 
