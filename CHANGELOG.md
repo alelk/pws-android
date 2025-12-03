@@ -1,5 +1,43 @@
 # PWS Android
 
+# [2.2.0](https://github.com/alelk/pws-android/compare/v2.1.0...v2.2.0) (2025-12-03)
+
+
+### Bug Fixes
+
+* **backup:** fix backups ([44045ad](https://github.com/alelk/pws-android/commit/44045ad92f7ee70ae0165c57a7f4ef01c9c84bcd))
+* **backup:** fix backups ([f0291d8](https://github.com/alelk/pws-android/commit/f0291d8413948a5122678b8e97967c2b8bebb43d))
+* **build:** Fix intellij idea build. ([fda8995](https://github.com/alelk/pws-android/commit/fda8995903b4eac17b35194a0506626d1bddc708))
+* **database:** fix database issue: when tag is updated, all tag's song references deleting ([6237db2](https://github.com/alelk/pws-android/commit/6237db2e12a9da22f4e5b73aa14eb262e4cdd23b))
+* **database:** fix database native build ([aa5feef](https://github.com/alelk/pws-android/commit/aa5feef5b6122076232a1970ea225770753d116a))
+* **database:** fix database native build ([f0adc89](https://github.com/alelk/pws-android/commit/f0adc89d9705c4d9f9a5dd81b3de76f6bbae43e5))
+* **domain:** fix CreateSongCommand ([fe362f4](https://github.com/alelk/pws-android/commit/fe362f4389749d6a5cdebf9ad809598662355ad7))
+* fix build issues ([1a808b4](https://github.com/alelk/pws-android/commit/1a808b4991c0b5c9b8e707946bffedc2cf9b3249))
+* fix github packages publication ([1257918](https://github.com/alelk/pws-android/commit/12579183e756884e0028b6a229f131a9cf66f614))
+* **project:** app module packages refactoring ([31fafba](https://github.com/alelk/pws-android/commit/31fafba013580671443a6355a535c0dcceeecd30))
+* **project:** update dependencies ([#78](https://github.com/alelk/pws-android/issues/78)) ([7e5a911](https://github.com/alelk/pws-android/commit/7e5a911875c9ba76fb0b422e6e83f16d10ed6fc4))
+* **test:** Add song number link arb ([d20d4d2](https://github.com/alelk/pws-android/commit/d20d4d2769ade11d82ec78374d24b7827c739398))
+
+
+### Features
+
+* **database:** implement database migrator for pws db v2.0.0 ([0df77c4](https://github.com/alelk/pws-android/commit/0df77c4c3c063444f3eb20982d7a639c983c4519))
+* **domain, database:** domain refactoring; database module refactoring ([#82](https://github.com/alelk/pws-android/issues/82)) ([842da76](https://github.com/alelk/pws-android/commit/842da769a158886e40590e9d95f57e7b10cfab93))
+* **domain:** add book and song use cases ([35e3411](https://github.com/alelk/pws-android/commit/35e3411bb8d16d1b9b4376545e0ebfe603c8d2c0))
+* **domain:** add hasChanges() method into UpdateBookCommand model ([bafb5b8](https://github.com/alelk/pws-android/commit/bafb5b86776662de17350e900e0151397e0ba404))
+* **domain:** add interfaces: Song repositories ([c509dfb](https://github.com/alelk/pws-android/commit/c509dfb4b4d568f2287245901d96f34634e19305))
+* **domain:** Add song number use cases ([2de61b3](https://github.com/alelk/pws-android/commit/2de61b376ba7a08ad85ab023aa3ed370d017ea7a))
+* **domain:** add song use cases ([21e4daf](https://github.com/alelk/pws-android/commit/21e4daf2815e746be63bcf748ec4c9dda4be6bfb))
+* **domain:** book repository interfaces refactoring ([42f1e57](https://github.com/alelk/pws-android/commit/42f1e574cb257ba9fd9f95b561cebabbbf39e157))
+* **domain:** Improve optional field api: add getOrElse helper method ([3652819](https://github.com/alelk/pws-android/commit/3652819a316557b942de5067728bb804925c49f3))
+* **domain:** make some domain types comparable ([7f296c5](https://github.com/alelk/pws-android/commit/7f296c5bea4f85f8f502e1a066f36d0fc230c59d))
+* **domain:** Reimplement CreateResourcesResult domain model. ([680b786](https://github.com/alelk/pws-android/commit/680b786f32c21b209cad531801371e9520bf5756))
+* **domain:** Reimplement song creation use case ([c73eb32](https://github.com/alelk/pws-android/commit/c73eb32779446e1deaa3c2099fe5e086c8a78f6f))
+* **domain:** Update book repositories and use cases ([023fb36](https://github.com/alelk/pws-android/commit/023fb36b9a690f31f6ab34fe72c9d0393929efdc))
+* **domain:** Update OptionalField api: add forEach method ([8db2dd8](https://github.com/alelk/pws-android/commit/8db2dd8f48006880852be02d2ec808f83aa2bc41))
+* **domain:** Update Song use cases and repositories ([288e2ce](https://github.com/alelk/pws-android/commit/288e2cec36fa593bf4245b36bc3caefb83e6751b))
+* **repository:** implement book and bookstatistic repositories ([#83](https://github.com/alelk/pws-android/issues/83)) ([fa21ae6](https://github.com/alelk/pws-android/commit/fa21ae6f1eb3057d3f90804a690cfe4fac1dbecc))
+
 # [2.2.0-rc.14](https://github.com/alelk/pws-android/compare/v2.2.0-rc.13...v2.2.0-rc.14) (2025-12-02)
 
 
