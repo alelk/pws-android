@@ -1,6 +1,3 @@
-import org.gradle.kotlin.dsl.withType
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
-
 plugins {
   id("com.android.library")
   id("org.jetbrains.kotlin.multiplatform")
@@ -84,6 +81,11 @@ android {
       dimension = "contentLevel"
       resValue("string", "db_authority", "com.alelk.pws.database.full")
       buildConfigField("String", "DB_AUTHORITY", "\"com.alelk.pws.database.full\"")
+    }
+    create("rustore") {
+      dimension = "contentLevel"
+      resValue("string", "db_authority", "io.github.alelk.pws.database")
+      buildConfigField("String", "DB_AUTHORITY", "\"io.github.alelk.pws.database\"")
     }
   }
   namespace = "io.github.alelk.pws.database"

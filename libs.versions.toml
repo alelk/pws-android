@@ -73,6 +73,16 @@ navigation-ui = { group = "androidx.navigation", name = "navigation-ui", version
 androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigation-fragment-ktx" }
 androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigation-ui-ktx" }
 
+# Compose
+compose-bom = { group = "androidx.compose", name = "compose-bom", version = "2025.09.01" }
+activity-compose = { group = "androidx.activity", name = "activity-compose", version = "1.11.0" }
+lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version = "2.9.4" }
+material3 = { group = "androidx.compose.material3", name = "material3", version = "1.4.0" }
+material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version = "1.7.8" }
+
+# Payment
+rustore-sdk-bom = { group = "ru.rustore.sdk", name = "bom", version = "2025.08.01" }
+
 # Test
 kotest-framework-datatest = { module = "io.kotest:kotest-framework-datatest", version.ref = "kotest-framework-datatest" } # https://search.maven.org/artifact/io.kotest/kotest-framework-datatest
 kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" } # https://search.maven.org/artifact/io.kotest/kotest-assertions-core
@@ -91,3 +101,4 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 android-application = { id = "com.android.application", version.ref = "android-application" } # https://mvnrepository.com/artifact/com.android.tools.build/gradle
 kotest-multiplatform = { id = "io.kotest.multiplatform", version.ref = "kotest-multiplatform" } # https://plugins.gradle.org/plugin/io.kotest.multiplatform
 hilt = { id = "com.google.dagger.hilt.android", version = "2.57.2" } # https://mvnrepository.com/artifact/com.google.dagger.hilt.android/com.google.dagger.hilt.android.gradle.plugin
+compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

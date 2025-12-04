@@ -2,6 +2,7 @@ plugins {
   id("com.android.application")
   id("org.jetbrains.kotlin.android")
   alias(libs.plugins.hilt)
+  alias(libs.plugins.compose)
   id("kotlin-kapt")
 }
 
@@ -22,6 +23,16 @@ android {
       storeFile = (project.findProperty("android.release.keystorePath") as String?)?.let(::file)
       storePassword = project.findProperty("android.release.storePassword") as String?
     }
+    create("release-rustore") {
+      keyAlias = project.findProperty("android.release.keyAliasRuRustore") as String?
+      keyPassword = project.findProperty("android.release.keyPasswordRustore") as String?
+      storeFile = (project.findProperty("android.release.keystorePathRustore") as String?)?.let(::file)
+      storePassword = project.findProperty("android.release.storePasswordRustore") as String?
+    }
+  }
+
+  buildFeatures {
+    compose = true
   }
 
   defaultConfig {
@@ -49,6 +60,12 @@ android {
       versionNameSuffix = "-full"
       resValue("string", "db_authority", "com.alelk.pws.database.full")
     }
+    create("rustore") {
+      dimension = "contentLevel"
+      applicationId = "io.github.alelk.pws.app"
+      versionNameSuffix = "-rustore"
+      resValue("string", "db_authority", "io.github.alelk.pws.database")
+    }
   }
 
   buildTypes {
@@ -57,6 +74,7 @@ android {
       proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
       productFlavors.getByName("ru").signingConfig = signingConfigs.getByName("release-ru")
       productFlavors.getByName("uk").signingConfig = signingConfigs.getByName("release-uk")
+      productFlavors.getByName("rustore").signingConfig = signingConfigs.getByName("release-rustore")
     }
     getByName("debug") {
       isDebuggable = true
@@ -121,6 +139,25 @@ dependencies {
   testImplementation(libs.robolectric)
   testImplementation(libs.androidx.test.core)
   testImplementation(libs.room.testing)
+}
+
+// Rustore-specific dependencies - must be added after evaluation when configurations are created
+afterEvaluate {
+  dependencies {
+    add("rustoreImplementation", libs.compose.bom)
+    add("rustoreImplementation", "androidx.compose.ui:ui")
+    add("rustoreImplementation", "androidx.compose.ui:ui-tooling-preview")
+    add("rustoreImplementation", "androidx.compose.foundation:foundation")
+    add("rustoreImplementation", libs.material3)
+    add("rustoreImplementation", libs.material.icons.extended)
+    add("rustoreImplementation", libs.activity.compose)
+    add("rustoreImplementation", libs.lifecycle.viewmodel.compose)
+    add("rustoreImplementation", platform(libs.rustore.sdk.bom))
+    add("rustoreImplementation", "ru.rustore.sdk:pay")
+
+    add("rustoreDebugImplementation", "androidx.compose.ui:ui-tooling")
+    add("rustoreDebugImplementation", "androidx.compose.ui:ui-test-manifest")
+  }
 }
 
 tasks.withType<Test>().configureEach {

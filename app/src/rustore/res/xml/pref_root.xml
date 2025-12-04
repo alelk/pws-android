@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <!-- General settings -->
+  <Preference
+    android:icon="@drawable/ic_build_black_24dp"
+    android:key="pref_general"
+    android:title="@string/pref_header_general" />
+
+  <!-- Import/Export -->
+  <Preference
+    android:icon="@drawable/ic_import_export_black_24dp"
+    android:key="pref_backup"
+    android:summary="@string/pref_import_export_data_summary"
+    android:title="@string/pref_header_import_export" />
+
+  <!-- Payments -->
+  <Preference
+    android:icon="@drawable/credit_card_24px"
+    android:key="pref_payment"
+    android:title="@string/screen_payments_title" />
+
+  <!-- About section -->
+  <Preference
+    android:icon="@drawable/ic_info_black_24dp"
+    android:key="pref_about"
+    android:title="@string/pref_header_about" />
+
+</PreferenceScreen>
+
