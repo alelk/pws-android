@@ -1,5 +1,17 @@
 # PWS Android
 
+# [2.3.0-rc.1](https://github.com/alelk/pws-android/compare/v2.2.1...v2.3.0-rc.1) (2025-12-08)
+
+
+### Bug Fixes
+
+* spip database tests ([c6b06bd](https://github.com/alelk/pws-android/commit/c6b06bd9e9f4634dece95ec87c0b499595492fcf))
+
+
+### Features
+
+* **payment:** Implement rustore payment functionality ([988a86f](https://github.com/alelk/pws-android/commit/988a86f2c2b4506cf5c98069f2bb864c6bee4d5f))
+
 ## [2.2.1](https://github.com/alelk/pws-android/compare/v2.2.0...v2.2.1) (2025-12-03)
 
 
