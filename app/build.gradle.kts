@@ -127,6 +127,17 @@ dependencies {
   implementation(libs.androidx.navigation.ui.ktx)
   implementation(libs.kotlinx.datetime)
 
+  implementation(platform(libs.compose.bom))
+  implementation("androidx.compose.ui:ui")
+  implementation("androidx.compose.ui:ui-tooling-preview")
+  implementation("androidx.compose.foundation:foundation")
+  implementation(libs.material3)
+  implementation(libs.material.icons.extended)
+  implementation(libs.activity.compose)
+  implementation(libs.lifecycle.viewmodel.compose)
+  debugImplementation("androidx.compose.ui:ui-tooling")
+  debugImplementation("androidx.compose.ui:ui-test-manifest")
+
   // DI
   implementation(libs.hilt.android)
   kapt(libs.hilt.compiler)
@@ -144,19 +155,8 @@ dependencies {
 // Rustore-specific dependencies - must be added after evaluation when configurations are created
 afterEvaluate {
   dependencies {
-    add("rustoreImplementation", libs.compose.bom)
-    add("rustoreImplementation", "androidx.compose.ui:ui")
-    add("rustoreImplementation", "androidx.compose.ui:ui-tooling-preview")
-    add("rustoreImplementation", "androidx.compose.foundation:foundation")
-    add("rustoreImplementation", libs.material3)
-    add("rustoreImplementation", libs.material.icons.extended)
-    add("rustoreImplementation", libs.activity.compose)
-    add("rustoreImplementation", libs.lifecycle.viewmodel.compose)
     add("rustoreImplementation", platform(libs.rustore.sdk.bom))
     add("rustoreImplementation", "ru.rustore.sdk:pay")
-
-    add("rustoreDebugImplementation", "androidx.compose.ui:ui-tooling")
-    add("rustoreDebugImplementation", "androidx.compose.ui:ui-test-manifest")
   }
 }
 

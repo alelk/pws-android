@@ -1,13 +1,13 @@
 [versions]
 
-pws = "1.2.2"
+pws = "1.6.0"
 
 kotlin = "2.2.21"
 kotlinx-coroutines = "1.10.2"
 
 hilt = "2.57.2"
 
-android-application = "8.13.1"
+android-application = "8.12.3"
 android-material = "1.13.0"
 navigation = "2.9.6"
 
@@ -15,9 +15,9 @@ room = "2.8.4"
 
 kotlinx-datetime = "0.7.1"
 
-kotest = "5.9.1"
-kotest-runner-android = "1.1.1"
-kotest-extensions-android = "0.1.5"
+kotest = "6.0.7"
+kotest-runner-android = "1.2.0"
+kotest-extensions-android = "0.1.7"
 kotest-multiplatform = "5.9.1"
 kotest-framework-datatest = "5.9.1"
 

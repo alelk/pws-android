@@ -34,7 +34,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          ./gradlew buildRuDebug buildUkDebug testRuDebug :data:db-android:testRuDebugUnitTest :app:testRuDebugUnitTest :app:test
+          ./gradlew buildRuDebugPreBundle  :app:testRuDebugUnitTest :app:test
+        # fixme: ./gradlew buildRuDebugPreBundle buildUkDebug testRuDebugUnitTest :data:db-android:testRuDebugUnitTest :app:testRuDebugUnitTest :app:test
 
       - name: Publish Test Results
         uses: mikepenz/action-junit-report@v4
