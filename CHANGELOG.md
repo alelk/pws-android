@@ -1,6 +1,7 @@
 # PWS Android
 
-## [2.2.1-rc.1](https://github.com/alelk/pws-android/compare/v2.2.0...v2.2.1-rc.1) (2025-12-03)
+## [2.2.1](https://github.com/alelk/pws-android/compare/v2.2.0...v2.2.1) (2025-12-03)
+
 
 
 ### Bug Fixes

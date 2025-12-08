@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- Payments -->
+  <string name="screen_payments_title">Zakupy</string>
+  <string name="payment_products_title">Dostępne opcje</string>
+  <string name="payment_active_purchases_title">Twoje aktywne subskrypcje</string>
+  <string name="payment_products_empty">Nie udało się załadować produktów.</string>
+  <string name="payment_auth_prompt_title">Zaloguj się do RuStore</string>
+  <string name="payment_auth_prompt_description">Jeśli masz już aktywną subskrypcję aplikacji, zaloguj się na swoje konto RuStore.</string>
+  <string name="payment_auth_button">Zaloguj się do RuStore</string>
+  <string name="payment_active_purchase_valid_until">Ważna do %1$s</string>
+  <string name="payment_multiple_subscriptions_title">Wykryto kilka aktywnych subskrypcji</string>
+  <string name="payment_multiple_subscriptions_description">Sprawdź swoje subskrypcje w RuStore i anuluj zbędne, aby uniknąć podwójnych opłat. Aktywna powinna pozostać tylko jedna subskrypcja.</string>
+  <string name="error_auth_check_failed">Nie udało się sprawdzić statusu autoryzacji.</string>
+  <string name="error_products_loading_failed">Błąd podczas ładowania listy produktów.</string>
+  <string name="error_purchases_loading_failed">Błąd podczas ładowania Twoich zakupów.</string>
+  <string name="error_purchase_failed">Wystąpił błąd podczas zakupu.</string>
+  <string name="error_authorization_required">Autoryzacja jest wymagana do wykonania tej czynności.</string>
+  <string name="error_no_rustore_app">Aplikacja RuStore nie jest zainstalowana.</string>
+  <string name="info_purchase_cancelled">Zakup anulowany.</string>
+  <string name="payment_purchase_id">ID zamówienia: %1$s</string>
+</resources>
+

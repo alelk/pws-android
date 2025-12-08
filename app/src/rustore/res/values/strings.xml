@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="common_close">Close</string>
+
+  <!-- Payment -->
+  <string name="CONSOLE_APPLICATION_ID" translatable="false">2063600773</string>
+
+  <!-- Payments -->
+  <string name="screen_payments_title">Purchases</string>
+  <string name="payment_products_title">Available options</string>
+  <string name="payment_active_purchases_title">Your active subscriptions</string>
+  <string name="payment_products_empty">Failed to load products.</string>
+  <string name="payment_auth_prompt_title">Sign in to RuStore</string>
+  <string name="payment_auth_prompt_description">If you already have an active app subscription, please sign in to your RuStore account.</string>
+  <string name="payment_auth_button">Sign in to RuStore</string>
+  <string name="payment_active_purchase_valid_until">Valid until %1$s</string>
+  <string name="payment_multiple_subscriptions_title">Multiple active subscriptions detected</string>
+  <string name="payment_multiple_subscriptions_description">Please check your subscriptions in RuStore and cancel any unnecessary ones to avoid double charges. Only one subscription should remain active.</string>
+  <string name="error_auth_check_failed">Failed to verify authorization status.</string>
+  <string name="error_products_loading_failed">Error loading product list.</string>
+  <string name="error_purchases_loading_failed">Error loading your purchases.</string>
+  <string name="error_purchase_failed">An error occurred during the purchase.</string>
+  <string name="error_authorization_required">Authorization is required for this action.</string>
+  <string name="error_no_rustore_app">RuStore app is not installed.</string>
+  <string name="info_purchase_cancelled">Purchase cancelled.</string>
+  <string name="payment_purchase_id">Order ID: %1$s</string>
+</resources>
+

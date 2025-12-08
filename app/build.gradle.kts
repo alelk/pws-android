@@ -2,6 +2,7 @@ plugins {
   id("com.android.application")
   id("org.jetbrains.kotlin.android")
   alias(libs.plugins.hilt)
+  alias(libs.plugins.compose)
   id("kotlin-kapt")
 }
 
@@ -22,6 +23,16 @@ android {
       storeFile = (project.findProperty("android.release.keystorePath") as String?)?.let(::file)
       storePassword = project.findProperty("android.release.storePassword") as String?
     }
+    create("release-rustore") {
+      keyAlias = project.findProperty("android.release.keyAliasRuRustore") as String?
+      keyPassword = project.findProperty("android.release.keyPasswordRustore") as String?
+      storeFile = (project.findProperty("android.release.keystorePathRustore") as String?)?.let(::file)
+      storePassword = project.findProperty("android.release.storePasswordRustore") as String?
+    }
+  }
+
+  buildFeatures {
+    compose = true
   }
 
   defaultConfig {
@@ -49,6 +60,12 @@ android {
       versionNameSuffix = "-full"
       resValue("string", "db_authority", "com.alelk.pws.database.full")
     }
+    create("rustore") {
+      dimension = "contentLevel"
+      applicationId = "io.github.alelk.pws.app"
+      versionNameSuffix = "-rustore"
+      resValue("string", "db_authority", "io.github.alelk.pws.database")
+    }
   }
 
   buildTypes {
@@ -57,6 +74,7 @@ android {
       proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
       productFlavors.getByName("ru").signingConfig = signingConfigs.getByName("release-ru")
       productFlavors.getByName("uk").signingConfig = signingConfigs.getByName("release-uk")
+      productFlavors.getByName("rustore").signingConfig = signingConfigs.getByName("release-rustore")
     }
     getByName("debug") {
       isDebuggable = true
@@ -109,6 +127,17 @@ dependencies {
   implementation(libs.androidx.navigation.ui.ktx)
   implementation(libs.kotlinx.datetime)
 
+  implementation(platform(libs.compose.bom))
+  implementation("androidx.compose.ui:ui")
+  implementation("androidx.compose.ui:ui-tooling-preview")
+  implementation("androidx.compose.foundation:foundation")
+  implementation(libs.material3)
+  implementation(libs.material.icons.extended)
+  implementation(libs.activity.compose)
+  implementation(libs.lifecycle.viewmodel.compose)
+  debugImplementation("androidx.compose.ui:ui-tooling")
+  debugImplementation("androidx.compose.ui:ui-test-manifest")
+
   // DI
   implementation(libs.hilt.android)
   kapt(libs.hilt.compiler)
@@ -121,6 +150,14 @@ dependencies {
   testImplementation(libs.robolectric)
   testImplementation(libs.androidx.test.core)
   testImplementation(libs.room.testing)
+}
+
+// Rustore-specific dependencies - must be added after evaluation when configurations are created
+afterEvaluate {
+  dependencies {
+    add("rustoreImplementation", platform(libs.rustore.sdk.bom))
+    add("rustoreImplementation", "ru.rustore.sdk:pay")
+  }
 }
 
 tasks.withType<Test>().configureEach {

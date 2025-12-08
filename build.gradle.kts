@@ -5,8 +5,8 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
-val sdkVersion by extra(35)
-val versionCode by extra(36)
+val sdkVersion by extra(36)
+val versionCode by extra(39)
 val versionName by extra(checkNotNull(File("app.version").readText().lines().firstOrNull()?.trim()?.takeIf { it.isNotBlank() }) { "app.version empty" })
 val versionNameSuffix by extra(getDate().lowercase())
 val kotlinVersion = libs.versions.kotlin.get()
@@ -32,6 +32,8 @@ allprojects {
         password = findProperty("gpr.token") as String? ?: System.getenv("GITHUB_TOKEN")
       }
     }
+    // rustore sdk
+    maven(uri("https://artifactory-external.vkpartner.ru/artifactory/maven"))
   }
 
   tasks.withType<KotlinCompile> {

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/app_navigation"
+  app:startDestination="@id/readNowFragment">
+
+  <fragment
+    android:id="@+id/readNowFragment"
+    android:name="io.github.alelk.pws.android.app.feature.home.ReadNowFragment"
+    android:label="ReadNowFragment" />
+  <fragment
+    android:id="@+id/favoritesFragment"
+    android:name="io.github.alelk.pws.android.app.feature.favorites.FavoritesFragment"
+    android:label="FavoritesFragment" />
+  <fragment
+    android:id="@+id/historyFragment"
+    android:name="io.github.alelk.pws.android.app.feature.history.HistoryFragment"
+    android:label="HistoryFragment" />
+  <fragment
+    android:id="@+id/booksFragment"
+    android:name="io.github.alelk.pws.android.app.feature.books.BooksFragment"
+    android:label="BooksFragment" />
+
+  <activity
+    android:id="@+id/tagsActivity"
+    android:name="io.github.alelk.pws.android.app.feature.tags.TagsActivity"
+    android:label="activity_categories"
+    tools:layout="@layout/activity_categories" />
+  <activity
+    android:id="@+id/mainSettingsActivity"
+    android:name="io.github.alelk.pws.android.app.feature.preference.MainSettingsActivity"
+    android:label="MainSettingsActivity" />
+  <activity
+    android:id="@+id/paymentActiviy"
+    android:name="io.github.alelk.pws.android.app.feature.payment.PaymentActivity"
+    android:label="PaymentActivity" />
+
+</navigation>
+
