@@ -1,4 +1,7 @@
 
+[![GitHub release](https://img.shields.io/github/v/release/alelk/pws-android?include_prereleases&label=version)](https://github.com/alelk/pws-android/releases)
+[![GitHub Packages](https://img.shields.io/badge/maven-GitHub%20Packages-blue)](https://github.com/alelk/pws-android/packages)
+
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->

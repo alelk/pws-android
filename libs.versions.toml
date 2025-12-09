@@ -1,6 +1,6 @@
 [versions]
 
-pws = "1.6.0"
+pws = "1.7.0"
 
 kotlin = "2.2.21"
 kotlinx-coroutines = "1.10.2"
