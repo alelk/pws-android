@@ -1,8 +1,8 @@
 plugins {
   id("com.android.application")
-  id("org.jetbrains.kotlin.android")
+  alias(libs.plugins.ksp)
   alias(libs.plugins.hilt)
-  id("kotlin-kapt")
+  alias(libs.plugins.compose)
 }
 
 
@@ -22,6 +22,17 @@ android {
       storeFile = (project.findProperty("android.release.keystorePath") as String?)?.let(::file)
       storePassword = project.findProperty("android.release.storePassword") as String?
     }
+    create("release-rustore") {
+      keyAlias = project.findProperty("android.release.keyAliasRuRustore") as String?
+      keyPassword = project.findProperty("android.release.keyPasswordRustore") as String?
+      storeFile = (project.findProperty("android.release.keystorePathRustore") as String?)?.let(::file)
+      storePassword = project.findProperty("android.release.storePasswordRustore") as String?
+    }
+  }
+
+  buildFeatures {
+    compose = true
+    resValues = true
   }
 
   defaultConfig {
@@ -49,14 +60,21 @@ android {
       versionNameSuffix = "-full"
       resValue("string", "db_authority", "com.alelk.pws.database.full")
     }
+    create("rustore") {
+      dimension = "contentLevel"
+      applicationId = "io.github.alelk.pws.app"
+      versionNameSuffix = "-rustore"
+      resValue("string", "db_authority", "io.github.alelk.pws.database")
+    }
   }
 
   buildTypes {
     getByName("release") {
       isMinifyEnabled = false
-      proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
+        proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
       productFlavors.getByName("ru").signingConfig = signingConfigs.getByName("release-ru")
       productFlavors.getByName("uk").signingConfig = signingConfigs.getByName("release-uk")
+      productFlavors.getByName("rustore").signingConfig = signingConfigs.getByName("release-rustore")
     }
     getByName("debug") {
       isDebuggable = true
@@ -72,19 +90,25 @@ android {
 
   sourceSets {
     getByName("main") {
-      assets.srcDirs("src/main/assets")
+      assets.srcDirs(setOf("src/main/assets"))
     }
   }
 
   flavorDimensions.add("contentLevel")
 
   namespace = "io.github.alelk.pws.android.app"
-  applicationVariants.forEach { variant ->
-    variant.resValue("string", "versionName", variant.versionName)
-  }
 
   viewBinding {
     enable = true
+  }
+}
+
+androidComponents {
+  onVariants { variant ->
+    variant.resValues.put(
+      variant.makeResValueKey("string", "versionName"),
+      com.android.build.api.variant.ResValue(variant.name)
+    )
   }
 }
 
@@ -92,6 +116,7 @@ dependencies {
   implementation(libs.pws.domain)
   implementation(project(":data:db-android"))
   implementation(libs.pws.repoRoom)
+  implementation(libs.pws.dbRoom)
   implementation(libs.pws.backup)
 
   implementation(libs.preference.ktx)
@@ -109,9 +134,20 @@ dependencies {
   implementation(libs.androidx.navigation.ui.ktx)
   implementation(libs.kotlinx.datetime)
 
+  implementation(platform(libs.compose.bom))
+  implementation("androidx.compose.ui:ui")
+  implementation("androidx.compose.ui:ui-tooling-preview")
+  implementation("androidx.compose.foundation:foundation")
+  implementation(libs.material3)
+  implementation(libs.material.icons.extended)
+  implementation(libs.activity.compose)
+  implementation(libs.lifecycle.viewmodel.compose)
+  debugImplementation("androidx.compose.ui:ui-tooling")
+  debugImplementation("androidx.compose.ui:ui-test-manifest")
+
   // DI
   implementation(libs.hilt.android)
-  kapt(libs.hilt.compiler)
+  ksp(libs.hilt.compiler)
 
   // Test dependencies
   testImplementation(libs.kotest.runner.junit5)
@@ -123,10 +159,15 @@ dependencies {
   testImplementation(libs.room.testing)
 }
 
+// Rustore-specific dependencies - must be added after evaluation when configurations are created
+afterEvaluate {
+  dependencies {
+    add("rustoreImplementation", platform(libs.rustore.sdk.bom))
+    add("rustoreImplementation", "ru.rustore.sdk:pay")
+  }
+}
+
 tasks.withType<Test>().configureEach {
   useJUnitPlatform()
 }
 
-kapt {
-  correctErrorTypes = true
-}

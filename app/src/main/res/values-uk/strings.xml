@@ -5,4 +5,15 @@
   <string name="clear_history_message">Ви впевнені, що хочете очистити список недавніх пісень?</string>
   <string name="clear">Очистити</string>
   <string name="cancel">Скасувати</string>
+
+  <!-- Import/Export -->
+  <string name="pref_header_import_export">Імпорт/Експорт</string>
+  <string name="pref_import_export_data_title">Імпорт/Експорт даних користувача</string>
+  <string name="pref_import_export_data_summary">Імпортуйте або експортуйте відредаговані пісні та категорії</string>
+  <string name="export_data">Експортувати дані</string>
+  <string name="import_data">Імпортувати дані</string>
+  <string name="export_success">Дані успішно експортовано</string>
+  <string name="export_failed">Не вдалося експортувати дані</string>
+  <string name="import_success">Дані успішно імпортовано</string>
+  <string name="import_failed">Не вдалося імпортувати дані</string>
 </resources>

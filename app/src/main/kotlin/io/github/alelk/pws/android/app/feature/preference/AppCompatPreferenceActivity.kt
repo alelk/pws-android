@@ -40,15 +40,15 @@ abstract class AppCompatPreferenceActivity : AppCompatActivity() {
     delegate.setContentView(layoutResID)
   }
 
-  override fun setContentView(view: View) {
+  override fun setContentView(view: View?) {
     delegate.setContentView(view)
   }
 
-  override fun setContentView(view: View, params: ViewGroup.LayoutParams) {
+  override fun setContentView(view: View?, params: ViewGroup.LayoutParams?) {
     delegate.setContentView(view, params)
   }
 
-  override fun addContentView(view: View, params: ViewGroup.LayoutParams) {
+  override fun addContentView(view: View?, params: ViewGroup.LayoutParams?) {
     delegate.addContentView(view, params)
   }
 

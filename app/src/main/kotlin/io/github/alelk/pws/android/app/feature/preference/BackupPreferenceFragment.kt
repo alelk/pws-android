@@ -44,10 +44,10 @@ class BackupPreferenceFragment : PreferenceFragmentCompat() {
                   "${pi.packageName}/${pi.versionName}"
                 }
               val backup = viewModel.getBackup(source)
-                withContext(Dispatchers.IO) {
-                    outputStream.bufferedWriter()
-                        .use { it.write(backupService.writeAsString(backup)) }
-                }
+              withContext(Dispatchers.IO) {
+                outputStream.bufferedWriter()
+                  .use { it.write(backupService.writeAsString(backup)) }
+              }
               Toast.makeText(context, R.string.export_success, Toast.LENGTH_SHORT).show()
             } catch (e: Throwable) {
               Timber.Forest.e(e, "Failed to export backup")
@@ -66,8 +66,8 @@ class BackupPreferenceFragment : PreferenceFragmentCompat() {
           context?.contentResolver?.openInputStream(uri)?.use { inputStream ->
             try {
               val backup = withContext(Dispatchers.IO) {
-                  backupService.readFromString(
-                      inputStream.bufferedReader().use { it.readText() })
+                backupService.readFromString(
+                  inputStream.bufferedReader().use { it.readText() })
               }
               viewModel.restoreBackup(backup)
               Toast.makeText(context, R.string.import_success, Toast.LENGTH_SHORT).show()
