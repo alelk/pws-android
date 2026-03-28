@@ -102,22 +102,22 @@ open class MainActivity : AppCompatThemedActivity() {
         }
       }
 
-      if (BuildConfig.FLAVOR == "ru") runCatching {
-        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
-        if (Date() > sdf.parse("2025-06-15"))
-          navigationView.menu.findItem(R.id.goToRustore)?.let {
-            it.isVisible = true
-            it.setOnMenuItemClickListener {
-              startActivity(
-                  Intent(
-                      Intent.ACTION_VIEW,
-                      Uri.parse("https://www.rustore.ru/catalog/app/io.github.alelk.pws.app")
-                  )
-              )
-              true
-            }
-          }
-      }
+//      if (BuildConfig.FLAVOR == "ru") runCatching {
+//        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+//        if (Date() > sdf.parse("2025-06-15"))
+//          navigationView.menu.findItem(R.id.goToRustore)?.let {
+//            it.isVisible = true
+//            it.setOnMenuItemClickListener {
+//              startActivity(
+//                  Intent(
+//                      Intent.ACTION_VIEW,
+//                      Uri.parse("https://www.rustore.ru/catalog/app/io.github.alelk.pws.app")
+//                  )
+//              )
+//              true
+//            }
+//          }
+//      }
     }
 
     if (BuildConfig.DEBUG) {
