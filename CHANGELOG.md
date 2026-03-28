@@ -1,5 +1,12 @@
 # PWS Android
 
+## [2.3.1](https://github.com/alelk/pws-android/compare/v2.3.0...v2.3.1) (2026-03-28)
+
+
+### Bug Fixes
+
+* Migrate data from db v2.0.0 ([0e9b98e](https://github.com/alelk/pws-android/commit/0e9b98e5e453d3993c3565c6558007c505b8ed27))
+
 # [2.3.0](https://github.com/alelk/pws-android/compare/v2.2.1...v2.3.0) (2026-03-28)
 
 
