@@ -1,7 +1,7 @@
 # Rename all images in directory:
 
 ```shell
-prefix="autumn"
+prefix="spring"
 counter=1
 
 for file in *.jpg; do
