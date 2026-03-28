@@ -1,5 +1,12 @@
 # PWS Android
 
+# [2.3.0-rc.3](https://github.com/alelk/pws-android/compare/v2.3.0-rc.2...v2.3.0-rc.3) (2026-03-28)
+
+
+### Features
+
+* Update song cover ([3583631](https://github.com/alelk/pws-android/commit/358363182e85025e4080b1ee76f82678d3afe0a7))
+
 # [2.3.0-rc.2](https://github.com/alelk/pws-android/compare/v2.3.0-rc.1...v2.3.0-rc.2) (2026-03-28)
 
 
