@@ -1,5 +1,21 @@
 # PWS Android
 
+# [2.3.0](https://github.com/alelk/pws-android/compare/v2.2.1...v2.3.0) (2026-03-28)
+
+
+### Bug Fixes
+
+* Disable rustore navigation link ([42e9549](https://github.com/alelk/pws-android/commit/42e95491cae128958d91300b377cf9f4bede6bd9))
+* spip database tests ([c6b06bd](https://github.com/alelk/pws-android/commit/c6b06bd9e9f4634dece95ec87c0b499595492fcf))
+* Update core libraries version ([7a8e8f8](https://github.com/alelk/pws-android/commit/7a8e8f88dde249f0e342b88debc470ffef4bb1cf))
+
+
+### Features
+
+* **payment:** Implement rustore payment functionality ([988a86f](https://github.com/alelk/pws-android/commit/988a86f2c2b4506cf5c98069f2bb864c6bee4d5f))
+* Update song cover ([3583631](https://github.com/alelk/pws-android/commit/358363182e85025e4080b1ee76f82678d3afe0a7))
+* upgrade to database version 3.0.0 and update core libraries ([99114cd](https://github.com/alelk/pws-android/commit/99114cd8831beca553ac189e13dd2d18642bb62a))
+
 # [2.3.0-rc.3](https://github.com/alelk/pws-android/compare/v2.3.0-rc.2...v2.3.0-rc.3) (2026-03-28)
 
 
