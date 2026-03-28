@@ -22,4 +22,10 @@ class MigrateDataFromPrevDatabaseTest : FeatureSpec({
     }
   }
 
+  feature("migrate data from database 2.0.0 (v11-with-user-data)") {
+    withSqliteDb(File("src/test/resources/test-db/v11-with-user-data/pws.2.0.0.dbz")) { prevDb ->
+      prevDb.migrateDataTo(db).isSuccess shouldBe true
+    }
+  }
+
 })

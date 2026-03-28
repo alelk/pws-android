@@ -10,7 +10,7 @@ import io.github.alelk.pws.database.support.PwsDb2xDataProvider
 import io.github.alelk.pws.domain.core.SongNumber
 import timber.log.Timber
 
-internal val DATABASE_PREV_NAMES = arrayOf("pws.1.8.0.db", "pws.1.2.0.db", "pws.1.1.0.db", "pws.0.9.1.db")
+internal val DATABASE_PREV_NAMES = arrayOf("pws.1.8.0.db", "pws.1.2.0.db", "pws.1.1.0.db", "pws.0.9.1.db", "pws.2.0.0.db")
 
 internal suspend fun migrateDataFromPrevDatabase(context: Context, currentDatabase: PwsDatabase): Boolean =
   DATABASE_PREV_NAMES.map { dbName ->
