@@ -1,32 +1,34 @@
 [versions]
 
-pws = "1.7.0"
+pws = "2.7.1"
 
-kotlin = "2.2.21"
+kotlin = "2.3.0"
 kotlinx-coroutines = "1.10.2"
 
-hilt = "2.57.2"
+ksp = "2.3.5" # https://central.sonatype.com/artifact/com.google.devtools.ksp/com.google.devtools.ksp.gradle.plugin/versions
 
-android-application = "8.12.3"
+hilt = "2.59.2"
+
+android-application = "9.1.0"
 android-material = "1.13.0"
-navigation = "2.9.6"
+navigation = "2.9.7"
 
 room = "2.8.4"
 
 kotlinx-datetime = "0.7.1"
 
-kotest = "6.0.7"
-kotest-runner-android = "1.2.0"
-kotest-extensions-android = "0.1.7"
-kotest-multiplatform = "5.9.1"
+kotest = "6.1.8"
+kotest-runner-android = "1.2.2"
+kotest-extensions-android = "0.1.9"
+kotest-multiplatform = "6.0.0.M4"
 kotest-framework-datatest = "5.9.1"
 
-robolectric = "4.16"
+robolectric = "4.16.1"
 
 
 kaml = "0.97.0"
-navigation-fragment-ktx = "2.9.6"
-navigation-ui-ktx = "2.9.6"
+navigation-fragment-ktx = "2.9.7"
+navigation-ui-ktx = "2.9.7"
 
 [libraries]
 
@@ -58,10 +60,10 @@ hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt"
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" } # https://mvnrepository.com/artifact/com.google.dagger/hilt-compiler
 
 # Preferences
-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version = "1.1.7" } # https://mvnrepository.com/artifact/androidx.datastore/datastore-preferences
+datastore-preferences = { module = "androidx.datastore:datastore-preferences", version = "1.2.1" } # https://mvnrepository.com/artifact/androidx.datastore/datastore-preferences
 
 preference-ktx = { group = "androidx.preference", name = "preference-ktx", version = "1.2.1" }
-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version = "2.9.4" }
+lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version = "2.10.0" }
 material = { group = "com.google.android.material", name = "material", version = "1.13.0" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version = "1.7.1" }
 ambilwarna = { group = "com.github.yukuku", name = "ambilwarna", version = "2.0.1" }
@@ -74,9 +76,9 @@ androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navi
 androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigation-ui-ktx" }
 
 # Compose
-compose-bom = { group = "androidx.compose", name = "compose-bom", version = "2025.09.01" }
-activity-compose = { group = "androidx.activity", name = "activity-compose", version = "1.11.0" }
-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version = "2.9.4" }
+compose-bom = { group = "androidx.compose", name = "compose-bom", version = "2026.03.00" }
+activity-compose = { group = "androidx.activity", name = "activity-compose", version = "1.13.0" }
+lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version = "2.10.0" }
 material3 = { group = "androidx.compose.material3", name = "material3", version = "1.4.0" }
 material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version = "1.7.8" }
 
@@ -97,8 +99,10 @@ kotest-extensions-android = { group = "br.com.colman", name = "kotest-extensions
 
 [plugins]
 
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 android-application = { id = "com.android.application", version.ref = "android-application" } # https://mvnrepository.com/artifact/com.android.tools.build/gradle
+android-kmpLibrary = { id = "com.android.kotlin.multiplatform.library", version.ref = "android-application" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" } # https://github.com/google/ksp
 kotest-multiplatform = { id = "io.kotest.multiplatform", version.ref = "kotest-multiplatform" } # https://plugins.gradle.org/plugin/io.kotest.multiplatform
-hilt = { id = "com.google.dagger.hilt.android", version = "2.57.2" } # https://mvnrepository.com/artifact/com.google.dagger.hilt.android/com.google.dagger.hilt.android.gradle.plugin
+hilt = { id = "com.google.dagger.hilt.android", version = "2.59.2" } # https://mvnrepository.com/artifact/com.google.dagger.hilt.android/com.google.dagger.hilt.android.gradle.plugin
 compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

@@ -39,7 +39,7 @@ class PwsDb2xDataProviderTest : FeatureSpec({
   )
 
   feature("fetch data from database v2.0.0 (v11-with-user-data)") {
-    withSqliteDb(File("src/androidUnitTest/resources/test-db/v11-with-user-data/pws.2.0.0.dbz")) { db ->
+    withSqliteDb(File("src/test/resources/test-db/v11-with-user-data/pws.2.0.0.dbz")) { db ->
       db.version shouldBe 11
 
       val dbProvider = PwsDb2xDataProvider(db)

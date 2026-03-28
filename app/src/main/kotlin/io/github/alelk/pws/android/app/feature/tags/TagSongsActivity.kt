@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
-import androidx.appcompat.view.menu.MenuBuilder
 import androidx.lifecycle.asLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -54,7 +53,7 @@ class TagSongsActivity : AppCompatThemedActivity() {
     sortOrder = sharedPrefs.getInt(KEY_SORTED_BY, SORT_BY_ADDED_DATE)
     isAscending = sharedPrefs.getBoolean(KEY_IS_ASCENDING, false)
 
-    tagsViewModel.getTagSongs(TagId.Companion.parse(tagId)).asLiveData().observe(this) { songInfoList ->
+    tagsViewModel.getTagSongs(TagId.parse(tagId)).asLiveData().observe(this) { songInfoList ->
       val sortedList = when (sortOrder) {
         SORT_BY_NUMBER -> {
           if (isAscending) songInfoList.sortedBy { it.songNumber.number }
@@ -77,7 +76,7 @@ class TagSongsActivity : AppCompatThemedActivity() {
 
   private fun onSongSelected(data: SongNumberWithSongWithBookEntity) {
     val intentSongView = Intent(this, SongActivity::class.java).apply {
-      putExtra(SongActivity.Companion.KEY_SONG_NUMBER_ID, data.songNumber.id.toString())
+      putExtra(SongActivity.KEY_SONG_NUMBER_ID, data.songNumber.id.toString())
     }
     startActivity(intentSongView)
   }
@@ -89,7 +88,14 @@ class TagSongsActivity : AppCompatThemedActivity() {
   }
 
   override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-    (menu as? MenuBuilder)?.setOptionalIconsVisible(true)
+    // Force icons in the overflow menu via reflection to avoid RestrictedApi (MenuBuilder is internal)
+    try {
+      val method = menu.javaClass.getDeclaredMethod("setOptionalIconsVisible", Boolean::class.java)
+      method.isAccessible = true
+      method.invoke(menu, true)
+    } catch (_: Exception) {
+      // best effort — icons may not appear on all devices/versions
+    }
     updateSortMenuIcons(menu)
     return super.onPrepareOptionsMenu(menu)
   }
@@ -144,7 +150,7 @@ class TagSongsActivity : AppCompatThemedActivity() {
   }
 
   private fun refreshSongs() {
-    tagsViewModel.getTagSongs(TagId.Companion.parse(tagId)).asLiveData().observe(this) { songs ->
+    tagsViewModel.getTagSongs(TagId.parse(tagId)).asLiveData().observe(this) { songs ->
       songsInfoAdapter.swapData(sortSongsList(songs))
     }
   }

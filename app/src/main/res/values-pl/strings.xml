@@ -5,4 +5,15 @@
   <string name="clear_history_message">Czy na pewno chcesz wyczyścić listę ostatnich pieśni?</string>
   <string name="clear">Wyczyść</string>
   <string name="cancel">Anuluj</string>
+
+  <!-- Import/Export -->
+  <string name="pref_header_import_export">Import/Eksport</string>
+  <string name="pref_import_export_data_title">Import/Eksport danych użytkownika</string>
+  <string name="pref_import_export_data_summary">Importuj lub eksportuj edytowane pieśni i kategorie</string>
+  <string name="export_data">Eksportuj dane</string>
+  <string name="import_data">Importuj dane</string>
+  <string name="export_success">Dane zostały pomyślnie wyeksportowane</string>
+  <string name="export_failed">Nie udało się wyeksportować danych</string>
+  <string name="import_success">Dane zostały pomyślnie zaimportowane</string>
+  <string name="import_failed">Nie udało się zaimportować danych</string>
 </resources>

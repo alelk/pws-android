@@ -17,7 +17,7 @@ class MigrateDataFromPrevDatabaseTest : FeatureSpec({
   afterContainer { db.clean(); db.close() }
 
   feature("migrate data from database 1.8.0 (v6-with-user-data)") {
-    withSqliteDb(File("src/androidUnitTest/resources/test-db/v6-with-user-data/pws.1.8.0.dbz")) { prevDb ->
+    withSqliteDb(File("src/test/resources/test-db/v6-with-user-data/pws.1.8.0.dbz")) { prevDb ->
       prevDb.migrateDataTo(db).isSuccess shouldBe true
     }
   }

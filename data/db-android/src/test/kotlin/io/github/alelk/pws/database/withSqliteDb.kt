@@ -28,7 +28,7 @@ inline fun <T> withSqliteDb(dbZipFile: File, patches: List<TestDbPatch> = emptyL
 }
 
 inline fun <T> withPwsDb(
-  dbZipFile: File = File("src/androidUnitTest/resources/test-db/v11/pws.2.0.0.dbz"),
+  dbZipFile: File = File("src/test/resources/test-db/v11/pws.2.0.0.dbz"),
   patches: List<TestDbPatch> = emptyList(),
   readOnly: Boolean = false,
   body: (db: PwsDatabase) -> T

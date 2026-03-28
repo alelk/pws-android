@@ -24,5 +24,5 @@ object PwsDatabaseProvider {
     instance
   }
 
-  const val DATABASE_NAME = "pws.2.0.0.db"
+  const val DATABASE_NAME = "pws.3.0.0.db"
 }

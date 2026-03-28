@@ -13,7 +13,9 @@ val kotlinVersion = libs.versions.kotlin.get()
 
 plugins {
   alias(libs.plugins.android.application) apply false
-  alias(libs.plugins.kotlin.android) apply false
+  alias(libs.plugins.android.kmpLibrary) apply false
+  alias(libs.plugins.kotlin.multiplatform) apply false
+  alias(libs.plugins.ksp) apply false
   alias(libs.plugins.hilt) apply false
   id("maven-publish")
 }

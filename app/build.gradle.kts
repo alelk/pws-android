@@ -1,9 +1,8 @@
 plugins {
   id("com.android.application")
-  id("org.jetbrains.kotlin.android")
+  alias(libs.plugins.ksp)
   alias(libs.plugins.hilt)
   alias(libs.plugins.compose)
-  id("kotlin-kapt")
 }
 
 
@@ -33,6 +32,7 @@ android {
 
   buildFeatures {
     compose = true
+    resValues = true
   }
 
   defaultConfig {
@@ -71,7 +71,7 @@ android {
   buildTypes {
     getByName("release") {
       isMinifyEnabled = false
-      proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
+        proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
       productFlavors.getByName("ru").signingConfig = signingConfigs.getByName("release-ru")
       productFlavors.getByName("uk").signingConfig = signingConfigs.getByName("release-uk")
       productFlavors.getByName("rustore").signingConfig = signingConfigs.getByName("release-rustore")
@@ -90,19 +90,25 @@ android {
 
   sourceSets {
     getByName("main") {
-      assets.srcDirs("src/main/assets")
+      assets.srcDirs(setOf("src/main/assets"))
     }
   }
 
   flavorDimensions.add("contentLevel")
 
   namespace = "io.github.alelk.pws.android.app"
-  applicationVariants.forEach { variant ->
-    variant.resValue("string", "versionName", variant.versionName)
-  }
 
   viewBinding {
     enable = true
+  }
+}
+
+androidComponents {
+  onVariants { variant ->
+    variant.resValues.put(
+      variant.makeResValueKey("string", "versionName"),
+      com.android.build.api.variant.ResValue(variant.name)
+    )
   }
 }
 
@@ -110,6 +116,7 @@ dependencies {
   implementation(libs.pws.domain)
   implementation(project(":data:db-android"))
   implementation(libs.pws.repoRoom)
+  implementation(libs.pws.dbRoom)
   implementation(libs.pws.backup)
 
   implementation(libs.preference.ktx)
@@ -140,7 +147,7 @@ dependencies {
 
   // DI
   implementation(libs.hilt.android)
-  kapt(libs.hilt.compiler)
+  ksp(libs.hilt.compiler)
 
   // Test dependencies
   testImplementation(libs.kotest.runner.junit5)
@@ -164,6 +171,3 @@ tasks.withType<Test>().configureEach {
   useJUnitPlatform()
 }
 
-kapt {
-  correctErrorTypes = true
-}

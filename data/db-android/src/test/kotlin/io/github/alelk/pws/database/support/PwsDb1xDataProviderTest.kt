@@ -36,7 +36,7 @@ class PwsDb1xDataProviderTest : FeatureSpec({
   )
 
   feature("fetch data from database v1.8.0 (v6-with-user-data)") {
-    withSqliteDb(File("src/androidUnitTest/resources/test-db/v6-with-user-data/pws.1.8.0.dbz")) { db ->
+    withSqliteDb(File("src/test/resources/test-db/v6-with-user-data/pws.1.8.0.dbz")) { db ->
       db.version shouldBe 6
 
       val dbProvider = PwsDb1xDataProvider(db)
@@ -98,7 +98,7 @@ class PwsDb1xDataProviderTest : FeatureSpec({
 
   feature("fetch data from database v1.8.0 (v7)") {
     withSqliteDb(
-      File("src/androidUnitTest/resources/test-db/v6-with-user-data/pws.1.8.0.dbz"),
+      File("src/test/resources/test-db/v6-with-user-data/pws.1.8.0.dbz"),
       patches = listOf(TestDbPatch.V6toV7, TestDbPatch.V1xInsertCustomTags)
     ) { db ->
       db.version shouldBe 7
@@ -129,7 +129,7 @@ class PwsDb1xDataProviderTest : FeatureSpec({
         tags.getOrThrow().run {
           size shouldBe 34
           filter { it.predefined } shouldHaveSize 30
-          single { it.id == TagId("custom-00002") }.songNumbers.values.flatten() shouldHaveSize 3
+          single { it.id == TagId.parse("custom-00002") }.songNumbers.values.flatten() shouldHaveSize 3
         }
       }
     }
@@ -137,7 +137,7 @@ class PwsDb1xDataProviderTest : FeatureSpec({
 
   feature("fetch data from database v1.8.0 (v8)") {
     withSqliteDb(
-      File("src/androidUnitTest/resources/test-db/v6-with-user-data/pws.1.8.0.dbz"),
+      File("src/test/resources/test-db/v6-with-user-data/pws.1.8.0.dbz"),
       patches = listOf(TestDbPatch.V1xInsertCustomTags, TestDbPatch.V6toV7, TestDbPatch.V7toV8)
     ) { db ->
       db.version shouldBe 8
@@ -172,7 +172,7 @@ class PwsDb1xDataProviderTest : FeatureSpec({
 
   feature("fetch data from database v1.8.0 (v9)") {
     withSqliteDb(
-      File("src/androidUnitTest/resources/test-db/v6-with-user-data/pws.1.8.0.dbz"),
+      File("src/test/resources/test-db/v6-with-user-data/pws.1.8.0.dbz"),
       patches = listOf(TestDbPatch.V6toV7, TestDbPatch.V1xInsertCustomTags, TestDbPatch.V7toV8, TestDbPatch.V8toV9)
     ) { db ->
       db.version shouldBe 9
@@ -207,7 +207,7 @@ class PwsDb1xDataProviderTest : FeatureSpec({
 
   feature("fetch data from database v1.8.0 (v10)") {
     withSqliteDb(
-      File("src/androidUnitTest/resources/test-db/v6-with-user-data/pws.1.8.0.dbz"),
+      File("src/test/resources/test-db/v6-with-user-data/pws.1.8.0.dbz"),
       patches = listOf(TestDbPatch.V6toV7, TestDbPatch.V1xInsertCustomTags, TestDbPatch.V7toV8, TestDbPatch.V8toV9, TestDbPatch.V9toV10)
     ) { db ->
       db.version shouldBe 10
