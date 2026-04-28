@@ -1,5 +1,12 @@
 # PWS Android
 
+# [2.4.0-rc.1](https://github.com/alelk/pws-android/compare/v2.3.1...v2.4.0-rc.1) (2026-04-28)
+
+
+### Features
+
+* Add initial Compose setup and application structure ([91cc5b8](https://github.com/alelk/pws-android/commit/91cc5b8eb700681e0e97dd0b5436633907aeaf09))
+
 ## [2.3.1](https://github.com/alelk/pws-android/compare/v2.3.0...v2.3.1) (2026-03-28)
 
 
