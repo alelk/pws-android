@@ -1,5 +1,12 @@
 # PWS Android
 
+# [2.4.0-rc.2](https://github.com/alelk/pws-android/compare/v2.4.0-rc.1...v2.4.0-rc.2) (2026-04-30)
+
+
+### Features
+
+* Add backup/restore, theme and display preferences, update dependencies, and switch to PolyForm Noncommercial license ([d72e8bd](https://github.com/alelk/pws-android/commit/d72e8bdbf8f04a0f4c6c5c46d3b9333d850cebd5))
+
 # [2.4.0-rc.1](https://github.com/alelk/pws-android/compare/v2.3.1...v2.4.0-rc.1) (2026-04-28)
 
 
