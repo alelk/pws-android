@@ -30,7 +30,7 @@ android {
 
   defaultConfig {
     applicationId = "com.alelk.pws.pwapp"
-    minSdk = 26
+    minSdk = 23
     targetSdk = rootProject.extra["sdkVersion"] as Int
     versionCode = rootProject.extra["versionCode"] as Int
     versionName = "${rootProject.extra["versionName"]}-${rootProject.extra["versionNameSuffix"]}"
@@ -42,6 +42,12 @@ android {
   productFlavors {
     create("ru") {
       dimension = "contentLevel"
+    }
+    create("full") {
+      dimension = "contentLevel"
+      applicationIdSuffix = ".full"
+      versionNameSuffix = "-full"
+      resValue("string", "db_authority", "com.alelk.pws.database.full")
     }
     create("uk") {
       dimension = "contentLevel"
@@ -62,6 +68,7 @@ android {
       isMinifyEnabled = false
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
       productFlavors.getByName("ru").signingConfig = signingConfigs.getByName("release-ru")
+      productFlavors.getByName("full").signingConfig = signingConfigs.getByName("release-ru")
       productFlavors.getByName("uk").signingConfig = signingConfigs.getByName("release-uk")
       productFlavors.getByName("rustore").signingConfig = signingConfigs.getByName("release-rustore")
     }
@@ -82,9 +89,10 @@ android {
     targetCompatibility = JavaVersion.VERSION_21
   }
 
-  kotlin {
-    jvmToolchain(21)
-  }
+}
+
+kotlin {
+  jvmToolchain(21)
 }
 
 androidComponents {
@@ -102,6 +110,7 @@ dependencies {
   implementation(libs.pws.repoRoom)
   implementation(libs.pws.dbRoom)
   implementation(libs.pws.domain)
+  implementation(libs.pws.backup)
 
   // local db provider from :data:db-android
   implementation(project(":data:db-android"))
@@ -116,6 +125,7 @@ dependencies {
   implementation(libs.appcompat)
   implementation(libs.activity.compose)
   implementation(libs.kotlinx.coroutines.android)
+  implementation(libs.datastore.preferences)
 
   // Compose BOM
   implementation(platform(libs.compose.bom))

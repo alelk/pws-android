@@ -5,6 +5,7 @@ import cafe.adriel.voyager.core.registry.ScreenRegistry
 import io.github.alelk.pws.data.repository.room.di.repoRoomModule
 import io.github.alelk.pws.database.PwsDatabase
 import io.github.alelk.pws.database.PwsDatabaseProvider
+import io.github.alelk.pws.features.app.PwsAppInfo
 import io.github.alelk.pws.features.di.appScreenModule
 import io.github.alelk.pws.features.di.featuresModule
 import io.github.alelk.pws.features.di.useCasesModule
@@ -26,10 +27,16 @@ class PwsComposeApplication : Application() {
       single<PwsDatabase> { PwsDatabaseProvider.getDatabase(androidContext()) }
     }
 
+    val appInfoModule = module {
+      val version = packageManager.getPackageInfo(packageName, 0).versionName ?: "Unknown"
+      single { PwsAppInfo(version) }
+    }
+
     startKoin {
       androidContext(this@PwsComposeApplication)
       modules(
         databaseModule,
+        appInfoModule,
         repoRoomModule,
         useCasesModule,
         featuresModule,

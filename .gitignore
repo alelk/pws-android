@@ -30,6 +30,13 @@ local-repo/
 # Assets (if not needed in VCS)
 app/src/ru/assets/
 app/src/uk/assets/
+app-compose/src/main/assets/db
+app-compose/src/ruRelease/assets/db
+app-compose/src/ruDebug/assets/db
+app-compose/src/ukRelease/assets/db
+app-compose/src/ukDebug/assets/db
+app-compose/src/rustoreRelease/assets/db
+app-compose/src/rustoreDebug/assets/db
 
 # Yarn
 node_modules/
