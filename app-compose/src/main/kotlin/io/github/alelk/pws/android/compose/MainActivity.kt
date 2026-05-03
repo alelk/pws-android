@@ -13,6 +13,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.lifecycle.lifecycleScope
 import io.github.alelk.pws.backup.BackupService
 import io.github.alelk.pws.database.PwsDatabaseProvider
@@ -154,19 +159,26 @@ class MainActivity : ComponentActivity() {
         )
       }
 
-      AppRoot(
-        themeMode = themeMode,
-        appVersion = appVersion,
-        onThemeModeChange = { newMode ->
-          lifecycleScope.launch {
-            applicationContext.setThemeMode(newMode)
-          }
-        },
-        settingsExternalActions = settingsExternalActions,
-        songDetailExternalActions = songDetailExternalActions,
-        songDetailDisplaySettings = songDetailDisplaySettings,
-        favoritesDisplaySettings = favoritesDisplaySettings,
-      )
+      @OptIn(ExperimentalComposeUiApi::class)
+      Box(
+        modifier = androidx.compose.ui.Modifier
+          .fillMaxSize()
+          .semantics { testTagsAsResourceId = true }
+      ) {
+        AppRoot(
+          themeMode = themeMode,
+          appVersion = appVersion,
+          onThemeModeChange = { newMode ->
+            lifecycleScope.launch {
+              applicationContext.setThemeMode(newMode)
+            }
+          },
+          settingsExternalActions = settingsExternalActions,
+          songDetailExternalActions = songDetailExternalActions,
+          songDetailDisplaySettings = songDetailDisplaySettings,
+          favoritesDisplaySettings = favoritesDisplaySettings,
+        )
+      }
     }
   }
 }

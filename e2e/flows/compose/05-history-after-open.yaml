@@ -1,0 +1,57 @@
+appId: ${APP_ID}
+name: "05 - History recorded after opening song"
+---
+# Opens song №1, navigates back, opens History tab,
+# and verifies the song row is present.
+
+- launchApp:
+    clearState: false
+
+- tapOn:
+    id: "${NAV_SEARCH}"
+- extendedWaitUntil:
+    visible:
+      id: "${FIELD_SEARCH}"
+    timeout: 10000
+- tapOn:
+    id: "${FIELD_SEARCH}"
+- inputText: "${SEARCH_QUERY_NUMERIC}"
+- pressKey: Enter
+
+- waitForAnimationToEnd
+- tapOn:
+    text: "${SEARCH_QUERY_NUMERIC}"
+    index: 1
+
+- extendedWaitUntil:
+    visible:
+      id: "${ACTION_TOGGLE_FAVORITE}"
+    timeout: 15000
+
+# Go back to main navigation.
+- back
+- back
+
+- tapOn:
+    id: "${NAV_HISTORY}"
+
+- waitForAnimationToEnd
+
+# Open the first row in history via stable contentDescription.
+- extendedWaitUntil:
+    visible:
+      id: "${SONG_ITEM_ONE}"
+    timeout: 10000
+- tapOn:
+    id: "${SONG_ITEM_ONE}"
+
+# Verify we navigated to song detail from history.
+- extendedWaitUntil:
+    visible:
+      id: "${ACTION_TOGGLE_FAVORITE}"
+    timeout: 15000
+
+- assertVisible:
+    id: "${ACTION_TOGGLE_FAVORITE}"
+
+- takeScreenshot: "05-history-list"

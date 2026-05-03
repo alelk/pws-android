@@ -1,6 +1,6 @@
 [versions]
 
-pws = "2.20.0"
+pws = "2.23.0"
 
 android-application = "9.1.1"
 kotlin = "2.3.21"

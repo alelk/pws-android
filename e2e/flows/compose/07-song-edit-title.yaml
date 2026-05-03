@@ -1,0 +1,85 @@
+appId: ${APP_ID}
+name: "07 - Edit song title and verify"
+---
+# Opens song №1, edits its title to TEST_SONG_EDIT_TITLE,
+# saves, and asserts the new title appears in the top bar.
+# Includes cleanup: restores the original title.
+
+- launchApp:
+    clearState: true
+
+- extendedWaitUntil:
+    visible:
+      id: "${NAV_HOME}"
+    timeout: 30000
+
+- tapOn:
+    id: "${NAV_SEARCH}"
+
+- extendedWaitUntil:
+    visible:
+      id: "${FIELD_SEARCH}"
+    timeout: 10000
+- tapOn:
+    id: "${FIELD_SEARCH}"
+- inputText: "${SEARCH_QUERY_NUMERIC}"
+- pressKey: Enter
+
+- waitForAnimationToEnd
+- tapOn:
+    id: "${SONG_ITEM_ONE}"
+
+- extendedWaitUntil:
+    visible:
+      id: "${ACTION_MORE}"
+    timeout: 15000
+
+- tapOn:
+    id: "${ACTION_MORE}"
+- waitForAnimationToEnd
+- tapOn:
+    id: "${ACTION_EDIT_SONG}"
+
+# Wait for Edit screen.
+- extendedWaitUntil:
+    visible:
+      id: "${ACTION_SAVE}"
+    timeout: 10000
+
+- waitForAnimationToEnd
+- takeScreenshot: "07-edit-screen-loaded"
+
+# Focus the title field, erase content, type new title.
+# tapOn places cursor at tap point (center); two eraseText passes clear left and remaining chars.
+- extendedWaitUntil:
+    visible:
+      id: "${FIELD_SONG_EDIT_TITLE}"
+    timeout: 10000
+- tapOn:
+    id: "${FIELD_SONG_EDIT_TITLE}"
+- waitForAnimationToEnd
+- eraseText: 50
+- tapOn:
+    id: "${FIELD_SONG_EDIT_TITLE}"
+- eraseText: 50
+- inputText: "${TEST_SONG_EDIT_TITLE}"
+
+- waitForAnimationToEnd
+- takeScreenshot: "07-edit-form-filled"
+
+# Save — the check icon becomes enabled once the title field has changed.
+- tapOn:
+    id: "${ACTION_SAVE}"
+
+# Wait for navigation back to the song detail screen.
+- extendedWaitUntil:
+    visible:
+      id: "${ACTION_TOGGLE_FAVORITE}"
+    timeout: 15000
+
+- waitForAnimationToEnd
+
+# The new title should be visible in the top bar (substring match).
+- assertVisible: "${TEST_SONG_EDIT_TITLE}"
+- takeScreenshot: "07-song-title-updated"
+

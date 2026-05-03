@@ -1,0 +1,17 @@
+appId: ${APP_ID}
+name: "Compose full suite (including mutating tests)"
+---
+# CAUTION: mutating flows (04, 06, 07) modify app data.
+# They run with clearState: true so each starts clean, but they leave data behind.
+# Use this suite for pre-release full regression only.
+
+- runFlow: 01-app-launch.yaml
+- runFlow: 02-search-basic.yaml
+- runFlow: 03-song-detail-actions.yaml
+- runFlow: 04-favorites-add-verify.yaml
+- runFlow: 05-history-after-open.yaml
+- runFlow: 06-tags-create-assign.yaml
+- runFlow: 07-song-edit-title.yaml
+- runFlow: 08-navigation-tabs.yaml
+- runFlow: 09-books-to-song.yaml
+

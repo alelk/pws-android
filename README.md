@@ -42,6 +42,17 @@ Specify [app version](app.version).
 ./gradlew :domain:publishToMavenLocal :domain:domain-test-fixtures:publishToMavenLocal
 ```
 
+#### Local APK smoke E2E (Maestro)
+
+Black-box smoke tests for ready local APK are in `e2e/`.
+
+```shell
+chmod +x ./e2e/scripts/run-local.sh
+./e2e/scripts/run-local.sh --flavor ru
+```
+
+Details and troubleshooting: `e2e/README.md`
+
 ## License
 
 This project is licensed under the **PolyForm Noncommercial License 1.0.0**. 

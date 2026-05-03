@@ -1,0 +1,11 @@
+appId: ${APP_ID}
+name: Smoke - install and songs availability
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: ${HOME_READY_TEXT}
+    timeout: 20000
+- assertVisible: ${HOME_READY_TEXT}
+- assertNotVisible: ${HOME_ERROR_TEXT}
+- takeScreenshot: smoke-home-ready

@@ -1,0 +1,12 @@
+appId: ${APP_ID}
+name: "Compose smoke suite"
+---
+# Runs all read-only (non-mutating) flows.
+# Run with: maestro test e2e/flows/compose/suite.yaml --env-file e2e/config/compose.env
+
+- runFlow: 01-app-launch.yaml
+- runFlow: 02-search-basic.yaml
+- runFlow: 03-song-detail-actions.yaml
+- runFlow: 08-navigation-tabs.yaml
+- runFlow: 09-books-to-song.yaml
+

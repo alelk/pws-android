@@ -1,0 +1,5 @@
+appId: ${APP_ID}
+name: Local smoke suite
+---
+- runFlow: install-and-songs.yaml
+- runFlow: search-basic.yaml

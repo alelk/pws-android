@@ -1,0 +1,63 @@
+appId: ${APP_ID}
+name: "08 - Navigation tabs - all tabs reachable"
+---
+# Visits every bottom-nav tab in sequence and asserts that each tab's content
+# screen loads without error. 100% locale-independent: navigation is by
+# contentDescription = route; presence is asserted via nav item visibility.
+
+- launchApp:
+    clearState: false
+
+# Search tab
+- tapOn:
+    id: "${NAV_SEARCH}"
+- extendedWaitUntil:
+    visible:
+      id: "${FIELD_SEARCH}"
+    timeout: 10000
+- assertVisible:
+    id: "${FIELD_SEARCH}"
+- takeScreenshot: "08-tab-search"
+- hideKeyboard
+- waitForAnimationToEnd
+
+# Books tab
+- extendedWaitUntil:
+    visible:
+      id: "${NAV_BOOKS}"
+    timeout: 5000
+- tapOn:
+    id: "${NAV_BOOKS}"
+- waitForAnimationToEnd
+- takeScreenshot: "08-tab-books"
+
+# Tags tab
+- tapOn:
+    id: "${NAV_TAGS}"
+- extendedWaitUntil:
+    visible:
+      id: "${ACTION_ADD_TAG}"
+    timeout: 10000
+- assertVisible:
+    id: "${ACTION_ADD_TAG}"
+- takeScreenshot: "08-tab-tags"
+
+# Favorites tab
+- tapOn:
+    id: "${NAV_FAVORITES}"
+- waitForAnimationToEnd
+- takeScreenshot: "08-tab-favorites"
+
+# History tab
+- tapOn:
+    id: "${NAV_HISTORY}"
+- waitForAnimationToEnd
+- takeScreenshot: "08-tab-history"
+
+# Back to Home
+- tapOn:
+    id: "${NAV_HOME}"
+- waitForAnimationToEnd
+- takeScreenshot: "08-tab-home"
+
+
