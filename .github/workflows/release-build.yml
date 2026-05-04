@@ -51,6 +51,13 @@ jobs:
         with:
           ref: ${{ inputs.tag }}
 
+      # Ensure build tooling scripts come from the default branch, not the tag.
+      # This prevents stale helper scripts in old tags from breaking the build.
+      - name: Restore build scripts from default branch
+        run: |
+          git fetch origin
+          git checkout origin/HEAD -- fetch-db.sh
+
       # ── Java + Gradle cache ───────────────────────────────────────────────
       - name: Set up JDK 21
         uses: actions/setup-java@v4
