@@ -37,6 +37,8 @@ app-compose/src/ukRelease/assets/db
 app-compose/src/ukDebug/assets/db
 app-compose/src/rustoreRelease/assets/db
 app-compose/src/rustoreDebug/assets/db
+app-compose/src/fullRelease/assets/db
+app-compose/src/fullDebug/assets/db
 
 # Yarn
 node_modules/
