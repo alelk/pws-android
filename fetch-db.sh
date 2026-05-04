@@ -27,24 +27,22 @@ DB_VERSION="$(tr -d '[:space:]' < "${DB_VERSION_FILE}")"
 echo "DB version: ${DB_VERSION}"
 
 # ── auth / download method ───────────────────────────────────────────────────
+# gh release download uses GraphQL which has cross-repo limitations with
+# repo-scoped tokens. We prefer the REST API (curl) whenever a token is
+# available, and fall back to gh CLI only for local interactive use.
+#
 # Priority:
-#   1. GH_TOKEN env var (PAT) → gh CLI  (works for private repos in GitHub Actions)
-#   2. gh CLI with stored credentials  → gh CLI  (local dev)
-#   3. GITHUB_TOKEN env var            → curl via GitHub API
-#      Note: plain GITHUB_TOKEN in Actions is repo-scoped and cannot access
-#      other private repos, so downloads will still fail unless pws-docs is public.
-#      Set GH_TOKEN to a PAT with 'Contents: Read' on pws-docs to fix this.
+#   1. GH_TOKEN or GITHUB_TOKEN present → GitHub REST API via curl
+#   2. gh CLI with stored credentials   → gh CLI  (local dev, no explicit token)
 GH_REPO="alelk/pws-docs"
+AUTH_TOKEN="${GH_TOKEN:-${GITHUB_TOKEN:-}}"
 
-if [[ -n "${GH_TOKEN:-}" ]]; then
-  DOWNLOAD_METHOD="gh"
-  echo "Using: gh CLI (GH_TOKEN)"
+if [[ -n "${AUTH_TOKEN}" ]]; then
+  DOWNLOAD_METHOD="curl_api"
+  echo "Using: GitHub REST API (token)"
 elif command -v gh &>/dev/null && gh auth status &>/dev/null 2>&1; then
   DOWNLOAD_METHOD="gh"
   echo "Using: gh CLI"
-elif [[ -n "${GITHUB_TOKEN:-}" ]]; then
-  DOWNLOAD_METHOD="curl_token"
-  echo "Using: curl + GITHUB_TOKEN"
 else
   echo "ERROR: No GitHub auth found." >&2
   echo "  Option 1: install & authenticate gh CLI  →  brew install gh && gh auth login" >&2
@@ -108,19 +106,38 @@ download_and_extract() {
 
   # Download only once even if multiple variants share the same archive
   if [[ ! -f "${zip_file}" ]]; then
-    if [[ "${DOWNLOAD_METHOD}" == "gh" ]]; then
+    if [[ "${DOWNLOAD_METHOD}" == "curl_api" ]]; then
+      # Use GitHub REST API to locate the asset, then download it.
+      # This avoids the GraphQL cross-repo resolution issues with scoped tokens.
+      if ! command -v jq &>/dev/null; then
+        echo "ERROR: 'jq' is required for REST API downloads. Install it: brew install jq" >&2
+        exit 1
+      fi
+      echo "  Resolving asset ${zip_name}.zip via GitHub REST API ..."
+      local asset_url
+      asset_url=$(
+        curl -fsSL \
+          -H "Authorization: Bearer ${AUTH_TOKEN}" \
+          -H "Accept: application/vnd.github+json" \
+          "https://api.github.com/repos/${GH_REPO}/releases/tags/v${DB_VERSION}" \
+        | jq -r ".assets[] | select(.name == \"${zip_name}.zip\") | .url"
+      )
+      if [[ -z "${asset_url}" || "${asset_url}" == "null" ]]; then
+        echo "ERROR: Asset '${zip_name}.zip' not found in release v${DB_VERSION} of ${GH_REPO}" >&2
+        exit 1
+      fi
+      echo "  Downloading ${zip_name}.zip via curl ..."
+      curl -fsSL --retry 3 --retry-delay 2 \
+        -H "Authorization: Bearer ${AUTH_TOKEN}" \
+        -H "Accept: application/octet-stream" \
+        -o "${zip_file}" "${asset_url}"
+    else
       echo "  Downloading ${zip_name}.zip via gh CLI ..."
       gh release download "v${DB_VERSION}" \
         --repo "${GH_REPO}" \
         --pattern "${zip_name}.zip" \
         --dir "${TMP_DIR}" \
         --clobber
-    else
-      local zip_url="${BASE_URL}/${zip_name}.zip"
-      echo "  Downloading ${zip_url} via curl ..."
-      curl -fsSL --retry 3 --retry-delay 2 \
-        -H "Authorization: token ${GITHUB_TOKEN}" \
-        -o "${zip_file}" "${zip_url}"
     fi
   else
     echo "  Already downloaded: ${zip_name}.zip"
@@ -173,7 +190,4 @@ done
 
 echo ""
 echo "All done."
-
-
-
 
