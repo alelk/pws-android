@@ -27,10 +27,16 @@ DB_VERSION="$(tr -d '[:space:]' < "${DB_VERSION_FILE}")"
 echo "DB version: ${DB_VERSION}"
 
 # ── auth / download method ───────────────────────────────────────────────────
-# Priority: gh CLI (uses stored credentials) → GITHUB_TOKEN env var → fail
+# Priority:
+#   1. GitHub Actions + GITHUB_TOKEN → curl (gh CLI GraphQL cannot resolve cross-repo)
+#   2. gh CLI with stored credentials → gh CLI
+#   3. GITHUB_TOKEN env var → curl
 GH_REPO="alelk/pws-docs"
 
-if command -v gh &>/dev/null && gh auth status &>/dev/null 2>&1; then
+if [[ "${GITHUB_ACTIONS:-}" == "true" && -n "${GITHUB_TOKEN:-}" ]]; then
+  DOWNLOAD_METHOD="curl_token"
+  echo "Using: curl + GITHUB_TOKEN (GitHub Actions)"
+elif command -v gh &>/dev/null && gh auth status &>/dev/null 2>&1; then
   DOWNLOAD_METHOD="gh"
   echo "Using: gh CLI"
 elif [[ -n "${GITHUB_TOKEN:-}" ]]; then
