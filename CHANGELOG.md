@@ -1,5 +1,15 @@
 # PWS Android
 
+# [3.0.0](https://github.com/alelk/pws-android/compare/v2.3.1...v3.0.0) (2026-05-04)
+
+
+* feat(compose)!: Release new app version: kotlin compose kmp ([#88](https://github.com/alelk/pws-android/issues/88)) ([d46f77f](https://github.com/alelk/pws-android/commit/d46f77faa10b000c561501d5eef54e9bec2ab37e))
+
+
+### BREAKING CHANGES
+
+* new ui
+
 # [2.4.0-rc.3](https://github.com/alelk/pws-android/compare/v2.4.0-rc.2...v2.4.0-rc.3) (2026-05-04)
 
 
