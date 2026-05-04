@@ -1,0 +1,84 @@
+appId: ${APP_ID}
+name: "14 - History: clear all entries"
+---
+# Opens a song to ensure history is non-empty, navigates to History tab,
+# taps the Clear All button (action:clear-history), confirms in the dialog,
+# and verifies the history list becomes empty.
+
+- launchApp:
+    clearState: false
+
+# --- Step 1: Open a song to populate history ---
+- tapOn:
+    id: "${NAV_SEARCH}"
+
+- extendedWaitUntil:
+    visible:
+      id: "${FIELD_SEARCH}"
+    timeout: 10000
+
+- tapOn:
+    id: "${FIELD_SEARCH}"
+- inputText: "${SEARCH_QUERY_NUMERIC}"
+- pressKey: Enter
+- waitForAnimationToEnd
+
+- extendedWaitUntil:
+    visible:
+      id: "${SONG_ITEM_ONE}"
+    timeout: 15000
+
+- tapOn:
+    id: "${SONG_ITEM_ONE}"
+
+- extendedWaitUntil:
+    visible:
+      id: "${ACTION_TOGGLE_FAVORITE}"
+    timeout: 15000
+
+# Stay on song detail for a moment to trigger history recording
+- waitForAnimationToEnd
+- waitForAnimationToEnd
+
+- back
+- back
+- waitForAnimationToEnd
+
+# --- Step 2: Open History tab and verify non-empty ---
+- tapOn:
+    id: "${NAV_HISTORY}"
+
+- extendedWaitUntil:
+    visible:
+      id: "${ACTION_CLEAR_HISTORY}"
+    timeout: 15000
+
+- takeScreenshot: "14-history-before-clear"
+
+# --- Step 3: Tap Clear All button ---
+- tapOn:
+    id: "${ACTION_CLEAR_HISTORY}"
+
+- waitForAnimationToEnd
+
+# Dialog renders in a popup window; testTagsAsResourceId applied on confirm button
+- extendedWaitUntil:
+    visible:
+      id: "${ACTION_CONFIRM_CLEAR_HISTORY}"
+    timeout: 8000
+
+- takeScreenshot: "14-clear-dialog"
+
+- tapOn:
+    id: "${ACTION_CONFIRM_CLEAR_HISTORY}"
+
+- waitForAnimationToEnd
+- waitForAnimationToEnd
+- takeScreenshot: "14-after-clear"
+
+# --- Step 4: Verify history is empty (no song rows visible) ---
+- assertNotVisible:
+    id: "${SONG_ITEM_ONE}"
+
+
+

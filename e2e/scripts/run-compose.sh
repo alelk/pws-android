@@ -87,36 +87,18 @@ adb install -r "$APK_PATH" || {
 }
 
 # ---------------------------------------------------------------------------
-# Env vars forwarded to every flow
+# Env vars forwarded to every flow — built automatically from compose.env keys
 # ---------------------------------------------------------------------------
-MAESTRO_ENV=(
-  --env APP_ID="$APP_ID"
-  --env NAV_HOME="${NAV_HOME}"
-  --env NAV_SEARCH="${NAV_SEARCH}"
-  --env NAV_BOOKS="${NAV_BOOKS}"
-  --env NAV_TAGS="${NAV_TAGS}"
-  --env NAV_FAVORITES="${NAV_FAVORITES}"
-  --env NAV_HISTORY="${NAV_HISTORY}"
-  --env ACTION_TOGGLE_FAVORITE="${ACTION_TOGGLE_FAVORITE}"
-  --env ACTION_MORE="${ACTION_MORE}"
-  --env ACTION_EDIT_SONG="${ACTION_EDIT_SONG}"
-  --env ACTION_EDIT_TAGS="${ACTION_EDIT_TAGS}"
-  --env ACTION_SAVE="${ACTION_SAVE}"
-  --env ACTION_ADD_TAG="${ACTION_ADD_TAG}"
-  --env ACTION_SAVE_TAG="${ACTION_SAVE_TAG}"
-  --env ACTION_SAVE_SONG_TAGS="${ACTION_SAVE_SONG_TAGS}"
-  --env FIELD_SEARCH="${FIELD_SEARCH}"
-  --env FIELD_TAG_NAME="${FIELD_TAG_NAME}"
-  --env FIELD_SONG_EDIT_TITLE="${FIELD_SONG_EDIT_TITLE}"
-  --env SEARCH_QUERY_NUMERIC="${SEARCH_QUERY_NUMERIC}"
-  --env SEARCH_QUERY_UNIQUE="${SEARCH_QUERY_UNIQUE}"
-  --env SONG_TITLE_UNIQUE="${SONG_TITLE_UNIQUE}"
-  --env SONG_ITEM_ONE="${SONG_ITEM_ONE}"
-  --env SONG_LIST_ITEM_PREFIX="${SONG_LIST_ITEM_PREFIX}"
-  --env RECENT_ITEM_PREFIX="${RECENT_ITEM_PREFIX}"
-  --env TEST_TAG_NAME="${TEST_TAG_NAME}"
-  --env TEST_SONG_EDIT_TITLE="${TEST_SONG_EDIT_TITLE}"
-)
+MAESTRO_ENV=()
+while IFS= read -r line; do
+  [[ "$line" =~ ^[[:space:]]*# ]] && continue  # skip comments
+  [[ "$line" =~ ^[[:space:]]*$ ]] && continue  # skip blank lines
+  key="${line%%=*}"
+  key="${key// /}"
+  [[ -z "$key" ]] && continue
+  val="${!key:-}"
+  MAESTRO_ENV+=(--env "$key=$val")
+done < "$CONFIG_FILE"
 
 # ---------------------------------------------------------------------------
 # Flow lists
@@ -127,16 +109,35 @@ SMOKE_FLOWS=(
   03-song-detail-actions.yaml
   08-navigation-tabs.yaml
   09-books-to-song.yaml
+  # Phase 2 smoke
+  10-settings-open.yaml
+  11-home-number-search.yaml
+  15-search-empty-results.yaml
+  16-home-recently-viewed.yaml
+  18-home-search-suggestions.yaml
 )
 FULL_FLOWS=(
   01-app-launch.yaml
   02-search-basic.yaml
   03-song-detail-actions.yaml
-  04-favorites-add-verify.yaml
-  06-tags-create-assign.yaml
-  07-song-edit-title.yaml
   08-navigation-tabs.yaml
   09-books-to-song.yaml
+  # Phase 2 smoke
+  10-settings-open.yaml
+  11-home-number-search.yaml
+  15-search-empty-results.yaml
+  16-home-recently-viewed.yaml
+  18-home-search-suggestions.yaml
+  # Mutation — Phase 1
+  04-favorites-add-verify.yaml
+  05-history-after-open.yaml
+  06-tags-create-assign.yaml
+  07-song-edit-title.yaml
+  # Mutation — Phase 2
+  12-favorites-remove.yaml
+  13-tag-to-songs.yaml
+  14-history-clear-all.yaml
+  # NOTE: 17-history-swipe-delete.yaml is diagnostic (flaky), not included by default
 )
 
 if [[ -n "$FLOW_OVERRIDE" ]]; then

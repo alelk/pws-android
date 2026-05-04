@@ -1,0 +1,76 @@
+appId: ${APP_ID}
+name: "16 - Home: recently viewed section appears after opening song"
+---
+# Opens a song to ensure history is populated, then navigates to Home
+# and verifies the "Recently Viewed" section appears with at least one card.
+# Taps the first card and verifies navigation to SongDetailScreen.
+
+- launchApp:
+    clearState: false
+
+# --- Step 1: Open a song to populate recently viewed ---
+- tapOn:
+    id: "${NAV_SEARCH}"
+
+- extendedWaitUntil:
+    visible:
+      id: "${FIELD_SEARCH}"
+    timeout: 10000
+
+- tapOn:
+    id: "${FIELD_SEARCH}"
+- inputText: "${SEARCH_QUERY_NUMERIC}"
+- pressKey: Enter
+- waitForAnimationToEnd
+
+- extendedWaitUntil:
+    visible:
+      id: "${SONG_ITEM_ONE}"
+    timeout: 15000
+
+- tapOn:
+    id: "${SONG_ITEM_ONE}"
+
+- extendedWaitUntil:
+    visible:
+      id: "${ACTION_TOGGLE_FAVORITE}"
+    timeout: 15000
+
+# Stay briefly so history recording triggers
+- waitForAnimationToEnd
+- waitForAnimationToEnd
+
+# --- Step 2: Go to Home tab ---
+- tapOn:
+    id: "${NAV_HOME}"
+
+- waitForAnimationToEnd
+
+# --- Step 3: Scroll to "Recently Viewed" section header ---
+- scrollUntilVisible:
+    element:
+      id: "${HOME_SECTION_RECENTLY_VIEWED}"
+    direction: DOWN
+    timeout: 10000
+
+- takeScreenshot: "16-recently-viewed-section-visible"
+
+# --- Step 4: Scroll to and tap first recent song card ---
+- scrollUntilVisible:
+    element:
+      id: "${RECENT_SONG_CARD_ZERO}"
+    direction: DOWN
+    timeout: 5000
+
+- tapOn:
+    id: "${RECENT_SONG_CARD_ZERO}"
+
+- extendedWaitUntil:
+    visible:
+      id: "${ACTION_TOGGLE_FAVORITE}"
+    timeout: 15000
+
+- assertVisible:
+    id: "${ACTION_TOGGLE_FAVORITE}"
+
+- takeScreenshot: "16-song-opened-from-recent"

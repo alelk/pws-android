@@ -1,0 +1,52 @@
+appId: ${APP_ID}
+name: "11 - Home: number search modal opens song"
+---
+# Opens NumberInputModal via the "action:number-search" quick-action chip on HomeScreen,
+# enters a numeric query, waits for suggestions, taps the first one, and verifies
+# the song detail screen loads.
+
+- launchApp:
+    clearState: false
+
+- tapOn:
+    id: "${NAV_HOME}"
+
+- waitForAnimationToEnd
+
+- extendedWaitUntil:
+    visible:
+      id: "${ACTION_NUMBER_SEARCH}"
+    timeout: 15000
+
+- tapOn:
+    id: "${ACTION_NUMBER_SEARCH}"
+
+- waitForAnimationToEnd
+- takeScreenshot: "11-number-modal-open"
+
+- tapOn:
+    id: "${FIELD_NUMBER_INPUT}"
+
+- waitForAnimationToEnd
+- inputText: "${SEARCH_QUERY_NUMERIC}"
+
+- extendedWaitUntil:
+    visible:
+      id: "${NUMBER_SUGGESTION_ZERO}"
+    timeout: 10000
+
+- takeScreenshot: "11-number-suggestions"
+
+- tapOn:
+    id: "${NUMBER_SUGGESTION_ZERO}"
+
+- extendedWaitUntil:
+    visible:
+      id: "${ACTION_TOGGLE_FAVORITE}"
+    timeout: 15000
+
+- assertVisible:
+    id: "${ACTION_TOGGLE_FAVORITE}"
+
+- takeScreenshot: "11-song-opened-via-number"
+

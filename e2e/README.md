@@ -72,6 +72,16 @@ stable `contentDescription` values added to `pws-core/features`, not localized t
 | Add tag FAB | `contentDescription = "action:add-tag"` | `TagsScreen.kt` |
 | Search field | `contentDescription = "field:search"` | `SearchField.kt` |
 | Song list rows | `contentDescription = "Song number N"` | `SongListItem.kt` (pre-existing) |
+| **Settings icon** | `.testTag("action:open-settings")` | `HomeScreen.kt`, `HistoryScreen.kt`, `FavoritesScreen.kt`, `SearchScreen.kt`, `TagsScreen.kt` |
+| **Number search chip** | `.testTag("action:number-search")` | `HomeScreen.kt` (`QuickActionsRow`) |
+| **Text search chip** | `.testTag("action:text-search")` | `HomeScreen.kt` (`QuickActionsRow`) |
+| **Home search field** | `.testTag("field:home-search")` | `SearchBarWithSuggestions.kt` |
+| **Home suggestion N** | `.testTag("home-suggestion-N")` | `SearchBarWithSuggestions.kt` |
+| **Number input field** | `.testTag("field:number-input")` | `NumberInputModal.kt` |
+| **Number suggestion N** | `.testTag("number-suggestion-N")` | `NumberInputModal.kt` |
+| **Clear history button** | `.testTag("action:clear-history")` | `HistoryScreen.kt` |
+| **Confirm clear dialog** | `.testTag("action:confirm-clear-history")` | `HistoryScreen.kt` (`ClearHistoryDialog`) |
+| Tag list rows | `.testTag("tag-row-{name}")` | `TagsScreen.kt` (`TagListItem`) |
 
 Search query `"1"` is used because it is numeric and guaranteed to return results in every flavour.
 
@@ -95,7 +105,8 @@ Search query `"1"` is used because it is numeric and guaranteed to return result
 
 - Android emulator/device available via `adb`
 - Maestro CLI installed: `curl -Ls https://get.maestro.mobile.dev | bash`
-- APK at `output/compose/pws-app-release-2.4.0-ru.apk`
+- APK at `output/compose/pws-app-release-<version>-ru.apk` (version from `app.version`)
+- **pws-core rebuilt** after Phase 2 testTag changes and APK reinstalled
 
 ### Run (smoke suite)
 
