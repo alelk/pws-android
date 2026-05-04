@@ -102,6 +102,8 @@ jobs:
       # ── Build ─────────────────────────────────────────────────────────────
       - name: Build ru Release
         if: ${{ inputs.flavor_ru }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           ./gradlew :app-compose:assembleRuRelease :app-compose:bundleRuRelease \
             -Pandroid.release.keystorePath=/tmp/release.jks \
@@ -111,6 +113,8 @@ jobs:
 
       - name: Build uk Release
         if: ${{ inputs.flavor_uk }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           ./gradlew :app-compose:assembleUkRelease :app-compose:bundleUkRelease \
             -Pandroid.release.keystorePath=/tmp/release.jks \
@@ -120,6 +124,8 @@ jobs:
 
       - name: Build rustore Release
         if: ${{ inputs.flavor_rustore }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           ./gradlew :app-compose:assembleRustoreRelease :app-compose:bundleRustoreRelease \
             -Pandroid.release.keystorePathRustore=/tmp/rustore.jks \
