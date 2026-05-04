@@ -28,14 +28,17 @@ echo "DB version: ${DB_VERSION}"
 
 # ── auth / download method ───────────────────────────────────────────────────
 # Priority:
-#   1. GitHub Actions + GITHUB_TOKEN → curl (gh CLI GraphQL cannot resolve cross-repo)
-#   2. gh CLI with stored credentials → gh CLI
-#   3. GITHUB_TOKEN env var → curl
+#   1. GH_TOKEN env var (PAT) → gh CLI  (works for private repos in GitHub Actions)
+#   2. gh CLI with stored credentials  → gh CLI  (local dev)
+#   3. GITHUB_TOKEN env var            → curl via GitHub API
+#      Note: plain GITHUB_TOKEN in Actions is repo-scoped and cannot access
+#      other private repos, so downloads will still fail unless pws-docs is public.
+#      Set GH_TOKEN to a PAT with 'Contents: Read' on pws-docs to fix this.
 GH_REPO="alelk/pws-docs"
 
-if [[ "${GITHUB_ACTIONS:-}" == "true" && -n "${GITHUB_TOKEN:-}" ]]; then
-  DOWNLOAD_METHOD="curl_token"
-  echo "Using: curl + GITHUB_TOKEN (GitHub Actions)"
+if [[ -n "${GH_TOKEN:-}" ]]; then
+  DOWNLOAD_METHOD="gh"
+  echo "Using: gh CLI (GH_TOKEN)"
 elif command -v gh &>/dev/null && gh auth status &>/dev/null 2>&1; then
   DOWNLOAD_METHOD="gh"
   echo "Using: gh CLI"
@@ -45,7 +48,7 @@ elif [[ -n "${GITHUB_TOKEN:-}" ]]; then
 else
   echo "ERROR: No GitHub auth found." >&2
   echo "  Option 1: install & authenticate gh CLI  →  brew install gh && gh auth login" >&2
-  echo "  Option 2: export GITHUB_TOKEN=<your_token>" >&2
+  echo "  Option 2: export GH_TOKEN=<pat-with-pws-docs-read-access>" >&2
   exit 1
 fi
 

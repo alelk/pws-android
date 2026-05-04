@@ -78,22 +78,24 @@ jobs:
           echo "${{ secrets.RELEASE_KEYSTORE_RUSTORE_BASE64 }}" | base64 --decode > /tmp/rustore.jks
 
       # ── Fetch DB assets ───────────────────────────────────────────────────
+      # GH_TOKEN must be a PAT with 'Contents: Read' on the private alelk/pws-docs repo.
+      # Store the PAT as secret PWS_DOCS_TOKEN in this repository's settings.
       - name: Fetch DB — ru
         if: ${{ inputs.flavor_ru }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.PWS_DOCS_TOKEN }}
         run: ./fetch-db.sh ruRelease
 
       - name: Fetch DB — uk
         if: ${{ inputs.flavor_uk }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.PWS_DOCS_TOKEN }}
         run: ./fetch-db.sh ukRelease
 
       - name: Fetch DB — rustore
         if: ${{ inputs.flavor_rustore }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.PWS_DOCS_TOKEN }}
         run: ./fetch-db.sh rustoreRelease
 
       # ── Build ─────────────────────────────────────────────────────────────
