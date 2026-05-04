@@ -1,5 +1,12 @@
 # PWS Android
 
+## [3.0.1](https://github.com/alelk/pws-android/compare/v3.0.0...v3.0.1) (2026-05-04)
+
+
+### Bug Fixes
+
+* use GH_TOKEN (PAT) for gh CLI to access private pws-docs repo ([ebf3081](https://github.com/alelk/pws-android/commit/ebf308124bb40f350f2fadf32cd6b18d25a5d9cf))
+
 # [3.0.0](https://github.com/alelk/pws-android/compare/v2.3.1...v3.0.0) (2026-05-04)
 
 
