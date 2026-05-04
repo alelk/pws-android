@@ -33,7 +33,7 @@ permissions:
 
 jobs:
   release:
-    runs-on: macos-13  # macOS required for Android emulator (hardware virtualization)
+    runs-on: ubuntu-latest
 
     steps:
       # ── Validation ────────────────────────────────────────────────────────
@@ -160,33 +160,18 @@ jobs:
           ls -lh output/release/
 
       # ── E2E tests ─────────────────────────────────────────────────────────
-      # macOS runner supports hardware virtualization (Hypervisor Framework),
-      # which is required to boot the Android emulator reliably.
-      - name: Install Maestro
+      # TODO: re-enable when E2E infrastructure is ready (requires macOS runner for emulator)
+      - name: E2E — ru
         if: ${{ inputs.flavor_ru }}
-        run: |
-          curl -Ls "https://get.maestro.mobile.dev" | bash
-          echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+        run: echo "::notice::E2E tests are temporarily disabled."
 
-      - name: E2E — ru (Android emulator, API 34)
-        if: ${{ inputs.flavor_ru }}
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 34
-          target: google_apis
-          arch: x86_64
-          profile: pixel_6
-          script: |
-            ./e2e/scripts/run-compose.sh \
-              --apk "output/release/pws-app-${{ inputs.tag }}-ru.apk"
-
-      - name: E2E — uk (not yet implemented)
+      - name: E2E — uk
         if: ${{ inputs.flavor_uk }}
-        run: echo "::notice::E2E tests for uk flavor are not yet implemented — skipping."
+        run: echo "::notice::E2E tests are temporarily disabled."
 
-      - name: E2E — rustore (not yet implemented)
+      - name: E2E — rustore
         if: ${{ inputs.flavor_rustore }}
-        run: echo "::notice::E2E tests for rustore flavor are not yet implemented — skipping."
+        run: echo "::notice::E2E tests are temporarily disabled."
 
       # ── GitHub Release ────────────────────────────────────────────────────
       - name: Create GitHub Release
@@ -202,4 +187,3 @@ jobs:
             --verify-tag \
             output/release/*
           echo "✅ Release '$TITLE' created: https://github.com/${{ github.repository }}/releases/tag/${{ inputs.tag }}"
-
