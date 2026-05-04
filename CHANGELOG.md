@@ -1,5 +1,33 @@
 # PWS Android
 
+# [2.4.0-rc.3](https://github.com/alelk/pws-android/compare/v2.4.0-rc.2...v2.4.0-rc.3) (2026-05-04)
+
+
+### Bug Fixes
+
+* Add TransactionRunner provision and update UpdateBookStatisticUseCase to use it ([caa841e](https://github.com/alelk/pws-android/commit/caa841ef76a32fa3c025b4c9949fa82b436a57d6))
+
+
+### Features
+
+* Add end-to-end tests for settings navigation, number search, favorites management, and search suggestions ([25a9c7c](https://github.com/alelk/pws-android/commit/25a9c7c88b6759087718b13e688ce237e47983ce))
+* Add script to fetch and extract database assets, update db version, and modify .gitignore ([742e42b](https://github.com/alelk/pws-android/commit/742e42b19fd56389762b723aa61814cc64ffe56c))
+* Add smoke tests for app launch, search functionality, and navigation tabs ([6dc9c3e](https://github.com/alelk/pws-android/commit/6dc9c3e7574271241821515c19ac285d95afc22c))
+
+# [2.4.0-rc.2](https://github.com/alelk/pws-android/compare/v2.4.0-rc.1...v2.4.0-rc.2) (2026-04-30)
+
+
+### Features
+
+* Add backup/restore, theme and display preferences, update dependencies, and switch to PolyForm Noncommercial license ([d72e8bd](https://github.com/alelk/pws-android/commit/d72e8bdbf8f04a0f4c6c5c46d3b9333d850cebd5))
+
+# [2.4.0-rc.1](https://github.com/alelk/pws-android/compare/v2.3.1...v2.4.0-rc.1) (2026-04-28)
+
+
+### Features
+
+* Add initial Compose setup and application structure ([91cc5b8](https://github.com/alelk/pws-android/commit/91cc5b8eb700681e0e97dd0b5436633907aeaf09))
+
 ## [2.3.1](https://github.com/alelk/pws-android/compare/v2.3.0...v2.3.1) (2026-03-28)
 
 

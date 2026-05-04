@@ -1,0 +1,16 @@
+appId: ${APP_ID}
+name: Smoke - basic search
+---
+- launchApp
+- tapOn: ${SEARCH_TAB_TEXT}
+- extendedWaitUntil:
+    visible: ${SEARCH_PLACEHOLDER_TEXT}
+    timeout: 10000
+- tapOn: ${SEARCH_PLACEHOLDER_TEXT}
+- eraseText
+- inputText: ${SEARCH_QUERY}
+- pressKey: Enter
+- waitForAnimationToEnd
+- assertNotVisible: ${SEARCH_EMPTY_TEXT}
+- assertNotVisible: ${SEARCH_ERROR_TEXT}
+- takeScreenshot: smoke-search-results

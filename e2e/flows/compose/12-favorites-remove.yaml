@@ -1,0 +1,97 @@
+appId: ${APP_ID}
+name: "12 - Remove from favorites and verify empty"
+---
+# Adds song #1 to favorites, verifies it appears in the Favorites tab,
+# then opens the song from Favorites, toggles favorite off,
+# returns to the Favorites tab and confirms the item is gone.
+# Uses clearState: true to start clean.
+
+- launchApp:
+    clearState: true
+
+- extendedWaitUntil:
+    visible:
+      id: "${NAV_HOME}"
+    timeout: 30000
+
+# --- Step 1: Find song and add to favorites ---
+- tapOn:
+    id: "${NAV_SEARCH}"
+
+- extendedWaitUntil:
+    visible:
+      id: "${FIELD_SEARCH}"
+    timeout: 10000
+
+- tapOn:
+    id: "${FIELD_SEARCH}"
+- inputText: "${SEARCH_QUERY_NUMERIC}"
+- pressKey: Enter
+- waitForAnimationToEnd
+
+- extendedWaitUntil:
+    visible:
+      id: "${SONG_ITEM_ONE}"
+    timeout: 15000
+
+- tapOn:
+    id: "${SONG_ITEM_ONE}"
+
+- extendedWaitUntil:
+    visible:
+      id: "${ACTION_TOGGLE_FAVORITE}"
+    timeout: 30000
+
+- tapOn:
+    id: "${ACTION_TOGGLE_FAVORITE}"
+
+- waitForAnimationToEnd
+- takeScreenshot: "12-added-to-favorites"
+
+# --- Step 2: Verify song appears in Favorites tab ---
+# One back: SongDetail → Search results
+- back
+- waitForAnimationToEnd
+
+- tapOn:
+    id: "${NAV_FAVORITES}"
+
+- extendedWaitUntil:
+    visible:
+      id: "${SONG_ITEM_ONE}"
+    timeout: 10000
+
+- assertVisible:
+    id: "${SONG_ITEM_ONE}"
+
+- takeScreenshot: "12-favorites-has-item"
+
+# --- Step 3: Open the song from Favorites and remove favorite ---
+- tapOn:
+    id: "${SONG_ITEM_ONE}"
+
+- extendedWaitUntil:
+    visible:
+      id: "${ACTION_TOGGLE_FAVORITE}"
+    timeout: 15000
+
+- tapOn:
+    id: "${ACTION_TOGGLE_FAVORITE}"
+
+- waitForAnimationToEnd
+- takeScreenshot: "12-removed-from-favorites"
+
+# --- Step 4: Back to Favorites tab and verify item gone ---
+# One back: SongDetail → Favorites list
+- back
+- waitForAnimationToEnd
+
+- tapOn:
+    id: "${NAV_FAVORITES}"
+
+- waitForAnimationToEnd
+- takeScreenshot: "12-favorites-after-remove"
+
+# Song row must not be visible (list is empty or item removed)
+- assertNotVisible:
+    id: "${SONG_ITEM_ONE}"

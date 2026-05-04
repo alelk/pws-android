@@ -1,0 +1,51 @@
+appId: ${APP_ID}
+name: "02 - Basic search returns results and opens song"
+---
+# Enter a numeric query — ASCII only, Maestro does not support Unicode input.
+
+- launchApp:
+    clearState: false
+    stopApp: false
+
+- waitForAnimationToEnd
+
+- tapOn:
+    id: "${NAV_SEARCH}"
+
+- extendedWaitUntil:
+    visible:
+      id: "${FIELD_SEARCH}"
+    timeout: 10000
+
+- tapOn:
+    id: "${FIELD_SEARCH}"
+
+- waitForAnimationToEnd
+- inputText: "${SEARCH_QUERY_NUMERIC}"
+- pressKey: Enter
+- waitForAnimationToEnd
+
+- takeScreenshot: "02-after-input"
+
+# After Enter the keyboard dismisses and results load.
+# Wait for first result and tap it via stable testTag (song-row-N).
+- extendedWaitUntil:
+    visible:
+      id: "${SONG_ITEM_ONE}"
+    timeout: 15000
+
+- takeScreenshot: "02-search-results"
+
+- tapOn:
+    id: "${SONG_ITEM_ONE}"
+
+# The song detail screen should show the favorite FAB — proves the content loaded.
+- extendedWaitUntil:
+    visible:
+      id: "${ACTION_TOGGLE_FAVORITE}"
+    timeout: 15000
+
+- assertVisible:
+    id: "${ACTION_TOGGLE_FAVORITE}"
+
+- takeScreenshot: "02-song-detail-opened"

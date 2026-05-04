@@ -1,0 +1,50 @@
+appId: ${APP_ID}
+name: "18 - Home: inline search suggestions appear and navigate to song"
+---
+# Types in the HomeScreen inline SearchBarWithSuggestions field,
+# waits for the first suggestion to appear in the dropdown,
+# taps it, and verifies navigation to SongDetailScreen.
+
+- launchApp:
+    clearState: false
+
+- tapOn:
+    id: "${NAV_HOME}"
+
+- waitForAnimationToEnd
+
+- extendedWaitUntil:
+    visible:
+      id: "${FIELD_HOME_SEARCH}"
+    timeout: 15000
+
+- tapOn:
+    id: "${FIELD_HOME_SEARCH}"
+
+- waitForAnimationToEnd
+- inputText: "${SEARCH_QUERY_NUMERIC}"
+
+- takeScreenshot: "18-home-search-typed"
+
+# Wait for first suggestion to appear in the dropdown
+- extendedWaitUntil:
+    visible:
+      id: "${HOME_SUGGESTION_ZERO}"
+    timeout: 10000
+
+- takeScreenshot: "18-home-suggestions-visible"
+
+- tapOn:
+    id: "${HOME_SUGGESTION_ZERO}"
+
+# Song detail screen should load
+- extendedWaitUntil:
+    visible:
+      id: "${ACTION_TOGGLE_FAVORITE}"
+    timeout: 15000
+
+- assertVisible:
+    id: "${ACTION_TOGGLE_FAVORITE}"
+
+- takeScreenshot: "18-song-opened-from-home-suggestion"
+

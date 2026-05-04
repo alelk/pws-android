@@ -1,0 +1,37 @@
+appId: ${APP_ID}
+name: "Compose full suite (Phase 2 — including mutating tests)"
+---
+# CAUTION: mutating flows (04, 06, 07, 12, 13, 14) modify app data.
+# Most mutation flows use clearState: true so they start clean,
+# but they may leave data behind for subsequent flows.
+# Use this suite for pre-release full regression only.
+
+# --- Smoke (read-only) — Phase 1 ---
+- runFlow: 01-app-launch.yaml
+- runFlow: 02-search-basic.yaml
+- runFlow: 03-song-detail-actions.yaml
+- runFlow: 08-navigation-tabs.yaml
+- runFlow: 09-books-to-song.yaml
+
+# --- Smoke (read-only) — Phase 2 ---
+- runFlow: 10-settings-open.yaml
+- runFlow: 11-home-number-search.yaml
+- runFlow: 15-search-empty-results.yaml
+- runFlow: 16-home-recently-viewed.yaml
+- runFlow: 18-home-search-suggestions.yaml
+
+# --- Mutation — Phase 1 ---
+- runFlow: 04-favorites-add-verify.yaml
+- runFlow: 05-history-after-open.yaml
+- runFlow: 06-tags-create-assign.yaml
+- runFlow: 07-song-edit-title.yaml
+
+# --- Mutation — Phase 2 ---
+- runFlow: 12-favorites-remove.yaml
+- runFlow: 13-tag-to-songs.yaml
+- runFlow: 14-history-clear-all.yaml
+
+# --- Diagnostic (flaky — run separately if needed) ---
+# - runFlow: 17-history-swipe-delete.yaml
+
+

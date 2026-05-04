@@ -1,0 +1,187 @@
+name: Release Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag (e.g. v2.4.0)'
+        required: true
+        type: string
+      flavor_ru:
+        description: 'Build ru flavor (Google Play RU)'
+        required: false
+        type: boolean
+        default: false
+      flavor_uk:
+        description: 'Build uk flavor (Google Play UK)'
+        required: false
+        type: boolean
+        default: false
+      flavor_rustore:
+        description: 'Build rustore flavor (RuStore)'
+        required: false
+        type: boolean
+        default: false
+      release_title:
+        description: 'Release title (optional, defaults to tag name)'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── Validation ────────────────────────────────────────────────────────
+      - name: Validate — at least one flavor selected
+        run: |
+          if [[ "${{ inputs.flavor_ru }}" != "true" && \
+                "${{ inputs.flavor_uk }}" != "true" && \
+                "${{ inputs.flavor_rustore }}" != "true" ]]; then
+            echo "::error::At least one flavor must be selected (flavor_ru, flavor_uk, or flavor_rustore)."
+            exit 1
+          fi
+
+      # ── Checkout ─────────────────────────────────────────────────────────
+      - name: Checkout ${{ inputs.tag }}
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag }}
+
+      # ── Java + Gradle cache ───────────────────────────────────────────────
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: gradle
+
+      # ── Keystores ────────────────────────────────────────────────────────
+      - name: Decode keystore — ru / uk
+        if: ${{ inputs.flavor_ru || inputs.flavor_uk }}
+        run: |
+          echo "${{ secrets.RELEASE_KEYSTORE_BASE64 }}" | base64 --decode > /tmp/release.jks
+
+      - name: Decode keystore — rustore
+        if: ${{ inputs.flavor_rustore }}
+        run: |
+          echo "${{ secrets.RELEASE_KEYSTORE_RUSTORE_BASE64 }}" | base64 --decode > /tmp/rustore.jks
+
+      # ── Fetch DB assets ───────────────────────────────────────────────────
+      - name: Fetch DB — ru
+        if: ${{ inputs.flavor_ru }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ./fetch-db.sh ruRelease
+
+      - name: Fetch DB — uk
+        if: ${{ inputs.flavor_uk }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ./fetch-db.sh ukRelease
+
+      - name: Fetch DB — rustore
+        if: ${{ inputs.flavor_rustore }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ./fetch-db.sh rustoreRelease
+
+      # ── Build ─────────────────────────────────────────────────────────────
+      - name: Build ru Release
+        if: ${{ inputs.flavor_ru }}
+        run: |
+          ./gradlew :app-compose:assembleRuRelease :app-compose:bundleRuRelease \
+            -Pandroid.release.keystorePath=/tmp/release.jks \
+            -Pandroid.release.storePassword="${{ secrets.RELEASE_STORE_PASSWORD }}" \
+            -Pandroid.release.keyAliasRu="${{ secrets.RELEASE_KEY_ALIAS_RU }}" \
+            -Pandroid.release.keyPassword="${{ secrets.RELEASE_KEY_PASSWORD }}"
+
+      - name: Build uk Release
+        if: ${{ inputs.flavor_uk }}
+        run: |
+          ./gradlew :app-compose:assembleUkRelease :app-compose:bundleUkRelease \
+            -Pandroid.release.keystorePath=/tmp/release.jks \
+            -Pandroid.release.storePassword="${{ secrets.RELEASE_STORE_PASSWORD }}" \
+            -Pandroid.release.keyAliasUk="${{ secrets.RELEASE_KEY_ALIAS_UK }}" \
+            -Pandroid.release.keyPassword="${{ secrets.RELEASE_KEY_PASSWORD }}"
+
+      - name: Build rustore Release
+        if: ${{ inputs.flavor_rustore }}
+        run: |
+          ./gradlew :app-compose:assembleRustoreRelease :app-compose:bundleRustoreRelease \
+            -Pandroid.release.keystorePathRustore=/tmp/rustore.jks \
+            -Pandroid.release.storePasswordRustore="${{ secrets.RELEASE_STORE_PASSWORD_RUSTORE }}" \
+            -Pandroid.release.keyAliasRuRustore="${{ secrets.RELEASE_KEY_ALIAS_RUSTORE }}" \
+            -Pandroid.release.keyPasswordRustore="${{ secrets.RELEASE_KEY_PASSWORD_RUSTORE }}"
+
+      # ── Collect & rename artifacts ────────────────────────────────────────
+      - name: Collect artifacts
+        run: |
+          mkdir -p output/release
+          TAG="${{ inputs.tag }}"
+          if [[ "${{ inputs.flavor_ru }}" == "true" ]]; then
+            cp app-compose/build/outputs/apk/ru/release/app-compose-ru-release.apk \
+               "output/release/pws-app-${TAG}-ru.apk"
+            cp app-compose/build/outputs/bundle/ruRelease/app-compose-ru-release.aab \
+               "output/release/pws-app-${TAG}-ru.aab"
+          fi
+          if [[ "${{ inputs.flavor_uk }}" == "true" ]]; then
+            cp app-compose/build/outputs/apk/uk/release/app-compose-uk-release.apk \
+               "output/release/pws-app-${TAG}-uk.apk"
+            cp app-compose/build/outputs/bundle/ukRelease/app-compose-uk-release.aab \
+               "output/release/pws-app-${TAG}-uk.aab"
+          fi
+          if [[ "${{ inputs.flavor_rustore }}" == "true" ]]; then
+            cp app-compose/build/outputs/apk/rustore/release/app-compose-rustore-release.apk \
+               "output/release/pws-app-${TAG}-rustore.apk"
+            cp app-compose/build/outputs/bundle/rustoreRelease/app-compose-rustore-release.aab \
+               "output/release/pws-app-${TAG}-rustore.aab"
+          fi
+          echo "Artifacts ready:"
+          ls -lh output/release/
+
+      # ── E2E tests ─────────────────────────────────────────────────────────
+      - name: Install Maestro
+        if: ${{ inputs.flavor_ru }}
+        run: |
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+
+      - name: E2E — ru (Android emulator, API 34)
+        if: ${{ inputs.flavor_ru }}
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          script: |
+            ./e2e/scripts/run-compose.sh \
+              --apk "output/release/pws-app-${{ inputs.tag }}-ru.apk"
+
+      - name: E2E — uk (not yet implemented)
+        if: ${{ inputs.flavor_uk }}
+        run: echo "::notice::E2E tests for uk flavor are not yet implemented — skipping."
+
+      - name: E2E — rustore (not yet implemented)
+        if: ${{ inputs.flavor_rustore }}
+        run: echo "::notice::E2E tests for rustore flavor are not yet implemented — skipping."
+
+      # ── GitHub Release ────────────────────────────────────────────────────
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TITLE="${{ inputs.release_title }}"
+          if [[ -z "$TITLE" ]]; then
+            TITLE="${{ inputs.tag }}"
+          fi
+          gh release create "${{ inputs.tag }}" \
+            --title "$TITLE" \
+            --verify-tag \
+            output/release/*
+          echo "✅ Release '$TITLE' created: https://github.com/${{ github.repository }}/releases/tag/${{ inputs.tag }}"
+

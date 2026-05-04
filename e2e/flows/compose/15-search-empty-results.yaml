@@ -1,0 +1,33 @@
+appId: ${APP_ID}
+name: "15 - Search: empty results state"
+---
+# Submits a query that is guaranteed to return zero results
+# and verifies the app shows an empty state without crashing.
+
+- launchApp:
+    clearState: false
+
+- tapOn:
+    id: "${NAV_SEARCH}"
+
+- extendedWaitUntil:
+    visible:
+      id: "${FIELD_SEARCH}"
+    timeout: 10000
+
+- tapOn:
+    id: "${FIELD_SEARCH}"
+
+- waitForAnimationToEnd
+- inputText: "zzz999"
+- pressKey: Enter
+
+- waitForAnimationToEnd
+- waitForAnimationToEnd
+
+- takeScreenshot: "15-empty-results"
+
+# Verify no song rows are visible (empty state, no crash)
+- assertNotVisible:
+    id: "${SONG_ITEM_ONE}"
+

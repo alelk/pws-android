@@ -42,6 +42,26 @@ Specify [app version](app.version).
 ./gradlew :domain:publishToMavenLocal :domain:domain-test-fixtures:publishToMavenLocal
 ```
 
+#### Local APK smoke E2E (Maestro)
+
+Black-box smoke tests for ready local APK are in `e2e/`.
+
+```shell
+chmod +x ./e2e/scripts/run-local.sh
+./e2e/scripts/run-local.sh --flavor ru
+```
+
+Details and troubleshooting: `e2e/README.md`
+
+## License
+
+This project is licensed under the **PolyForm Noncommercial License 1.0.0**. 
+
+- **Non-commercial use only**: You are free to use, modify, and distribute this software for personal, educational, or other non-commercial purposes.
+- **Commercial use**: Any commercial use requires a separate license from the author. If you are interested in using PWS Android for commercial purposes, please contact the maintainers.
+
+See the [LICENSE.md](LICENSE.md) file for the full text.
+
 ## Contributors ✨
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):

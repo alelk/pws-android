@@ -1,0 +1,32 @@
+appId: ${APP_ID}
+name: "01 - App launch and navigation ready"
+---
+# Verify the app starts without crash and all navigation tabs are reachable.
+# Fully locale-independent: all selectors use stable contentDescription routes.
+
+- launchApp:
+    clearState: false
+
+# Wait for the home screen to settle (books grid loads from Room).
+- extendedWaitUntil:
+    visible:
+      id: "${NAV_HOME}"
+    timeout: 20000
+
+# All nav tabs must be present in the accessibility tree.
+- assertVisible:
+    id: "${NAV_HOME}"
+- assertVisible:
+    id: "${NAV_SEARCH}"
+- assertVisible:
+    id: "${NAV_BOOKS}"
+- assertVisible:
+    id: "${NAV_TAGS}"
+- assertVisible:
+    id: "${NAV_FAVORITES}"
+- assertVisible:
+    id: "${NAV_HISTORY}"
+
+- takeScreenshot: "01-app-launch-home"
+
+

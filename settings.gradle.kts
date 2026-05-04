@@ -1,7 +1,8 @@
 rootProject.name = "pws-android"
 include(
   ":data:db-android",
-  ":app"
+  ":app",
+  ":app-compose"
 )
 
 pluginManagement {
@@ -40,6 +41,10 @@ if (localCoreDir.exists() && localCoreDir.isDirectory) {
         .using(project(":data:repo-room"))
       substitute(module("io.github.alelk.pws.data:db-room-test-fixtures"))
         .using(project(":data:db-room:db-room-test-fixtures"))
+      substitute(module("io.github.alelk.pws.features:features"))
+        .using(project(":features"))
+      substitute(module("io.github.alelk.pws.core:core-navigation"))
+        .using(project(":core:navigation"))
     }
   }
 } else {
