@@ -160,23 +160,9 @@ jobs:
           ls -lh output/release/
 
       # ── E2E tests ─────────────────────────────────────────────────────────
-      - name: Install Maestro
+      - name: E2E — ru (not yet stable in CI without KVM)
         if: ${{ inputs.flavor_ru }}
-        run: |
-          curl -Ls "https://get.maestro.mobile.dev" | bash
-          echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
-
-      - name: E2E — ru (Android emulator, API 34)
-        if: ${{ inputs.flavor_ru }}
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 34
-          target: google_apis
-          arch: x86_64
-          profile: pixel_6
-          script: |
-            ./e2e/scripts/run-compose.sh \
-              --apk "output/release/pws-app-${{ inputs.tag }}-ru.apk"
+        run: echo "::notice::E2E tests for ru flavor require KVM — skipping in this runner."
 
       - name: E2E — uk (not yet implemented)
         if: ${{ inputs.flavor_uk }}
