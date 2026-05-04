@@ -10,10 +10,12 @@ import io.github.alelk.pws.data.repository.room.book.BookObserveRepositoryImpl
 import io.github.alelk.pws.data.repository.room.bookstatistic.BookStatisticRepositoryImpl
 import io.github.alelk.pws.database.PwsDatabase
 import io.github.alelk.pws.database.PwsDatabaseProvider
+import io.github.alelk.pws.data.repository.room.transaction.RoomTransactionRunner
 import io.github.alelk.pws.domain.book.repository.BookObserveRepository
 import io.github.alelk.pws.domain.book.usecase.ObserveBooksUseCase
 import io.github.alelk.pws.domain.bookstatistic.repository.BookStatisticRepository
 import io.github.alelk.pws.domain.bookstatistic.usecase.UpdateBookStatisticUseCase
+import io.github.alelk.pws.domain.core.transaction.TransactionRunner
 import javax.inject.Singleton
 
 @Module
@@ -31,10 +33,17 @@ object AppModule {
   fun provideBookStatisticRepository(database: PwsDatabase): BookStatisticRepository = BookStatisticRepositoryImpl(database.bookStatisticDao())
 
   @Provides
+  @Singleton
+  fun provideTransactionRunner(database: PwsDatabase): TransactionRunner = RoomTransactionRunner(database)
+
+  @Provides
   fun provideObserveBooksUseCase(bookRepository: BookObserveRepository): ObserveBooksUseCase = ObserveBooksUseCase(bookRepository)
 
   @Provides
-  fun provideUpdateBookStatisticUseCase(bookStatisticRepository: BookStatisticRepository): UpdateBookStatisticUseCase =
-    UpdateBookStatisticUseCase(bookStatisticRepository)
+  fun provideUpdateBookStatisticUseCase(
+    bookStatisticRepository: BookStatisticRepository,
+    txRunner: TransactionRunner
+  ): UpdateBookStatisticUseCase =
+    UpdateBookStatisticUseCase(bookStatisticRepository, txRunner)
 
 }
