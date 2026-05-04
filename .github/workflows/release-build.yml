@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Release tag (e.g. v2.4.0)'
+        description: 'Release tag (e.g. v2.4.0-rc.3)'
         required: true
         type: string
       flavor_ru:
@@ -96,7 +96,7 @@ jobs:
           ./gradlew :app-compose:assembleRuRelease :app-compose:bundleRuRelease \
             -Pandroid.release.keystorePath=/tmp/release.jks \
             -Pandroid.release.storePassword="${{ secrets.RELEASE_STORE_PASSWORD }}" \
-            -Pandroid.release.keyAliasRu="${{ secrets.RELEASE_KEY_ALIAS_RU }}" \
+            -Pandroid.release.keyAliasRu="pws" \
             -Pandroid.release.keyPassword="${{ secrets.RELEASE_KEY_PASSWORD }}"
 
       - name: Build uk Release
@@ -105,7 +105,7 @@ jobs:
           ./gradlew :app-compose:assembleUkRelease :app-compose:bundleUkRelease \
             -Pandroid.release.keystorePath=/tmp/release.jks \
             -Pandroid.release.storePassword="${{ secrets.RELEASE_STORE_PASSWORD }}" \
-            -Pandroid.release.keyAliasUk="${{ secrets.RELEASE_KEY_ALIAS_UK }}" \
+            -Pandroid.release.keyAliasUk="pws-uk" \
             -Pandroid.release.keyPassword="${{ secrets.RELEASE_KEY_PASSWORD }}"
 
       - name: Build rustore Release
@@ -114,7 +114,7 @@ jobs:
           ./gradlew :app-compose:assembleRustoreRelease :app-compose:bundleRustoreRelease \
             -Pandroid.release.keystorePathRustore=/tmp/rustore.jks \
             -Pandroid.release.storePasswordRustore="${{ secrets.RELEASE_STORE_PASSWORD_RUSTORE }}" \
-            -Pandroid.release.keyAliasRuRustore="${{ secrets.RELEASE_KEY_ALIAS_RUSTORE }}" \
+            -Pandroid.release.keyAliasRuRustore="pws" \
             -Pandroid.release.keyPasswordRustore="${{ secrets.RELEASE_KEY_PASSWORD_RUSTORE }}"
 
       # ── Collect & rename artifacts ────────────────────────────────────────
