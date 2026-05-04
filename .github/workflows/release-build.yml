@@ -80,6 +80,26 @@ jobs:
       # ── Fetch DB assets ───────────────────────────────────────────────────
       # GH_TOKEN must be a PAT with 'Contents: Read' on the private alelk/pws-docs repo.
       # Store the PAT as secret PWS_DOCS_TOKEN in this repository's settings.
+
+      # Verify the token has access before attempting downloads
+      - name: Verify PWS_DOCS_TOKEN access
+        env:
+          GH_TOKEN: ${{ secrets.PWS_DOCS_TOKEN }}
+        run: |
+          http_code=$(curl -s -o /dev/null -w "%{http_code}" \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/alelk/pws-docs")
+          echo "API response for alelk/pws-docs: HTTP ${http_code}"
+          if [[ "${http_code}" != "200" ]]; then
+            echo "::error::PWS_DOCS_TOKEN cannot access alelk/pws-docs (HTTP ${http_code})."
+            echo "::error::Create a Fine-grained PAT: Settings → Developer settings → Personal access tokens → Fine-grained"
+            echo "::error::  Resource owner: alelk | Repository: pws-docs | Permission: Contents = Read-only"
+            echo "::error::Save it as repository secret PWS_DOCS_TOKEN in pws-android settings."
+            exit 1
+          fi
+          echo "✅ Token has access to alelk/pws-docs"
+
       - name: Fetch DB — ru
         if: ${{ inputs.flavor_ru }}
         env:

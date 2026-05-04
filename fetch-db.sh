@@ -114,14 +114,24 @@ download_and_extract() {
         exit 1
       fi
       echo "  Resolving asset ${zip_name}.zip via GitHub REST API ..."
+      local release_url="https://api.github.com/repos/${GH_REPO}/releases/tags/v${DB_VERSION}"
+      local http_code release_json
+      release_json=$(mktemp)
+      http_code=$(curl -sL \
+        -H "Authorization: Bearer ${AUTH_TOKEN}" \
+        -H "Accept: application/vnd.github+json" \
+        -o "${release_json}" -w "%{http_code}" \
+        "${release_url}")
+      if [[ "${http_code}" != "200" ]]; then
+        echo "ERROR: GitHub API returned HTTP ${http_code} for ${release_url}" >&2
+        echo "  Response: $(cat "${release_json}")" >&2
+        echo "  Check that GH_TOKEN / PWS_DOCS_TOKEN is a valid PAT with read access to ${GH_REPO}." >&2
+        rm -f "${release_json}"
+        exit 1
+      fi
       local asset_url
-      asset_url=$(
-        curl -fsSL \
-          -H "Authorization: Bearer ${AUTH_TOKEN}" \
-          -H "Accept: application/vnd.github+json" \
-          "https://api.github.com/repos/${GH_REPO}/releases/tags/v${DB_VERSION}" \
-        | jq -r ".assets[] | select(.name == \"${zip_name}.zip\") | .url"
-      )
+      asset_url=$(jq -r ".assets[] | select(.name == \"${zip_name}.zip\") | .url" < "${release_json}")
+      rm -f "${release_json}"
       if [[ -z "${asset_url}" || "${asset_url}" == "null" ]]; then
         echo "ERROR: Asset '${zip_name}.zip' not found in release v${DB_VERSION} of ${GH_REPO}" >&2
         exit 1
