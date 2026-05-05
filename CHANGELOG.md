@@ -1,5 +1,12 @@
 # PWS Android
 
+# [3.1.0-rc.1](https://github.com/alelk/pws-android/compare/v3.0.1...v3.1.0-rc.1) (2026-05-05)
+
+
+### Features
+
+* add donation prompt feature with UI components and logic ([2187d06](https://github.com/alelk/pws-android/commit/2187d0687612218e8c5b1f40d11a690c4a8cae4c))
+
 ## [3.0.1](https://github.com/alelk/pws-android/compare/v3.0.0...v3.0.1) (2026-05-04)
 
 
