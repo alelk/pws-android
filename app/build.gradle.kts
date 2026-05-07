@@ -117,7 +117,7 @@ dependencies {
   implementation(project(":data:db-android"))
   implementation(libs.pws.repoRoom)
   implementation(libs.pws.dbRoom)
-  implementation(libs.pws.backup)
+  implementation(libs.pws.portableData)
 
   implementation(libs.preference.ktx)
   implementation(libs.lifecycle.viewmodel.ktx)

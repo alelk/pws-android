@@ -1,6 +1,6 @@
 [versions]
 
-pws = "2.27.0-rc.2"
+pws = "2.27.0"
 
 android-application = "9.1.1"
 kotlin = "2.3.21"
@@ -40,7 +40,7 @@ pws-domain = { module = "io.github.alelk.pws.domain:domain", version.ref = "pws"
 pws-dbRoom = { module = "io.github.alelk.pws.data:db-room", version.ref = "pws" }
 pws-dbRoomTestFixtures = { module = "io.github.alelk.pws.data:db-room-test-fixtures", version.ref = "pws" }
 pws-repoRoom = { module = "io.github.alelk.pws.data:repo-room", version.ref = "pws" }
-pws-backup = { module = "io.github.alelk.pws.backup:backup", version.ref = "pws" }
+pws-portableData = { module = "io.github.alelk.pws.portable:portable-data", version.ref = "pws" }
 
 pws-features = { module = "io.github.alelk.pws.features:features", version.ref = "pws" }
 # Android

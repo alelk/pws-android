@@ -7,11 +7,11 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.alelk.pws.android.app.feature.preference.AppPreferenceKeys
 import io.github.alelk.pws.android.app.core.theme.AppTheme
-import io.github.alelk.pws.backup.model.Backup
-import io.github.alelk.pws.backup.model.BookPreference
-import io.github.alelk.pws.backup.model.Song
-import io.github.alelk.pws.backup.model.SongNumber
-import io.github.alelk.pws.backup.model.Tag
+import io.github.alelk.pws.portable.model.Backup
+import io.github.alelk.pws.portable.model.BookPreference
+import io.github.alelk.pws.portable.model.Song
+import io.github.alelk.pws.portable.model.SongNumber
+import io.github.alelk.pws.portable.model.Tag
 import io.github.alelk.pws.database.BuildConfig
 import io.github.alelk.pws.database.PwsDatabase
 import io.github.alelk.pws.database.song_tag.SongTagEntity
