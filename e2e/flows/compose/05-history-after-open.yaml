@@ -28,6 +28,13 @@ name: "05 - History recorded after opening song"
       id: "${ACTION_TOGGLE_FAVORITE}"
     timeout: 15000
 
+# Wait for the 5-second view-time threshold to be satisfied.
+- extendedWaitUntil:
+    visible:
+      id: "___never_exists___"
+    timeout: 6000
+    optional: true
+
 # Go back to main navigation.
 - back
 - back

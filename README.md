@@ -1,4 +1,3 @@
-
 [![GitHub release](https://img.shields.io/github/v/release/alelk/pws-android?include_prereleases&label=version)](https://github.com/alelk/pws-android/releases)
 [![GitHub Packages](https://img.shields.io/badge/maven-GitHub%20Packages-blue)](https://github.com/alelk/pws-android/packages)
 
@@ -10,6 +9,8 @@
 
 | Date       | Tag                                                                  | UK Release                 | RU Release                               |
 |------------|----------------------------------------------------------------------|----------------------------|------------------------------------------|
+| 2026-05-04 | [v3.0.1](https://github.com/alelk/pws-android/releases/tag/v3.0.1)   | -                          | 40 (3.0.1-may-4-2026)                    |
+| 2026-03-28 | [v2.3.1](https://github.com/alelk/pws-android/releases/tag/v2.3.1)   | -                          | 39 (2.3.1-mar-28-2026)                   |
 | 2025-03-02 | [v2.1.0](https://github.com/alelk/pws-android/releases/tag/v2.1.0)   | -                          | 36 (2.1.0-mar-18-2025)                   |
 | 2025-03-02 | [v2.0.2](https://github.com/alelk/pws-android/releases/tag/v2.0.2)   | 35 (2.0.2-mar-2-2025-uk)   | 35 (2.0.2-mar-2-2025)                    |
 | 2025-02-16 | [v1.15.0](https://github.com/alelk/pws-android/releases/tag/v1.15.0) | 32 (1.15.0-feb-16-2025-uk) | 32 (1.15.0-feb-16-2025)                  |
@@ -30,7 +31,6 @@
 | 2017-06-16 |                                                                      | 11 (1.1.1-jun-16-2017-uk)  |                                          |
 | 2017-03-14 |                                                                      |                            | 10 (1.1.0-mar-14-2017)                   |
 | 2016-12-28 |                                                                      |                            | 5 (1.0.2-dec-28-2016)                    |
-
 
 ## Development
 
@@ -55,10 +55,12 @@ Details and troubleshooting: `e2e/README.md`
 
 ## License
 
-This project is licensed under the **PolyForm Noncommercial License 1.0.0**. 
+This project is licensed under the **PolyForm Noncommercial License 1.0.0**.
 
-- **Non-commercial use only**: You are free to use, modify, and distribute this software for personal, educational, or other non-commercial purposes.
-- **Commercial use**: Any commercial use requires a separate license from the author. If you are interested in using PWS Android for commercial purposes, please contact the maintainers.
+- **Non-commercial use only**: You are free to use, modify, and distribute this software for
+  personal, educational, or other non-commercial purposes.
+- **Commercial use**: Any commercial use requires a separate license from the author. If you are
+  interested in using PWS Android for commercial purposes, please contact the maintainers.
 
 See the [LICENSE.md](LICENSE.md) file for the full text.
 
@@ -82,4 +84,5 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors)
+specification. Contributions of any kind welcome!

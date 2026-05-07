@@ -65,7 +65,8 @@ android {
 
   buildTypes {
     getByName("release") {
-      isMinifyEnabled = false
+      isMinifyEnabled = true
+      isShrinkResources = true
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
       productFlavors.getByName("ru").signingConfig = signingConfigs.getByName("release-ru")
       productFlavors.getByName("full").signingConfig = signingConfigs.getByName("release-ru")
@@ -110,7 +111,7 @@ dependencies {
   implementation(libs.pws.repoRoom)
   implementation(libs.pws.dbRoom)
   implementation(libs.pws.domain)
-  implementation(libs.pws.backup)
+  implementation(libs.pws.portableData)
 
   // local db provider from :data:db-android
   implementation(project(":data:db-android"))

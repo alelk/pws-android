@@ -13,7 +13,7 @@ import androidx.preference.PreferenceFragmentCompat
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.alelk.pws.android.app.R
 import io.github.alelk.pws.android.app.feature.backup.BackupViewModel
-import io.github.alelk.pws.backup.BackupService
+import io.github.alelk.pws.portable.BackupService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

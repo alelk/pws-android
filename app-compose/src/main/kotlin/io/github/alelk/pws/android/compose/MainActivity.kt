@@ -19,7 +19,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.lifecycle.lifecycleScope
-import io.github.alelk.pws.backup.BackupService
+import io.github.alelk.pws.portable.BackupService
 import io.github.alelk.pws.database.PwsDatabaseProvider
 import io.github.alelk.pws.features.app.AppRoot
 import io.github.alelk.pws.features.settings.SettingsExternalActions
