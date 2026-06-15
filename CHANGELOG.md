@@ -1,5 +1,12 @@
 # PWS Android
 
+# [3.2.0-rc.4](https://github.com/alelk/pws-android/compare/v3.2.0-rc.3...v3.2.0-rc.4) (2026-06-15)
+
+
+### Bug Fixes
+
+* fix app start issue ([07d4310](https://github.com/alelk/pws-android/commit/07d431059519976579f89830edf8f7dd70081d5f))
+
 # [3.2.0-rc.3](https://github.com/alelk/pws-android/compare/v3.2.0-rc.2...v3.2.0-rc.3) (2026-06-15)
 
 
