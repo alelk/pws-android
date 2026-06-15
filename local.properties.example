@@ -1,0 +1,13 @@
+## local.properties — local developer overrides. DO NOT commit local.properties!
+## Copy this file to local.properties and fill in the values.
+# Android SDK location (required)
+sdk.dir=/Users/yourname/Library/Android/sdk
+# DB decryption keys
+# Required only to build/run RELEASE variants locally.
+# Debug variants use the public debug key embedded in source code.
+# Obtain the prod key from the project maintainer.
+# In CI this is supplied via the DB_DECRYPT_KEY_PROD GitHub Actions secret.
+db.decrypt.key.prod=<hex-encoded-32-byte-key>
+# GitHub Packages auth (to resolve pws-core library)
+gpr.user=your-github-username
+gpr.token=ghp_your_pat_with_read_packages_scope

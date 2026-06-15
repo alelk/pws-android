@@ -78,9 +78,13 @@ jobs:
         run: |
           echo "${{ secrets.RELEASE_KEYSTORE_RUSTORE_BASE64 }}" | base64 --decode > /tmp/rustore.jks
 
-      # ── Fetch DB assets ───────────────────────────────────────────────────
+      # ── Fetch DB assets ───────────────────────────────────────────────────────
       # GH_TOKEN must be a PAT with 'Contents: Read' on the private alelk/pws-docs repo.
       # Store the PAT as secret PWS_DOCS_TOKEN in this repository's settings.
+      #
+      # DB_DECRYPT_KEY_PROD — prod decryption key for *.dbz.enc release assets.
+      # Store as secret DB_DECRYPT_KEY_PROD in this repository's settings.
+      # Debug key is public and embedded in source code (BuildConfig.DB_DECRYPT_KEY).
       - name: Fetch DB — ru
         if: ${{ inputs.flavor_ru }}
         env:
@@ -104,6 +108,7 @@ jobs:
         if: ${{ inputs.flavor_ru }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DB_DECRYPT_KEY_PROD: ${{ secrets.DB_DECRYPT_KEY_PROD }}
         run: |
           ./gradlew :app-compose:assembleRuRelease :app-compose:bundleRuRelease \
             -Pandroid.release.keystorePath=/tmp/release.jks \
@@ -115,6 +120,7 @@ jobs:
         if: ${{ inputs.flavor_uk }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DB_DECRYPT_KEY_PROD: ${{ secrets.DB_DECRYPT_KEY_PROD }}
         run: |
           ./gradlew :app-compose:assembleUkRelease :app-compose:bundleUkRelease \
             -Pandroid.release.keystorePath=/tmp/release.jks \
@@ -126,6 +132,7 @@ jobs:
         if: ${{ inputs.flavor_rustore }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DB_DECRYPT_KEY_PROD: ${{ secrets.DB_DECRYPT_KEY_PROD }}
         run: |
           ./gradlew :app-compose:assembleRustoreRelease :app-compose:bundleRustoreRelease \
             -Pandroid.release.keystorePathRustore=/tmp/rustore.jks \

@@ -1,9 +1,23 @@
-[![GitHub release](https://img.shields.io/github/v/release/alelk/pws-android?include_prereleases&label=version)](https://github.com/alelk/pws-android/releases)
-[![GitHub Packages](https://img.shields.io/badge/maven-GitHub%20Packages-blue)](https://github.com/alelk/pws-android/packages)
+# PWS Android
 
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+The official Android client for the PWS ecosystem.
+
+[![GitHub release](https://img.shields.io/github/v/release/alelk/pws-android?include_prereleases&label=version)](https://github.com/alelk/pws-android/releases)
 [![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
+
+## Project Structure
+- **app-compose** (New): Modern Jetpack Compose-based application. This is the primary development target.
+- **app** (Legacy): Original View-based application (maintenance mode).
+- **pws-core**: Shared business logic and domain models, integrated via Gradle Composite Build.
+
+## Quick Start
+1. **Prerequisite**: Clone [pws-core](https://github.com/alelk/pws-core) into the same parent directory as this repository.
+2. **Open**: Import the project into Android Studio.
+3. **Run**: Select the `app-compose` run configuration with either `ruDebug` or `ukDebug` flavor.
+
+## Documentation
+- **[Agent Guide (AGENTS.md)](AGENTS.md)**: Comprehensive technical guide for AI agents and developers (architecture, patterns, code navigation).
+- **[Release Workflow](docs/release-workflow.md)**: Instructions for CI/CD and manual production builds.
 
 ## App Releases (published on Google Play)
 
@@ -32,42 +46,10 @@
 | 2017-03-14 |                                                                      |                            | 10 (1.1.0-mar-14-2017)                   |
 | 2016-12-28 |                                                                      |                            | 5 (1.0.2-dec-28-2016)                    |
 
-## Development
-
-#### Local maven publication
-
-Specify [app version](app.version).
-
-```shell
-./gradlew :domain:publishToMavenLocal :domain:domain-test-fixtures:publishToMavenLocal
-```
-
-#### Local APK smoke E2E (Maestro)
-
-Black-box smoke tests for ready local APK are in `e2e/`.
-
-```shell
-chmod +x ./e2e/scripts/run-local.sh
-./e2e/scripts/run-local.sh --flavor ru
-```
-
-Details and troubleshooting: `e2e/README.md`
-
 ## License
-
-This project is licensed under the **PolyForm Noncommercial License 1.0.0**.
-
-- **Non-commercial use only**: You are free to use, modify, and distribute this software for
-  personal, educational, or other non-commercial purposes.
-- **Commercial use**: Any commercial use requires a separate license from the author. If you are
-  interested in using PWS Android for commercial purposes, please contact the maintainers.
-
-See the [LICENSE.md](LICENSE.md) file for the full text.
+This project is licensed under the **PolyForm Noncommercial License 1.0.0**. See [LICENSE.md](LICENSE.md) for details.
 
 ## Contributors ✨
-
-Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
-
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
@@ -78,11 +60,6 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     </tr>
   </tbody>
 </table>
-
 <!-- markdownlint-restore -->
 <!-- prettier-ignore-end -->
-
 <!-- ALL-CONTRIBUTORS-LIST:END -->
-
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors)
-specification. Contributions of any kind welcome!
