@@ -45,6 +45,10 @@
 -keep class androidx.security.crypto.** { *; }
 -dontwarn androidx.security.crypto.**
 
+# Google Tink (transitive dep of security-crypto) references javax.annotation which is not bundled
+-dontwarn javax.annotation.**
+-dontwarn javax.annotation.concurrent.**
+
 # PWS — keep domain/features/portable but NOT database.BuildConfig (let R8 inline DB_DECRYPT_KEY)
 -keep class io.github.alelk.pws.domain.** { *; }
 -keep class io.github.alelk.pws.features.** { *; }
