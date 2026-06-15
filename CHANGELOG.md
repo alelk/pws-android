@@ -1,5 +1,13 @@
 # PWS Android
 
+# [3.2.0-rc.1](https://github.com/alelk/pws-android/compare/v3.1.0...v3.2.0-rc.1) (2026-06-15)
+
+
+### Features
+
+* implement data protection ([e25cd6a](https://github.com/alelk/pws-android/commit/e25cd6a497d290e9f2c21d700fb119f2e4b218dc))
+* implement data protection ([1920682](https://github.com/alelk/pws-android/commit/1920682a21f425ffe69af7dd450536361f8fafb5))
+
 # [3.1.0](https://github.com/alelk/pws-android/compare/v3.0.1...v3.1.0) (2026-05-07)
 
 
