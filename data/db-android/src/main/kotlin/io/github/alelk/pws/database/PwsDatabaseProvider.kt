@@ -14,6 +14,8 @@ object PwsDatabaseProvider {
   fun getDatabase(context: Context): PwsDatabase = INSTANCE ?: synchronized(this) {
     if (BuildConfig.DEBUG) Timber.plant(Timber.DebugTree())
 
+    System.loadLibrary("sqlcipher")
+
     val passphrase = KeyManager.getOrCreatePassphrase(context)
 
     // Copy and encrypt database from asset on the first app start

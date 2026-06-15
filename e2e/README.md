@@ -61,45 +61,45 @@ stable `contentDescription` values added to `pws-core/features`, not localized t
 
 ### How locale-independence works
 
-| Element | Selector | Where set |
-|---|---|---|
-| Nav tabs | `contentDescription = destination.route` (`"home"`, `"search"`, …) | `NavigationBar.kt` |
-| Favorite FAB | `contentDescription = "action:toggle-favorite"` | `SongDetailScreen.kt` |
-| More actions menu | `contentDescription = "action:more-actions"` | `SongDetailScreen.kt` |
-| Edit song action | `contentDescription = "action:edit-song"` | `SongDetailScreen.kt` |
-| Edit tags action | `contentDescription = "action:edit-tags"` | `SongDetailScreen.kt` |
-| Save button | `contentDescription = "action:save"` | `SongEditScreen.kt` |
-| Add tag FAB | `contentDescription = "action:add-tag"` | `TagsScreen.kt` |
-| Search field | `contentDescription = "field:search"` | `SearchField.kt` |
-| Song list rows | `contentDescription = "Song number N"` | `SongListItem.kt` (pre-existing) |
-| **Settings icon** | `.testTag("action:open-settings")` | `HomeScreen.kt`, `HistoryScreen.kt`, `FavoritesScreen.kt`, `SearchScreen.kt`, `TagsScreen.kt` |
-| **Number search chip** | `.testTag("action:number-search")` | `HomeScreen.kt` (`QuickActionsRow`) |
-| **Text search chip** | `.testTag("action:text-search")` | `HomeScreen.kt` (`QuickActionsRow`) |
-| **Home search field** | `.testTag("field:home-search")` | `SearchBarWithSuggestions.kt` |
-| **Home suggestion N** | `.testTag("home-suggestion-N")` | `SearchBarWithSuggestions.kt` |
-| **Number input field** | `.testTag("field:number-input")` | `NumberInputModal.kt` |
-| **Number suggestion N** | `.testTag("number-suggestion-N")` | `NumberInputModal.kt` |
-| **Clear history button** | `.testTag("action:clear-history")` | `HistoryScreen.kt` |
-| **Confirm clear dialog** | `.testTag("action:confirm-clear-history")` | `HistoryScreen.kt` (`ClearHistoryDialog`) |
-| Tag list rows | `.testTag("tag-row-{name}")` | `TagsScreen.kt` (`TagListItem`) |
+| Element                  | Selector                                                           | Where set                                                                                     |
+|--------------------------|--------------------------------------------------------------------|-----------------------------------------------------------------------------------------------|
+| Nav tabs                 | `contentDescription = destination.route` (`"home"`, `"search"`, …) | `NavigationBar.kt`                                                                            |
+| Favorite FAB             | `contentDescription = "action:toggle-favorite"`                    | `SongDetailScreen.kt`                                                                         |
+| More actions menu        | `contentDescription = "action:more-actions"`                       | `SongDetailScreen.kt`                                                                         |
+| Edit song action         | `contentDescription = "action:edit-song"`                          | `SongDetailScreen.kt`                                                                         |
+| Edit tags action         | `contentDescription = "action:edit-tags"`                          | `SongDetailScreen.kt`                                                                         |
+| Save button              | `contentDescription = "action:save"`                               | `SongEditScreen.kt`                                                                           |
+| Add tag FAB              | `contentDescription = "action:add-tag"`                            | `TagsScreen.kt`                                                                               |
+| Search field             | `contentDescription = "field:search"`                              | `SearchField.kt`                                                                              |
+| Song list rows           | `contentDescription = "Song number N"`                             | `SongListItem.kt` (pre-existing)                                                              |
+| **Settings icon**        | `.testTag("action:open-settings")`                                 | `HomeScreen.kt`, `HistoryScreen.kt`, `FavoritesScreen.kt`, `SearchScreen.kt`, `TagsScreen.kt` |
+| **Number search chip**   | `.testTag("action:number-search")`                                 | `HomeScreen.kt` (`QuickActionsRow`)                                                           |
+| **Text search chip**     | `.testTag("action:text-search")`                                   | `HomeScreen.kt` (`QuickActionsRow`)                                                           |
+| **Home search field**    | `.testTag("field:home-search")`                                    | `SearchBarWithSuggestions.kt`                                                                 |
+| **Home suggestion N**    | `.testTag("home-suggestion-N")`                                    | `SearchBarWithSuggestions.kt`                                                                 |
+| **Number input field**   | `.testTag("field:number-input")`                                   | `NumberInputModal.kt`                                                                         |
+| **Number suggestion N**  | `.testTag("number-suggestion-N")`                                  | `NumberInputModal.kt`                                                                         |
+| **Clear history button** | `.testTag("action:clear-history")`                                 | `HistoryScreen.kt`                                                                            |
+| **Confirm clear dialog** | `.testTag("action:confirm-clear-history")`                         | `HistoryScreen.kt` (`ClearHistoryDialog`)                                                     |
+| Tag list rows            | `.testTag("tag-row-{name}")`                                       | `TagsScreen.kt` (`TagListItem`)                                                               |
 
 Search query `"1"` is used because it is numeric and guaranteed to return results in every flavour.
 
 ### Flow catalogue
 
-| File | Type | What it tests |
-|---|---|---|
-| `01-app-launch.yaml` | smoke | launch, all nav tabs visible |
-| `02-search-basic.yaml` | smoke | search "1" → results → open song |
-| `03-song-detail-actions.yaml` | smoke | open song, verify actions sheet |
-| `04-favorites-add-verify.yaml` | mutation | add favorite → verify in Favorites tab |
-| `05-history-after-open.yaml` | diagnostic | history recorded after opening song (run separately while stabilizing) |
-| `06-tags-create-assign.yaml` | mutation | create tag → assign to song |
-| `07-song-edit-title.yaml` | mutation | edit song title → verify |
-| `08-navigation-tabs.yaml` | smoke | all 6 nav tabs open without error |
-| `09-books-to-song.yaml` | smoke | Books → book song list → open song |
-| `suite.yaml` | smoke bundle | flows 01 02 03 08 09 (read-only) |
-| `suite-full.yaml` | full bundle | flows 01 02 03 04 06 07 08 09 |
+| File                           | Type         | What it tests                                                          |
+|--------------------------------|--------------|------------------------------------------------------------------------|
+| `01-app-launch.yaml`           | smoke        | launch, all nav tabs visible                                           |
+| `02-search-basic.yaml`         | smoke        | search "1" → results → open song                                       |
+| `03-song-detail-actions.yaml`  | smoke        | open song, verify actions sheet                                        |
+| `04-favorites-add-verify.yaml` | mutation     | add favorite → verify in Favorites tab                                 |
+| `05-history-after-open.yaml`   | diagnostic   | history recorded after opening song (run separately while stabilizing) |
+| `06-tags-create-assign.yaml`   | mutation     | create tag → assign to song                                            |
+| `07-song-edit-title.yaml`      | mutation     | edit song title → verify                                               |
+| `08-navigation-tabs.yaml`      | smoke        | all 6 nav tabs open without error                                      |
+| `09-books-to-song.yaml`        | smoke        | Books → book song list → open song                                     |
+| `suite.yaml`                   | smoke bundle | flows 01 02 03 08 09 (read-only)                                       |
+| `suite-full.yaml`              | full bundle  | flows 01 02 03 04 06 07 08 09                                          |
 
 ### Prerequisites
 
