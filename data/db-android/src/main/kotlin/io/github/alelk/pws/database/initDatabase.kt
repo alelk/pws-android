@@ -38,7 +38,9 @@ internal fun initDatabase(context: Context, passphrase: ByteArray) {
 
   val am = context.assets
   val dbFolder = checkNotNull(dbFile.parentFile) { "cannot resolve parent dir of $dbFile" }
-  if (!dbFolder.exists()) dbFolder.mkdirs()
+  if (!dbFolder.exists()) {
+    check(dbFolder.mkdirs() || dbFolder.exists()) { "failed to create database dir $dbFolder" }
+  }
 
   val fileList = checkNotNull(am.list(ASSETS_DB_FOLDER)) { "no files in assets/$ASSETS_DB_FOLDER" }
   // DB_ASSET_VERSION = book-content version from db.version (e.g. 3.2.2).
@@ -66,15 +68,17 @@ internal fun initDatabase(context: Context, passphrase: ByteArray) {
     FileOutputStream(tmpFile).use { it.write(dbBytes) }
 
     Timber.i("encrypting → $dbFile via sqlcipher_export ...")
-    val passphraseStr = passphrase.toString(Charsets.UTF_8)
-    // Open the plain temp file with SQLCipher using empty key (plain mode)
-    val tmpDb = SQLCipherDatabase.openDatabase(tmpFile.absolutePath, ByteArray(0), null, SQLCipherDatabase.OPEN_READWRITE, null)
+    // Open (create) the encrypted destination DB with the SQLCipher key, then ATTACH the plain
+    // temp DB with empty KEY '' and copy data with sqlcipher_export(target, source).
+    // This direction is the canonical pattern and avoids issues with opening a plain SQLite file
+    // through the SQLCipher binding.
+    val destDb = SQLCipherDatabase.openOrCreateDatabase(dbFile, passphrase, null, null)
     try {
-      tmpDb.execSQL("ATTACH DATABASE '${dbFile.absolutePath}' AS encrypted KEY '$passphraseStr'")
-      tmpDb.execSQL("SELECT sqlcipher_export('encrypted')")
-      tmpDb.execSQL("DETACH DATABASE encrypted")
+      destDb.execSQL("ATTACH DATABASE '${tmpFile.absolutePath}' AS plaintext KEY ''")
+      destDb.execSQL("SELECT sqlcipher_export('main', 'plaintext')")
+      destDb.execSQL("DETACH DATABASE plaintext")
     } finally {
-      tmpDb.close()
+      destDb.close()
     }
   } catch (e: Exception) {
     Timber.e(e, "failed to initialise database from asset $encAsset: ${e.message}")
