@@ -3,7 +3,7 @@ package io.github.alelk.pws.database
 import android.content.Context
 import io.github.alelk.pws.database.PwsDatabaseProvider.DATABASE_NAME
 import io.github.alelk.pws.portable.serialization.BundleCrypto
-import io.github.alelk.pws.portable.serialization.ungzip
+import java.util.zip.GZIPInputStream
 import net.zetetic.database.sqlcipher.SQLiteDatabase as SQLCipherDatabase
 import timber.log.Timber
 import java.io.File
@@ -60,7 +60,7 @@ internal fun initDatabase(context: Context, passphrase: ByteArray) {
     val gzippedDb = BundleCrypto.decrypt(encBytes, masterKey)
 
     Timber.i("decompressing gzip → temp file ...")
-    val dbBytes = ungzip(gzippedDb)
+    val dbBytes = GZIPInputStream(gzippedDb.inputStream()).use { it.readBytes() }
     FileOutputStream(tmpFile).use { it.write(dbBytes) }
 
     Timber.i("encrypting → $dbFile via sqlcipher_export ...")
