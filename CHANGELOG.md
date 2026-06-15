@@ -1,5 +1,12 @@
 # PWS Android
 
+# [3.2.0-rc.3](https://github.com/alelk/pws-android/compare/v3.2.0-rc.2...v3.2.0-rc.3) (2026-06-15)
+
+
+### Features
+
+* update database ([cf8e219](https://github.com/alelk/pws-android/commit/cf8e219f003cd0824e11546bf4c0506f8358fed9))
+
 # [3.2.0-rc.2](https://github.com/alelk/pws-android/compare/v3.2.0-rc.1...v3.2.0-rc.2) (2026-06-15)
 
 
