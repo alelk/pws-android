@@ -41,7 +41,9 @@ internal fun initDatabase(context: Context, passphrase: ByteArray) {
   if (!dbFolder.exists()) dbFolder.mkdirs()
 
   val fileList = checkNotNull(am.list(ASSETS_DB_FOLDER)) { "no files in assets/$ASSETS_DB_FOLDER" }
-  val expectedSuffix = "-${PwsDatabaseProvider.DB_VERSION}.dbz.enc"
+  // DB_ASSET_VERSION = book-content version from db.version (e.g. 3.2.2).
+  // Distinct from PwsDatabaseProvider.DB_VERSION (app-side encrypted DB filename, e.g. 3.3.0).
+  val expectedSuffix = "-${BuildConfig.DB_ASSET_VERSION}.dbz.enc"
   val encAsset = fileList.firstOrNull { it.endsWith(expectedSuffix) }
     ?: error(
       "no asset matching *$expectedSuffix found in assets/$ASSETS_DB_FOLDER " +

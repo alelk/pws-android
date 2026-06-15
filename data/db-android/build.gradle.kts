@@ -24,6 +24,10 @@ val dbDecryptKeyDebug = "7b4cabf2662f9f7ffab9e916fdd0d64a184a70c7cd5f585cf89501c
 // Prod key — loaded from env/local.properties, never hardcoded.
 val dbDecryptKeyProd: String = localOrEnv("db.decrypt.key.prod", "DB_DECRYPT_KEY_PROD") ?: ""
 
+// Asset version — tracks the book-content version in pws-docs releases (db.version file).
+// Decoupled from PwsDatabaseProvider.DB_VERSION (app-side DB filename, changes with schema bumps).
+val dbAssetVersion: String = rootProject.file("db.version").readText().trim()
+
 // XOR-obfuscate the hex key so its literal string does not appear in the DEX.
 // Returns a pair (maskedField, maskField) as Java byte-array initialiser literals.
 // The mask is freshly random on every Gradle invocation — each APK build gets different bytes.
@@ -43,6 +47,8 @@ android {
     minSdk = 23
     buildConfigField("String", "DB_AUTHORITY", "\"com.alelk.pws.database\"")
     resValue("string", "db_authority", "com.alelk.pws.database")
+    // Version of the .dbz.enc asset in pws-docs — may differ from DB_VERSION (app-side DB name).
+    buildConfigField("String", "DB_ASSET_VERSION", "\"$dbAssetVersion\"")
   }
 
   buildFeatures {
