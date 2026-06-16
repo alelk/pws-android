@@ -75,7 +75,9 @@ internal fun initDatabase(context: Context, passphrase: ByteArray) {
     val destDb = SQLCipherDatabase.openOrCreateDatabase(dbFile, passphrase, null, null)
     try {
       destDb.execSQL("ATTACH DATABASE '${tmpFile.absolutePath}' AS plaintext KEY ''")
-      destDb.execSQL("SELECT sqlcipher_export('main', 'plaintext')")
+      // sqlcipher_export() is a function that returns rows, so it must be executed via rawQuery,
+      // not execSQL (which only accepts non-result statements).
+      destDb.rawQuery("SELECT sqlcipher_export('main', 'plaintext')", null).use { it.moveToFirst() }
       destDb.execSQL("DETACH DATABASE plaintext")
     } finally {
       destDb.close()
