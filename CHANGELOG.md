@@ -1,5 +1,12 @@
 # PWS Android
 
+# [3.2.0-rc.6](https://github.com/alelk/pws-android/compare/v3.2.0-rc.5...v3.2.0-rc.6) (2026-06-16)
+
+
+### Bug Fixes
+
+* fix db init issue ([6caf344](https://github.com/alelk/pws-android/commit/6caf344c356b80bf678efcc2520ee0e22bc30c20))
+
 # [3.2.0-rc.5](https://github.com/alelk/pws-android/compare/v3.2.0-rc.4...v3.2.0-rc.5) (2026-06-15)
 
 
