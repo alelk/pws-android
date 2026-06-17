@@ -1,0 +1,19 @@
+appId: ${APP_ID}
+name: "_helper: open song #1 and dwell for HistoryRecorder"
+---
+# Reusable subflow. Opens song #1 via search, dwells past the 5s view-time
+# threshold of HistoryRecorder so the song is persisted into history,
+# then navigates back to the root.
+
+- runFlow: open-song-1-via-search.yaml
+
+# Maestro has no native sleep — extendedWaitUntil on a guaranteed-absent id
+# with optional:true is the community idiom for a timed wait.
+- extendedWaitUntil:
+    visible:
+      id: "__sleep_anchor__"
+    timeout: ${TIMEOUT_HISTORY_DWELL}
+    optional: true
+
+- back
+- back

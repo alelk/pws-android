@@ -1,62 +1,29 @@
 appId: ${APP_ID}
 name: "05 - History recorded after opening song"
 ---
-# Opens song №1, navigates back, opens History tab,
-# and verifies the song row is present.
+# Mutation: open song #1, dwell past HistoryRecorder threshold, navigate to
+# History tab, assert song appears and is tappable.
 
-- launchApp:
-    clearState: false
+- runFlow: _helpers/cold-start.yaml
 
-- tapOn:
-    id: "${NAV_SEARCH}"
-- extendedWaitUntil:
-    visible:
-      id: "${FIELD_SEARCH}"
-    timeout: 10000
-- tapOn:
-    id: "${FIELD_SEARCH}"
-- inputText: "${SEARCH_QUERY_NUMERIC}"
-- pressKey: Enter
-
-- waitForAnimationToEnd
-- tapOn:
-    text: "${SEARCH_QUERY_NUMERIC}"
-    index: 1
-
-- extendedWaitUntil:
-    visible:
-      id: "${ACTION_TOGGLE_FAVORITE}"
-    timeout: 15000
-
-# Wait for the 5-second view-time threshold to be satisfied.
-- extendedWaitUntil:
-    visible:
-      id: "___never_exists___"
-    timeout: 6000
-    optional: true
-
-# Go back to main navigation.
-- back
-- back
+- runFlow: _helpers/populate-history.yaml
 
 - tapOn:
     id: "${NAV_HISTORY}"
 
-- waitForAnimationToEnd
-
-# Open the first row in history via stable contentDescription.
 - extendedWaitUntil:
     visible:
       id: "${SONG_ITEM_ONE}"
-    timeout: 10000
+    timeout: ${TIMEOUT_MEDIUM}
+
 - tapOn:
     id: "${SONG_ITEM_ONE}"
 
-# Verify we navigated to song detail from history.
+# Verify navigation to song detail from history.
 - extendedWaitUntil:
     visible:
       id: "${ACTION_TOGGLE_FAVORITE}"
-    timeout: 15000
+    timeout: ${TIMEOUT_LONG}
 
 - assertVisible:
     id: "${ACTION_TOGGLE_FAVORITE}"

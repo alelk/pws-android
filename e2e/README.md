@@ -98,8 +98,31 @@ Search query `"1"` is used because it is numeric and guaranteed to return result
 | `07-song-edit-title.yaml`      | mutation     | edit song title → verify                                               |
 | `08-navigation-tabs.yaml`      | smoke        | all 6 nav tabs open without error                                      |
 | `09-books-to-song.yaml`        | smoke        | Books → book song list → open song                                     |
+| `10-settings-open.yaml`        | smoke        | settings icon → open → back                                            |
+| `11-home-number-search.yaml`   | smoke        | home number-search modal → suggestion → song                           |
+| `12-favorites-remove.yaml`     | mutation     | add favorite → remove → verify gone                                    |
+| `13-tag-to-songs.yaml`         | mutation     | create tag → assign → tap tag → tag-songs screen                       |
+| `14-history-clear-all.yaml`    | mutation     | populate history → clear all → verify empty                            |
+| `15-search-empty-results.yaml` | smoke        | query with no matches → empty state                                    |
+| `16-home-recently-viewed.yaml` | smoke        | open song → home "recently viewed" → tap card                          |
+| `18-home-search-suggestions.yaml` | smoke     | home inline search → suggestion → song                                 |
 | `suite.yaml`                   | smoke bundle | flows 01 02 03 08 09 (read-only)                                       |
-| `suite-full.yaml`              | full bundle  | flows 01 02 03 04 06 07 08 09                                          |
+| `suite-full.yaml`              | full bundle  | all smoke + mutation flows                                             |
+
+### Shared subflows (`_helpers/`)
+
+Common sequences are factored out as Maestro `runFlow` subflows so that 11 main
+flows no longer duplicate the same 7-step search/open-song boilerplate.
+
+| Helper                              | What it does                                                                |
+|-------------------------------------|-----------------------------------------------------------------------------|
+| `cold-start.yaml`                   | `launchApp clearState:true` + wait Home (use as first step of mutation flow) |
+| `open-song-1-via-search.yaml`       | Search tab → numeric query → tap song-row-1 → wait detail                   |
+| `populate-history.yaml`             | open song + dwell past 5s HistoryRecorder threshold + back to root          |
+| `create-tag.yaml`                   | Tags tab → add → type TEST_TAG_NAME → save → scroll to it                   |
+| `assign-tag-to-song-1.yaml`         | open song → more → edit-tags → pick TEST_TAG_NAME → save                    |
+
+Edit a selector or timeout once in `_helpers/` instead of 11 times across flows.
 
 ### Prerequisites
 
@@ -121,11 +144,18 @@ cd /Users/alexelkin/Projects/software-development/pws-android
 ./e2e/scripts/run-compose.sh --full
 ```
 
-### Run a single flow
+### Run one or several flows by number
+
+The simplest way — pass the flow number(s) as positional arguments:
 
 ```bash
-./e2e/scripts/run-compose.sh --flow flows/compose/02-search-basic.yaml
+./e2e/scripts/run-compose.sh 2              # → 02-search-basic.yaml
+./e2e/scripts/run-compose.sh 4 5 6 --clean  # → 04, 05, 06 with pm clear
+./e2e/scripts/run-compose.sh 14 --retries 2 # → 14, retry once on flake
+./e2e/scripts/run-compose.sh 02-search-basic # → also works by basename
 ```
+
+(Legacy form `--flow flows/compose/02-search-basic.yaml` still works.)
 
 ### Override APK
 
@@ -133,10 +163,20 @@ cd /Users/alexelkin/Projects/software-development/pws-android
 ./e2e/scripts/run-compose.sh --apk /path/to/other.apk
 ```
 
+### Clean state + retries (recommended for CI)
+
+```bash
+./e2e/scripts/run-compose.sh --full --clean --retries 2
+```
+
+- `--clean` runs `adb shell pm clear $APP_ID` before the first flow so the
+  whole run starts from a fresh app state (required for reproducible full-suite).
+- `--retries N` retries each failed flow up to N times.
+
 ### Outputs
 
-- JUnit reports: `e2e/reports/compose-<timestamp>.xml`
-- Screenshots + Maestro debug: `e2e/artifacts/<timestamp>-compose/`
+- **JUnit reports** (one per flow): `e2e/reports/<timestamp>-compose/junit-<flow>.xml`
+- **Maestro debug output** (screenshots, hierarchy dumps): `e2e/artifacts/<timestamp>-compose/<flow>/`
 
 ### Troubleshooting
 

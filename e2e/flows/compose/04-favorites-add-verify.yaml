@@ -1,57 +1,27 @@
 appId: ${APP_ID}
 name: "04 - Add to favorites and verify in Favorites list"
 ---
-# Adds song №1 to favorites, navigates to the Favorites tab
-# and verifies the song row appears there.
+# Mutation: add song #1 to favorites, navigate to Favorites tab, assert visible.
 
-- launchApp:
-    clearState: false
+- runFlow: _helpers/cold-start.yaml
 
-- tapOn:
-    id: "${NAV_SEARCH}"
-- extendedWaitUntil:
-    visible:
-      id: "${FIELD_SEARCH}"
-    timeout: 10000
-- tapOn:
-    id: "${FIELD_SEARCH}"
-- inputText: "${SEARCH_QUERY_NUMERIC}"
-- pressKey: Enter
-
-- waitForAnimationToEnd
-- waitForAnimationToEnd
-
-- tapOn:
-    id: "${SONG_ITEM_ONE}"
-
-- extendedWaitUntil:
-    visible:
-      id: "${ACTION_TOGGLE_FAVORITE}"
-    timeout: 30000
+- runFlow: _helpers/open-song-1-via-search.yaml
 
 # Add to favorites.
 - tapOn:
     id: "${ACTION_TOGGLE_FAVORITE}"
-- waitForAnimationToEnd
-- takeScreenshot: "04-after-add-favorite"
 
-# Navigate back, then to Favorites tab.
 - back
 - back
 - tapOn:
     id: "${NAV_FAVORITES}"
 
-# Verify favorites list contains the same song. This avoids depending on list-item action buttons.
 - extendedWaitUntil:
     visible:
       id: "${SONG_ITEM_ONE}"
-    timeout: 15000
+    timeout: ${TIMEOUT_LONG}
 
 - assertVisible:
     id: "${SONG_ITEM_ONE}"
 
 - takeScreenshot: "04-favorites-list"
-
-
-
-

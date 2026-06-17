@@ -1,48 +1,24 @@
 appId: ${APP_ID}
 name: "03 - Song detail - actions sheet visible"
 ---
-# Opens a song and verifies the more-actions sheet contains Edit and Edit-tags entries.
-# Uses only stable contentDescription anchors.
+# Smoke: open song-1, open more-actions sheet, verify Edit / Edit-tags items.
 
 - launchApp:
     clearState: false
 
-- tapOn:
-    id: "${NAV_SEARCH}"
-- extendedWaitUntil:
-    visible:
-      id: "${FIELD_SEARCH}"
-    timeout: 10000
-- tapOn:
-    id: "${FIELD_SEARCH}"
-- inputText: "${SEARCH_QUERY_NUMERIC}"
-- pressKey: Enter
+- runFlow: _helpers/open-song-1-via-search.yaml
 
-- waitForAnimationToEnd
-- tapOn:
-    id: "${SONG_ITEM_ONE}"
-
-- extendedWaitUntil:
-    visible:
-      id: "${ACTION_TOGGLE_FAVORITE}"
-    timeout: 15000
-
-- takeScreenshot: "03-song-detail"
-
-# Open the more-actions bottom sheet.
 - tapOn:
     id: "${ACTION_MORE}"
 
-- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible:
+      id: "${ACTION_EDIT_SONG}"
+    timeout: ${TIMEOUT_MEDIUM}
 
-# Both action items must be visible (identified by their stable descriptions).
 - assertVisible:
     id: "${ACTION_EDIT_SONG}"
 - assertVisible:
     id: "${ACTION_EDIT_TAGS}"
 
 - takeScreenshot: "03-actions-sheet"
-
-
-
-

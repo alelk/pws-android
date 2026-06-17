@@ -1,8 +1,7 @@
 appId: ${APP_ID}
 name: "10 - Settings screen opens and closes"
 ---
-# Navigates to History tab (known screen with Settings icon),
-# opens Settings via stable testTag, verifies no crash, returns back.
+# Open Settings via History tab → back → assert History reachable.
 
 - launchApp:
     clearState: false
@@ -10,30 +9,26 @@ name: "10 - Settings screen opens and closes"
 - tapOn:
     id: "${NAV_HISTORY}"
 
-- waitForAnimationToEnd
-
 - extendedWaitUntil:
     visible:
       id: "${ACTION_OPEN_SETTINGS}"
-    timeout: 10000
+    timeout: ${TIMEOUT_MEDIUM}
 
 - tapOn:
     id: "${ACTION_OPEN_SETTINGS}"
 
+# Settings is a separate screen; no stable testTag exists there yet,
+# so we wait for the transition to settle and then assert we can get back.
 - waitForAnimationToEnd
-- takeScreenshot: "10-settings-opened"
 
-# Settings loaded — verify the screen is visible (back button implies navigation occurred)
-# and navigate back to previous screen.
 - back
 
 - extendedWaitUntil:
     visible:
       id: "${NAV_HISTORY}"
-    timeout: 10000
+    timeout: ${TIMEOUT_MEDIUM}
 
 - assertVisible:
     id: "${NAV_HISTORY}"
 
 - takeScreenshot: "10-settings-back"
-

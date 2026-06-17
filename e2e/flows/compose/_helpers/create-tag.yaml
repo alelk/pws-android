@@ -1,0 +1,46 @@
+appId: ${APP_ID}
+name: "_helper: create tag TEST_TAG_NAME"
+---
+# Reusable subflow. From any screen, navigates to the Tags tab, opens the
+# create-tag dialog, types TEST_TAG_NAME, saves, then scrolls the tag list
+# until the new tag becomes visible. Leaves the app on the Tags list.
+
+- tapOn:
+    id: "${NAV_TAGS}"
+
+- extendedWaitUntil:
+    visible:
+      id: "${ACTION_ADD_TAG}"
+    timeout: ${TIMEOUT_MEDIUM}
+
+- tapOn:
+    id: "${ACTION_ADD_TAG}"
+
+- extendedWaitUntil:
+    visible:
+      id: "${FIELD_TAG_NAME}"
+    timeout: ${TIMEOUT_MEDIUM}
+
+- tapOn:
+    id: "${FIELD_TAG_NAME}"
+- inputText: "${TEST_TAG_NAME}"
+- hideKeyboard
+
+- assertVisible: "${TEST_TAG_NAME}"
+
+- tapOn:
+    id: "${ACTION_SAVE_TAG}"
+
+# Wait for return to the Tags list — Add FAB is visible there.
+- extendedWaitUntil:
+    visible:
+      id: "${ACTION_ADD_TAG}"
+    timeout: ${TIMEOUT_MEDIUM}
+
+# Tag may be below the predefined ones — scroll to it.
+- scrollUntilVisible:
+    element: "${TEST_TAG_NAME}"
+    direction: DOWN
+    timeout: ${TIMEOUT_LONG}
+
+- assertVisible: "${TEST_TAG_NAME}"

@@ -1,8 +1,7 @@
 appId: ${APP_ID}
 name: "09 - Books tab - navigate to a song via book song list"
 ---
-# Opens the Books tab, taps the first available book,
-# verifies song list loads, then opens the first song from the list.
+# Smoke: open Books tab → tap first book card → open first song.
 
 - launchApp:
     clearState: false
@@ -10,42 +9,33 @@ name: "09 - Books tab - navigate to a song via book song list"
 - tapOn:
     id: "${NAV_BOOKS}"
 
-- waitForAnimationToEnd
-- takeScreenshot: "09-books-tab-loaded"
-
-# Wait for books grid to become visible (stable contentDescription set on LazyVerticalGrid).
 - extendedWaitUntil:
     visible:
       id: "books-grid"
-    timeout: 15000
+    timeout: ${TIMEOUT_LONG}
 
-# Tap the first book card (contentDescription = "book-card-<name>").
-# Use point-based tap on first card: grid starts below TopAppBar.
+- extendedWaitUntil:
+    visible:
+      id: "book-card-0"
+    timeout: ${TIMEOUT_MEDIUM}
+
 - tapOn:
-    point: "25%,30%"
+    id: "book-card-0"
 
-- waitForAnimationToEnd
-- waitForAnimationToEnd
-- takeScreenshot: "09-book-songs-list"
-
-# Wait for any song row to appear (contentDescription = "song-row-N").
 - extendedWaitUntil:
     visible:
       id: "${SONG_ITEM_ONE}"
-    timeout: 20000
+    timeout: ${TIMEOUT_LONG}
 
-# Tap the first song row via its stable contentDescription (set on SongListItem Surface).
 - tapOn:
     id: "${SONG_ITEM_ONE}"
 
 - extendedWaitUntil:
     visible:
       id: "${ACTION_TOGGLE_FAVORITE}"
-    timeout: 15000
+    timeout: ${TIMEOUT_LONG}
 
 - assertVisible:
     id: "${ACTION_TOGGLE_FAVORITE}"
 
 - takeScreenshot: "09-song-opened-from-book"
-
-

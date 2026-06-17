@@ -1,108 +1,20 @@
 appId: ${APP_ID}
 name: "06 - Create tag and assign to song"
 ---
-# Creates a tag named TEST_TAG_NAME (English, locale-independent),
-# assigns it to song №1, and verifies the tag chip is visible on the song screen.
+# Mutation: create tag TEST_TAG_NAME, assign to song #1, verify chip visible.
 
-- launchApp:
-    clearState: true
+- runFlow: _helpers/cold-start.yaml
 
-# Wait for the app to fully initialize after a cold clearState start.
-- extendedWaitUntil:
-    visible:
-      id: "${NAV_HOME}"
-    timeout: 30000
+- runFlow: _helpers/create-tag.yaml
 
-# Step 1: Open Tags tab and create the tag.
-- tapOn:
-    id: "${NAV_TAGS}"
+- runFlow: _helpers/assign-tag-to-song-1.yaml
 
-- extendedWaitUntil:
-    visible:
-      id: "${ACTION_ADD_TAG}"
-    timeout: 10000
-
-- tapOn:
-    id: "${ACTION_ADD_TAG}"
-
-- waitForAnimationToEnd
-
-# Focus the tag name input field and type the name.
-- tapOn:
-    id: "${FIELD_TAG_NAME}"
-- waitForAnimationToEnd
-- inputText: "${TEST_TAG_NAME}"
-- waitForAnimationToEnd
-- takeScreenshot: "06-tag-name-typed"
-
-# Verify text was entered before saving.
-- assertVisible: "${TEST_TAG_NAME}"
-
-# Save.
-- tapOn:
-    id: "${ACTION_SAVE_TAG}"
-
-- waitForAnimationToEnd
-- waitForAnimationToEnd
-- takeScreenshot: "06-after-save-tag"
-
-# The tag may be off-screen (below predefined tags). Scroll to find it.
+# Tag chip should be visible on the song detail screen (may need scroll).
 - scrollUntilVisible:
     element: "${TEST_TAG_NAME}"
     direction: DOWN
-    timeout: 15000
+    timeout: ${TIMEOUT_MEDIUM}
+
 - assertVisible: "${TEST_TAG_NAME}"
-- takeScreenshot: "06-tag-created"
 
-# Step 2: Open a song and assign the tag via Edit Tags action.
-- tapOn:
-    id: "${NAV_SEARCH}"
-
-- extendedWaitUntil:
-    visible:
-      id: "${FIELD_SEARCH}"
-    timeout: 10000
-
-- tapOn:
-    id: "${FIELD_SEARCH}"
-- inputText: "${SEARCH_QUERY_NUMERIC}"
-- pressKey: Enter
-
-- waitForAnimationToEnd
-- tapOn:
-    id: "${SONG_ITEM_ONE}"
-
-- extendedWaitUntil:
-    visible:
-      id: "${ACTION_MORE}"
-    timeout: 15000
-
-- tapOn:
-    id: "${ACTION_MORE}"
-- waitForAnimationToEnd
-
-- tapOn:
-    id: "${ACTION_EDIT_TAGS}"
-- waitForAnimationToEnd
-
-# Scroll to find the tag chip by its English name.
-- scrollUntilVisible:
-    element: "${TEST_TAG_NAME}"
-    direction: DOWN
-    timeout: 10000
-- tapOn: "${TEST_TAG_NAME}"
-- waitForAnimationToEnd
-- takeScreenshot: "06-tag-dialog-with-selection"
-
-# Save the tag assignment.
-- tapOn:
-    id: "${ACTION_SAVE_SONG_TAGS}"
-- waitForAnimationToEnd
-
-# Verify tag chip is visible on the song detail screen (may need scroll).
-- scrollUntilVisible:
-    element: "${TEST_TAG_NAME}"
-    direction: DOWN
-    timeout: 10000
-- assertVisible: "${TEST_TAG_NAME}"
 - takeScreenshot: "06-tag-assigned-on-song"
