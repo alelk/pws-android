@@ -1,5 +1,12 @@
 # PWS Android
 
+# [3.2.0-rc.7](https://github.com/alelk/pws-android/compare/v3.2.0-rc.6...v3.2.0-rc.7) (2026-06-17)
+
+
+### Bug Fixes
+
+* fix ui issues ([7fb236a](https://github.com/alelk/pws-android/commit/7fb236a5c9f1eb0cbac126889ef2c5f6b6987daf))
+
 # [3.2.0-rc.6](https://github.com/alelk/pws-android/compare/v3.2.0-rc.5...v3.2.0-rc.6) (2026-06-16)
 
 
