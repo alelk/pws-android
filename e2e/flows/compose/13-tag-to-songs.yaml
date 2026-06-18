@@ -1,136 +1,42 @@
 appId: ${APP_ID}
 name: "13 - Tag tap navigates to TagSongsScreen"
 ---
-# Creates a custom tag E2E_SMOKE_TAG, assigns it to song #1,
-# then taps the tag row in the Tags tab and verifies TagSongsScreen loads
-# with at least one song row.
-# Uses clearState: true to avoid leftover tags from previous runs.
+# Mutation: create tag, assign to song #1, tap tag row in Tags tab,
+# verify TagSongsScreen loads with at least one song row.
 
-- launchApp:
-    clearState: true
+- runFlow: _helpers/cold-start.yaml
 
-- extendedWaitUntil:
-    visible:
-      id: "${NAV_HOME}"
-    timeout: 30000
+- runFlow: _helpers/create-tag.yaml
 
-# --- Step 1: Create the tag ---
+- runFlow: _helpers/assign-tag-to-song-1.yaml
+
+# Navigate to Tags tab and tap the tag row.
+- back
+- back
 - tapOn:
     id: "${NAV_TAGS}"
 
 - extendedWaitUntil:
     visible:
       id: "${ACTION_ADD_TAG}"
-    timeout: 10000
-
-- tapOn:
-    id: "${ACTION_ADD_TAG}"
-
-- waitForAnimationToEnd
-
-- tapOn:
-    id: "${FIELD_TAG_NAME}"
-
-- waitForAnimationToEnd
-- inputText: "${TEST_TAG_NAME}"
-- waitForAnimationToEnd
-
-- assertVisible: "${TEST_TAG_NAME}"
-
-- tapOn:
-    id: "${ACTION_SAVE_TAG}"
-
-- waitForAnimationToEnd
-- waitForAnimationToEnd
-- takeScreenshot: "13-after-save-tag"
-
-# Scroll to find the new tag in the list
-- scrollUntilVisible:
-    element: "${TEST_TAG_NAME}"
-    direction: DOWN
-    timeout: 15000
-
-- assertVisible: "${TEST_TAG_NAME}"
-- takeScreenshot: "13-tag-created"
-
-# --- Step 2: Assign tag to song #1 ---
-- tapOn:
-    id: "${NAV_SEARCH}"
-
-- extendedWaitUntil:
-    visible:
-      id: "${FIELD_SEARCH}"
-    timeout: 10000
-
-- tapOn:
-    id: "${FIELD_SEARCH}"
-- inputText: "${SEARCH_QUERY_NUMERIC}"
-- pressKey: Enter
-- waitForAnimationToEnd
-
-- extendedWaitUntil:
-    visible:
-      id: "${SONG_ITEM_ONE}"
-    timeout: 15000
-
-- tapOn:
-    id: "${SONG_ITEM_ONE}"
-
-- extendedWaitUntil:
-    visible:
-      id: "${ACTION_MORE}"
-    timeout: 15000
-
-- tapOn:
-    id: "${ACTION_MORE}"
-- waitForAnimationToEnd
-
-- tapOn:
-    id: "${ACTION_EDIT_TAGS}"
-- waitForAnimationToEnd
+    timeout: ${TIMEOUT_MEDIUM}
 
 - scrollUntilVisible:
     element: "${TEST_TAG_NAME}"
     direction: DOWN
-    timeout: 10000
+    timeout: ${TIMEOUT_LONG}
 
-- tapOn: "${TEST_TAG_NAME}"
-- waitForAnimationToEnd
-
-- tapOn:
-    id: "${ACTION_SAVE_SONG_TAGS}"
-- waitForAnimationToEnd
-
-- takeScreenshot: "13-tag-assigned-on-song"
-
-# --- Step 3: Navigate to Tags tab and tap the tag ---
-- back
-- back
-- waitForAnimationToEnd
-
-- tapOn:
-    id: "${NAV_TAGS}"
-- waitForAnimationToEnd
-
-- scrollUntilVisible:
-    element: "${TEST_TAG_NAME}"
-    direction: DOWN
-    timeout: 15000
-
-- takeScreenshot: "13-tags-list"
-
-# Tap tag row — contentDescription = "tag-row-E2E_SMOKE_TAG"
+# Tap tag row (testTag = "tag-row-${TEST_TAG_NAME}").
 - tapOn:
     id: "tag-row-${TEST_TAG_NAME}"
 
-# --- Step 4: Verify TagSongsScreen loaded with song rows ---
+# TagSongsScreen should load with the song row.
 - extendedWaitUntil:
     visible:
       id: "${SONG_ITEM_ONE}"
-    timeout: 15000
+    timeout: ${TIMEOUT_LONG}
 
 - assertVisible:
     id: "${SONG_ITEM_ONE}"
 
 - takeScreenshot: "13-tag-songs-list"
-

@@ -1,0 +1,40 @@
+appId: ${APP_ID}
+name: "_helper: assign TEST_TAG_NAME to song #1"
+---
+# Reusable subflow. Assumes the tag TEST_TAG_NAME has already been created.
+# Opens song #1 via search, opens the more-actions sheet, picks "Edit tags",
+# selects TEST_TAG_NAME, and saves the assignment.
+# Leaves the app on SongDetailScreen.
+
+- runFlow: open-song-1-via-search.yaml
+
+- extendedWaitUntil:
+    visible:
+      id: "${ACTION_MORE}"
+    timeout: ${TIMEOUT_LONG}
+
+- tapOn:
+    id: "${ACTION_MORE}"
+
+- extendedWaitUntil:
+    visible:
+      id: "${ACTION_EDIT_TAGS}"
+    timeout: ${TIMEOUT_MEDIUM}
+
+- tapOn:
+    id: "${ACTION_EDIT_TAGS}"
+
+- scrollUntilVisible:
+    element: "${TEST_TAG_NAME}"
+    direction: DOWN
+    timeout: ${TIMEOUT_MEDIUM}
+
+- tapOn: "${TEST_TAG_NAME}"
+
+- tapOn:
+    id: "${ACTION_SAVE_SONG_TAGS}"
+
+- extendedWaitUntil:
+    visible:
+      id: "${ACTION_TOGGLE_FAVORITE}"
+    timeout: ${TIMEOUT_LONG}

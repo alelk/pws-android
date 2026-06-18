@@ -1,5 +1,62 @@
 # PWS Android
 
+# [3.2.0-rc.8](https://github.com/alelk/pws-android/compare/v3.2.0-rc.7...v3.2.0-rc.8) (2026-06-18)
+
+
+### Bug Fixes
+
+* fix migrate from prev db ([d85420f](https://github.com/alelk/pws-android/commit/d85420fd598d3609ef3a91e330fae20090f449cd))
+
+# [3.2.0-rc.7](https://github.com/alelk/pws-android/compare/v3.2.0-rc.6...v3.2.0-rc.7) (2026-06-17)
+
+
+### Bug Fixes
+
+* fix ui issues ([7fb236a](https://github.com/alelk/pws-android/commit/7fb236a5c9f1eb0cbac126889ef2c5f6b6987daf))
+
+# [3.2.0-rc.6](https://github.com/alelk/pws-android/compare/v3.2.0-rc.5...v3.2.0-rc.6) (2026-06-16)
+
+
+### Bug Fixes
+
+* fix db init issue ([6caf344](https://github.com/alelk/pws-android/commit/6caf344c356b80bf678efcc2520ee0e22bc30c20))
+
+# [3.2.0-rc.5](https://github.com/alelk/pws-android/compare/v3.2.0-rc.4...v3.2.0-rc.5) (2026-06-15)
+
+
+### Bug Fixes
+
+* fix db init issue ([3eb8001](https://github.com/alelk/pws-android/commit/3eb80015b1a52b6a92af7dc595f593e57e87d834))
+
+# [3.2.0-rc.4](https://github.com/alelk/pws-android/compare/v3.2.0-rc.3...v3.2.0-rc.4) (2026-06-15)
+
+
+### Bug Fixes
+
+* fix app start issue ([07d4310](https://github.com/alelk/pws-android/commit/07d431059519976579f89830edf8f7dd70081d5f))
+
+# [3.2.0-rc.3](https://github.com/alelk/pws-android/compare/v3.2.0-rc.2...v3.2.0-rc.3) (2026-06-15)
+
+
+### Features
+
+* update database ([cf8e219](https://github.com/alelk/pws-android/commit/cf8e219f003cd0824e11546bf4c0506f8358fed9))
+
+# [3.2.0-rc.2](https://github.com/alelk/pws-android/compare/v3.2.0-rc.1...v3.2.0-rc.2) (2026-06-15)
+
+
+### Bug Fixes
+
+* update database version ([d8f053b](https://github.com/alelk/pws-android/commit/d8f053beedc7d4017ac4becc530acbb78ec65f65))
+
+# [3.2.0-rc.1](https://github.com/alelk/pws-android/compare/v3.1.0...v3.2.0-rc.1) (2026-06-15)
+
+
+### Features
+
+* implement data protection ([e25cd6a](https://github.com/alelk/pws-android/commit/e25cd6a497d290e9f2c21d700fb119f2e4b218dc))
+* implement data protection ([1920682](https://github.com/alelk/pws-android/commit/1920682a21f425ffe69af7dd450536361f8fafb5))
+
 # [3.1.0](https://github.com/alelk/pws-android/compare/v3.0.1...v3.1.0) (2026-05-07)
 
 

@@ -78,6 +78,11 @@ android {
       isMinifyEnabled = false
       versionNameSuffix = "-debug"
     }
+    create("localSeed") {
+      isDebuggable = true
+      isMinifyEnabled = false
+      versionNameSuffix = "-localSeed"
+    }
   }
 
   buildFeatures {

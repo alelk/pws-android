@@ -37,8 +37,22 @@
 -keep class androidx.compose.** { *; }
 -dontwarn androidx.compose.**
 
-# PWS domain models (keep data classes for serialization)
--keep class io.github.alelk.pws.** { *; }
+# SQLCipher
+-keep class net.zetetic.database.** { *; }
+-dontwarn net.zetetic.database.**
+
+# EncryptedSharedPreferences
+-keep class androidx.security.crypto.** { *; }
+-dontwarn androidx.security.crypto.**
+
+# Google Tink (transitive dep of security-crypto) references javax.annotation which is not bundled
+-dontwarn javax.annotation.**
+-dontwarn javax.annotation.concurrent.**
+
+# PWS — keep domain/features/portable but NOT database.BuildConfig (let R8 inline DB_DECRYPT_KEY)
+-keep class io.github.alelk.pws.domain.** { *; }
+-keep class io.github.alelk.pws.features.** { *; }
+-keep class io.github.alelk.pws.portable.** { *; }
 
 # Keep Serializable classes
 -keepclassmembers class * implements java.io.Serializable {
@@ -48,4 +62,3 @@
     java.lang.Object writeReplace();
     java.lang.Object readResolve();
 }
-

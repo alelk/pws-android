@@ -1,6 +1,6 @@
 [versions]
 
-pws = "2.27.0"
+pws = "3.0.0"
 
 android-application = "9.1.1"
 kotlin = "2.3.21"
@@ -28,6 +28,8 @@ kotest-framework-datatest = "5.9.1"
 
 robolectric = "4.16.1"
 
+sqlcipher = "4.16.0"
+security-crypto = "1.1.0-alpha06"
 
 kaml = "0.97.0"
 navigation-fragment-ktx = "2.9.8"
@@ -54,6 +56,8 @@ kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.
 
 # Database
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" } # https://mvnrepository.com/artifact/androidx.room/room-runtime
+sqlcipher = { module = "net.zetetic:sqlcipher-android", version.ref = "sqlcipher" }
+security-crypto = { module = "androidx.security:security-crypto", version.ref = "security-crypto" }
 
 # Logging
 timber = { module = "com.jakewharton.timber:timber", version = "5.0.1" }

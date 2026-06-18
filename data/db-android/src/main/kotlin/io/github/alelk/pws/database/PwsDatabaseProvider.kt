@@ -2,7 +2,9 @@ package io.github.alelk.pws.database
 
 import android.content.Context
 import androidx.room.Room
+import io.github.alelk.pws.database.security.KeyManager
 import kotlinx.coroutines.runBlocking
+import net.zetetic.database.sqlcipher.SupportOpenHelperFactory
 import timber.log.Timber
 
 object PwsDatabaseProvider {
@@ -10,19 +12,26 @@ object PwsDatabaseProvider {
   private var INSTANCE: PwsDatabase? = null
 
   fun getDatabase(context: Context): PwsDatabase = INSTANCE ?: synchronized(this) {
-    // setup logging
     if (BuildConfig.DEBUG) Timber.plant(Timber.DebugTree())
 
-    // copy database from asset on the first app start
-    initDatabase(context)
+    System.loadLibrary("sqlcipher")
 
-    val instance = Room.databaseBuilder(context.applicationContext, PwsDatabase::class.java, DATABASE_NAME).addCallback(callback = databaseCallbacks).build()
+    val passphrase = if (BuildConfig.DB_ENCRYPTED) KeyManager.getOrCreatePassphrase(context) else ByteArray(0)
+
+    // Copy and encrypt database from asset on the first app start
+    initDatabase(context, passphrase)
+
+    val instance = Room.databaseBuilder(context.applicationContext, PwsDatabase::class.java, DATABASE_NAME)
+      .openHelperFactory(SupportOpenHelperFactory(passphrase))
+      .addCallback(callback = databaseCallbacks)
+      .build()
     INSTANCE = instance
 
-    // migrate user data from previous database
+    // Migrate user data from previous database version
     runBlocking { migrateDataFromPrevDatabase(context, instance) }
     instance
   }
 
-  const val DATABASE_NAME = "pws.3.0.0.db"
+  const val DB_VERSION = "3.2.3"
+  const val DATABASE_NAME = "pws.$DB_VERSION.db"
 }

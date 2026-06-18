@@ -1,0 +1,14 @@
+appId: ${APP_ID}
+name: "_helper: clean cold start"
+---
+# Reusable subflow. Cold-launches the app with cleared state and waits for
+# the Home tab to become reachable. Use as the first step of any mutation flow
+# to guarantee isolation from previous flow's leftover state.
+
+- launchApp:
+    clearState: true
+
+- extendedWaitUntil:
+    visible:
+      id: "${NAV_HOME}"
+    timeout: ${TIMEOUT_COLD_START}

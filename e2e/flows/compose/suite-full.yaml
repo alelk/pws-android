@@ -31,7 +31,4 @@ name: "Compose full suite (Phase 2 — including mutating tests)"
 - runFlow: 13-tag-to-songs.yaml
 - runFlow: 14-history-clear-all.yaml
 
-# --- Diagnostic (flaky — run separately if needed) ---
-# - runFlow: 17-history-swipe-delete.yaml
-
 

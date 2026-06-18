@@ -1,0 +1,34 @@
+appId: ${APP_ID}
+name: "_helper: open song #1 via Search tab"
+---
+# Reusable subflow. Navigates to the Search tab, types the numeric query,
+# waits for results, taps song row #1, and waits for the song-detail screen.
+# Leaves the app on SongDetailScreen with ACTION_TOGGLE_FAVORITE visible.
+
+- tapOn:
+    id: "${NAV_SEARCH}"
+
+- extendedWaitUntil:
+    visible:
+      id: "${FIELD_SEARCH}"
+    timeout: ${TIMEOUT_MEDIUM}
+
+- tapOn:
+    id: "${FIELD_SEARCH}"
+
+- inputText: "${SEARCH_QUERY_NUMERIC}"
+- pressKey: Enter
+- hideKeyboard
+
+- extendedWaitUntil:
+    visible:
+      id: "${SONG_ITEM_ONE}"
+    timeout: ${TIMEOUT_LONG}
+
+- tapOn:
+    id: "${SONG_ITEM_ONE}"
+
+- extendedWaitUntil:
+    visible:
+      id: "${ACTION_TOGGLE_FAVORITE}"
+    timeout: ${TIMEOUT_LONG}

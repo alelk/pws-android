@@ -52,19 +52,19 @@ jobs:
         with:
           ref: ${{ inputs.tag }}
 
-      # Ensure build tooling scripts come from the default branch, not the tag.
+      # Ensure build tooling scripts come from the dispatching branch, not the tag.
       # This prevents stale helper scripts in old tags from breaking the build.
-      - name: Restore build scripts from default branch
+      - name: Restore build scripts from dispatching branch
         run: |
           git fetch origin
-          git checkout origin/HEAD -- fetch-db.sh
+          git checkout origin/${{ github.ref_name }} -- fetch-db.sh
 
       # ── Java + Gradle cache ───────────────────────────────────────────────
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           java-version: '21'
-          distribution: 'temurin'
+          distribution: 'jetbrains'
           cache: gradle
 
       # ── Keystores ────────────────────────────────────────────────────────
@@ -78,9 +78,13 @@ jobs:
         run: |
           echo "${{ secrets.RELEASE_KEYSTORE_RUSTORE_BASE64 }}" | base64 --decode > /tmp/rustore.jks
 
-      # ── Fetch DB assets ───────────────────────────────────────────────────
+      # ── Fetch DB assets ───────────────────────────────────────────────────────
       # GH_TOKEN must be a PAT with 'Contents: Read' on the private alelk/pws-docs repo.
       # Store the PAT as secret PWS_DOCS_TOKEN in this repository's settings.
+      #
+      # DB_DECRYPT_KEY_PROD — prod decryption key for *.dbz.enc release assets.
+      # Store as secret DB_DECRYPT_KEY_PROD in this repository's settings.
+      # Debug key is public and embedded in source code (BuildConfig.DB_DECRYPT_KEY).
       - name: Fetch DB — ru
         if: ${{ inputs.flavor_ru }}
         env:
@@ -104,6 +108,7 @@ jobs:
         if: ${{ inputs.flavor_ru }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DB_DECRYPT_KEY_PROD: ${{ secrets.DB_DECRYPT_KEY_PROD }}
         run: |
           ./gradlew :app-compose:assembleRuRelease :app-compose:bundleRuRelease \
             -Pandroid.release.keystorePath=/tmp/release.jks \
@@ -115,6 +120,7 @@ jobs:
         if: ${{ inputs.flavor_uk }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DB_DECRYPT_KEY_PROD: ${{ secrets.DB_DECRYPT_KEY_PROD }}
         run: |
           ./gradlew :app-compose:assembleUkRelease :app-compose:bundleUkRelease \
             -Pandroid.release.keystorePath=/tmp/release.jks \
@@ -126,6 +132,7 @@ jobs:
         if: ${{ inputs.flavor_rustore }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DB_DECRYPT_KEY_PROD: ${{ secrets.DB_DECRYPT_KEY_PROD }}
         run: |
           ./gradlew :app-compose:assembleRustoreRelease :app-compose:bundleRustoreRelease \
             -Pandroid.release.keystorePathRustore=/tmp/rustore.jks \
