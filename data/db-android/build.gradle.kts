@@ -49,6 +49,10 @@ android {
     resValue("string", "db_authority", "com.alelk.pws.database")
     // Version of the .dbz.enc asset in pws-docs — may differ from DB_VERSION (app-side DB name).
     buildConfigField("String", "DB_ASSET_VERSION", "\"$dbAssetVersion\"")
+    // true for all normal builds; overridden to false in localSeed build type.
+    buildConfigField("boolean", "DB_ASSET_ENCRYPTED", "true")
+    // true for all normal builds; overridden to false in localSeed (plain SQLite, no Keystore).
+    buildConfigField("boolean", "DB_ENCRYPTED", "true")
   }
 
   buildFeatures {
@@ -100,6 +104,15 @@ android {
       val (masked, mask) = xorObfuscate(dbDecryptKeyDebug)
       buildConfigField("byte[]", "DB_KEY_MASKED", masked)
       buildConfigField("byte[]", "DB_KEY_MASK", mask)
+    }
+    create("localSeed") {
+      isMinifyEnabled = false
+      // Plain .dbz asset, no encryption layer. Key fields are unused but required for compilation.
+      buildConfigField("boolean", "DB_ASSET_ENCRYPTED", "false")
+      buildConfigField("byte[]", "DB_KEY_MASKED", "{}")
+      buildConfigField("byte[]", "DB_KEY_MASK", "{}")
+      // SQLCipher with empty passphrase = plain SQLite — no Keystore needed.
+      buildConfigField("boolean", "DB_ENCRYPTED", "false")
     }
   }
 

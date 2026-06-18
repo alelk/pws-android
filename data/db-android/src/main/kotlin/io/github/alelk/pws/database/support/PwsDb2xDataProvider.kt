@@ -17,20 +17,22 @@ import kotlinx.datetime.format.char
 /** Supports database versions:
  * - 2.0.0 (v11)
  * - 3.0.0 (v12)
+ * - 3.2.x (v13)
  */
 class PwsDb2xDataProvider(val db: SQLiteDatabase) : PwsDbDataProvider {
 
-  override val dbVersions: IntRange = 11..12
+  override val dbVersions: IntRange = 11..13
 
   /** Get favorites.
    *
    * Database versions:
    * - 2.0.0 (11)
    * - 3.0.0 (12)
+   * - 3.2.x (13)
    */
   override suspend fun getFavorites(): Result<List<SongNumber>> =
     db.fetchData(
-      dbVersion = 11..12,
+      dbVersion = 11..13,
       collectionName = "favorites",
       table = "favorites as f inner join song_numbers as sn on f.song_id=sn.song_id and f.book_id=sn.book_id",
       columns = arrayOf("f.position as position", "sn.number as number", "f.book_id as book_id")
@@ -47,10 +49,11 @@ class PwsDb2xDataProvider(val db: SQLiteDatabase) : PwsDbDataProvider {
    * Database versions:
    * - 2.0.0 (11)
    * - 3.0.0 (12)
+   * - 3.2.x (13)
    */
   override suspend fun getHistory(): Result<List<HistoryItem>> =
     db.fetchData(
-      dbVersion = 11..12,
+      dbVersion = 11..13,
       collectionName = "history",
       table = "history as h inner join song_numbers as sn on h.song_id=sn.song_id and h.book_id=sn.book_id",
       columns = arrayOf("h.access_timestamp as access_timestamp", "sn.number as number", "h.book_id as book_id"),
@@ -66,10 +69,11 @@ class PwsDb2xDataProvider(val db: SQLiteDatabase) : PwsDbDataProvider {
    * Database versions:
    * - 2.0.0 (11)
    * - 3.0.0 (12)
+   * - 3.2.x (13)
    */
   override suspend fun getEditedSongs(): Result<List<SongChange>> =
     db.fetchData(
-      dbVersion = 11..12,
+      dbVersion = 11..13,
       collectionName = "edited songs",
       table = "songs as s inner join song_numbers as sn on sn.song_id=s.id",
       columns = arrayOf("s.lyric as lyric", "s.bibleref as bibleref", "s.tonalities as tonalities", "sn.number as number", "sn.book_id as book_id"),
@@ -94,10 +98,11 @@ class PwsDb2xDataProvider(val db: SQLiteDatabase) : PwsDbDataProvider {
    * Database versions:
    * - 2.0.0 (11)
    * - 3.0.0 (12)
+   * - 3.2.x (13)
    */
   override suspend fun getTags(): Result<List<Tag>> =
     db.fetchData(
-      dbVersion = 11..12,
+      dbVersion = 11..13,
       collectionName = "tags",
       table =
         """

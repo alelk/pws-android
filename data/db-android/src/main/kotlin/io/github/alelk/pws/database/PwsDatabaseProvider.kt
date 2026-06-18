@@ -16,7 +16,7 @@ object PwsDatabaseProvider {
 
     System.loadLibrary("sqlcipher")
 
-    val passphrase = KeyManager.getOrCreatePassphrase(context)
+    val passphrase = if (BuildConfig.DB_ENCRYPTED) KeyManager.getOrCreatePassphrase(context) else ByteArray(0)
 
     // Copy and encrypt database from asset on the first app start
     initDatabase(context, passphrase)

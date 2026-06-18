@@ -45,23 +45,28 @@ internal fun initDatabase(context: Context, passphrase: ByteArray) {
   val fileList = checkNotNull(am.list(ASSETS_DB_FOLDER)) { "no files in assets/$ASSETS_DB_FOLDER" }
   // DB_ASSET_VERSION = book-content version from db.version (e.g. 3.2.2).
   // Distinct from PwsDatabaseProvider.DB_VERSION (app-side encrypted DB filename, e.g. 3.3.0).
-  val expectedSuffix = "-${BuildConfig.DB_ASSET_VERSION}.dbz.enc"
+  val expectedSuffix = if (BuildConfig.DB_ASSET_ENCRYPTED) "-${BuildConfig.DB_ASSET_VERSION}.dbz.enc"
+                       else "-${BuildConfig.DB_ASSET_VERSION}.dbz"
   val encAsset = fileList.firstOrNull { it.endsWith(expectedSuffix) }
     ?: error(
       "no asset matching *$expectedSuffix found in assets/$ASSETS_DB_FOLDER " +
         "(found: ${fileList.toList()}). Make sure ./fetch-db.sh was run for this variant."
     )
 
-  Timber.i("found encrypted asset: $encAsset")
+  Timber.i("found asset: $encAsset (encrypted=${BuildConfig.DB_ASSET_ENCRYPTED})")
 
-  val masterKey = BundleCrypto.keyFromHex(DbKeyConfig.keyHex())
   val tmpFile = File(context.cacheDir, "pws_init_tmp.db")
 
   try {
     val encBytes = am.open("$ASSETS_DB_FOLDER/$encAsset").use { it.readBytes() }
 
-    Timber.i("decrypting $encAsset (${encBytes.size} bytes) ...")
-    val gzippedDb = BundleCrypto.decrypt(encBytes, masterKey)
+    val gzippedDb = if (BuildConfig.DB_ASSET_ENCRYPTED) {
+      Timber.i("decrypting $encAsset (${encBytes.size} bytes) ...")
+      BundleCrypto.decrypt(encBytes, BundleCrypto.keyFromHex(DbKeyConfig.keyHex()))
+    } else {
+      Timber.i("asset is plaintext, skipping decryption ...")
+      encBytes
+    }
 
     Timber.i("decompressing gzip → temp file ...")
     val dbBytes = GZIPInputStream(gzippedDb.inputStream()).use { it.readBytes() }

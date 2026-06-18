@@ -45,6 +45,7 @@ variant_asset() {
     ukDebug)               echo "pws-uk-debug-${DB_VERSION}.dbz.enc" ;;
     rustoreRelease)        echo "pws-rustore-${DB_VERSION}.dbz.enc" ;;
     rustoreDebug)          echo "pws-ru-debug-${DB_VERSION}.dbz.enc" ;;
+    ruLocalSeed)           echo "pws-ru-test-${DB_VERSION}.dbz" ;;
     *) return 1 ;;
   esac
 }
@@ -59,12 +60,13 @@ variant_dir() {
     rustoreDebug)   echo "app-compose/src/rustoreDebug/assets/db" ;;
     fullRelease)    echo "app-compose/src/fullRelease/assets/db" ;;
     fullDebug)      echo "app-compose/src/fullDebug/assets/db" ;;
+    ruLocalSeed)    echo "app-compose/src/ruLocalSeed/assets/db" ;;
     *) return 1 ;;
   esac
 }
 
 # ── variants to process ───────────────────────────────────────────────────────
-ALL_VARIANTS=(ruRelease ruDebug ukRelease ukDebug rustoreRelease rustoreDebug fullRelease fullDebug)
+ALL_VARIANTS=(ruRelease ruDebug ukRelease ukDebug rustoreRelease rustoreDebug fullRelease fullDebug ruLocalSeed)
 SELECTED_VARIANTS=("${@:-${ALL_VARIANTS[@]}}")
 
 # ── temp workspace ────────────────────────────────────────────────────────────

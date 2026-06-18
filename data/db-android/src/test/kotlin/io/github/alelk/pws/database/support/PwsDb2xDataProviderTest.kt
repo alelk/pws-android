@@ -38,6 +38,76 @@ class PwsDb2xDataProviderTest : FeatureSpec({
     SongNumber(BookId.PesnHvaly, 1),
   )
 
+  val psalmsOfZion = BookId.parse("psalms-of-zion-3")
+  val weWillSingAndPraise = BookId.parse("we-will-sing-and-praise")
+
+  feature("fetch data from database v3.2.3 (v13-with-user-data)") {
+    withSqliteDb(File("src/test/resources/test-db/v13-with-user-data/pws-ru-test-3.2.3.dbz")) { db ->
+      db.version shouldBe 13
+
+      val dbProvider = PwsDb2xDataProvider(db)
+
+      scenario("get favorites") {
+        val favorites = dbProvider.getFavorites()
+        favorites.isSuccess shouldBe true
+        favorites.getOrThrow().run {
+          size shouldBe 4
+          this shouldBe listOf(
+            SongNumber(BookId.Pv2555, 10),
+            SongNumber(BookId.Pv2555, 12),
+            SongNumber(BookId.Pv2555, 14),
+            SongNumber(weWillSingAndPraise, 5),
+          )
+        }
+      }
+
+      scenario("get history") {
+        val history = dbProvider.getHistory()
+        history.isSuccess shouldBe true
+        history.getOrThrow().run {
+          size shouldBe 8
+          first() shouldBe HistoryItem(SongNumber(psalmsOfZion, 10), LocalDateTime.parse("2026-06-18T15:24:55.545656"))
+          last() shouldBe HistoryItem(SongNumber(weWillSingAndPraise, 5), LocalDateTime.parse("2026-06-18T15:34:44.403645"))
+        }
+      }
+
+      scenario("get edited songs") {
+        val songs = dbProvider.getEditedSongs()
+        songs.isSuccess shouldBe true
+        songs.getOrThrow().run {
+          size shouldBe 5
+          distinctBy { it.lyric } shouldHaveSize 1
+          single { it.number == SongNumber(BookId.Pv2001, 19) }.run {
+            lyric shouldContain "Edited song Text!!!"
+            tonalities shouldBe listOf(Tonality.F_MAJOR, Tonality.D_MAJOR)
+            bibleRef shouldBe BibleRef("bible text")
+          }
+        }
+      }
+
+      scenario("get tags") {
+        val tags = dbProvider.getTags()
+        tags.isSuccess shouldBe true
+        tags.getOrThrow().run {
+          size shouldBe 36
+          filter { it.predefined } shouldHaveSize 34
+          val customTags = filter { !it.predefined }
+          customTags shouldHaveSize 2
+          customTags.single { it.name == "Test Tag" }.let { tag ->
+            tag.id shouldBe TagId.parse("custom-15687")
+            tag.color shouldBe Color.parse("#7986cb")
+            tag.songNumbers shouldHaveSize 5
+          }
+          customTags.single { it.name == "Test Tag 2" }.let { tag ->
+            tag.id shouldBe TagId.parse("custom-25630")
+            tag.color shouldBe Color.parse("#ba68c8")
+            tag.songNumbers shouldHaveSize 1
+          }
+        }
+      }
+    }
+  }
+
   feature("fetch data from database v2.0.0 (v11-with-user-data)") {
     withSqliteDb(File("src/test/resources/test-db/v11-with-user-data/pws.2.0.0.dbz")) { db ->
       db.version shouldBe 11
