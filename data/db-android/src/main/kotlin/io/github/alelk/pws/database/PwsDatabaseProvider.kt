@@ -32,6 +32,6 @@ object PwsDatabaseProvider {
     instance
   }
 
-  const val DB_VERSION = "3.3.0"
+  const val DB_VERSION = "3.2.3"
   const val DATABASE_NAME = "pws.$DB_VERSION.db"
 }
