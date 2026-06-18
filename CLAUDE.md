@@ -33,11 +33,9 @@ Each skill's `SKILL.md` is the entrypoint. Most apply to `pws-core`; this repo i
 
 In [`docs/ai/plans/`](docs/ai/plans/):
 
-- `2026-06-15_data-protection-consolidated_plan.md` — DB encryption + key management
-- `2026-05-06_book-bundle-and-data-module_plan.md` — content packaging
-- `2026-05-05_content-protection-and-delivery_plan.md` — assets pipeline
+- `2026-06-18_pluggable-book-library_plan.md` — book catalog, download, import into Room, BookLibraryScreen
 
-When the user references "current plan" without a name, **ask which one**.
+When the user references "current plan" without a name, use this one.
 
 ### Don't waste tokens on
 

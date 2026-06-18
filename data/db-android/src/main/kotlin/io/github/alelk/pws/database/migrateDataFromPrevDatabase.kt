@@ -11,8 +11,9 @@ import io.github.alelk.pws.domain.core.SongNumber
 import timber.log.Timber
 
 internal val DATABASE_PREV_NAMES = arrayOf(
-  "pws.3.2.2.db",  // plain SQLite — was unencrypted before SQLCipher was introduced
-  "pws.1.8.0.db", "pws.1.2.0.db", "pws.1.1.0.db", "pws.0.9.1.db", "pws.2.0.0.db",
+  "pws.3.2.2.db",
+  // plain SQLite — was unencrypted before SQLCipher was introduced
+  "pws.1.8.0.db", "pws.1.2.0.db", "pws.1.1.0.db", "pws.0.9.1.db", "pws.2.0.0.db", "pws.3.0.0.db"
 )
 
 internal suspend fun migrateDataFromPrevDatabase(context: Context, currentDatabase: PwsDatabase): Boolean =
