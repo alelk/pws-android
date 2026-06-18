@@ -124,8 +124,22 @@ class MainActivity : ComponentActivity() {
       val songTextExpanded by applicationContext.songTextExpandedFlow().collectAsState(initial = true)
       val favoritesSortMode by applicationContext.favoritesSortModeFlow().collectAsState(initial = "ADDED_DATE")
       val favoritesAscending by applicationContext.favoritesAscendingFlow().collectAsState(initial = false)
+      val useDynamicColor by applicationContext.useDynamicColorFlow().collectAsState(initial = false)
+      val keepScreenOn by applicationContext.keepScreenOnFlow().collectAsState(initial = false)
+      val songLineHeightMultiplier by applicationContext.songLineHeightMultiplierFlow().collectAsState(initial = 1.0f)
 
-      val songDetailDisplaySettings = remember(songTextScale, songTextExpanded) {
+      // Window FLAG_KEEP_SCREEN_ON — обработка флага здесь, в shell.
+      // iOS-analog: UIApplication.shared.isIdleTimerDisabled
+      androidx.compose.runtime.DisposableEffect(keepScreenOn) {
+        if (keepScreenOn) {
+          window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        } else {
+          window.clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
+        onDispose { window.clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) }
+      }
+
+      val songDetailDisplaySettings = remember(songTextScale, songTextExpanded, songLineHeightMultiplier) {
         SongDetailDisplaySettings(
           fontScale = songTextScale,
           expandedText = songTextExpanded,
@@ -137,6 +151,12 @@ class MainActivity : ComponentActivity() {
           onExpandedTextChange = { expanded ->
             lifecycleScope.launch {
               applicationContext.setSongTextExpanded(expanded)
+            }
+          },
+          lineHeightMultiplier = songLineHeightMultiplier,
+          onLineHeightMultiplierChange = { multiplier ->
+            lifecycleScope.launch {
+              applicationContext.setSongLineHeightMultiplier(multiplier)
             }
           }
         )
@@ -171,6 +191,18 @@ class MainActivity : ComponentActivity() {
           onThemeModeChange = { newMode ->
             lifecycleScope.launch {
               applicationContext.setThemeMode(newMode)
+            }
+          },
+          useDynamicColor = useDynamicColor,
+          onUseDynamicColorChange = { enabled ->
+            lifecycleScope.launch {
+              applicationContext.setUseDynamicColor(enabled)
+            }
+          },
+          keepScreenOn = keepScreenOn,
+          onKeepScreenOnChange = { enabled ->
+            lifecycleScope.launch {
+              applicationContext.setKeepScreenOn(enabled)
             }
           },
           settingsExternalActions = settingsExternalActions,
