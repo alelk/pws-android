@@ -18,6 +18,9 @@ private val songTextScaleKey = floatPreferencesKey("song-text-scale")
 private val songTextExpandedKey = booleanPreferencesKey("song-text-expanded")
 private val favoritesSortModeKey = stringPreferencesKey("favorites-sort-mode")
 private val favoritesAscendingKey = booleanPreferencesKey("favorites-ascending")
+private val useDynamicColorKey = booleanPreferencesKey("use-dynamic-color")
+private val keepScreenOnKey = booleanPreferencesKey("keep-screen-on")
+private val songLineHeightMultiplierKey = floatPreferencesKey("song-line-height-multiplier")
 
 fun Context.themeModeFlow(): Flow<ThemeMode> =
   dataStore.data.map { prefs ->
@@ -72,6 +75,27 @@ suspend fun Context.setFavoritesAscending(value: Boolean) {
   dataStore.edit { prefs ->
     prefs[favoritesAscendingKey] = value
   }
+}
+
+fun Context.useDynamicColorFlow(): Flow<Boolean> =
+  dataStore.data.map { prefs -> prefs[useDynamicColorKey] ?: false }
+
+suspend fun Context.setUseDynamicColor(value: Boolean) {
+  dataStore.edit { prefs -> prefs[useDynamicColorKey] = value }
+}
+
+fun Context.keepScreenOnFlow(): Flow<Boolean> =
+  dataStore.data.map { prefs -> prefs[keepScreenOnKey] ?: false }
+
+suspend fun Context.setKeepScreenOn(value: Boolean) {
+  dataStore.edit { prefs -> prefs[keepScreenOnKey] = value }
+}
+
+fun Context.songLineHeightMultiplierFlow(): Flow<Float> =
+  dataStore.data.map { prefs -> prefs[songLineHeightMultiplierKey] ?: 1.0f }
+
+suspend fun Context.setSongLineHeightMultiplier(value: Float) {
+  dataStore.edit { prefs -> prefs[songLineHeightMultiplierKey] = value }
 }
 
 fun Context.appSettingsDataStore(): DataStore<Preferences> = dataStore
