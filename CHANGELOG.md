@@ -1,5 +1,12 @@
 # PWS Android
 
+# [3.2.0-rc.8](https://github.com/alelk/pws-android/compare/v3.2.0-rc.7...v3.2.0-rc.8) (2026-06-18)
+
+
+### Bug Fixes
+
+* fix migrate from prev db ([d85420f](https://github.com/alelk/pws-android/commit/d85420fd598d3609ef3a91e330fae20090f449cd))
+
 # [3.2.0-rc.7](https://github.com/alelk/pws-android/compare/v3.2.0-rc.6...v3.2.0-rc.7) (2026-06-17)
 
 
