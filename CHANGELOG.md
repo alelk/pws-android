@@ -1,5 +1,18 @@
 # PWS Android
 
+# [3.3.0-rc.1](https://github.com/alelk/pws-android/compare/v3.2.0...v3.3.0-rc.1) (2026-06-20)
+
+
+### Bug Fixes
+
+* fix ci build issue ([0b57f6e](https://github.com/alelk/pws-android/commit/0b57f6e5a030c0cc3fe2e9aa22b12a71396cf417))
+
+
+### Features
+
+* Implement pluggable books ([93c72ab](https://github.com/alelk/pws-android/commit/93c72ab53ac813dfd41df40bb78bbb96ffa27c6f))
+* improve ui ([99670e7](https://github.com/alelk/pws-android/commit/99670e769b60e81943e10813c546a0f5bd54f853))
+
 # [3.2.0](https://github.com/alelk/pws-android/compare/v3.1.0...v3.2.0) (2026-06-18)
 
 
