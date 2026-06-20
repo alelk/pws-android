@@ -1,8 +1,8 @@
 package io.github.alelk.pws.database.support
 
-import android.database.sqlite.SQLiteDatabase
 import androidx.core.database.getIntOrNull
 import androidx.core.database.getStringOrNull
+import io.github.alelk.pws.database.MigrationDbSource
 import io.github.alelk.pws.domain.core.BibleRef
 import io.github.alelk.pws.domain.core.ids.BookId
 import io.github.alelk.pws.domain.core.Color
@@ -19,7 +19,7 @@ import kotlinx.datetime.format.char
  * - 3.0.0 (v12)
  * - 3.2.x (v13)
  */
-class PwsDb2xDataProvider(val db: SQLiteDatabase) : PwsDbDataProvider {
+internal class PwsDb2xDataProvider(val db: MigrationDbSource) : PwsDbDataProvider {
 
   override val dbVersions: IntRange = 11..13
 

@@ -25,7 +25,8 @@ val dbDecryptKeyDebug = "7b4cabf2662f9f7ffab9e916fdd0d64a184a70c7cd5f585cf89501c
 val dbDecryptKeyProd: String = localOrEnv("db.decrypt.key.prod", "DB_DECRYPT_KEY_PROD") ?: ""
 
 // Asset version — tracks the book-content version in pws-docs releases (db.version file).
-// Decoupled from PwsDatabaseProvider.DB_VERSION (app-side DB filename, changes with schema bumps).
+// Decoupled from the Room schema version (see PwsDatabase.version) — multiple asset rebuilds
+// may target the same schema version, and a schema bump may reuse a previous asset.
 val dbAssetVersion: String = rootProject.file("db.version").readText().trim()
 
 // XOR-obfuscate the hex key so its literal string does not appear in the DEX.
@@ -47,7 +48,7 @@ android {
     minSdk = 23
     buildConfigField("String", "DB_AUTHORITY", "\"com.alelk.pws.database\"")
     resValue("string", "db_authority", "com.alelk.pws.database")
-    // Version of the .dbz.enc asset in pws-docs — may differ from DB_VERSION (app-side DB name).
+    // Version of the .dbz.enc asset in pws-docs — independent of the Room schema version.
     buildConfigField("String", "DB_ASSET_VERSION", "\"$dbAssetVersion\"")
     // true for all normal builds; overridden to false in localSeed build type.
     buildConfigField("boolean", "DB_ASSET_ENCRYPTED", "true")

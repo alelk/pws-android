@@ -1,12 +1,12 @@
 package io.github.alelk.pws.database.support
 
 import android.database.Cursor
-import android.database.sqlite.SQLiteDatabase
+import io.github.alelk.pws.database.MigrationDbSource
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.toList
 import timber.log.Timber
 
-internal suspend fun <T> SQLiteDatabase.fetchData(
+internal suspend fun <T> MigrationDbSource.fetchData(
   collectionName: String,
   table: String,
   columns: Array<String>,
