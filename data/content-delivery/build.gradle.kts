@@ -52,6 +52,18 @@ dependencies {
   implementation(libs.kotlinx.coroutines.android)
   implementation(libs.kotlinx.coroutines.core)
   implementation(libs.timber)
+
+  testImplementation(libs.pws.dbRoomTestFixtures)
+  testImplementation(libs.kotest.runner.junit5)
+  testImplementation(libs.kotest.property)
+  testImplementation(libs.kotest.assertions.core)
+  testImplementation(libs.kotlinx.coroutines.test)
+  testImplementation(libs.kotlinx.datetime)
+  testImplementation(libs.ktor.client.mock)
+  testImplementation(libs.androidx.test.core)
+  testImplementation(libs.kotest.runner.android)
+  testImplementation(libs.kotest.extensions.android)
+  testImplementation(libs.robolectric)
 }
 
 tasks.withType<Test> {
