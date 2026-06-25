@@ -30,12 +30,18 @@ jobs:
           distribution: 'jetbrains'
           cache: gradle
 
+      - name: Run tests
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ./gradlew :data:db-android:testRuDebugUnitTest data:content-delivery:check app-compose:check
+
+
       - name: Build ruDebug & ukDebug
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          ./gradlew buildRuDebugPreBundle  :app:testRuDebugUnitTest :app:test
-        # fixme: ./gradlew buildRuDebugPreBundle buildUkDebug testRuDebugUnitTest :data:db-android:testRuDebugUnitTest :app:testRuDebugUnitTest :app:test
+          ./gradlew buildRuDebugPreBundle buildUkDebugPreBundle
 
       - name: Publish Test Results
         uses: mikepenz/action-junit-report@v4

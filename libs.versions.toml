@@ -1,13 +1,13 @@
 [versions]
 
-pws = "3.1.0-rc.5"
+pws = "3.1.0-rc.6"
 
 android-application = "9.2.1"
-kotlin = "2.4.0"
+kotlin = "2.3.21" # 2.4.0 blocked: Hilt/Dagger 2.59.2 bundles kotlin-metadata-jvm that only supports metadata <= 2.3.0
 kotlinx-coroutines = "1.11.0"
 ktor = "3.5.0"
 
-ksp = "2.3.7" # https://central.sonatype.com/artifact/com.google.devtools.ksp/com.google.devtools.ksp.gradle.plugin/versions
+ksp = "2.3.9" # https://central.sonatype.com/artifact/com.google.devtools.ksp/com.google.devtools.ksp.gradle.plugin/versions
 
 hilt = "2.59.2"
 
@@ -21,7 +21,7 @@ room = "2.8.4"
 
 kotlinx-datetime = "0.8.0"
 
-kotest = "6.2.0"
+kotest = "6.2.1"
 kotest-runner-android = "1.2.2"
 kotest-extensions-android = "0.1.9"
 kotest-multiplatform = "6.0.0.M4"

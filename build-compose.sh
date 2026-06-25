@@ -14,6 +14,7 @@ rm -rf ./.gradle/buildOutputCleanup
 rm -rf ./.gradle/configuration-cache
 
 ./gradlew :data:db-android:testRuDebugUnitTest :app-compose:check \
+  :data:content-delivery:check \
   :app-compose:bundleRuRelease \
   :app-compose:bundleUkRelease \
   :app-compose:bundleFullRelease \
