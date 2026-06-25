@@ -1,5 +1,17 @@
 # PWS Android
 
+# [3.3.0-rc.2](https://github.com/alelk/pws-android/compare/v3.3.0-rc.1...v3.3.0-rc.2) (2026-06-25)
+
+
+### Bug Fixes
+
+* Update libraries ([42bcb6e](https://github.com/alelk/pws-android/commit/42bcb6e2750a6a088fd811c8cfb0df7d94552cc9))
+
+
+### Features
+
+* Reimplement key manager ([00c43f7](https://github.com/alelk/pws-android/commit/00c43f78fe7882cdf3449918ac64da8368f6ae19))
+
 # [3.3.0-rc.1](https://github.com/alelk/pws-android/compare/v3.2.0...v3.3.0-rc.1) (2026-06-20)
 
 
