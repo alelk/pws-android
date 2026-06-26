@@ -1,6 +1,6 @@
 [versions]
 
-pws = "3.1.0-rc.6"
+pws = "3.1.0-rc.7"
 
 android-application = "9.2.1"
 kotlin = "2.3.21" # 2.4.0 blocked: Hilt/Dagger 2.59.2 bundles kotlin-metadata-jvm that only supports metadata <= 2.3.0

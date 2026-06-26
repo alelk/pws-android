@@ -7,7 +7,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.contract.ActivityResultContracts.OpenDocument
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -30,14 +30,19 @@ import io.github.alelk.pws.features.theme.ThemeMode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.text.SimpleDateFormat
-import java.util.Date
 
 class MainActivity : ComponentActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     enableEdgeToEdge()
     super.onCreate(savedInstanceState)
+    lifecycleScope.launch(Dispatchers.IO) {
+      PwsBackupAgent.applyPendingRestoreIfNeeded(
+        this@MainActivity,
+        PwsDatabaseProvider.getDatabase(this@MainActivity),
+        appSettingsDataStore(),
+      )
+    }
     setContent {
       val context = LocalContext.current
       val backupService = remember { BackupService() }
@@ -53,25 +58,7 @@ class MainActivity : ComponentActivity() {
         packageManager.getPackageInfo(packageName, 0).versionName ?: "Unknown"
       }
 
-      val exportLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/octet-stream")) { uri ->
-        if (uri == null) return@rememberLauncherForActivityResult
-        scope.launch {
-          runCatching {
-            val source = packageManager.getPackageInfo(packageName, 0).let { "${it.packageName}/${it.versionName}" }
-            val backup = backupManager.exportBackup(source)
-            val text = backupService.writeAsString(backup)
-            withContext(Dispatchers.IO) {
-              contentResolver.openOutputStream(uri)?.bufferedWriter()?.use { it.write(text) }
-            }
-          }.onSuccess {
-            Toast.makeText(context, "Export completed", Toast.LENGTH_SHORT).show()
-          }.onFailure {
-            Toast.makeText(context, "Export failed", Toast.LENGTH_SHORT).show()
-          }
-        }
-      }
-
-      val importLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+      val importLauncher = rememberLauncherForActivityResult(OpenDocument()) { uri ->
         if (uri == null) return@rememberLauncherForActivityResult
         scope.launch {
           runCatching {
@@ -89,7 +76,7 @@ class MainActivity : ComponentActivity() {
         }
       }
 
-      val settingsExternalActions = remember(exportLauncher, importLauncher) {
+      val settingsExternalActions = remember(importLauncher) {
         SettingsExternalActions(
           openUrl = { url ->
             startActivity(Intent(Intent.ACTION_VIEW, android.net.Uri.parse(url)))
@@ -98,8 +85,21 @@ class MainActivity : ComponentActivity() {
             startActivity(Intent(Intent.ACTION_SENDTO, android.net.Uri.parse(mailto)))
           },
           exportBackup = {
-            val currentTime = SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(Date())
-            exportLauncher.launch("pws_backup_$currentTime.pws")
+            scope.launch {
+              runCatching {
+                val source = packageManager.getPackageInfo(packageName, 0).let { "${it.packageName}/${it.versionName}" }
+                val backup = backupManager.exportBackup(source)
+                val text = backupService.writeAsString(backup)
+                withContext(Dispatchers.IO) {
+                  val dir = context.getExternalFilesDir(null) ?: context.filesDir
+                  java.io.File(dir, "pws_backup.yaml").writeText(text, Charsets.UTF_8)
+                }
+              }.onSuccess {
+                Toast.makeText(context, "Backup saved", Toast.LENGTH_SHORT).show()
+              }.onFailure {
+                Toast.makeText(context, "Export failed", Toast.LENGTH_SHORT).show()
+              }
+            }
           },
           importBackup = {
             importLauncher.launch(arrayOf("application/octet-stream", "*/*"))

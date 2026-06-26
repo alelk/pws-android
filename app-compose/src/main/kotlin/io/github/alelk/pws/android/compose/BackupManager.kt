@@ -10,6 +10,7 @@ import io.github.alelk.pws.portable.model.Song
 import io.github.alelk.pws.portable.model.SongNumber
 import io.github.alelk.pws.portable.model.Tag
 import io.github.alelk.pws.database.PwsDatabase
+import io.github.alelk.pws.database.history.HistoryEntity
 import io.github.alelk.pws.database.song_tag.SongTagEntity
 import io.github.alelk.pws.database.tag.TagEntity
 import io.github.alelk.pws.features.theme.ThemeMode
@@ -24,6 +25,7 @@ class BackupManager(
 
   private val bookStatisticDao = db.bookStatisticDao()
   private val favoriteDao = db.favoriteDao()
+  private val historyDao = db.historyDao()
   private val songDao = db.songDao()
   private val tagDao = db.tagDao()
   private val songTagDao = db.songTagDao()
@@ -59,6 +61,12 @@ class BackupManager(
       it.bookStatistic.priority?.let { pref -> BookPreference(it.book.id, pref) }
     }
 
+    val history = historyDao.getAllFlow().first().mapNotNull { h ->
+      songNumberDao.getById(h.bookId, h.songId)?.let { sn ->
+        Backup.HistoryEntry(SongNumber(sn.bookId, sn.number), h.accessTimestamp)
+      }
+    }
+
     val settings = listOfNotNull(
       setting(appThemeKey),
     ).toMap()
@@ -69,6 +77,7 @@ class BackupManager(
       favorites = favorites,
       tags = customTags,
       bookPreferences = bookPreferences,
+      history = history,
       settings = settings,
     )
   }
@@ -125,6 +134,13 @@ class BackupManager(
       bookStatisticDao.getById(pref.bookId)?.let { stat ->
         bookStatisticDao.upsert(stat.copy(priority = pref.preference))
       }
+    }
+
+    backup.history?.forEach { entry ->
+      songNumberDao.getByBookIdAndSongNumber(entry.songNumber.bookId, entry.songNumber.number)
+        ?.let { sn ->
+          historyDao.insert(HistoryEntity(sn.id, accessTimestamp = entry.accessTimestamp))
+        }
     }
 
     backup.settings?.get(appThemeKey.name)?.let { themeValue ->

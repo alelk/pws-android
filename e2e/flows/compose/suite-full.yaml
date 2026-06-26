@@ -30,5 +30,6 @@ name: "Compose full suite (Phase 2 — including mutating tests)"
 - runFlow: 12-favorites-remove.yaml
 - runFlow: 13-tag-to-songs.yaml
 - runFlow: 14-history-clear-all.yaml
+- runFlow: 17-backup-restore.yaml
 
 

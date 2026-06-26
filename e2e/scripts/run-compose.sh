@@ -204,6 +204,7 @@ FULL_FLOWS=(
   12-favorites-remove.yaml
   13-tag-to-songs.yaml
   14-history-clear-all.yaml
+  17-backup-restore.yaml
 )
 
 FLOWS_TO_RUN=()

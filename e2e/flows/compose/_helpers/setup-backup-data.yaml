@@ -1,0 +1,30 @@
+appId: ${APP_ID}
+name: "_helper: populate favorites, history and a tag for backup test"
+---
+# Creates the user data that the backup/restore test verifies.
+# After this flow: song #1 is in favorites, in history, and tagged with TEST_TAG_NAME.
+# Leaves app on the Home tab.
+
+- runFlow: open-song-1-via-search.yaml
+
+# Add to favorites
+- tapOn:
+    id: "${ACTION_TOGGLE_FAVORITE}"
+
+# Dwell so HistoryRecorder persists the view
+- extendedWaitUntil:
+    visible:
+      id: "__sleep_anchor__"
+    timeout: ${TIMEOUT_HISTORY_DWELL}
+    optional: true
+
+- back
+- back
+
+# Create a custom tag and assign song #1 to it
+- runFlow: create-tag.yaml
+- runFlow: assign-tag-to-song-1.yaml
+
+# Back to Home
+- tapOn:
+    id: "${NAV_HOME}"

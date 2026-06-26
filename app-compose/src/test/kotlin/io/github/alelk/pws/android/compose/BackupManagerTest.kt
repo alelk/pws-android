@@ -15,12 +15,15 @@ import io.github.alelk.pws.database.book.bookEntity
 import io.github.alelk.pws.database.bookstatistic.BookStatisticEntity
 import io.github.alelk.pws.database.song.songEntity
 import io.github.alelk.pws.database.song_number.songNumberEntity
+import io.github.alelk.pws.database.history.HistoryEntity
 import io.github.alelk.pws.database.song_tag.SongTagEntity
 import io.github.alelk.pws.database.tag.tagEntity
 import io.github.alelk.pws.domain.core.Color
 import io.github.alelk.pws.domain.core.ids.BookId
 import io.github.alelk.pws.domain.core.ids.SongId
 import io.github.alelk.pws.domain.core.ids.SongNumberId
+import io.github.alelk.pws.portable.model.SongNumber
+import kotlinx.datetime.LocalDateTime
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.nulls.shouldNotBeNull
@@ -106,6 +109,8 @@ class BackupManagerTest : FeatureSpec({
         source.songTagDao().insert(SongTagEntity(songId = SongId(1L), tagId = tagId))
         // book priority
         source.bookStatisticDao().upsert(BookStatisticEntity(id = bookId, priority = 5))
+        // history entry for song #1
+        source.historyDao().insert(HistoryEntity(SongNumberId(bookId, SongId(1L)), accessTimestamp = LocalDateTime(2026, 1, 1, 12, 0)))
         // theme setting
         val sourceDs = dataStore(backgroundScope)
         sourceDs.edit { it[stringPreferencesKey("app-theme")] = "dark" }
@@ -117,6 +122,10 @@ class BackupManagerTest : FeatureSpec({
         backup.songs.shouldNotBeNull().single().lyric shouldBe "my edited lyric"
         backup.tags.shouldNotBeNull().single().name shouldBe "My Tag"
         backup.bookPreferences.shouldNotBeNull().single().preference shouldBe 5
+        backup.history.shouldNotBeNull().single().let {
+          it.songNumber shouldBe SongNumber(bookId, 1)
+          it.accessTimestamp shouldBe LocalDateTime(2026, 1, 1, 12, 0)
+        }
         backup.settings?.get("app-theme") shouldBe "dark"
 
         // --- destination DB with only base content ---
@@ -135,6 +144,10 @@ class BackupManagerTest : FeatureSpec({
           it.name shouldBe "My Tag"
           it.color shouldBe Color.parse("#123456")
           it.songs shouldBe backup.tags!!.single().songs
+        }
+        restored.history.shouldNotBeNull().single().let {
+          it.songNumber shouldBe SongNumber(bookId, 1)
+          it.accessTimestamp shouldBe LocalDateTime(2026, 1, 1, 12, 0)
         }
         restored.settings?.get("app-theme") shouldBe "dark"
 

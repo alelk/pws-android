@@ -154,6 +154,7 @@ dependencies {
   implementation(libs.appcompat)
   implementation(libs.activity.compose)
   implementation(libs.kotlinx.coroutines.android)
+  implementation(libs.kotlinx.datetime)
   implementation(libs.datastore.preferences)
 
   // Compose BOM

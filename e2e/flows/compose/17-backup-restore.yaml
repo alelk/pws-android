@@ -1,0 +1,85 @@
+appId: ${APP_ID}
+name: "17 - Backup export and restore (no Google services required)"
+---
+# Verifies the full backup/restore cycle using the pending_user_restore.yaml mechanism.
+# Does NOT require Google Play Services or bmgr — works on any debug emulator.
+#
+# Prerequisite: debuggable build (adb shell run-as requires it).
+
+# Phase 1: populate user data
+- runFlow: _helpers/cold-start.yaml
+- runFlow: _helpers/setup-backup-data.yaml
+
+# Phase 2: export backup via settings UI
+- tapOn:
+    id: "${ACTION_OPEN_SETTINGS}"
+
+- extendedWaitUntil:
+    visible:
+      testTag: "${ACTION_EXPORT_BACKUP}"
+    timeout: ${TIMEOUT_MEDIUM}
+
+- tapOn:
+    testTag: "${ACTION_EXPORT_BACKUP}"
+
+- waitForAnimationToEnd
+
+# Phase 3: pull backup file to host
+- runScript: ../../scripts/pull-backup.js
+  env:
+    APP_ID: ${APP_ID}
+
+# Phase 4: fresh install simulation
+- launchApp:
+    clearState: true
+
+- extendedWaitUntil:
+    visible:
+      id: "${NAV_HOME}"
+    timeout: ${TIMEOUT_COLD_START}
+
+# Phase 5: inject pending restore
+- runScript: ../../scripts/push-pending-restore.js
+  env:
+    APP_ID: ${APP_ID}
+
+# Phase 6: relaunch — app applies pending restore on startup
+- stopApp
+
+- launchApp:
+    clearState: false
+
+- extendedWaitUntil:
+    visible:
+      id: "${NAV_HOME}"
+    timeout: ${TIMEOUT_COLD_START}
+
+# Phase 7: verify favorites restored
+- tapOn:
+    id: "${NAV_FAVORITES}"
+
+- extendedWaitUntil:
+    visible:
+      id: "${SONG_ITEM_ONE}"
+    timeout: ${TIMEOUT_LONG}
+
+- assertVisible:
+    id: "${SONG_ITEM_ONE}"
+
+# Verify tag restored
+- tapOn:
+    id: "${NAV_TAGS}"
+
+- extendedWaitUntil:
+    visible:
+      id: "${ACTION_ADD_TAG}"
+    timeout: ${TIMEOUT_MEDIUM}
+
+- scrollUntilVisible:
+    element: "${TEST_TAG_NAME}"
+    direction: DOWN
+    timeout: ${TIMEOUT_LONG}
+
+- assertVisible: "${TEST_TAG_NAME}"
+
+- takeScreenshot: "17-backup-restored"
