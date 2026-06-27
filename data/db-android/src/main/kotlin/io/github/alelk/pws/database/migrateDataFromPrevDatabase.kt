@@ -1,7 +1,6 @@
 package io.github.alelk.pws.database
 
 import android.content.Context
-import android.database.sqlite.SQLiteDatabase
 import io.github.alelk.pws.database.history.HistoryEntity
 import io.github.alelk.pws.database.song_tag.SongTagEntity
 import io.github.alelk.pws.database.tag.TagEntity
@@ -10,31 +9,35 @@ import io.github.alelk.pws.database.support.PwsDb2xDataProvider
 import io.github.alelk.pws.domain.core.SongNumber
 import timber.log.Timber
 
-internal val DATABASE_PREV_NAMES = arrayOf(
-  "pws.3.2.2.db",
-  // plain SQLite — was unencrypted before SQLCipher was introduced
-  "pws.1.8.0.db", "pws.1.2.0.db", "pws.1.1.0.db", "pws.0.9.1.db", "pws.2.0.0.db", "pws.3.0.0.db"
-)
+internal val DATABASE_PREV_NAMES =
+  arrayOf(
+    // encrypted (SQLCipher) — versioned filename used before the switch to stable `pws.db`
+    "pws.3.2.3.db",
+    // plain SQLite — was unencrypted before SQLCipher was introduced
+    "pws.1.8.0.db", "pws.1.2.0.db", "pws.1.1.0.db", "pws.0.9.1.db", "pws.2.0.0.db", "pws.3.0.0.db"
+  )
 
-internal suspend fun migrateDataFromPrevDatabase(context: Context, currentDatabase: PwsDatabase): Boolean =
+internal suspend fun migrateDataFromPrevDatabase(context: Context, currentDatabase: PwsDatabase, passphrase: ByteArray): Boolean =
   DATABASE_PREV_NAMES.map { dbName ->
     runCatching {
       val dbFile = context.getDatabasePath(dbName)
-      val prevDb = dbFile?.let(::openReadOnlyDatabase)
+      val prevDb = dbFile?.let { openReadOnlyDatabase(it, passphrase) }
       if (prevDb != null) {
-        prevDb.migrateDataTo(currentDatabase)
-          .onSuccess {
-            // delete previous database file if all user data has been upserted
-            Timber.i("imported all user data from previous database $dbFile, delete file...")
-            dbFile.delete()
-          }.getOrThrow()
+        prevDb.use {
+          it.migrateDataTo(currentDatabase)
+            .onSuccess {
+              // delete previous database file if all user data has been upserted
+              Timber.i("imported all user data from previous database $dbFile, delete file...")
+              dbFile.delete()
+            }.getOrThrow()
+        }
       } else Timber.d("no previous database $dbFile found")
     }.onFailure { e ->
       Timber.e(e, "error migrating data from previous database $dbName: ${e.message}")
     }
   }.all { it.isSuccess }
 
-internal suspend fun SQLiteDatabase.migrateDataTo(currentDatabase: PwsDatabase): Result<Unit> =
+internal suspend fun MigrationDbSource.migrateDataTo(currentDatabase: PwsDatabase): Result<Unit> =
   kotlin.runCatching {
     Timber.i("found previous database $path ($version), migrate user data to...")
     val dataProviders = listOf(PwsDb1xDataProvider(this), PwsDb2xDataProvider(this))

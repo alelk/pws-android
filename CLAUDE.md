@@ -1,6 +1,7 @@
 # CLAUDE.md — pws-android
 
-> **Canonical agent guide is [`AGENTS.md`](AGENTS.md).** Read it first — everything below is Claude-Code-specific glue.
+> **Canonical agent guide is [`AGENTS.md`](AGENTS.md).** Read it first — everything below is
+> Claude-Code-specific glue.
 > Auto-loaded every session by Claude Code. Keep tight.
 
 ---
@@ -11,17 +12,18 @@
 
 This repo carries a copy of the `pws-core` skill catalogue. Invoke via the `Skill` tool:
 
-| Skill                       | Apply when                                                       |
-|-----------------------------|------------------------------------------------------------------|
-| `kotlin-project-layout`     | Touching root Gradle layout, `app.version`, version catalog      |
-| `kmp-architecture`          | Adding KMP-shaped modules / interop                              |
-| `kotlin-clean-architecture` | Auditing layer boundaries                                        |
-| `kotlin-domain-modeling`    | Domain refactors (mostly applies in `pws-core`)                  |
-| `compose-multiplatform-ui`  | UI work that touches `pws-core:features`                         |
-| `voyager-navigation`        | Navigation changes (mostly in `pws-core`)                        |
-| `ktor-api-contract`         | API/DTO changes (lives in `pws-core`)                            |
+| Skill                       | Apply when                                                  |
+|-----------------------------|-------------------------------------------------------------|
+| `kotlin-project-layout`     | Touching root Gradle layout, `app.version`, version catalog |
+| `kmp-architecture`          | Adding KMP-shaped modules / interop                         |
+| `kotlin-clean-architecture` | Auditing layer boundaries                                   |
+| `kotlin-domain-modeling`    | Domain refactors (mostly applies in `pws-core`)             |
+| `compose-multiplatform-ui`  | UI work that touches `pws-core:features`                    |
+| `voyager-navigation`        | Navigation changes (mostly in `pws-core`)                   |
+| `ktor-api-contract`         | API/DTO changes (lives in `pws-core`)                       |
 
-Each skill's `SKILL.md` is the entrypoint. Most apply to `pws-core`; this repo is mostly Android glue.
+Each skill's `SKILL.md` is the entrypoint. Most apply to `pws-core`; this repo is mostly Android
+glue.
 
 ### Subagents
 
@@ -33,20 +35,30 @@ Each skill's `SKILL.md` is the entrypoint. Most apply to `pws-core`; this repo i
 
 In [`docs/ai/plans/`](docs/ai/plans/):
 
-- `2026-06-18_pluggable-book-library_plan.md` — book catalog, download, import into Room, BookLibraryScreen
+- `2026-06-18_pluggable-book-library_plan.md` — book catalog, download, import into Room,
+  BookLibraryScreen. **T-003–T-020 реализованы**; остались T-001/T-002 (pws-v2x-library-manager
+  export commands) и T-019/T-021.
+- `2026-06-19_stable-db-filename-room-migrations_plan.md` — стабильное имя `pws.db`, Room
+  `exportSchema=true`, удаление мёртвой миграции. **Фаза 0** на стороне library-manager, **Фазы 1–2
+  ** в коде.
 
-When the user references "current plan" without a name, use this one.
+When the user references "current plan" without a name, use the **stable-db-filename** plan (most
+recent).
 
 ### Don't waste tokens on
 
-`build/` · `*/build/` · `.gradle/` · `.kotlin/` · `output/` · `*.iml` · `.idea/` · `gradle-wrapper.jar` · `kotlin-js-store/` · `app-compose/src/main/res/raw/` · `data/db-android/src/test/resources/test-db/`.
+`build/` · `*/build/` · `.gradle/` · `.kotlin/` · `output/` · `*.iml` · `.idea/` ·
+`gradle-wrapper.jar` · `kotlin-js-store/` · `app-compose/src/main/res/raw/` ·
+`data/db-android/src/test/resources/test-db/`.
 
 ### Cross-repo
 
-`../pws-core` is auto-linked as a composite Gradle build. Most logic lives there. If a user reports an Android symptom that touches features/domain, check both repos.
+`../pws-core` is auto-linked as a composite Gradle build. Most logic lives there. If a user reports
+an Android symptom that touches features/domain, check both repos.
 
 ---
 
 ## Everything else
 
-Build commands · flavors · module map · architecture · hard rules · workflows · docs index → **[`AGENTS.md`](AGENTS.md)**.
+Build commands · flavors · module map · architecture · hard rules · workflows · docs index → *
+*[`AGENTS.md`](AGENTS.md)**.

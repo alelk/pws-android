@@ -5,6 +5,10 @@ plugins {
   alias(libs.plugins.compose)
 }
 
+// The RuStore flavor pulls the RuStore SDK from artifactory-external.vkpartner.ru, which is not
+// reachable from regular CI (SSL handshake failure). Keep it disabled by default; enable it
+// explicitly with -Ppws.enableRustore=true (or in gradle.properties) when building the RuStore app.
+val enableRustore = (project.findProperty("pws.enableRustore") as String?)?.toBoolean() ?: false
 
 android {
   compileSdk = rootProject.extra["sdkVersion"] as Int
@@ -104,6 +108,13 @@ android {
 }
 
 androidComponents {
+  // Skip building the RuStore variants entirely unless explicitly enabled. This avoids resolving
+  // the unreachable RuStore artifactory during regular CI (e.g. the aggregate `:app:test` task).
+  if (!enableRustore) {
+    beforeVariants(selector().withFlavor("contentLevel" to "rustore")) { variant ->
+      variant.enable = false
+    }
+  }
   onVariants { variant ->
     variant.resValues.put(
       variant.makeResValueKey("string", "versionName"),
@@ -159,11 +170,15 @@ dependencies {
   testImplementation(libs.room.testing)
 }
 
-// Rustore-specific dependencies - must be added after evaluation when configurations are created
+// Rustore-specific dependencies - must be added after evaluation when configurations are created.
+// Only declared when the RuStore flavor is enabled, otherwise the unreachable RuStore artifactory
+// would be resolved during regular CI.
 afterEvaluate {
-  dependencies {
-    add("rustoreImplementation", platform(libs.rustore.sdk.bom))
-    add("rustoreImplementation", "ru.rustore.sdk:pay")
+  if (enableRustore) {
+    dependencies {
+      add("rustoreImplementation", platform(libs.rustore.sdk.bom))
+      add("rustoreImplementation", "ru.rustore.sdk:pay")
+    }
   }
 }
 

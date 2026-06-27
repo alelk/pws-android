@@ -11,7 +11,7 @@ name: "12 - Remove from favorites and verify empty"
     id: "${ACTION_TOGGLE_FAVORITE}"
 
 # --- Step 2: verify song appears in Favorites tab ---
-# Two back: one may be consumed by a transient Snackbar (UNDO toast after toggle).
+# Two backs: SearchScreen auto-requests focus → keyboard appears → second back dismisses it.
 - back
 - back
 
@@ -44,7 +44,6 @@ name: "12 - Remove from favorites and verify empty"
     id: "${ACTION_TOGGLE_FAVORITE}"
 
 # --- Step 4: back to Favorites tab and verify item gone ---
-- back
 - back
 
 - extendedWaitUntil:

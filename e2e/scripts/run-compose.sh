@@ -27,7 +27,7 @@ Options:
   --flow PATH      [legacy] run a single flow (path relative to e2e/)
   --full           Run full suite including mutating tests
   --clean          adb pm clear $APP_ID before the first flow (recommended for CI / full suite)
-  --retries N      Retry each failed flow up to N times (default: 1)
+  --retries N      Retry each failed flow up to N times (default: 0; set to 1+ in CI)
   --dry-run        Print resolved config and exit
   -h, --help       Show this help
 
@@ -53,7 +53,7 @@ FLOW_OVERRIDE=""
 USE_FULL="false"
 DRY_RUN="false"
 CLEAN_STATE="false"
-RETRIES="1"
+RETRIES="0"
 SELECTED_FLOWS=()
 
 while [[ $# -gt 0 ]]; do
@@ -204,6 +204,7 @@ FULL_FLOWS=(
   12-favorites-remove.yaml
   13-tag-to-songs.yaml
   14-history-clear-all.yaml
+  17-backup-restore.yaml
 )
 
 FLOWS_TO_RUN=()
@@ -223,7 +224,44 @@ fi
 # ---------------------------------------------------------------------------
 # Run a single flow with up to $RETRIES retries.
 # Emits one JUnit XML per flow into $REPORT_DIR.
+# Retry safety: mutation flows all start with cold-start.yaml (clearState: true),
+# so a retry always begins from a clean app state. Smoke flows use clearState: false
+# and may see leftover state from a prior attempt — keep RETRIES=0 locally.
 # ---------------------------------------------------------------------------
+
+# Special handler for the backup/restore test (17-backup-restore).
+# Maestro runScript cannot call Java/adb (GraalJS sandbox blocks interop),
+# so host-side file transfer is done here between the two Maestro phases.
+_run_backup_restore() {
+  local debug="$1"
+  local junit="$2"
+  local export_flow="$E2E_DIR/flows/compose/17-backup-restore.yaml"
+  local verify_flow="$E2E_DIR/flows/compose/_helpers/backup-restore-verify.yaml"
+
+  # Clean up stale backup files so only one file exists after export
+  adb -s "$DEVICE_ID" shell "rm -f /sdcard/Download/pws_backup_*.pws" 2>/dev/null || true
+
+  # Phase 1: populate data + export (backup saved to Downloads via file picker)
+  echo "[INFO]   Phase 1/2: setup and export"
+  maestro test "$export_flow" \
+    --udid "$DEVICE_ID" \
+    --debug-output "$debug" \
+    "${MAESTRO_ENV[@]}" || { echo "[FAIL]   export phase failed"; return 1; }
+
+  # Clear app private data; the backup file in Downloads is untouched
+  echo "[INFO]   Clearing app state"
+  adb -s "$DEVICE_ID" shell pm clear "$APP_ID" > /dev/null
+
+  # Phase 2: relaunch → import via UI → verify
+  echo "[INFO]   Phase 2/2: import via UI and verify restore"
+  maestro test "$verify_flow" \
+    --udid "$DEVICE_ID" \
+    --debug-output "$debug" \
+    --format junit \
+    --output "$junit" \
+    "${MAESTRO_ENV[@]}"
+}
+
 run_flow() {
   local idx="$1"
   local total="$2"
@@ -242,12 +280,19 @@ run_flow() {
       echo "[INFO] [$idx/$total] Retry $((attempt - 1))/$RETRIES: $name"
     fi
 
-    if (cd "$debug" && maestro test "$flow" \
-        --udid "$DEVICE_ID" \
-        --debug-output "$debug" \
-        --format junit \
-        --output "$junit" \
-        "${MAESTRO_ENV[@]}"); then
+    local ok=false
+    if [[ "$name" == "17-backup-restore" ]]; then
+      _run_backup_restore "$debug" "$junit" && ok=true
+    else
+      maestro test "$flow" \
+          --udid "$DEVICE_ID" \
+          --debug-output "$debug" \
+          --format junit \
+          --output "$junit" \
+          "${MAESTRO_ENV[@]}" && ok=true
+    fi
+
+    if $ok; then
       echo "[PASS] [$idx/$total] $name"
       return 0
     fi

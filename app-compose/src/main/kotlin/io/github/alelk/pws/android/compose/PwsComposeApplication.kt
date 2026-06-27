@@ -4,13 +4,17 @@ import android.app.Application
 import android.content.Context
 import cafe.adriel.voyager.core.registry.ScreenRegistry
 import io.github.alelk.pws.android.compose.donation.SharedPrefsDonationPromptStateRepository
+import io.github.alelk.pws.contentdelivery.ContentKeyProvider
+import io.github.alelk.pws.contentdelivery.di.contentDeliveryModule
 import io.github.alelk.pws.data.repository.room.di.repoRoomModule
 import io.github.alelk.pws.database.PwsDatabase
 import io.github.alelk.pws.database.PwsDatabaseProvider
+import io.github.alelk.pws.database.pwsContentKeyHex
 import io.github.alelk.pws.domain.donationprompt.config.DonationConfig
 import io.github.alelk.pws.domain.donationprompt.repository.DonationPromptStateReadRepository
 import io.github.alelk.pws.domain.donationprompt.repository.DonationPromptStateWriteRepository
 import io.github.alelk.pws.features.app.PwsAppInfo
+import io.github.alelk.pws.features.booklibrary.BookLibraryFirstLaunchState
 import io.github.alelk.pws.features.di.appScreenModule
 import io.github.alelk.pws.features.di.featuresModule
 import io.github.alelk.pws.features.di.useCasesModule
@@ -39,6 +43,10 @@ class PwsComposeApplication : Application() {
       single { PwsAppInfo(version) }
     }
 
+    val firstLaunchModule = module {
+      single<BookLibraryFirstLaunchState> { BookLibraryFirstLaunchStateImpl(androidContext()) }
+    }
+
     val donationModule = module {
       single { DonationConfig(enabled = true, boostyUrl = "https://boosty.to/hymna") }
       single {
@@ -53,8 +61,14 @@ class PwsComposeApplication : Application() {
       modules(
         databaseModule,
         appInfoModule,
+        firstLaunchModule,
         donationModule,
         repoRoomModule,
+        contentDeliveryModule(
+          catalogUrl = BuildConfig.CATALOG_URL,
+          bundleVariant = BuildConfig.BUNDLE_VARIANT,
+          keyProvider = ContentKeyProvider { pwsContentKeyHex() },
+        ),
         useCasesModule,
         featuresModule,
       )

@@ -1,7 +1,8 @@
 rootProject.name = "pws-android"
 include(
   ":data:db-android",
-  ":app",
+  ":data:content-delivery",
+  //":app",
   ":app-compose"
 )
 

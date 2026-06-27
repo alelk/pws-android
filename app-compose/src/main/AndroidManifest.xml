@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+  <!-- Required by :data:content-delivery to fetch the book catalog and bundles from pws-catalog. -->
+  <uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
   <application
     android:name=".PwsComposeApplication"
     android:icon="@mipmap/ic_launcher"
     android:label="@string/app_name"
     android:theme="@style/Theme.PwsCompose"
     android:enableOnBackInvokedCallback="true"
-    android:largeHeap="true">
+    android:largeHeap="true"
+    android:allowBackup="true"
+    android:fullBackupOnly="false"
+    android:backupAgent=".PwsBackupAgent"
+    android:dataExtractionRules="@xml/data_extraction_rules"
+    android:fullBackupContent="@xml/backup_rules">
 
     <activity
       android:name=".MainActivity"

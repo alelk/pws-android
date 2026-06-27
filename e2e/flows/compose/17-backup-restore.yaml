@@ -1,0 +1,39 @@
+appId: ${APP_ID}
+name: "17 - Backup export and restore (no Google services required)"
+---
+# Phase 1 of 2 — run by run-compose.sh as part of the full backup/restore test.
+# Phase 2 (verify) lives in 17-backup-restore-verify.yaml.
+# Host-side adb file transfer is orchestrated by run-compose.sh between the two phases.
+#
+# Prerequisite: debuggable build (adb shell run-as requires it).
+
+# Phase 1: populate user data
+- runFlow: _helpers/cold-start.yaml
+- runFlow: _helpers/setup-backup-data.yaml
+
+# Phase 2: export backup via settings UI
+- tapOn:
+    id: "${ACTION_OPEN_SETTINGS}"
+
+- waitForAnimationToEnd
+
+- scrollUntilVisible:
+    element:
+      id: ".*${ACTION_EXPORT_BACKUP}"
+    direction: DOWN
+    timeout: ${TIMEOUT_LONG}
+    speed: 80
+    visibilityPercentage: 50
+
+- tapOn:
+    id: "${ACTION_EXPORT_BACKUP}"
+
+# Android file picker (CreateDocument) opens — confirm save with the pre-filled filename
+- waitForAnimationToEnd
+
+- tapOn:
+    text: "SAVE"
+
+- waitForAnimationToEnd
+
+- stopApp

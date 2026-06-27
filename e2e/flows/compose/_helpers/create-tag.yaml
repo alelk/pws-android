@@ -42,5 +42,6 @@ name: "_helper: create tag TEST_TAG_NAME"
     element: "${TEST_TAG_NAME}"
     direction: DOWN
     timeout: ${TIMEOUT_LONG}
+    speed: 80
 
 - assertVisible: "${TEST_TAG_NAME}"

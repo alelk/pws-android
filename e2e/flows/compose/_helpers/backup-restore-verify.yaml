@@ -1,0 +1,73 @@
+appId: ${APP_ID}
+name: "17 - Backup restore verify (phase 2 of 2)"
+---
+# Phase 2 of 2. Called by run-compose.sh after pm clear.
+# App private data was wiped; the backup file remains in the device Downloads folder.
+# This flow imports the backup via Settings UI and verifies the data is restored.
+
+- launchApp:
+    clearState: false
+
+- extendedWaitUntil:
+    visible:
+      id: "${NAV_HOME}"
+    timeout: ${TIMEOUT_COLD_START}
+
+# Open Settings → Import Backup
+- tapOn:
+    id: "${ACTION_OPEN_SETTINGS}"
+
+- waitForAnimationToEnd
+
+- scrollUntilVisible:
+    element:
+      id: ".*${ACTION_IMPORT_BACKUP}"
+    direction: DOWN
+    timeout: ${TIMEOUT_LONG}
+    speed: 80
+    visibilityPercentage: 50
+
+- tapOn:
+    id: "${ACTION_IMPORT_BACKUP}"
+
+# File picker opens — wait for it to load, then tap the backup file
+- extendedWaitUntil:
+    visible:
+      text: ".*pws_backup.*"
+    timeout: ${TIMEOUT_LONG}
+
+- tapOn:
+    text: ".*pws_backup.*"
+
+- waitForAnimationToEnd
+
+# Verify favorites restored
+- tapOn:
+    id: "${NAV_FAVORITES}"
+
+- extendedWaitUntil:
+    visible:
+      id: "${SONG_ITEM_ONE}"
+    timeout: ${TIMEOUT_LONG}
+
+- assertVisible:
+    id: "${SONG_ITEM_ONE}"
+
+# Verify tag restored
+- tapOn:
+    id: "${NAV_TAGS}"
+
+- extendedWaitUntil:
+    visible:
+      id: "${ACTION_ADD_TAG}"
+    timeout: ${TIMEOUT_MEDIUM}
+
+- scrollUntilVisible:
+    element: "${TEST_TAG_NAME}"
+    direction: DOWN
+    timeout: ${TIMEOUT_LONG}
+    speed: 80
+
+- assertVisible: "${TEST_TAG_NAME}"
+
+- takeScreenshot: "17-backup-restored"
