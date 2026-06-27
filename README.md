@@ -6,23 +6,32 @@ The official Android client for the PWS ecosystem.
 [![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
 
 ## Project Structure
-- **app-compose** (New): Modern Jetpack Compose-based application. This is the primary development target.
+
+- **app-compose** (New): Modern Jetpack Compose-based application. This is the primary development
+  target.
 - **app** (Legacy): Original View-based application (maintenance mode).
 - **pws-core**: Shared business logic and domain models, integrated via Gradle Composite Build.
 
 ## Quick Start
-1. **Prerequisite**: Clone [pws-core](https://github.com/alelk/pws-core) into the same parent directory as this repository.
+
+1. **Prerequisite**: Clone [pws-core](https://github.com/alelk/pws-core) into the same parent
+   directory as this repository.
 2. **Open**: Import the project into Android Studio.
 3. **Run**: Select the `app-compose` run configuration with either `ruDebug` or `ukDebug` flavor.
 
 ## Documentation
-- **[Agent Guide (AGENTS.md)](AGENTS.md)**: Comprehensive technical guide for AI agents and developers (architecture, patterns, code navigation).
-- **[Release Workflow](docs/release-workflow.md)**: Instructions for CI/CD and manual production builds.
+
+- **[Agent Guide (AGENTS.md)](AGENTS.md)**: Comprehensive technical guide for AI agents and
+  developers (architecture, patterns, code navigation).
+- **[Release Workflow](docs/release-workflow.md)**: Instructions for CI/CD and manual production
+  builds.
 
 ## App Releases (published on Google Play)
 
 | Date       | Tag                                                                  | UK Release                 | RU Release                               |
 |------------|----------------------------------------------------------------------|----------------------------|------------------------------------------|
+| 2026-06-18 | [v3.2.0](https://github.com/alelk/pws-android/releases/tag/v3.2.0)   | -                          | 42 (3.2.0-jun-18-2026)                   |
+| 2026-05-07 | [v3.1.0](https://github.com/alelk/pws-android/releases/tag/v3.1.0)   | -                          | 41 (3.1.0-may-7-2026)                    |
 | 2026-05-04 | [v3.0.1](https://github.com/alelk/pws-android/releases/tag/v3.0.1)   | -                          | 40 (3.0.1-may-4-2026)                    |
 | 2026-03-28 | [v2.3.1](https://github.com/alelk/pws-android/releases/tag/v2.3.1)   | -                          | 39 (2.3.1-mar-28-2026)                   |
 | 2025-03-02 | [v2.1.0](https://github.com/alelk/pws-android/releases/tag/v2.1.0)   | -                          | 36 (2.1.0-mar-18-2025)                   |
@@ -47,9 +56,12 @@ The official Android client for the PWS ecosystem.
 | 2016-12-28 |                                                                      |                            | 5 (1.0.2-dec-28-2016)                    |
 
 ## License
-This project is licensed under the **PolyForm Noncommercial License 1.0.0**. See [LICENSE.md](LICENSE.md) for details.
+
+This project is licensed under the **PolyForm Noncommercial License 1.0.0**.
+See [LICENSE.md](LICENSE.md) for details.
 
 ## Contributors ✨
+
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
