@@ -7,11 +7,17 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts.CreateDocument
 import androidx.activity.result.contract.ActivityResultContracts.OpenDocument
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
@@ -58,6 +64,26 @@ class MainActivity : ComponentActivity() {
         packageManager.getPackageInfo(packageName, 0).versionName ?: "Unknown"
       }
 
+      var pendingBackupText by remember { mutableStateOf<String?>(null) }
+
+      val exportLauncher = rememberLauncherForActivityResult(CreateDocument("application/octet-stream")) { uri ->
+        val text = pendingBackupText ?: return@rememberLauncherForActivityResult
+        pendingBackupText = null
+        if (uri == null) return@rememberLauncherForActivityResult
+        scope.launch {
+          runCatching {
+            withContext(Dispatchers.IO) {
+              contentResolver.openOutputStream(uri)?.bufferedWriter()?.use { it.write(text) }
+                ?: error("Cannot open output stream")
+            }
+          }.onSuccess {
+            Toast.makeText(context, "Backup saved", Toast.LENGTH_SHORT).show()
+          }.onFailure {
+            Toast.makeText(context, "Export failed", Toast.LENGTH_SHORT).show()
+          }
+        }
+      }
+
       val importLauncher = rememberLauncherForActivityResult(OpenDocument()) { uri ->
         if (uri == null) return@rememberLauncherForActivityResult
         scope.launch {
@@ -76,7 +102,7 @@ class MainActivity : ComponentActivity() {
         }
       }
 
-      val settingsExternalActions = remember(importLauncher) {
+      val settingsExternalActions = remember(exportLauncher, importLauncher) {
         SettingsExternalActions(
           openUrl = { url ->
             startActivity(Intent(Intent.ACTION_VIEW, android.net.Uri.parse(url)))
@@ -89,13 +115,9 @@ class MainActivity : ComponentActivity() {
               runCatching {
                 val source = packageManager.getPackageInfo(packageName, 0).let { "${it.packageName}/${it.versionName}" }
                 val backup = backupManager.exportBackup(source)
-                val text = backupService.writeAsString(backup)
-                withContext(Dispatchers.IO) {
-                  val dir = context.getExternalFilesDir(null) ?: context.filesDir
-                  java.io.File(dir, "pws_backup.yaml").writeText(text, Charsets.UTF_8)
-                }
-              }.onSuccess {
-                Toast.makeText(context, "Backup saved", Toast.LENGTH_SHORT).show()
+                pendingBackupText = backupService.writeAsString(backup)
+                val timestamp = SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.getDefault()).format(Date())
+                exportLauncher.launch("pws_backup_$timestamp.pws")
               }.onFailure {
                 Toast.makeText(context, "Export failed", Toast.LENGTH_SHORT).show()
               }

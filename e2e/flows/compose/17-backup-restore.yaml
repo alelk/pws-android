@@ -1,8 +1,9 @@
 appId: ${APP_ID}
 name: "17 - Backup export and restore (no Google services required)"
 ---
-# Verifies the full backup/restore cycle using the pending_user_restore.yaml mechanism.
-# Does NOT require Google Play Services or bmgr — works on any debug emulator.
+# Phase 1 of 2 — run by run-compose.sh as part of the full backup/restore test.
+# Phase 2 (verify) lives in 17-backup-restore-verify.yaml.
+# Host-side adb file transfer is orchestrated by run-compose.sh between the two phases.
 #
 # Prerequisite: debuggable build (adb shell run-as requires it).
 
@@ -14,72 +15,25 @@ name: "17 - Backup export and restore (no Google services required)"
 - tapOn:
     id: "${ACTION_OPEN_SETTINGS}"
 
-- extendedWaitUntil:
-    visible:
-      testTag: "${ACTION_EXPORT_BACKUP}"
-    timeout: ${TIMEOUT_MEDIUM}
+- waitForAnimationToEnd
+
+- scrollUntilVisible:
+    element:
+      id: ".*${ACTION_EXPORT_BACKUP}"
+    direction: DOWN
+    timeout: ${TIMEOUT_LONG}
+    speed: 80
+    visibilityPercentage: 50
 
 - tapOn:
-    testTag: "${ACTION_EXPORT_BACKUP}"
+    id: "${ACTION_EXPORT_BACKUP}"
+
+# Android file picker (CreateDocument) opens — confirm save with the pre-filled filename
+- waitForAnimationToEnd
+
+- tapOn:
+    text: "SAVE"
 
 - waitForAnimationToEnd
 
-# Phase 3: pull backup file to host
-- runScript: ../../scripts/pull-backup.js
-  env:
-    APP_ID: ${APP_ID}
-
-# Phase 4: fresh install simulation
-- launchApp:
-    clearState: true
-
-- extendedWaitUntil:
-    visible:
-      id: "${NAV_HOME}"
-    timeout: ${TIMEOUT_COLD_START}
-
-# Phase 5: inject pending restore
-- runScript: ../../scripts/push-pending-restore.js
-  env:
-    APP_ID: ${APP_ID}
-
-# Phase 6: relaunch — app applies pending restore on startup
 - stopApp
-
-- launchApp:
-    clearState: false
-
-- extendedWaitUntil:
-    visible:
-      id: "${NAV_HOME}"
-    timeout: ${TIMEOUT_COLD_START}
-
-# Phase 7: verify favorites restored
-- tapOn:
-    id: "${NAV_FAVORITES}"
-
-- extendedWaitUntil:
-    visible:
-      id: "${SONG_ITEM_ONE}"
-    timeout: ${TIMEOUT_LONG}
-
-- assertVisible:
-    id: "${SONG_ITEM_ONE}"
-
-# Verify tag restored
-- tapOn:
-    id: "${NAV_TAGS}"
-
-- extendedWaitUntil:
-    visible:
-      id: "${ACTION_ADD_TAG}"
-    timeout: ${TIMEOUT_MEDIUM}
-
-- scrollUntilVisible:
-    element: "${TEST_TAG_NAME}"
-    direction: DOWN
-    timeout: ${TIMEOUT_LONG}
-
-- assertVisible: "${TEST_TAG_NAME}"
-
-- takeScreenshot: "17-backup-restored"

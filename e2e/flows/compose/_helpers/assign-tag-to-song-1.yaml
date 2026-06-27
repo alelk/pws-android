@@ -28,6 +28,7 @@ name: "_helper: assign TEST_TAG_NAME to song #1"
     element: "${TEST_TAG_NAME}"
     direction: DOWN
     timeout: ${TIMEOUT_MEDIUM}
+    speed: 80
 
 - tapOn: "${TEST_TAG_NAME}"
 

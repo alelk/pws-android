@@ -16,6 +16,7 @@ name: "_helper: open song #1 via Search tab"
 - tapOn:
     id: "${FIELD_SEARCH}"
 
+- eraseText
 - inputText: "${SEARCH_QUERY_NUMERIC}"
 - pressKey: Enter
 - hideKeyboard
