@@ -1,5 +1,12 @@
 # PWS Android
 
+# [3.3.0-rc.4](https://github.com/alelk/pws-android/compare/v3.3.0-rc.3...v3.3.0-rc.4) (2026-06-27)
+
+
+### Bug Fixes
+
+* Fix backup export issue ([f8cb25f](https://github.com/alelk/pws-android/commit/f8cb25f2829390dcd0252bb371e913270dcbef89))
+
 # [3.3.0-rc.3](https://github.com/alelk/pws-android/compare/v3.3.0-rc.2...v3.3.0-rc.3) (2026-06-26)
 
 
