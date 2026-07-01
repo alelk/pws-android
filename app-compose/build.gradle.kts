@@ -82,14 +82,14 @@ android {
       productFlavors.getByName("full").signingConfig = signingConfigs.getByName("release-ru")
       productFlavors.getByName("uk").signingConfig = signingConfigs.getByName("release-uk")
       productFlavors.getByName("rustore").signingConfig = signingConfigs.getByName("release-rustore")
-      buildConfigField("String", "CATALOG_URL", "\"${catalogUrl("release")}\"")
+      buildConfigField("String", "CATALOG_URLS", "\"${catalogUrl("release")}\"")
       buildConfigField("String", "BUNDLE_VARIANT", "\"release\"")
     }
     getByName("debug") {
       isDebuggable = true
       isMinifyEnabled = false
       versionNameSuffix = "-debug"
-      buildConfigField("String", "CATALOG_URL", "\"${catalogUrl("debug")}\"")
+      buildConfigField("String", "CATALOG_URLS", "\"${catalogUrl("debug")}\"")
       buildConfigField("String", "BUNDLE_VARIANT", "\"debug\"")
     }
     create("localSeed") {
@@ -98,7 +98,7 @@ android {
       versionNameSuffix = "-localSeed"
       // localSeed ships a plain-text asset DB and is not expected to fetch the catalog;
       // we still populate the fields to keep BuildConfig consistent.
-      buildConfigField("String", "CATALOG_URL", "\"${catalogUrl("debug")}\"")
+      buildConfigField("String", "CATALOG_URLS", "\"${catalogUrl("debug")}\"")
       buildConfigField("String", "BUNDLE_VARIANT", "\"debug\"")
     }
   }

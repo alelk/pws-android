@@ -22,14 +22,15 @@ class BookCatalogRepositoryImpl(
     private val catalogUrl: String,
     private val bundleVariant: String,
     private val httpClient: HttpClient,
+    private val maxAttempts: Int = CATALOG_MAX_ATTEMPTS,
 ) : BookCatalogRepository {
 
     override suspend fun getAvailableBooks(): Either<ReadError, List<BookCatalogEntry>> {
         var lastError: Throwable? = null
-        repeat(CATALOG_MAX_ATTEMPTS) { attempt ->
+        repeat(maxAttempts) { attempt ->
             if (attempt > 0) delay(5_000L * attempt)
             runCatching {
-                Timber.d("Fetching catalog from $catalogUrl (attempt ${attempt + 1}/$CATALOG_MAX_ATTEMPTS)")
+                Timber.d("Fetching catalog from $catalogUrl (attempt ${attempt + 1}/$maxAttempts)")
                 val json = withTimeout(CATALOG_TIMEOUT_MS) {
                     httpClient.get(catalogUrl) {
                         header(HttpHeaders.UserAgent, "pws-android/1.0 (github.com/alelk/pws-android)")
@@ -61,7 +62,7 @@ class BookCatalogRepositoryImpl(
                 },
             )
         }
-        Timber.e(lastError, "Failed to load catalog after $CATALOG_MAX_ATTEMPTS attempts")
+        Timber.e(lastError, "Failed to load catalog after $maxAttempts attempts")
         return Either.Left(ReadError.UnknownError(lastError ?: Exception("unknown")))
     }
 

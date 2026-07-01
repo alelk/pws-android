@@ -38,6 +38,9 @@ In [`docs/ai/plans/`](docs/ai/plans/):
 - `2026-06-18_pluggable-book-library_plan.md` — book catalog, download, import into Room,
   BookLibraryScreen. **T-003–T-020 реализованы**; остались T-001/T-002 (pws-v2x-library-manager
   export commands) и T-019/T-021.
+- `2026-06-27_global-book-library_plan.md` — **ACTIVE** — global library: multi-source (GitHub
+  Pages + Cloudflare R2), smart ID remap on install/update, user-edit preservation, version-aware
+  updates, first-launch onboarding, empty DB. Phases A–F.
 - `2026-06-19_stable-db-filename-room-migrations_plan.md` — стабильное имя `pws.db`, Room
   `exportSchema=true`, удаление мёртвой миграции. **Фаза 0** на стороне library-manager, **Фазы 1–2
   ** в коде.

@@ -4,7 +4,6 @@ import android.app.Application
 import android.content.Context
 import cafe.adriel.voyager.core.registry.ScreenRegistry
 import io.github.alelk.pws.android.compose.donation.SharedPrefsDonationPromptStateRepository
-import io.github.alelk.pws.contentdelivery.ContentKeyProvider
 import io.github.alelk.pws.contentdelivery.di.contentDeliveryModule
 import io.github.alelk.pws.data.repository.room.di.repoRoomModule
 import io.github.alelk.pws.database.PwsDatabase
@@ -20,7 +19,7 @@ import io.github.alelk.pws.features.di.featuresModule
 import io.github.alelk.pws.features.di.useCasesModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
-import org.koin.dsl.bind
+import org.koin.core.qualifier.named
 import org.koin.dsl.binds
 import org.koin.dsl.module
 
@@ -45,6 +44,7 @@ class PwsComposeApplication : Application() {
 
     val firstLaunchModule = module {
       single<BookLibraryFirstLaunchState> { BookLibraryFirstLaunchStateImpl(androidContext()) }
+      single(named("deviceLanguage")) { java.util.Locale.getDefault().language }
     }
 
     val donationModule = module {
@@ -65,9 +65,9 @@ class PwsComposeApplication : Application() {
         donationModule,
         repoRoomModule,
         contentDeliveryModule(
-          catalogUrl = BuildConfig.CATALOG_URL,
+          catalogUrls = BuildConfig.CATALOG_URLS.split(",").map { it.trim() },
           bundleVariant = BuildConfig.BUNDLE_VARIANT,
-          keyProvider = ContentKeyProvider { pwsContentKeyHex() },
+          keyProvider = { pwsContentKeyHex() },
         ),
         useCasesModule,
         featuresModule,
