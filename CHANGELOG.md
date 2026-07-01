@@ -1,5 +1,12 @@
 # PWS Android
 
+# [3.4.0-rc.1](https://github.com/alelk/pws-android/compare/v3.3.0...v3.4.0-rc.1) (2026-07-01)
+
+
+### Features
+
+* Install book bundles from remote catalog ([c490843](https://github.com/alelk/pws-android/commit/c490843a2b6263507a2c6c04bef7fcc811bf6cec))
+
 # [3.3.0](https://github.com/alelk/pws-android/compare/v3.2.0...v3.3.0) (2026-06-27)
 
 
