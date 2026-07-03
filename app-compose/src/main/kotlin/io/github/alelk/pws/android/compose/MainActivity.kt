@@ -149,9 +149,11 @@ class MainActivity : ComponentActivity() {
       val useDynamicColor by applicationContext.useDynamicColorFlow().collectAsState(initial = false)
       val keepScreenOn by applicationContext.keepScreenOnFlow().collectAsState(initial = false)
       val songLineHeightMultiplier by applicationContext.songLineHeightMultiplierFlow().collectAsState(initial = 1.0f)
+      val songSerifFont by applicationContext.songSerifFontFlow().collectAsState(initial = false)
+      val showSongNavButtons by applicationContext.showSongNavButtonsFlow().collectAsState(initial = false)
 
-      // Window FLAG_KEEP_SCREEN_ON — обработка флага здесь, в shell.
-      // iOS-analog: UIApplication.shared.isIdleTimerDisabled
+      // Window FLAG_KEEP_SCREEN_ON is handled here, in the shell.
+      // iOS analog: UIApplication.shared.isIdleTimerDisabled
       androidx.compose.runtime.DisposableEffect(keepScreenOn) {
         if (keepScreenOn) {
           window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -161,7 +163,7 @@ class MainActivity : ComponentActivity() {
         onDispose { window.clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) }
       }
 
-      val songDetailDisplaySettings = remember(songTextScale, songTextExpanded, songLineHeightMultiplier) {
+      val songDetailDisplaySettings = remember(songTextScale, songTextExpanded, songLineHeightMultiplier, songSerifFont, showSongNavButtons) {
         SongDetailDisplaySettings(
           fontScale = songTextScale,
           expandedText = songTextExpanded,
@@ -179,6 +181,18 @@ class MainActivity : ComponentActivity() {
           onLineHeightMultiplierChange = { multiplier ->
             lifecycleScope.launch {
               applicationContext.setSongLineHeightMultiplier(multiplier)
+            }
+          },
+          serifFont = songSerifFont,
+          onSerifFontChange = { enabled ->
+            lifecycleScope.launch {
+              applicationContext.setSongSerifFont(enabled)
+            }
+          },
+          showNavigationButtons = showSongNavButtons,
+          onShowNavigationButtonsChange = { visible ->
+            lifecycleScope.launch {
+              applicationContext.setShowSongNavButtons(visible)
             }
           }
         )
