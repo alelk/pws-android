@@ -1,5 +1,12 @@
 # PWS Android
 
+# [3.4.0-rc.2](https://github.com/alelk/pws-android/compare/v3.4.0-rc.1...v3.4.0-rc.2) (2026-07-03)
+
+
+### Features
+
+* Update app design ([7cebd3a](https://github.com/alelk/pws-android/commit/7cebd3a46df07e310e837d4661f557dce6931062))
+
 # [3.4.0-rc.1](https://github.com/alelk/pws-android/compare/v3.3.0...v3.4.0-rc.1) (2026-07-01)
 
 
