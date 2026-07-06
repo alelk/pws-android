@@ -9,7 +9,15 @@ name: "05 - History recorded after opening song"
 - runFlow: _helpers/populate-history.yaml
 
 - tapOn:
-    id: "${NAV_HISTORY}"
+    id: "${NAV_LIBRARY}"
+
+- extendedWaitUntil:
+    visible:
+      id: "${LIBRARY_SECTION_HISTORY}"
+    timeout: ${TIMEOUT_MEDIUM}
+
+- tapOn:
+    id: "${LIBRARY_SECTION_HISTORY}"
 
 - extendedWaitUntil:
     visible:

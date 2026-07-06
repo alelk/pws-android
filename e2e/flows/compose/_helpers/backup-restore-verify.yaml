@@ -41,9 +41,17 @@ name: "17 - Backup restore verify (phase 2 of 2)"
 
 - waitForAnimationToEnd
 
-# Verify favorites restored
+# Verify favorites restored — navigate to Library → Favorites section
 - tapOn:
-    id: "${NAV_FAVORITES}"
+    id: "${NAV_LIBRARY}"
+
+- extendedWaitUntil:
+    visible:
+      id: "${LIBRARY_SECTION_FAVORITES}"
+    timeout: ${TIMEOUT_MEDIUM}
+
+- tapOn:
+    id: "${LIBRARY_SECTION_FAVORITES}"
 
 - extendedWaitUntil:
     visible:
@@ -53,9 +61,9 @@ name: "17 - Backup restore verify (phase 2 of 2)"
 - assertVisible:
     id: "${SONG_ITEM_ONE}"
 
-# Verify tag restored
+# Verify tag restored — switch to Tags section (still on Library tab)
 - tapOn:
-    id: "${NAV_TAGS}"
+    id: "${LIBRARY_SECTION_TAGS}"
 
 - extendedWaitUntil:
     visible:

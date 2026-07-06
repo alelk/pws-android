@@ -17,7 +17,6 @@ name: "15 - Search: empty results state"
 - tapOn:
     id: "${FIELD_SEARCH}"
 - inputText: "zzz999"
-- pressKey: Enter
 - hideKeyboard
 
 - waitForAnimationToEnd

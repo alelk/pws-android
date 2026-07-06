@@ -9,7 +9,15 @@ name: "14 - History: clear all entries"
 - runFlow: _helpers/populate-history.yaml
 
 - tapOn:
-    id: "${NAV_HISTORY}"
+    id: "${NAV_LIBRARY}"
+
+- extendedWaitUntil:
+    visible:
+      id: "${LIBRARY_SECTION_HISTORY}"
+    timeout: ${TIMEOUT_MEDIUM}
+
+- tapOn:
+    id: "${LIBRARY_SECTION_HISTORY}"
 
 - extendedWaitUntil:
     visible:

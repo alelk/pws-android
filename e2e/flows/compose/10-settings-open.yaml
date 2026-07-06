@@ -1,13 +1,13 @@
 appId: ${APP_ID}
 name: "10 - Settings screen opens and closes"
 ---
-# Open Settings via History tab → back → assert History reachable.
+# Open Settings via Library tab → back → assert Library reachable.
 
 - launchApp:
     clearState: false
 
 - tapOn:
-    id: "${NAV_HISTORY}"
+    id: "${NAV_LIBRARY}"
 
 - extendedWaitUntil:
     visible:
@@ -25,10 +25,10 @@ name: "10 - Settings screen opens and closes"
 
 - extendedWaitUntil:
     visible:
-      id: "${NAV_HISTORY}"
+      id: "${NAV_LIBRARY}"
     timeout: ${TIMEOUT_MEDIUM}
 
 - assertVisible:
-    id: "${NAV_HISTORY}"
+    id: "${NAV_LIBRARY}"
 
 - takeScreenshot: "10-settings-back"

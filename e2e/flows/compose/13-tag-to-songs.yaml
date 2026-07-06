@@ -10,11 +10,19 @@ name: "13 - Tag tap navigates to TagSongsScreen"
 
 - runFlow: _helpers/assign-tag-to-song-1.yaml
 
-# Navigate to Tags tab and tap the tag row.
+# Navigate to Library → Tags section and tap the tag row.
 - back
 - back
 - tapOn:
-    id: "${NAV_TAGS}"
+    id: "${NAV_LIBRARY}"
+
+- extendedWaitUntil:
+    visible:
+      id: "${LIBRARY_SECTION_TAGS}"
+    timeout: ${TIMEOUT_MEDIUM}
+
+- tapOn:
+    id: "${LIBRARY_SECTION_TAGS}"
 
 - extendedWaitUntil:
     visible:

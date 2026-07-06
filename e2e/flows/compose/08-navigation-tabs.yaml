@@ -2,7 +2,8 @@ appId: ${APP_ID}
 name: "08 - Navigation tabs - all tabs reachable"
 ---
 # Visits every bottom-nav tab in sequence and asserts each loads.
-# 100% locale-independent: navigation by contentDescription = route.
+# 4 tabs: Home / Books / Search / Library (Library contains Favorites, History, Tags sections).
+# 100% locale-independent: navigation by contentDescription = route / testTag.
 
 - launchApp:
     clearState: false
@@ -14,33 +15,51 @@ name: "08 - Navigation tabs - all tabs reachable"
     visible:
       id: "${FIELD_SEARCH}"
     timeout: ${TIMEOUT_MEDIUM}
-- hideKeyboard
+
+# Navigate Home first: dismisses keyboard cleanly via navigation (no hideKeyboard needed).
+- tapOn:
+    id: "${NAV_HOME}"
+- extendedWaitUntil:
+    visible:
+      id: "${FIELD_HOME_SEARCH}"
+    timeout: ${TIMEOUT_MEDIUM}
 
 # Books tab
 - tapOn:
     id: "${NAV_BOOKS}"
+# BookLibrary first-launch screen may appear — dismiss it if so.
+- runFlow:
+    when:
+      visible:
+        id: "${ACTION_NAVIGATE_BACK}"
+    commands:
+      - tapOn:
+          id: "${ACTION_NAVIGATE_BACK}"
 - extendedWaitUntil:
     visible:
       id: "books-grid"
     timeout: ${TIMEOUT_LONG}
 
-# Tags tab
+# Library tab — default section is Favorites
 - tapOn:
-    id: "${NAV_TAGS}"
+    id: "${NAV_LIBRARY}"
+- extendedWaitUntil:
+    visible:
+      id: "${LIBRARY_SECTION_FAVORITES}"
+    timeout: ${TIMEOUT_MEDIUM}
+
+# Library → History section
+- tapOn:
+    id: "${LIBRARY_SECTION_HISTORY}"
+- waitForAnimationToEnd
+
+# Library → Tags section (verifies FAB appears)
+- tapOn:
+    id: "${LIBRARY_SECTION_TAGS}"
 - extendedWaitUntil:
     visible:
       id: "${ACTION_ADD_TAG}"
     timeout: ${TIMEOUT_MEDIUM}
-
-# Favorites tab
-- tapOn:
-    id: "${NAV_FAVORITES}"
-- waitForAnimationToEnd
-
-# History tab
-- tapOn:
-    id: "${NAV_HISTORY}"
-- waitForAnimationToEnd
 
 # Back to Home
 - tapOn:
