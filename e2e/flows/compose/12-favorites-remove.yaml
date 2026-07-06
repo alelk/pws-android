@@ -11,8 +11,6 @@ name: "12 - Remove from favorites and verify empty"
     id: "${ACTION_TOGGLE_FAVORITE}"
 
 # --- Step 2: verify song appears in Favorites section (Library tab) ---
-# Two backs: SearchScreen auto-requests focus → keyboard appears → second back dismisses it.
-- back
 - back
 
 - tapOn:

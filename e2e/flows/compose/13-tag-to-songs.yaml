@@ -12,7 +12,6 @@ name: "13 - Tag tap navigates to TagSongsScreen"
 
 # Navigate to Library → Tags section and tap the tag row.
 - back
-- back
 - tapOn:
     id: "${NAV_LIBRARY}"
 
