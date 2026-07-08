@@ -4,6 +4,7 @@ import io.github.alelk.pws.contentdelivery.ContentKeyProvider
 import io.github.alelk.pws.contentdelivery.catalog.MultiSourceBookCatalogRepository
 import io.github.alelk.pws.contentdelivery.install.BookImporterImpl
 import io.github.alelk.pws.contentdelivery.install.BookUninstallerImpl
+import io.github.alelk.pws.contentdelivery.install.ImportBundleFromFileUseCase
 import io.github.alelk.pws.contentdelivery.install.InstallBookUseCaseImpl
 import io.github.alelk.pws.contentdelivery.install.UninstallBookUseCaseImpl
 import io.github.alelk.pws.contentdelivery.install.UpdateBookUseCaseImpl
@@ -47,6 +48,14 @@ fun contentDeliveryModule(
     single { BookImporterImpl(get<PwsDatabase>()) }
 
     single { BookUninstallerImpl(get<PwsDatabase>()) }
+
+    single {
+        ImportBundleFromFileUseCase(
+            context = androidContext(),
+            importer = get<BookImporterImpl>(),
+            keyProvider = keyProvider,
+        )
+    }
 
     single {
         InstallBookUseCaseImpl(

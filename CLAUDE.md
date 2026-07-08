@@ -44,9 +44,10 @@ In [`docs/ai/plans/`](docs/ai/plans/):
 - `2026-06-19_stable-db-filename-room-migrations_plan.md` — стабильное имя `pws.db`, Room
   `exportSchema=true`, удаление мёртвой миграции. **Фаза 0** на стороне library-manager, **Фазы 1–2
   ** в коде.
+- `2026-07-08_universal-apk-onboarding_plan.md` — **ACTIVE** — удаление встроенных DB-ассетов из
+  APK, универсальный APK, онбординг первого запуска с locale-aware установкой сборника. Phases A–F.
 
-When the user references "current plan" without a name, use the **stable-db-filename** plan (most
-recent).
+When the user references "current plan" without a name, use the **universal-apk-onboarding** plan (most recent). All tasks T-001..T-011 and T-013 реализованы.
 
 ### Don't waste tokens on
 

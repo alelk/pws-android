@@ -101,16 +101,14 @@ class BookImporterImpl(private val db: PwsDatabase) {
                         deferred++
                         return@forEach
                     }
-                    runCatching {
-                        db.songReferenceDao().insert(
-                            SongReferenceEntity(
-                                songId = ref.songId,
-                                refSongId = ref.refSongId,
-                                reason = SongRefReason.fromIdentifier(ref.reason),
-                                volume = ref.volume,
-                            )
+                    db.songReferenceDao().insert(
+                        SongReferenceEntity(
+                            songId = ref.songId,
+                            refSongId = ref.refSongId,
+                            reason = SongRefReason.fromIdentifier(ref.reason),
+                            volume = ref.volume,
                         )
-                    }.onFailure { Timber.w(it, "skip song reference ${ref.songId}→${ref.refSongId}") }
+                    )
                 }
                 if (deferred > 0) Timber.d("Deferred $deferred cross-book song references")
             }

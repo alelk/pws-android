@@ -9,12 +9,18 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts.CreateDocument
 import androidx.activity.result.contract.ActivityResultContracts.OpenDocument
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import io.github.alelk.pws.contentdelivery.install.ImportBundleFromFileUseCase
+import io.github.alelk.pws.domain.booklibrary.usecase.ObserveInstalledBooksUseCase
+import io.github.alelk.pws.features.booklibrary.BookLibraryExternalActions
+import kotlinx.coroutines.flow.map
+import org.koin.android.ext.android.get
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -64,6 +70,18 @@ class MainActivity : ComponentActivity() {
         packageManager.getPackageInfo(packageName, 0).versionName ?: "Unknown"
       }
 
+      val hasInstalledBooks: Boolean? by remember {
+        get<ObserveInstalledBooksUseCase>().invoke().map { it.isNotEmpty() }
+      }.collectAsState(initial = null)
+
+      // True once we know the user has no books — keeps us in onboarding until explicit skip.
+      var onboardingActive by remember { mutableStateOf(false) }
+      LaunchedEffect(hasInstalledBooks) {
+        if (hasInstalledBooks == false) onboardingActive = true
+      }
+
+      var onboardingSkipped by remember { mutableStateOf(false) }
+
       var pendingBackupText by remember { mutableStateOf<String?>(null) }
 
       val exportLauncher = rememberLauncherForActivityResult(CreateDocument("application/octet-stream")) { uri ->
@@ -100,6 +118,28 @@ class MainActivity : ComponentActivity() {
             Toast.makeText(context, "Import failed", Toast.LENGTH_SHORT).show()
           }
         }
+      }
+
+      val importBundleFromFile = remember { get<ImportBundleFromFileUseCase>() }
+      val importBundleLauncher = rememberLauncherForActivityResult(OpenDocument()) { uri ->
+        if (uri == null) return@rememberLauncherForActivityResult
+        scope.launch {
+          runCatching {
+            importBundleFromFile.invoke(uri)
+          }.onSuccess {
+            Toast.makeText(context, "Bundle imported", Toast.LENGTH_SHORT).show()
+          }.onFailure {
+            Toast.makeText(context, "Import failed: ${it.message}", Toast.LENGTH_SHORT).show()
+          }
+        }
+      }
+
+      val bookLibraryExternalActions = remember(importBundleLauncher) {
+        BookLibraryExternalActions(
+          onImportFromFile = {
+            importBundleLauncher.launch(arrayOf("application/octet-stream", "*/*"))
+          },
+        )
       }
 
       val settingsExternalActions = remember(exportLauncher, importLauncher) {
@@ -245,6 +285,13 @@ class MainActivity : ComponentActivity() {
           songDetailExternalActions = songDetailExternalActions,
           songDetailDisplaySettings = songDetailDisplaySettings,
           favoritesDisplaySettings = favoritesDisplaySettings,
+          hasInstalledBooks = when {
+            onboardingSkipped -> true           // user tapped Skip / Continue
+            onboardingActive -> false           // in onboarding: stay until explicit skip
+            else -> hasInstalledBooks           // existing users: pass through as-is
+          },
+          onSkipOnboarding = { onboardingSkipped = true },
+          bookLibraryExternalActions = bookLibraryExternalActions,
         )
       }
     }

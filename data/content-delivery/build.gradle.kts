@@ -17,8 +17,7 @@ android {
 
   buildTypes {
     create("localSeed") {
-      // mirrors the localSeed build type from :data:db-android and :app-compose
-      // so cross-module variant resolution finds a match for `:app-compose:assembleRuLocalSeed`.
+      // mirrors localSeed from :data:db-android and :app-compose for variant resolution
     }
   }
 

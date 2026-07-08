@@ -13,7 +13,6 @@ import io.github.alelk.pws.domain.donationprompt.config.DonationConfig
 import io.github.alelk.pws.domain.donationprompt.repository.DonationPromptStateReadRepository
 import io.github.alelk.pws.domain.donationprompt.repository.DonationPromptStateWriteRepository
 import io.github.alelk.pws.features.app.PwsAppInfo
-import io.github.alelk.pws.features.booklibrary.BookLibraryFirstLaunchState
 import io.github.alelk.pws.features.di.appScreenModule
 import io.github.alelk.pws.features.di.featuresModule
 import io.github.alelk.pws.features.di.useCasesModule
@@ -42,8 +41,7 @@ class PwsComposeApplication : Application() {
       single { PwsAppInfo(version) }
     }
 
-    val firstLaunchModule = module {
-      single<BookLibraryFirstLaunchState> { BookLibraryFirstLaunchStateImpl(androidContext()) }
+    val deviceLanguageModule = module {
       single(named("deviceLanguage")) { java.util.Locale.getDefault().language }
     }
 
@@ -61,7 +59,7 @@ class PwsComposeApplication : Application() {
       modules(
         databaseModule,
         appInfoModule,
-        firstLaunchModule,
+        deviceLanguageModule,
         donationModule,
         repoRoomModule,
         contentDeliveryModule(
