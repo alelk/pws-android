@@ -12,6 +12,7 @@ object PwsDatabaseProvider {
   private var INSTANCE: PwsDatabase? = null
 
   fun getDatabase(context: Context): PwsDatabase = INSTANCE ?: synchronized(this) {
+    INSTANCE?.let { return it }
     if (BuildConfig.DEBUG) Timber.plant(Timber.DebugTree())
 
     System.loadLibrary("sqlcipher")

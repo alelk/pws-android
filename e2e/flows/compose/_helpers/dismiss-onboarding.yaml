@@ -1,0 +1,24 @@
+appId: ${APP_ID}
+name: "_helper: install recommended book via onboarding"
+---
+# Called when the onboarding screen is already visible.
+# Taps "Install selected" to download the locale-recommended book (pre-selected
+# by the app), waits for the download to complete, then taps Continue.
+#
+# If "Install selected" is not shown (all books already installed or nothing
+# selected), falls through and taps Continue / Skip immediately.
+
+- tapOn:
+    optional: true
+    id: "${ACTION_INSTALL_SELECTED_BOOKS}"
+
+# Wait for download to complete: the install button disappears once all selected
+# books are installed and no downloads remain in progress.
+- extendedWaitUntil:
+    notVisible:
+      id: "${ACTION_INSTALL_SELECTED_BOOKS}"
+    timeout: ${TIMEOUT_BOOK_INSTALL}
+    optional: true
+
+- tapOn:
+    id: "${ACTION_SKIP_ONBOARDING}"

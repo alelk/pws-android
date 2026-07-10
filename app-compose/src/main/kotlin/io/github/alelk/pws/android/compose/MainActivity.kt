@@ -48,13 +48,6 @@ class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     enableEdgeToEdge()
     super.onCreate(savedInstanceState)
-    lifecycleScope.launch(Dispatchers.IO) {
-      PwsBackupAgent.applyPendingRestoreIfNeeded(
-        this@MainActivity,
-        PwsDatabaseProvider.getDatabase(this@MainActivity),
-        appSettingsDataStore(),
-      )
-    }
     setContent {
       val context = LocalContext.current
       val backupService = remember { BackupService() }
@@ -74,10 +67,25 @@ class MainActivity : ComponentActivity() {
         get<ObserveInstalledBooksUseCase>().invoke().map { it.isNotEmpty() }
       }.collectAsState(initial = null)
 
+      val installedBookCount: Int by remember {
+        get<ObserveInstalledBooksUseCase>().invoke().map { it.size }
+      }.collectAsState(initial = 0)
+
       // True once we know the user has no books — keeps us in onboarding until explicit skip.
       var onboardingActive by remember { mutableStateOf(false) }
       LaunchedEffect(hasInstalledBooks) {
         if (hasInstalledBooks == false) onboardingActive = true
+      }
+
+      // Re-apply pending backup restore on every new book install — the backup file is kept
+      // until all referenced books are installed, so each new install may unlock more records.
+      LaunchedEffect(installedBookCount) {
+        if (installedBookCount > 0) {
+          withContext(Dispatchers.IO) {
+            PwsBackupAgent
+              .applyPendingRestoreIfNeeded(context, PwsDatabaseProvider.getDatabase(context), context.appSettingsDataStore())
+          }
+        }
       }
 
       var onboardingSkipped by remember { mutableStateOf(false) }

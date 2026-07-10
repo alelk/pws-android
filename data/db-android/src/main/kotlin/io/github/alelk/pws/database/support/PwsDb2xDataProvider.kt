@@ -3,16 +3,27 @@ package io.github.alelk.pws.database.support
 import androidx.core.database.getIntOrNull
 import androidx.core.database.getStringOrNull
 import io.github.alelk.pws.database.MigrationDbSource
+import io.github.alelk.pws.database.book.BookEntity
+import io.github.alelk.pws.database.bookstatistic.BookStatisticEntity
+import io.github.alelk.pws.database.installed_book.InstalledBookEntity
+import io.github.alelk.pws.database.song.SongEntity
+import io.github.alelk.pws.database.song_number.SongNumberEntity
+import io.github.alelk.pws.domain.booklibrary.model.BookInstallSource
 import io.github.alelk.pws.domain.core.BibleRef
 import io.github.alelk.pws.domain.core.ids.BookId
 import io.github.alelk.pws.domain.core.Color
+import io.github.alelk.pws.domain.core.Locale
 import io.github.alelk.pws.domain.core.SongNumber
+import io.github.alelk.pws.domain.core.Version
+import io.github.alelk.pws.domain.core.ids.SongId
 import io.github.alelk.pws.domain.core.ids.TagId
+import io.github.alelk.pws.domain.person.Person
 import io.github.alelk.pws.domain.tonality.Tonality
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.format.char
+import timber.log.Timber
 
 /** Supports database versions:
  * - 2.0.0 (v11)
@@ -22,6 +33,115 @@ import kotlinx.datetime.format.char
 internal class PwsDb2xDataProvider(val db: MigrationDbSource) : PwsDbDataProvider {
 
   override val dbVersions: IntRange = 11..13
+
+  override suspend fun getBooks(): Result<List<BookMigrationData>> = runCatching {
+    data class RawBook(val id: BookId, val name: String, val shortName: String, val displayName: String, val locale: Locale, val version: Version)
+
+    val books = db.fetchData("books", "books", arrayOf("*"), 11..13) { cursor ->
+      val id = BookId.parse(cursor.getString(cursor.getColumnIndexOrThrow("id")))
+      val name = cursor.getStringOrNull(cursor.getColumnIndex("name"))?.takeIf { it.isNotBlank() } ?: id.toString()
+      val shortNameIdx = cursor.getColumnIndex("display_short_name")
+      val shortName = if (shortNameIdx >= 0) cursor.getStringOrNull(shortNameIdx)?.takeIf { it.isNotBlank() } ?: name else name
+      val displayNameIdx = cursor.getColumnIndex("display_name")
+      val displayName = if (displayNameIdx >= 0) cursor.getStringOrNull(displayNameIdx)?.takeIf { it.isNotBlank() } ?: name else name
+      val localeIdx = cursor.getColumnIndex("locale")
+      val locale = if (localeIdx >= 0) cursor.getStringOrNull(localeIdx)?.let { runCatching { Locale.of(it) }.getOrNull() } ?: Locale.RU else Locale.RU
+      val versionIdx = cursor.getColumnIndex("version")
+      val version = if (versionIdx >= 0) cursor.getStringOrNull(versionIdx)?.let { runCatching { Version.fromString(it) }.getOrNull() } ?: Version(0, 0) else Version(0, 0)
+      RawBook(id, name, shortName, displayName, locale, version)
+    }.getOrThrow()
+
+    val priorityById: Map<BookId, Int> = runCatching {
+      db.fetchData("book priorities", "book_statistic", arrayOf("*"), 11..13) { cursor ->
+        val id = BookId.parse(cursor.getString(cursor.getColumnIndexOrThrow("id")))
+        val priorityIdx = cursor.getColumnIndex("priority")
+        val priority = if (priorityIdx >= 0) cursor.getIntOrNull(priorityIdx) ?: 1 else 1
+        id to priority
+      }.getOrThrow().toMap()
+    }.onFailure { Timber.w("book_statistic table not found in old DB, using default priority") }
+      .getOrDefault(emptyMap())
+
+    data class RawSongRow(
+      val songId: SongId, val bookId: BookId, val number: Int,
+      val name: String, val lyric: String, val author: String?, val translator: String?,
+      val composer: String?, val bibleRef: String?, val tonalities: String?, val edited: Boolean,
+    )
+
+    val songRows = db.fetchData(
+      "songs with song_numbers",
+      "songs s INNER JOIN song_numbers sn ON sn.song_id = s.id",
+      arrayOf(
+        "s.id as _sid", "COALESCE(s.name, '') as _sname", "COALESCE(s.lyric, '') as _lyric",
+        "s.author as _author", "s.translator as _translator", "s.composer as _composer",
+        "s.bibleref as _bibleref", "s.tonalities as _tonalities", "s.edited as _edited",
+        "sn.book_id as _book_id", "sn.number as _snumber",
+      ),
+      11..13,
+    ) { cursor ->
+      RawSongRow(
+        songId = SongId(cursor.getLong(cursor.getColumnIndexOrThrow("_sid"))),
+        bookId = BookId.parse(cursor.getString(cursor.getColumnIndexOrThrow("_book_id"))),
+        number = cursor.getInt(cursor.getColumnIndexOrThrow("_snumber")),
+        name = cursor.getString(cursor.getColumnIndexOrThrow("_sname")) ?: "",
+        lyric = cursor.getString(cursor.getColumnIndexOrThrow("_lyric")) ?: "",
+        author = cursor.getStringOrNull(cursor.getColumnIndexOrThrow("_author")),
+        translator = cursor.getStringOrNull(cursor.getColumnIndexOrThrow("_translator")),
+        composer = cursor.getStringOrNull(cursor.getColumnIndexOrThrow("_composer")),
+        bibleRef = cursor.getStringOrNull(cursor.getColumnIndexOrThrow("_bibleref")),
+        tonalities = cursor.getStringOrNull(cursor.getColumnIndexOrThrow("_tonalities")),
+        edited = cursor.getInt(cursor.getColumnIndexOrThrow("_edited")) != 0,
+      )
+    }.getOrThrow()
+
+    val songsByBookId = songRows.groupBy { it.bookId }
+
+    books.mapNotNull { rawBook ->
+      runCatching {
+        val songsForBook = songsByBookId[rawBook.id] ?: emptyList()
+        if (songsForBook.isEmpty()) return@runCatching null
+        val songEntities = songsForBook.distinctBy { it.songId }.map { row ->
+          SongEntity(
+            id = row.songId,
+            version = Version(0, 0),
+            locale = rawBook.locale,
+            name = row.name.ifBlank { "?" },
+            lyric = row.lyric,
+            author = row.author?.takeIf { it.isNotBlank() }?.let { Person(it) },
+            translator = row.translator?.takeIf { it.isNotBlank() }?.let { Person(it) },
+            composer = row.composer?.takeIf { it.isNotBlank() }?.let { Person(it) },
+            bibleRef = row.bibleRef?.takeIf { it.isNotBlank() }?.let { BibleRef(it) },
+            tonalities = row.tonalities?.takeIf { it.isNotBlank() }
+              ?.split(';')?.filter { it.isNotBlank() }
+              ?.mapNotNull { runCatching { Tonality.fromIdentifier(it.trim()) }.getOrNull() },
+            edited = row.edited,
+          )
+        }
+        val songNumberEntities = songsForBook.map { row ->
+          SongNumberEntity(bookId = rawBook.id, songId = row.songId, number = row.number, priority = 0)
+        }
+        BookMigrationData(
+          book = BookEntity(
+            id = rawBook.id,
+            version = rawBook.version,
+            locales = listOf(rawBook.locale),
+            name = rawBook.name,
+            displayShortName = rawBook.shortName,
+            displayName = rawBook.displayName,
+          ),
+          bookStatistic = BookStatisticEntity(id = rawBook.id, priority = priorityById[rawBook.id] ?: 1),
+          installedBook = InstalledBookEntity(
+            bookId = rawBook.id,
+            bundleVersion = rawBook.version,
+            installedAt = System.currentTimeMillis(),
+            source = BookInstallSource.MIGRATION,
+          ),
+          songs = songEntities,
+          songNumbers = songNumberEntities,
+        )
+      }.onFailure { e -> Timber.e(e, "failed to assemble book ${rawBook.id} for migration: ${e.message}") }
+        .getOrNull()
+    }
+  }
 
   /** Get favorites.
    *

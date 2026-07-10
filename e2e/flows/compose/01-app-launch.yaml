@@ -2,9 +2,20 @@ appId: ${APP_ID}
 name: "01 - App launch and navigation ready"
 ---
 # Verify the app starts without crash and all navigation tabs are reachable.
+# On first launch (or after --clean) the onboarding screen appears; the helper
+# installs the recommended book and proceeds to the main screen.
 
 - launchApp:
     clearState: false
+
+- waitForAnimationToEnd:
+    timeout: 5000
+
+- runFlow:
+    when:
+      visible:
+        id: "${ACTION_SKIP_ONBOARDING}"
+    file: _helpers/dismiss-onboarding.yaml
 
 - extendedWaitUntil:
     visible:
