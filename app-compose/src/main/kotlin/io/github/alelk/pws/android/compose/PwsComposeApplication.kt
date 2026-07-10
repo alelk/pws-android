@@ -18,6 +18,7 @@ import io.github.alelk.pws.features.app.PwsAppInfo
 import io.github.alelk.pws.features.di.appScreenModule
 import io.github.alelk.pws.features.di.featuresModule
 import io.github.alelk.pws.features.di.useCasesModule
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -31,7 +32,12 @@ import org.koin.dsl.module
 
 class PwsComposeApplication : Application() {
 
-  private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+  private val applicationScope =
+    CoroutineScope(
+      SupervisorJob() +
+        Dispatchers.IO +
+        CoroutineExceptionHandler { _, e -> android.util.Log.e("PwsApp", "Background task failed", e) }
+    )
 
   override fun onCreate() {
     super.onCreate()
