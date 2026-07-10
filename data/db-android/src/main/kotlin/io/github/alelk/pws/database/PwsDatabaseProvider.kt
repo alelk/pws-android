@@ -22,7 +22,6 @@ object PwsDatabaseProvider {
     return Room
       .databaseBuilder(context.applicationContext, PwsDatabase::class.java, DATABASE_NAME)
       .openHelperFactory(SupportOpenHelperFactory(passphrase))
-      .addCallback(callback = databaseCallbacks)
       .build()
   }
 
