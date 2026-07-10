@@ -16,6 +16,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import io.github.alelk.pws.contentdelivery.install.ImportBundleFromFileUseCase
 import io.github.alelk.pws.domain.booklibrary.usecase.ObserveInstalledBooksUseCase
 import io.github.alelk.pws.features.booklibrary.BookLibraryExternalActions
@@ -32,7 +34,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.lifecycle.lifecycleScope
 import io.github.alelk.pws.portable.BackupService
-import io.github.alelk.pws.database.PwsDatabaseProvider
+import io.github.alelk.pws.database.PwsDatabase
 import io.github.alelk.pws.features.app.AppRoot
 import io.github.alelk.pws.features.settings.SettingsExternalActions
 import io.github.alelk.pws.features.song.detail.FavoritesDisplaySettings
@@ -51,12 +53,7 @@ class MainActivity : ComponentActivity() {
     setContent {
       val context = LocalContext.current
       val backupService = remember { BackupService() }
-      val backupManager = remember {
-        BackupManager(
-          db = PwsDatabaseProvider.getDatabase(context),
-          dataStore = context.appSettingsDataStore(),
-        )
-      }
+      val backupManager = remember { get<BackupManager>() }
       val scope = rememberCoroutineScope()
 
       val appVersion = remember {
@@ -83,7 +80,7 @@ class MainActivity : ComponentActivity() {
         if (installedBookCount > 0) {
           withContext(Dispatchers.IO) {
             PwsBackupAgent
-              .applyPendingRestoreIfNeeded(context, PwsDatabaseProvider.getDatabase(context), context.appSettingsDataStore())
+              .applyPendingRestoreIfNeeded(context, get<PwsDatabase>(), get<DataStore<Preferences>>())
           }
         }
       }

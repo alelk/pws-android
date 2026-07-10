@@ -2,6 +2,8 @@ package io.github.alelk.pws.android.compose
 
 import android.app.Application
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import cafe.adriel.voyager.core.registry.ScreenRegistry
 import io.github.alelk.pws.android.compose.donation.SharedPrefsDonationPromptStateRepository
 import io.github.alelk.pws.contentdelivery.di.contentDeliveryModule
@@ -16,6 +18,11 @@ import io.github.alelk.pws.features.app.PwsAppInfo
 import io.github.alelk.pws.features.di.appScreenModule
 import io.github.alelk.pws.features.di.featuresModule
 import io.github.alelk.pws.features.di.useCasesModule
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.get
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import org.koin.core.qualifier.named
@@ -23,6 +30,8 @@ import org.koin.dsl.binds
 import org.koin.dsl.module
 
 class PwsComposeApplication : Application() {
+
+  private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
   override fun onCreate() {
     super.onCreate()
@@ -34,6 +43,8 @@ class PwsComposeApplication : Application() {
 
     val databaseModule = module {
       single<PwsDatabase> { PwsDatabaseProvider.getDatabase(androidContext()) }
+      single<DataStore<Preferences>> { androidContext().appSettingsDataStore() }
+      single { BackupManager(get<PwsDatabase>(), get<DataStore<Preferences>>()) }
     }
 
     val appInfoModule = module {
@@ -70,6 +81,10 @@ class PwsComposeApplication : Application() {
         useCasesModule,
         featuresModule,
       )
+    }
+
+    applicationScope.launch {
+      PwsDatabaseProvider.runLegacyMigration(this@PwsComposeApplication, get())
     }
   }
 }

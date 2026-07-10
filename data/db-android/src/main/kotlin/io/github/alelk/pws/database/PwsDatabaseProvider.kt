@@ -3,7 +3,6 @@ package io.github.alelk.pws.database
 import android.content.Context
 import androidx.room.Room
 import io.github.alelk.pws.database.security.KeyManager
-import kotlinx.coroutines.runBlocking
 import net.zetetic.database.sqlcipher.SupportOpenHelperFactory
 import timber.log.Timber
 
@@ -12,27 +11,25 @@ object PwsDatabaseProvider {
   private var INSTANCE: PwsDatabase? = null
 
   fun getDatabase(context: Context): PwsDatabase = INSTANCE ?: synchronized(this) {
-    INSTANCE?.let { return it }
+    INSTANCE ?: buildDatabase(context).also { INSTANCE = it }
+  }
+
+  private fun buildDatabase(context: Context): PwsDatabase {
     if (BuildConfig.DEBUG) Timber.plant(Timber.DebugTree())
-
     System.loadLibrary("sqlcipher")
-
-    val passphrase = if (BuildConfig.DB_ENCRYPTED) KeyManager.getOrCreatePassphrase(context) else ByteArray(0)
-
     initDatabase(context)
+    val passphrase = if (BuildConfig.DB_ENCRYPTED) KeyManager.getOrCreatePassphrase(context) else ByteArray(0)
+    return Room
+      .databaseBuilder(context.applicationContext, PwsDatabase::class.java, DATABASE_NAME)
+      .openHelperFactory(SupportOpenHelperFactory(passphrase))
+      .addCallback(callback = databaseCallbacks)
+      .build()
+  }
 
-    val instance =
-      Room
-        .databaseBuilder(context.applicationContext, PwsDatabase::class.java, DATABASE_NAME)
-        .openHelperFactory(SupportOpenHelperFactory(passphrase))
-        .addCallback(callback = databaseCallbacks)
-        .build()
-    INSTANCE = instance
-
-    runBlocking {
-      migrateDataFromPrevDatabase(context, instance, passphrase)
-    }
-    instance
+  /** Must be called once on a background thread after the database is first obtained. */
+  suspend fun runLegacyMigration(context: Context, database: PwsDatabase) {
+    val passphrase = if (BuildConfig.DB_ENCRYPTED) KeyManager.getOrCreatePassphrase(context) else ByteArray(0)
+    migrateDataFromPrevDatabase(context, database, passphrase)
   }
 
   const val DATABASE_NAME = "pws.db"
