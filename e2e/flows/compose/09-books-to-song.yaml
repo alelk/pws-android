@@ -47,4 +47,4 @@ name: "09 - Books tab - navigate to a song via book song list"
 - assertVisible:
     id: "${ACTION_TOGGLE_FAVORITE}"
 
-- takeScreenshot: "09-song-opened-from-book"
+- takeScreenshot: "${SCREENSHOTS_DIR}/09-song-opened-from-book"

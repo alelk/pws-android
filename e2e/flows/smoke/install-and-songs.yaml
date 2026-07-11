@@ -8,4 +8,4 @@ name: Smoke - install and songs availability
     timeout: 20000
 - assertVisible: ${HOME_READY_TEXT}
 - assertNotVisible: ${HOME_ERROR_TEXT}
-- takeScreenshot: smoke-home-ready
+- takeScreenshot: "${SCREENSHOTS_DIR}/smoke-home-ready"

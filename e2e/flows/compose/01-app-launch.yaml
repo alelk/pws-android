@@ -31,4 +31,4 @@ name: "01 - App launch and navigation ready"
 - assertVisible:
     id: "${NAV_LIBRARY}"
 
-- takeScreenshot: "01-app-launch-home"
+- takeScreenshot: "${SCREENSHOTS_DIR}/01-app-launch-home"

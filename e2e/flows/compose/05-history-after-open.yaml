@@ -36,4 +36,4 @@ name: "05 - History recorded after opening song"
 - assertVisible:
     id: "${ACTION_TOGGLE_FAVORITE}"
 
-- takeScreenshot: "05-history-list"
+- takeScreenshot: "${SCREENSHOTS_DIR}/05-history-list"

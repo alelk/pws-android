@@ -31,4 +31,4 @@ name: "10 - Settings screen opens and closes"
 - assertVisible:
     id: "${NAV_LIBRARY}"
 
-- takeScreenshot: "10-settings-back"
+- takeScreenshot: "${SCREENSHOTS_DIR}/10-settings-back"

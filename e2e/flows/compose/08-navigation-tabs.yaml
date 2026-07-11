@@ -69,4 +69,4 @@ name: "08 - Navigation tabs - all tabs reachable"
       id: "${NAV_HOME}"
     timeout: ${TIMEOUT_MEDIUM}
 
-- takeScreenshot: "08-tab-home"
+- takeScreenshot: "${SCREENSHOTS_DIR}/08-tab-home"

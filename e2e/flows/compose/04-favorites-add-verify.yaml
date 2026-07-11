@@ -31,4 +31,4 @@ name: "04 - Add to favorites and verify in Favorites list"
 - assertVisible:
     id: "${SONG_ITEM_ONE}"
 
-- takeScreenshot: "04-favorites-list"
+- takeScreenshot: "${SCREENSHOTS_DIR}/04-favorites-list"

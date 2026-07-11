@@ -146,7 +146,8 @@ DEVICE_ID="$(adb devices | awk 'NR>1 && $2=="device" {print $1; exit}')"
 [[ -z "$DEVICE_ID" ]] && { echo "[ERROR] No online adb device. Start emulator first." >&2; exit 1; }
 echo "[INFO] Device: $DEVICE_ID"
 
-mkdir -p "$ARTIFACTS_DIR" "$REPORTS_DIR"
+SCREENSHOTS_DIR="$E2E_DIR/screenshots"
+mkdir -p "$ARTIFACTS_DIR" "$REPORTS_DIR" "$SCREENSHOTS_DIR"
 RUN_ID="$(now_ts)-compose"
 RUN_DIR="$ARTIFACTS_DIR/$RUN_ID"
 REPORT_DIR="$REPORTS_DIR/$RUN_ID"
@@ -178,6 +179,7 @@ while IFS= read -r line; do
   val="${!key:-}"
   MAESTRO_ENV+=(--env "$key=$val")
 done < "$CONFIG_FILE"
+MAESTRO_ENV+=(--env "SCREENSHOTS_DIR=$SCREENSHOTS_DIR")
 
 # ---------------------------------------------------------------------------
 # Flow lists

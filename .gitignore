@@ -23,6 +23,7 @@ local.properties
 # Android
 captures/
 output/
+e2e/screenshots/
 app/*/release/
 data/db-android/test-db
 local-repo/

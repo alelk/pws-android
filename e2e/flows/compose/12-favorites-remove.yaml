@@ -59,7 +59,7 @@ name: "12 - Remove from favorites and verify empty"
     id: "${LIBRARY_SECTION_FAVORITES}"
 
 - waitForAnimationToEnd
-- takeScreenshot: "12-favorites-after-remove"
+- takeScreenshot: "${SCREENSHOTS_DIR}/12-favorites-after-remove"
 
 - assertNotVisible:
     id: "${SONG_ITEM_ONE}"

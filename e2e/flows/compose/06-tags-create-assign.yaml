@@ -17,4 +17,4 @@ name: "06 - Create tag and assign to song"
 
 - assertVisible: "${TEST_TAG_NAME}"
 
-- takeScreenshot: "06-tag-assigned-on-song"
+- takeScreenshot: "${SCREENSHOTS_DIR}/06-tag-assigned-on-song"

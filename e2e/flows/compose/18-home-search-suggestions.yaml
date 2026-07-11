@@ -35,4 +35,4 @@ name: "18 - Home: inline search suggestions appear and navigate to song"
 - assertVisible:
     id: "${ACTION_TOGGLE_FAVORITE}"
 
-- takeScreenshot: "18-song-opened-from-home-suggestion"
+- takeScreenshot: "${SCREENSHOTS_DIR}/18-song-opened-from-home-suggestion"

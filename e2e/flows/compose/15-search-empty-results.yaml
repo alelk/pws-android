@@ -24,4 +24,4 @@ name: "15 - Search: empty results state"
 - assertNotVisible:
     id: "${SONG_ITEM_ONE}"
 
-- takeScreenshot: "15-empty-results"
+- takeScreenshot: "${SCREENSHOTS_DIR}/15-empty-results"

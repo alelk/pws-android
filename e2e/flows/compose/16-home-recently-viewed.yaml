@@ -36,4 +36,4 @@ name: "16 - Home: recently viewed section appears after opening song"
 - assertVisible:
     id: "${ACTION_TOGGLE_FAVORITE}"
 
-- takeScreenshot: "16-song-opened-from-recent"
+- takeScreenshot: "${SCREENSHOTS_DIR}/16-song-opened-from-recent"

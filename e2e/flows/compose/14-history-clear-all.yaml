@@ -47,7 +47,7 @@ name: "14 - History: clear all entries"
       id: "${ACTION_CONFIRM_CLEAR_HISTORY}"
     timeout: ${TIMEOUT_SHORT}
 
-- takeScreenshot: "14-after-clear"
+- takeScreenshot: "${SCREENSHOTS_DIR}/14-after-clear"
 
 - assertNotVisible:
     id: "${SONG_ITEM_ONE}"

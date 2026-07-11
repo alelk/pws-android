@@ -13,4 +13,4 @@ name: Smoke - basic search
 - waitForAnimationToEnd
 - assertNotVisible: ${SEARCH_EMPTY_TEXT}
 - assertNotVisible: ${SEARCH_ERROR_TEXT}
-- takeScreenshot: smoke-search-results
+- takeScreenshot: "${SCREENSHOTS_DIR}/smoke-search-results"

@@ -78,4 +78,4 @@ name: "17 - Backup restore verify (phase 2 of 2)"
 
 - assertVisible: "${TEST_TAG_NAME}"
 
-- takeScreenshot: "17-backup-restored"
+- takeScreenshot: "${SCREENSHOTS_DIR}/17-backup-restored"

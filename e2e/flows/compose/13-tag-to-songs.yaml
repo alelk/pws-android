@@ -46,4 +46,4 @@ name: "13 - Tag tap navigates to TagSongsScreen"
 - assertVisible:
     id: "${SONG_ITEM_ONE}"
 
-- takeScreenshot: "13-tag-songs-list"
+- takeScreenshot: "${SCREENSHOTS_DIR}/13-tag-songs-list"
