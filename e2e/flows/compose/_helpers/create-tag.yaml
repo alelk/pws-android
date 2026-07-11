@@ -1,12 +1,20 @@
 appId: ${APP_ID}
 name: "_helper: create tag TEST_TAG_NAME"
 ---
-# Reusable subflow. From any screen, navigates to the Tags tab, opens the
-# create-tag dialog, types TEST_TAG_NAME, saves, then scrolls the tag list
-# until the new tag becomes visible. Leaves the app on the Tags list.
+# Reusable subflow. From any screen, navigates to Library → Tags section, opens
+# the create-tag dialog, types TEST_TAG_NAME, saves, then scrolls the tag list
+# until the new tag becomes visible. Leaves the app on the Tags section.
 
 - tapOn:
-    id: "${NAV_TAGS}"
+    id: "${NAV_LIBRARY}"
+
+- extendedWaitUntil:
+    visible:
+      id: "${LIBRARY_SECTION_TAGS}"
+    timeout: ${TIMEOUT_MEDIUM}
+
+- tapOn:
+    id: "${LIBRARY_SECTION_TAGS}"
 
 - extendedWaitUntil:
     visible:
@@ -24,7 +32,6 @@ name: "_helper: create tag TEST_TAG_NAME"
 - tapOn:
     id: "${FIELD_TAG_NAME}"
 - inputText: "${TEST_TAG_NAME}"
-- hideKeyboard
 
 - assertVisible: "${TEST_TAG_NAME}"
 

@@ -14,4 +14,4 @@ name: "02 - Basic search returns results and opens song"
 - assertVisible:
     id: "${ACTION_TOGGLE_FAVORITE}"
 
-- takeScreenshot: "02-song-detail-opened"
+- takeScreenshot: "${SCREENSHOTS_DIR}/02-song-detail-opened"

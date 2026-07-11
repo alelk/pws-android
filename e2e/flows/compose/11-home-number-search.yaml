@@ -42,4 +42,4 @@ name: "11 - Home: number search modal opens song"
 - assertVisible:
     id: "${ACTION_TOGGLE_FAVORITE}"
 
-- takeScreenshot: "11-song-opened-via-number"
+- takeScreenshot: "${SCREENSHOTS_DIR}/11-song-opened-via-number"

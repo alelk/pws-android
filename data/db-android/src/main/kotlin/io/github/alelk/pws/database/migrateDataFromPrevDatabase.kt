@@ -1,6 +1,7 @@
 package io.github.alelk.pws.database
 
 import android.content.Context
+import androidx.room.withTransaction
 import io.github.alelk.pws.database.history.HistoryEntity
 import io.github.alelk.pws.database.song_tag.SongTagEntity
 import io.github.alelk.pws.database.tag.TagEntity
@@ -43,6 +44,36 @@ internal suspend fun MigrationDbSource.migrateDataTo(currentDatabase: PwsDatabas
     val dataProviders = listOf(PwsDb1xDataProvider(this), PwsDb2xDataProvider(this))
     val dataProvider = dataProviders.find { this.version in it.dbVersions }
     checkNotNull(dataProvider) { "no data provider found for database version $version" }
+
+    // Phase 1: install books from old DB if the target DB has no books yet.
+    // This ensures (bookId, songNumber) lookups in Phase 2 can succeed even when
+    // onboarding has not yet run (e.g. after a silent APK update on a device that
+    // had one of the legacy named databases).
+    if (currentDatabase.bookDao().count() == 0) {
+      val books = dataProvider.getBooks().getOrDefault(emptyList())
+      Timber.i("installing ${books.size} books from old DB $path into empty target DB...")
+      currentDatabase.withTransaction {
+        // Insert all unique songs first — avoids CASCADE-delete of song_numbers that would
+        // occur if we inserted songs per-book using REPLACE and the same song appears in
+        // multiple books (replacing a song deletes its song_number rows via ON DELETE CASCADE).
+        val allSongs = books.flatMap { it.songs }.distinctBy { it.id }
+        currentDatabase.songDao().insert(allSongs)
+
+        for (bookData in books) {
+          if (currentDatabase.bookDao().getById(bookData.book.id) != null) continue
+          currentDatabase.bookDao().update(bookData.book)
+          currentDatabase.bookStatisticDao().upsert(bookData.bookStatistic)
+          for (sn in bookData.songNumbers) {
+            runCatching { currentDatabase.songNumberDao().insert(sn) }
+              .onFailure { e -> Timber.w("skip duplicate song number ${sn.bookId}#${sn.number}: ${e.message}") }
+          }
+          currentDatabase.installedBookDao().upsert(bookData.installedBook)
+        }
+      }
+      Timber.i("books installed from old DB $path")
+    }
+
+    // Phase 2: migrate user data (favorites, history, edited songs, tags).
     val favorites = dataProvider.getFavorites()
     val history = dataProvider.getHistory()
     val editedSongs = dataProvider.getEditedSongs()

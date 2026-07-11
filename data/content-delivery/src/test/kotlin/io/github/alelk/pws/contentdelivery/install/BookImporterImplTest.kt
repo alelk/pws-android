@@ -10,11 +10,15 @@ import io.github.alelk.pws.contentdelivery.portableSongNumber
 import io.github.alelk.pws.contentdelivery.portableTag
 import io.github.alelk.pws.contentdelivery.songReference
 import io.github.alelk.pws.database.PwsDatabase
+import io.github.alelk.pws.database.history.HistoryEntity
 import io.github.alelk.pws.domain.booklibrary.model.BookInstallSource
 import io.github.alelk.pws.domain.core.Version
 import io.github.alelk.pws.domain.core.ids.BookId
 import io.github.alelk.pws.domain.core.ids.SongId
+import io.github.alelk.pws.domain.core.ids.SongNumberId
+import io.github.alelk.pws.portable.model.Song
 import io.github.alelk.pws.portable.model.SongNumber
+import io.github.alelk.pws.portable.model.SongReference
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
@@ -52,6 +56,25 @@ class BookImporterImplTest : FeatureSpec({
     val db = inMemoryPwsDb()
     return try { block(db) } finally { db.close() }
   }
+
+  // Builders for structural single-book scenarios: a song pinned to a (book, number) and version.
+  fun songIn(book: BookId, id: Long, number: Int, version: Version, lyric: String = "lyric"): Song =
+    Arb.portableSong(
+      id = Arb.constant(SongId(id)),
+      number = Arb.constant(SongNumber(book, number)),
+      version = Arb.constant(version),
+      lyric = Arb.constant(lyric),
+    ).next(rs)
+
+  fun song(id: Long, number: Int, version: Version, lyric: String = "lyric"): Song =
+    songIn(bookId, id, number, version, lyric)
+
+  fun bundleOf(book: BookId, songs: List<Song>, refs: List<SongReference>? = null) =
+    Arb.bookBundle(
+      book = Arb.portableBook(id = Arb.constant(book)),
+      songs = Arb.constant(songs),
+      songReferences = Arb.constant(refs),
+    ).next(rs)
 
   feature("clean import") {
     scenario("inserts the book, all songs and their numbers, and marks the book DOWNLOADED") {
@@ -152,6 +175,110 @@ class BookImporterImplTest : FeatureSpec({
           importer.import(bundle)
           db.songDao().count() shouldBe bundle.songs.size
         }
+      }
+    }
+  }
+
+  feature("smart song-number binding") {
+    scenario("remaps a number to a new song id and cleans up the old orphan") {
+      withDb { db ->
+        val importer = BookImporterImpl(db)
+        importer.import(bundleOf(bookId, listOf(song(id = 1L, number = 1, version = Version(1, 0)))))
+        // optimizer reassigned the id: number 1 now points to song 2
+        importer.import(bundleOf(bookId, listOf(song(id = 2L, number = 1, version = Version(1, 0)))))
+
+        db.songNumberDao().getByBookIdAndSongNumber(bookId, 1).shouldNotBeNull().songId shouldBe SongId(2L)
+        db.songDao().getById(SongId(1L)).shouldBeNull()    // orphan removed
+        db.songDao().getById(SongId(2L)).shouldNotBeNull()
+      }
+    }
+
+    scenario("survives a song-id swap between two numbers without a constraint crash") {
+      withDb { db ->
+        val importer = BookImporterImpl(db)
+        importer.import(bundleOf(bookId, listOf(song(1L, 1, Version(1, 0)), song(2L, 2, Version(1, 0)))))
+        // numbers trade song ids — the case a per-number upsert cannot express
+        importer.import(bundleOf(bookId, listOf(song(1L, 2, Version(1, 0)), song(2L, 1, Version(1, 0)))))
+
+        db.songNumberDao().getByBookIdAndSongNumber(bookId, 1).shouldNotBeNull().songId shouldBe SongId(2L)
+        db.songNumberDao().getByBookIdAndSongNumber(bookId, 2).shouldNotBeNull().songId shouldBe SongId(1L)
+      }
+    }
+
+    scenario("drops a number that disappeared from the re-imported bundle") {
+      withDb { db ->
+        val importer = BookImporterImpl(db)
+        importer.import(bundleOf(bookId, listOf(song(1L, 1, Version(1, 0)), song(2L, 2, Version(1, 0)), song(3L, 3, Version(1, 0)))))
+        importer.import(bundleOf(bookId, listOf(song(1L, 1, Version(1, 0)), song(2L, 2, Version(1, 0)))))
+
+        db.songNumberDao().getByBookIdAndSongNumber(bookId, 3).shouldBeNull()
+        db.songDao().getById(SongId(3L)).shouldBeNull()    // orphan removed
+        db.songNumberDao().getByBookIdAndSongNumber(bookId, 1).shouldNotBeNull()
+      }
+    }
+
+    scenario("keeps a user-edited song on its number even when the bundle remaps it") {
+      withDb { db ->
+        val importer = BookImporterImpl(db)
+        importer.import(bundleOf(bookId, listOf(song(1L, 1, Version(1, 0), lyric = "original"))))
+        db.songDao().update(db.songDao().getById(SongId(1L))!!.copy(lyric = "my edit", edited = true))
+
+        importer.import(bundleOf(bookId, listOf(song(2L, 1, Version(1, 0)))))   // remap number 1 → song 2
+
+        db.songNumberDao().getByBookIdAndSongNumber(bookId, 1).shouldNotBeNull().songId shouldBe SongId(1L)
+        db.songDao().getById(SongId(1L)).shouldNotBeNull().lyric shouldBe "my edit"
+      }
+    }
+  }
+
+  feature("song version gating") {
+    scenario("ignores an older bundle version and applies a newer one") {
+      withDb { db ->
+        val importer = BookImporterImpl(db)
+        importer.import(bundleOf(bookId, listOf(song(1L, 1, Version(2, 0), lyric = "v2"))))
+
+        importer.import(bundleOf(bookId, listOf(song(1L, 1, Version(1, 0), lyric = "v1"))))   // older → ignored
+        db.songDao().getById(SongId(1L)).shouldNotBeNull().lyric shouldBe "v2"
+
+        importer.import(bundleOf(bookId, listOf(song(1L, 1, Version(3, 0), lyric = "v3"))))   // newer → applied
+        db.songDao().getById(SongId(1L)).shouldNotBeNull().lyric shouldBe "v3"
+      }
+    }
+  }
+
+  feature("update preserves user data") {
+    scenario("favorites, history and cross-book numbers survive a book update") {
+      withDb { db ->
+        val importer = BookImporterImpl(db)
+        val book2 = BookId.parse("Book-2")
+        // song 1 lives in both books
+        importer.import(bundleOf(bookId, listOf(song(1L, 1, Version(1, 0)))))
+        importer.import(bundleOf(book2, listOf(songIn(book2, 1L, 7, Version(1, 0)))))
+
+        db.favoriteDao().addToFavorites(SongNumberId(bookId, SongId(1L)))
+        db.historyDao().insert(HistoryEntity(SongNumberId(bookId, SongId(1L))))
+
+        // update Book-1 to a newer version (same id, same number → row left untouched)
+        importer.import(bundleOf(bookId, listOf(song(1L, 1, Version(2, 0), lyric = "updated"))))
+
+        db.favoriteDao().getById(bookId, SongId(1L)).shouldNotBeNull()
+        db.historyDao().count() shouldBe 1
+        db.songNumberDao().getByBookIdAndSongNumber(book2, 7).shouldNotBeNull().songId shouldBe SongId(1L)
+        db.songDao().getById(SongId(1L)).shouldNotBeNull().lyric shouldBe "updated"
+      }
+    }
+  }
+
+  feature("song references are recalculated on re-import") {
+    scenario("removes a reference that is no longer present in the bundle") {
+      withDb { db ->
+        val importer = BookImporterImpl(db)
+        val ref = Arb.songReference(songId = Arb.constant(SongId(1L)), refSongId = Arb.constant(SongId(2L))).next(rs)
+        importer.import(bundleOf(bookId, listOf(song(1L, 1, Version(1, 0)), song(2L, 2, Version(1, 0))), refs = listOf(ref)))
+        db.songReferenceDao().getById(SongId(1L), SongId(2L)).shouldNotBeNull()
+
+        importer.import(bundleOf(bookId, listOf(song(1L, 1, Version(1, 0)), song(2L, 2, Version(1, 0)))))   // no refs
+        db.songReferenceDao().getById(SongId(1L), SongId(2L)).shouldBeNull()
       }
     }
   }

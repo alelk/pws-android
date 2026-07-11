@@ -9,6 +9,15 @@ name: "09 - Books tab - navigate to a song via book song list"
 - tapOn:
     id: "${NAV_BOOKS}"
 
+# BookLibrary first-launch screen may appear — dismiss it if so.
+- runFlow:
+    when:
+      visible:
+        id: "${ACTION_NAVIGATE_BACK}"
+    commands:
+      - tapOn:
+          id: "${ACTION_NAVIGATE_BACK}"
+
 - extendedWaitUntil:
     visible:
       id: "books-grid"
@@ -38,4 +47,4 @@ name: "09 - Books tab - navigate to a song via book song list"
 - assertVisible:
     id: "${ACTION_TOGGLE_FAVORITE}"
 
-- takeScreenshot: "09-song-opened-from-book"
+- takeScreenshot: "${SCREENSHOTS_DIR}/09-song-opened-from-book"

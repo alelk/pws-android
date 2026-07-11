@@ -21,6 +21,8 @@ private val favoritesAscendingKey = booleanPreferencesKey("favorites-ascending")
 private val useDynamicColorKey = booleanPreferencesKey("use-dynamic-color")
 private val keepScreenOnKey = booleanPreferencesKey("keep-screen-on")
 private val songLineHeightMultiplierKey = floatPreferencesKey("song-line-height-multiplier")
+private val songSerifFontKey = booleanPreferencesKey("song-serif-font")
+private val showSongNavButtonsKey = booleanPreferencesKey("show-song-nav-buttons")
 
 fun Context.themeModeFlow(): Flow<ThemeMode> =
   dataStore.data.map { prefs ->
@@ -96,6 +98,22 @@ fun Context.songLineHeightMultiplierFlow(): Flow<Float> =
 
 suspend fun Context.setSongLineHeightMultiplier(value: Float) {
   dataStore.edit { prefs -> prefs[songLineHeightMultiplierKey] = value }
+}
+
+fun Context.songSerifFontFlow(): Flow<Boolean> =
+  dataStore.data.map { prefs -> prefs[songSerifFontKey] ?: false }
+
+suspend fun Context.setSongSerifFont(value: Boolean) {
+  dataStore.edit { prefs -> prefs[songSerifFontKey] = value }
+}
+
+// Default false mirrors PlatformDefaultShowSongNavButtons on native mobile:
+// swipe pages between songs, so the header arrows stay hidden unless enabled.
+fun Context.showSongNavButtonsFlow(): Flow<Boolean> =
+  dataStore.data.map { prefs -> prefs[showSongNavButtonsKey] ?: false }
+
+suspend fun Context.setShowSongNavButtons(value: Boolean) {
+  dataStore.edit { prefs -> prefs[showSongNavButtonsKey] = value }
 }
 
 fun Context.appSettingsDataStore(): DataStore<Preferences> = dataStore

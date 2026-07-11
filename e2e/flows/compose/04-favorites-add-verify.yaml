@@ -12,9 +12,16 @@ name: "04 - Add to favorites and verify in Favorites list"
     id: "${ACTION_TOGGLE_FAVORITE}"
 
 - back
-- back
 - tapOn:
-    id: "${NAV_FAVORITES}"
+    id: "${NAV_LIBRARY}"
+
+- extendedWaitUntil:
+    visible:
+      id: "${LIBRARY_SECTION_FAVORITES}"
+    timeout: ${TIMEOUT_MEDIUM}
+
+- tapOn:
+    id: "${LIBRARY_SECTION_FAVORITES}"
 
 - extendedWaitUntil:
     visible:
@@ -24,4 +31,4 @@ name: "04 - Add to favorites and verify in Favorites list"
 - assertVisible:
     id: "${SONG_ITEM_ONE}"
 
-- takeScreenshot: "04-favorites-list"
+- takeScreenshot: "${SCREENSHOTS_DIR}/04-favorites-list"

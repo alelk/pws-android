@@ -9,12 +9,20 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts.CreateDocument
 import androidx.activity.result.contract.ActivityResultContracts.OpenDocument
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import io.github.alelk.pws.contentdelivery.install.ImportBundleFromFileUseCase
+import io.github.alelk.pws.domain.booklibrary.usecase.ObserveInstalledBooksUseCase
+import io.github.alelk.pws.features.booklibrary.BookLibraryExternalActions
+import kotlinx.coroutines.flow.map
+import org.koin.android.ext.android.get
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -26,7 +34,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.lifecycle.lifecycleScope
 import io.github.alelk.pws.portable.BackupService
-import io.github.alelk.pws.database.PwsDatabaseProvider
+import io.github.alelk.pws.database.PwsDatabase
 import io.github.alelk.pws.features.app.AppRoot
 import io.github.alelk.pws.features.settings.SettingsExternalActions
 import io.github.alelk.pws.features.song.detail.FavoritesDisplaySettings
@@ -42,27 +50,42 @@ class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     enableEdgeToEdge()
     super.onCreate(savedInstanceState)
-    lifecycleScope.launch(Dispatchers.IO) {
-      PwsBackupAgent.applyPendingRestoreIfNeeded(
-        this@MainActivity,
-        PwsDatabaseProvider.getDatabase(this@MainActivity),
-        appSettingsDataStore(),
-      )
-    }
     setContent {
       val context = LocalContext.current
       val backupService = remember { BackupService() }
-      val backupManager = remember {
-        BackupManager(
-          db = PwsDatabaseProvider.getDatabase(context),
-          dataStore = context.appSettingsDataStore(),
-        )
-      }
+      val backupManager = remember { get<BackupManager>() }
       val scope = rememberCoroutineScope()
 
       val appVersion = remember {
         packageManager.getPackageInfo(packageName, 0).versionName ?: "Unknown"
       }
+
+      val hasInstalledBooks: Boolean? by remember {
+        get<ObserveInstalledBooksUseCase>().invoke().map { it.isNotEmpty() }
+      }.collectAsState(initial = null)
+
+      val installedBookCount: Int by remember {
+        get<ObserveInstalledBooksUseCase>().invoke().map { it.size }
+      }.collectAsState(initial = 0)
+
+      // True once we know the user has no books — keeps us in onboarding until explicit skip.
+      var onboardingActive by remember { mutableStateOf(false) }
+      LaunchedEffect(hasInstalledBooks) {
+        if (hasInstalledBooks == false) onboardingActive = true
+      }
+
+      // Re-apply pending backup restore on every new book install — the backup file is kept
+      // until all referenced books are installed, so each new install may unlock more records.
+      LaunchedEffect(installedBookCount) {
+        if (installedBookCount > 0) {
+          withContext(Dispatchers.IO) {
+            PwsBackupAgent
+              .applyPendingRestoreIfNeeded(context, get<PwsDatabase>(), get<DataStore<Preferences>>())
+          }
+        }
+      }
+
+      var onboardingSkipped by remember { mutableStateOf(false) }
 
       var pendingBackupText by remember { mutableStateOf<String?>(null) }
 
@@ -100,6 +123,28 @@ class MainActivity : ComponentActivity() {
             Toast.makeText(context, "Import failed", Toast.LENGTH_SHORT).show()
           }
         }
+      }
+
+      val importBundleFromFile = remember { get<ImportBundleFromFileUseCase>() }
+      val importBundleLauncher = rememberLauncherForActivityResult(OpenDocument()) { uri ->
+        if (uri == null) return@rememberLauncherForActivityResult
+        scope.launch {
+          runCatching {
+            importBundleFromFile.invoke(uri)
+          }.onSuccess {
+            Toast.makeText(context, "Bundle imported", Toast.LENGTH_SHORT).show()
+          }.onFailure {
+            Toast.makeText(context, "Import failed: ${it.message}", Toast.LENGTH_SHORT).show()
+          }
+        }
+      }
+
+      val bookLibraryExternalActions = remember(importBundleLauncher) {
+        BookLibraryExternalActions(
+          onImportFromFile = {
+            importBundleLauncher.launch(arrayOf("application/octet-stream", "*/*"))
+          },
+        )
       }
 
       val settingsExternalActions = remember(exportLauncher, importLauncher) {
@@ -149,9 +194,11 @@ class MainActivity : ComponentActivity() {
       val useDynamicColor by applicationContext.useDynamicColorFlow().collectAsState(initial = false)
       val keepScreenOn by applicationContext.keepScreenOnFlow().collectAsState(initial = false)
       val songLineHeightMultiplier by applicationContext.songLineHeightMultiplierFlow().collectAsState(initial = 1.0f)
+      val songSerifFont by applicationContext.songSerifFontFlow().collectAsState(initial = false)
+      val showSongNavButtons by applicationContext.showSongNavButtonsFlow().collectAsState(initial = false)
 
-      // Window FLAG_KEEP_SCREEN_ON — обработка флага здесь, в shell.
-      // iOS-analog: UIApplication.shared.isIdleTimerDisabled
+      // Window FLAG_KEEP_SCREEN_ON is handled here, in the shell.
+      // iOS analog: UIApplication.shared.isIdleTimerDisabled
       androidx.compose.runtime.DisposableEffect(keepScreenOn) {
         if (keepScreenOn) {
           window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -161,7 +208,7 @@ class MainActivity : ComponentActivity() {
         onDispose { window.clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) }
       }
 
-      val songDetailDisplaySettings = remember(songTextScale, songTextExpanded, songLineHeightMultiplier) {
+      val songDetailDisplaySettings = remember(songTextScale, songTextExpanded, songLineHeightMultiplier, songSerifFont, showSongNavButtons) {
         SongDetailDisplaySettings(
           fontScale = songTextScale,
           expandedText = songTextExpanded,
@@ -179,6 +226,18 @@ class MainActivity : ComponentActivity() {
           onLineHeightMultiplierChange = { multiplier ->
             lifecycleScope.launch {
               applicationContext.setSongLineHeightMultiplier(multiplier)
+            }
+          },
+          serifFont = songSerifFont,
+          onSerifFontChange = { enabled ->
+            lifecycleScope.launch {
+              applicationContext.setSongSerifFont(enabled)
+            }
+          },
+          showNavigationButtons = showSongNavButtons,
+          onShowNavigationButtonsChange = { visible ->
+            lifecycleScope.launch {
+              applicationContext.setShowSongNavButtons(visible)
             }
           }
         )
@@ -231,6 +290,13 @@ class MainActivity : ComponentActivity() {
           songDetailExternalActions = songDetailExternalActions,
           songDetailDisplaySettings = songDetailDisplaySettings,
           favoritesDisplaySettings = favoritesDisplaySettings,
+          hasInstalledBooks = when {
+            onboardingSkipped -> true           // user tapped Skip / Continue
+            onboardingActive -> false           // in onboarding: stay until explicit skip
+            else -> hasInstalledBooks           // existing users: pass through as-is
+          },
+          onSkipOnboarding = { onboardingSkipped = true },
+          bookLibraryExternalActions = bookLibraryExternalActions,
         )
       }
     }

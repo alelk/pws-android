@@ -157,7 +157,7 @@ class BackupManagerTest : FeatureSpec({
   }
 
   feature("restore robustness") {
-    scenario("ignores favourites and edits for songs not present in the catalogue") {
+    scenario("ignores favourites for songs not present in the catalogue") {
       runTest {
         val dest = inMemoryDb()
         seedBaseContent(dest)

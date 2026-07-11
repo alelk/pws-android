@@ -19,7 +19,6 @@ name: "_helper: populate favorites, history and a tag for backup test"
     optional: true
 
 - back
-- back
 
 # Create a custom tag and assign song #1 to it
 - runFlow: create-tag.yaml

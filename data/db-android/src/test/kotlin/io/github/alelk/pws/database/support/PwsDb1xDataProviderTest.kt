@@ -5,12 +5,14 @@ import br.com.colman.kotest.android.extensions.robolectric.RobolectricTest
 import io.github.alelk.pws.database.TestDbPatch
 import io.github.alelk.pws.database.setupTimberForTest
 import io.github.alelk.pws.database.withSqliteDb
+import io.github.alelk.pws.domain.booklibrary.model.BookInstallSource
 import io.github.alelk.pws.domain.core.BibleRef
 import io.github.alelk.pws.domain.core.ids.BookId
 import io.github.alelk.pws.domain.core.Color
 import io.github.alelk.pws.domain.core.ids.Prayer
 import io.github.alelk.pws.domain.core.ids.Pv3300
 import io.github.alelk.pws.domain.core.ids.Pv800
+import io.github.alelk.pws.domain.core.ids.YunostIisusu
 import io.github.alelk.pws.domain.core.SongNumber
 import io.github.alelk.pws.domain.core.ids.TagId
 import io.github.alelk.pws.domain.tonality.Tonality
@@ -93,6 +95,35 @@ class PwsDb1xDataProviderTest : FeatureSpec({
           }
         }
       }
+
+      scenario("get books") {
+        val books = dbProvider.getBooks()
+        books.isSuccess shouldBe true
+        val bookList = books.getOrThrow()
+        bookList shouldHaveSize 9
+        bookList.any { it.book.id == BookId.Pv3300 } shouldBe true
+        bookList.any { it.book.id == BookId.Pv800 } shouldBe true
+        bookList.any { it.book.id == BookId.YunostIisusu } shouldBe true
+        bookList.any { it.book.id == BookId.parse("DerjisHrista") } shouldBe true
+        bookList.any { it.book.id == BookId.parse("TPMS") } shouldBe true
+        bookList.all { it.songs.isNotEmpty() } shouldBe true
+        bookList.all { it.songNumbers.isNotEmpty() } shouldBe true
+        bookList.all { it.book.name.isNotBlank() } shouldBe true
+        bookList.all { it.installedBook.source == BookInstallSource.MIGRATION } shouldBe true
+        bookList.single { it.book.id == BookId.Pv3300 }.run {
+          songs shouldHaveSize 50
+          songNumbers shouldHaveSize 50
+          songs.all { it.lyric.isNotBlank() } shouldBe true
+        }
+        bookList.single { it.book.id == BookId.Pv800 }.run {
+          songs shouldHaveSize 50
+          songNumbers shouldHaveSize 50
+        }
+        bookList.single { it.book.id == BookId.YunostIisusu }.run {
+          songs shouldHaveSize 10
+          songNumbers shouldHaveSize 10
+        }
+      }
     }
   }
 
@@ -132,6 +163,16 @@ class PwsDb1xDataProviderTest : FeatureSpec({
           single { it.id == TagId.parse("custom-00002") }.songNumbers.values.flatten() shouldHaveSize 3
         }
       }
+
+      scenario("get books") {
+        val books = dbProvider.getBooks()
+        books.isSuccess shouldBe true
+        val bookList = books.getOrThrow()
+        bookList shouldHaveSize 9
+        bookList.all { it.songs.isNotEmpty() } shouldBe true
+        bookList.all { it.songNumbers.isNotEmpty() } shouldBe true
+        bookList.single { it.book.id == BookId.Pv3300 }.songs shouldHaveSize 50
+      }
     }
   }
 
@@ -166,6 +207,16 @@ class PwsDb1xDataProviderTest : FeatureSpec({
         val tags = dbProvider.getTags()
         tags.isSuccess shouldBe true
         tags.getOrThrow() shouldHaveSize 34
+      }
+
+      scenario("get books") {
+        val books = dbProvider.getBooks()
+        books.isSuccess shouldBe true
+        val bookList = books.getOrThrow()
+        bookList shouldHaveSize 9
+        bookList.all { it.songs.isNotEmpty() } shouldBe true
+        bookList.all { it.songNumbers.isNotEmpty() } shouldBe true
+        bookList.single { it.book.id == BookId.Pv3300 }.songs shouldHaveSize 50
       }
     }
   }
@@ -202,6 +253,16 @@ class PwsDb1xDataProviderTest : FeatureSpec({
         tags.isSuccess shouldBe true
         tags.getOrThrow() shouldHaveSize 34
       }
+
+      scenario("get books") {
+        val books = dbProvider.getBooks()
+        books.isSuccess shouldBe true
+        val bookList = books.getOrThrow()
+        bookList shouldHaveSize 9
+        bookList.all { it.songs.isNotEmpty() } shouldBe true
+        bookList.all { it.songNumbers.isNotEmpty() } shouldBe true
+        bookList.single { it.book.id == BookId.Pv3300 }.songs shouldHaveSize 50
+      }
     }
   }
 
@@ -236,6 +297,16 @@ class PwsDb1xDataProviderTest : FeatureSpec({
         val tags = dbProvider.getTags()
         tags.isSuccess shouldBe true
         tags.getOrThrow() shouldHaveSize 34
+      }
+
+      scenario("get books") {
+        val books = dbProvider.getBooks()
+        books.isSuccess shouldBe true
+        val bookList = books.getOrThrow()
+        bookList shouldHaveSize 9
+        bookList.all { it.songs.isNotEmpty() } shouldBe true
+        bookList.all { it.songNumbers.isNotEmpty() } shouldBe true
+        bookList.single { it.book.id == BookId.Pv3300 }.songs shouldHaveSize 50
       }
     }
   }

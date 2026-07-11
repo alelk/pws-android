@@ -4,6 +4,7 @@ import br.com.colman.kotest.FeatureSpec
 import br.com.colman.kotest.android.extensions.robolectric.RobolectricTest
 import io.github.alelk.pws.database.setupTimberForTest
 import io.github.alelk.pws.database.withSqliteDb
+import io.github.alelk.pws.domain.booklibrary.model.BookInstallSource
 import io.github.alelk.pws.domain.core.ids.AboutChurch
 import io.github.alelk.pws.domain.core.BibleRef
 import io.github.alelk.pws.domain.core.ids.BookId
@@ -18,6 +19,7 @@ import io.github.alelk.pws.domain.core.ids.TagId
 import io.github.alelk.pws.domain.tonality.Tonality
 import io.github.alelk.pws.domain.core.ids.YunostIisusu
 import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.maps.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
@@ -105,6 +107,28 @@ class PwsDb2xDataProviderTest : FeatureSpec({
           }
         }
       }
+
+      scenario("get books") {
+        val books = dbProvider.getBooks()
+        books.isSuccess shouldBe true
+        val bookList = books.getOrThrow()
+        bookList shouldHaveSize 11
+        bookList.any { it.book.id == BookId.Pv2555 } shouldBe true
+        bookList.any { it.book.id == weWillSingAndPraise } shouldBe true
+        bookList.any { it.book.id == psalmsOfZion } shouldBe true
+        bookList.all { it.songs.isNotEmpty() } shouldBe true
+        bookList.all { it.songNumbers.isNotEmpty() } shouldBe true
+        bookList.all { it.book.name.isNotBlank() } shouldBe true
+        bookList.all { it.installedBook.source == BookInstallSource.MIGRATION } shouldBe true
+        bookList.single { it.book.id == BookId.Pv2555 }.run {
+          songs shouldHaveSize 20
+          songNumbers shouldHaveSize 20
+        }
+        bookList.single { it.book.id == weWillSingAndPraise }.run {
+          songs shouldHaveSize 20
+          songNumbers shouldHaveSize 20
+        }
+      }
     }
   }
 
@@ -172,6 +196,27 @@ class PwsDb2xDataProviderTest : FeatureSpec({
             tag.color shouldBe Color.parse("#e57373")
             tag.songNumbers shouldHaveSize 5
           }
+        }
+      }
+
+      scenario("get books") {
+        val books = dbProvider.getBooks()
+        books.isSuccess shouldBe true
+        val bookList = books.getOrThrow()
+        bookList shouldHaveSize 9
+        bookList.any { it.book.id == BookId.Pv3300 } shouldBe true
+        bookList.any { it.book.id == BookId.parse("DerjisHrista") } shouldBe true
+        bookList.any { it.book.id == BookId.Pv2001 } shouldBe true
+        bookList.all { it.songs.isNotEmpty() } shouldBe true
+        bookList.all { it.songNumbers.isNotEmpty() } shouldBe true
+        bookList.all { it.installedBook.source == BookInstallSource.MIGRATION } shouldBe true
+        bookList.single { it.book.id == BookId.Pv3300 }.run {
+          songs shouldHaveSize 50
+          songNumbers shouldHaveSize 50
+        }
+        bookList.single { it.book.id == BookId.parse("DerjisHrista") }.run {
+          songs shouldHaveSize 10
+          songNumbers shouldHaveSize 10
         }
       }
     }
@@ -247,6 +292,36 @@ class PwsDb2xDataProviderTest : FeatureSpec({
             tag.predefined shouldBe true
             tag.songNumbers shouldBe mapOf(BookId.YunostIisusu to (1..2).toSet(), BookId.PesnHvaly to setOf(1, 2, 5))
           }
+        }
+      }
+
+      scenario("get books") {
+        val books = dbProvider.getBooks()
+        books.isSuccess shouldBe true
+        val bookList = books.getOrThrow()
+        bookList shouldHaveSize 9
+        bookList.any { it.book.id == BookId.Pv800 } shouldBe true
+        bookList.any { it.book.id == BookId.YunostIisusu } shouldBe true
+        bookList.any { it.book.id == BookId.PesnHvaly } shouldBe true
+        bookList.any { it.book.id == BookId.Pv3300 } shouldBe true
+        bookList.any { it.book.id == BookId.Pv2555 } shouldBe true
+        bookList.any { it.book.id == BookId.Pv2001 } shouldBe true
+        bookList.all { it.songs.isNotEmpty() } shouldBe true
+        bookList.all { it.songNumbers.isNotEmpty() } shouldBe true
+        bookList.all { it.book.name.isNotBlank() } shouldBe true
+        bookList.all { it.installedBook.source == BookInstallSource.MIGRATION } shouldBe true
+        bookList.single { it.book.id == BookId.Pv3300 }.run {
+          songs shouldHaveSize 50
+          songNumbers shouldHaveSize 50
+          songs.all { it.lyric.isNotBlank() } shouldBe true
+        }
+        bookList.single { it.book.id == BookId.Pv800 }.run {
+          songs shouldHaveSize 50
+          songNumbers shouldHaveSize 50
+        }
+        bookList.single { it.book.id == BookId.YunostIisusu }.run {
+          songs shouldHaveSize 10
+          songNumbers shouldHaveSize 10
         }
       }
     }

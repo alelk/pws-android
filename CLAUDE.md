@@ -38,12 +38,16 @@ In [`docs/ai/plans/`](docs/ai/plans/):
 - `2026-06-18_pluggable-book-library_plan.md` — book catalog, download, import into Room,
   BookLibraryScreen. **T-003–T-020 реализованы**; остались T-001/T-002 (pws-v2x-library-manager
   export commands) и T-019/T-021.
+- `2026-06-27_global-book-library_plan.md` — **ACTIVE** — global library: multi-source (GitHub
+  Pages + Cloudflare R2), smart ID remap on install/update, user-edit preservation, version-aware
+  updates, first-launch onboarding, empty DB. Phases A–F.
 - `2026-06-19_stable-db-filename-room-migrations_plan.md` — стабильное имя `pws.db`, Room
   `exportSchema=true`, удаление мёртвой миграции. **Фаза 0** на стороне library-manager, **Фазы 1–2
   ** в коде.
+- `2026-07-08_universal-apk-onboarding_plan.md` — **ACTIVE** — удаление встроенных DB-ассетов из
+  APK, универсальный APK, онбординг первого запуска с locale-aware установкой сборника. Phases A–F.
 
-When the user references "current plan" without a name, use the **stable-db-filename** plan (most
-recent).
+When the user references "current plan" without a name, use the **universal-apk-onboarding** plan (most recent). All tasks T-001..T-011 and T-013 реализованы.
 
 ### Don't waste tokens on
 

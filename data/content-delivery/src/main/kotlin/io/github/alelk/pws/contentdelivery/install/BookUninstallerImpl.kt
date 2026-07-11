@@ -43,6 +43,10 @@ class BookUninstallerImpl(private val db: PwsDatabase) {
 
             // 7. Delete InstalledBookEntity
             db.installedBookDao().deleteByBookId(bookId)
+
+            // 8. Safety sweep for any remaining orphans (not user-edited)
+            val orphanCount = db.songDao().deleteOrphans()
+            if (orphanCount > 0) Timber.d("Deleted $orphanCount orphan songs after uninstall")
         }
         Timber.i("Uninstall complete: $bookId")
     }

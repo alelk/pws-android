@@ -4,9 +4,22 @@ name: "_helper: clean cold start"
 # Reusable subflow. Cold-launches the app with cleared state and waits for
 # the Home tab to become reachable. Use as the first step of any mutation flow
 # to guarantee isolation from previous flow's leftover state.
+#
+# With no pre-installed books (fresh / cleared state) the onboarding screen
+# appears before the main navigation. dismiss-onboarding.yaml installs the
+# locale-recommended book and continues to the main screen.
 
 - launchApp:
     clearState: true
+
+- waitForAnimationToEnd:
+    timeout: 5000
+
+- runFlow:
+    when:
+      visible:
+        id: "${ACTION_SKIP_ONBOARDING}"
+    file: dismiss-onboarding.yaml
 
 - extendedWaitUntil:
     visible:

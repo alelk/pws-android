@@ -17,7 +17,6 @@ name: "15 - Search: empty results state"
 - tapOn:
     id: "${FIELD_SEARCH}"
 - inputText: "zzz999"
-- pressKey: Enter
 - hideKeyboard
 
 - waitForAnimationToEnd
@@ -25,4 +24,4 @@ name: "15 - Search: empty results state"
 - assertNotVisible:
     id: "${SONG_ITEM_ONE}"
 
-- takeScreenshot: "15-empty-results"
+- takeScreenshot: "${SCREENSHOTS_DIR}/15-empty-results"

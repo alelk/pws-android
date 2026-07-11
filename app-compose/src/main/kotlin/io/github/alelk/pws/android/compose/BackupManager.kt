@@ -139,7 +139,9 @@ class BackupManager(
     backup.history?.forEach { entry ->
       songNumberDao.getByBookIdAndSongNumber(entry.songNumber.bookId, entry.songNumber.number)
         ?.let { sn ->
-          historyDao.insert(HistoryEntity(sn.id, accessTimestamp = entry.accessTimestamp))
+          runCatching {
+            historyDao.insert(HistoryEntity(sn.id, accessTimestamp = entry.accessTimestamp))
+          }
         }
     }
 

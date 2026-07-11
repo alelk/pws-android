@@ -35,7 +35,6 @@ name: "07 - Edit song title and verify"
 - eraseText: 50
 
 - inputText: "${TEST_SONG_EDIT_TITLE}"
-- hideKeyboard
 
 - tapOn:
     id: "${ACTION_SAVE}"
@@ -48,4 +47,4 @@ name: "07 - Edit song title and verify"
 
 - assertVisible: "${TEST_SONG_EDIT_TITLE}"
 
-- takeScreenshot: "07-song-title-updated"
+- takeScreenshot: "${SCREENSHOTS_DIR}/07-song-title-updated"

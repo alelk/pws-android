@@ -21,4 +21,4 @@ name: "03 - Song detail - actions sheet visible"
 - assertVisible:
     id: "${ACTION_EDIT_TAGS}"
 
-- takeScreenshot: "03-actions-sheet"
+- takeScreenshot: "${SCREENSHOTS_DIR}/03-actions-sheet"

@@ -110,7 +110,8 @@ if ! adb get-state >/dev/null 2>&1; then
   exit 1
 fi
 
-mkdir -p "$REPORTS_DIR" "$ARTIFACTS_DIR"
+SCREENSHOTS_DIR="$E2E_DIR/screenshots"
+mkdir -p "$REPORTS_DIR" "$ARTIFACTS_DIR" "$SCREENSHOTS_DIR"
 
 RUN_ID="$(now_ts)-$FLAVOR"
 RUN_DIR="$ARTIFACTS_DIR/$RUN_ID"
@@ -132,7 +133,8 @@ maestro test "$FLOW_FILE" \
   --env SEARCH_PLACEHOLDER_TEXT="$SEARCH_PLACEHOLDER_TEXT" \
   --env SEARCH_QUERY="$SEARCH_QUERY" \
   --env SEARCH_EMPTY_TEXT="$SEARCH_EMPTY_TEXT" \
-  --env SEARCH_ERROR_TEXT="$SEARCH_ERROR_TEXT"
+  --env SEARCH_ERROR_TEXT="$SEARCH_ERROR_TEXT" \
+  --env SCREENSHOTS_DIR="$SCREENSHOTS_DIR"
 
 echo "[OK] Smoke tests finished"
 echo "[OK] JUnit report: $JUNIT_FILE"

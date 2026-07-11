@@ -9,7 +9,15 @@ name: "14 - History: clear all entries"
 - runFlow: _helpers/populate-history.yaml
 
 - tapOn:
-    id: "${NAV_HISTORY}"
+    id: "${NAV_LIBRARY}"
+
+- extendedWaitUntil:
+    visible:
+      id: "${LIBRARY_SECTION_HISTORY}"
+    timeout: ${TIMEOUT_MEDIUM}
+
+- tapOn:
+    id: "${LIBRARY_SECTION_HISTORY}"
 
 - extendedWaitUntil:
     visible:
@@ -39,7 +47,7 @@ name: "14 - History: clear all entries"
       id: "${ACTION_CONFIRM_CLEAR_HISTORY}"
     timeout: ${TIMEOUT_SHORT}
 
-- takeScreenshot: "14-after-clear"
+- takeScreenshot: "${SCREENSHOTS_DIR}/14-after-clear"
 
 - assertNotVisible:
     id: "${SONG_ITEM_ONE}"

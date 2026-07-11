@@ -10,18 +10,19 @@ name: "12 - Remove from favorites and verify empty"
 - tapOn:
     id: "${ACTION_TOGGLE_FAVORITE}"
 
-# --- Step 2: verify song appears in Favorites tab ---
-# Two backs: SearchScreen auto-requests focus → keyboard appears → second back dismisses it.
+# --- Step 2: verify song appears in Favorites section (Library tab) ---
 - back
-- back
+
+- tapOn:
+    id: "${NAV_LIBRARY}"
 
 - extendedWaitUntil:
     visible:
-      id: "${NAV_FAVORITES}"
+      id: "${LIBRARY_SECTION_FAVORITES}"
     timeout: ${TIMEOUT_MEDIUM}
 
 - tapOn:
-    id: "${NAV_FAVORITES}"
+    id: "${LIBRARY_SECTION_FAVORITES}"
 
 - extendedWaitUntil:
     visible:
@@ -43,19 +44,22 @@ name: "12 - Remove from favorites and verify empty"
 - tapOn:
     id: "${ACTION_TOGGLE_FAVORITE}"
 
-# --- Step 4: back to Favorites tab and verify item gone ---
+# --- Step 4: back to Favorites section and verify item gone ---
 - back
+
+- tapOn:
+    id: "${NAV_LIBRARY}"
 
 - extendedWaitUntil:
     visible:
-      id: "${NAV_FAVORITES}"
+      id: "${LIBRARY_SECTION_FAVORITES}"
     timeout: ${TIMEOUT_MEDIUM}
 
 - tapOn:
-    id: "${NAV_FAVORITES}"
+    id: "${LIBRARY_SECTION_FAVORITES}"
 
 - waitForAnimationToEnd
-- takeScreenshot: "12-favorites-after-remove"
+- takeScreenshot: "${SCREENSHOTS_DIR}/12-favorites-after-remove"
 
 - assertNotVisible:
     id: "${SONG_ITEM_ONE}"

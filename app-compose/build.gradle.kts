@@ -3,15 +3,19 @@ plugins {
   alias(libs.plugins.compose)
 }
 
-// Catalog version is kept in sync with the DB asset version (db.version file).
-// To ship updated book bundles: bump db.version → release new app.
-val catalogVersion: String = rootProject.file("db.version").readText().trim()
-// pws-catalog publishes one catalog + one set of bundles per build variant (debug/release)
-// because debug and release builds use different content-decryption keys.
+val catalogVersion: String = rootProject.file("catalog.version").readText().trim()
+// Major version path (e.g. "v3") lets pws-catalog push updated bundles without
+// requiring a new app release. Breaking changes bump the major → new path "v4",
+// so apps pinned to "v3" keep receiving their own content indefinitely.
+// Bundles are also mirrored on Cloudflare Pages; the app tries both in order.
 //   - Catalog filename:  books-catalog-{variant}.json
 //   - Bundle filename:   {bookId}-{variant}-{version}.book.yaml.gz.enc
-val catalogReleaseBase = "https://alelk.github.io/pws-catalog/v$catalogVersion"
-fun catalogUrl(variant: String) = "$catalogReleaseBase/books-catalog-$variant.json"
+val catalogMajor = catalogVersion.split(".").first()
+val catalogGhPages    = "https://alelk.github.io/pws-catalog/v$catalogMajor"
+val catalogCloudflare = "https://pws-catalog.pages.dev/v$catalogMajor"
+val catalogYandex     = "https://pws-catalog.storage.yandexcloud.net/v$catalogMajor"
+fun catalogUrl(variant: String) = listOf(catalogGhPages, catalogCloudflare, catalogYandex)
+  .joinToString(",") { "$it/books-catalog-$variant.json" }
 
 android {
   namespace = "io.github.alelk.pws.android.compose"
@@ -82,23 +86,21 @@ android {
       productFlavors.getByName("full").signingConfig = signingConfigs.getByName("release-ru")
       productFlavors.getByName("uk").signingConfig = signingConfigs.getByName("release-uk")
       productFlavors.getByName("rustore").signingConfig = signingConfigs.getByName("release-rustore")
-      buildConfigField("String", "CATALOG_URL", "\"${catalogUrl("release")}\"")
+      buildConfigField("String", "CATALOG_URLS", "\"${catalogUrl("release")}\"")
       buildConfigField("String", "BUNDLE_VARIANT", "\"release\"")
     }
     getByName("debug") {
       isDebuggable = true
       isMinifyEnabled = false
       versionNameSuffix = "-debug"
-      buildConfigField("String", "CATALOG_URL", "\"${catalogUrl("debug")}\"")
+      buildConfigField("String", "CATALOG_URLS", "\"${catalogUrl("debug")}\"")
       buildConfigField("String", "BUNDLE_VARIANT", "\"debug\"")
     }
     create("localSeed") {
       isDebuggable = true
       isMinifyEnabled = false
       versionNameSuffix = "-localSeed"
-      // localSeed ships a plain-text asset DB and is not expected to fetch the catalog;
-      // we still populate the fields to keep BuildConfig consistent.
-      buildConfigField("String", "CATALOG_URL", "\"${catalogUrl("debug")}\"")
+      buildConfigField("String", "CATALOG_URLS", "\"${catalogUrl("debug")}\"")
       buildConfigField("String", "BUNDLE_VARIANT", "\"debug\"")
     }
   }
