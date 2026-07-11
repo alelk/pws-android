@@ -1,5 +1,12 @@
 # PWS Android
 
+## [3.4.1](https://github.com/alelk/pws-android/compare/v3.4.0...v3.4.1) (2026-07-11)
+
+
+### Bug Fixes
+
+* Fix app build issue ([31b7432](https://github.com/alelk/pws-android/commit/31b74328794fa5ab70673215c6933419e4df1833))
+
 # [3.4.0](https://github.com/alelk/pws-android/compare/v3.3.0...v3.4.0) (2026-07-11)
 
 
