@@ -1,5 +1,23 @@
 # PWS Android
 
+# [3.4.0](https://github.com/alelk/pws-android/compare/v3.3.0...v3.4.0) (2026-07-11)
+
+
+### Bug Fixes
+
+* Fix db migration issue (do not use main thread) ([e73fd7c](https://github.com/alelk/pws-android/commit/e73fd7c7d5f3cf6b111dda5c6613cb7d2c7462a6))
+* Fix e2e tests ([3c793bb](https://github.com/alelk/pws-android/commit/3c793bbb4a6d06b25124f1133de27cb2480d6d3e))
+* Fix failed tests ([8fb7bd5](https://github.com/alelk/pws-android/commit/8fb7bd594bfe0de2d77a7c1c070fce90176faeb2))
+* Remove obsolete db callbacks ([c778295](https://github.com/alelk/pws-android/commit/c77829590d2dc5e7bbb1ed56602471622622a060))
+
+
+### Features
+
+* Implement onboarding screen ([c4c8fdc](https://github.com/alelk/pws-android/commit/c4c8fdcabf3dcf82256e299ae0f1f8e439bfd2cc))
+* Install book bundles from remote catalog ([c490843](https://github.com/alelk/pws-android/commit/c490843a2b6263507a2c6c04bef7fcc811bf6cec))
+* Onboarding screen ([64fe881](https://github.com/alelk/pws-android/commit/64fe88199be1f7afcafa792b6a1df054b06485ec))
+* Update app design ([7cebd3a](https://github.com/alelk/pws-android/commit/7cebd3a46df07e310e837d4661f557dce6931062))
+
 # [3.4.0-rc.4](https://github.com/alelk/pws-android/compare/v3.4.0-rc.3...v3.4.0-rc.4) (2026-07-11)
 
 
