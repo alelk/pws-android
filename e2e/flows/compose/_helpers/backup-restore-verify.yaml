@@ -8,6 +8,18 @@ name: "17 - Backup restore verify (phase 2 of 2)"
 - launchApp:
     clearState: false
 
+- waitForAnimationToEnd:
+    timeout: 5000
+
+# pm clear wiped the DB, so first launch shows onboarding. Install the recommended
+# book (the one that contains song #1) so the restored favorites/tags have a book
+# to attach to, then continue to the main screen.
+- runFlow:
+    when:
+      visible:
+        id: "${ACTION_SKIP_ONBOARDING}"
+    file: dismiss-onboarding.yaml
+
 - extendedWaitUntil:
     visible:
       id: "${NAV_HOME}"

@@ -5,6 +5,11 @@ name: "_helper: create tag TEST_TAG_NAME"
 # the create-tag dialog, types TEST_TAG_NAME, saves, then scrolls the tag list
 # until the new tag becomes visible. Leaves the app on the Tags section.
 
+# The caller may arrive with the search field focused (e.g. after backing out of
+# a song opened via Search) — the soft keyboard then covers the bottom nav bar
+# and hides NAV_LIBRARY. Dismiss it first so the tab is tappable.
+- hideKeyboard
+
 - tapOn:
     id: "${NAV_LIBRARY}"
 

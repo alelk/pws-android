@@ -25,5 +25,6 @@ fun pwsDbFromFile(dbFile: File, name: String = "pws-from-file.db"): PwsDatabase 
   }
   return Room.databaseBuilder(context, PwsDatabase::class.java, name)
     .createFromFile(dbFile)
+    .addMigrations(MIGRATION_14_15)
     .build()
 }
