@@ -1,5 +1,12 @@
 # PWS Android
 
+## [3.4.2-rc.1](https://github.com/alelk/pws-android/compare/v3.4.1...v3.4.2-rc.1) (2026-07-23)
+
+
+### Bug Fixes
+
+* Fix e2e tests ([bc6f53c](https://github.com/alelk/pws-android/commit/bc6f53c92e0bb0cd583a0b2c52d56b8f953819a1))
+
 ## [3.4.1](https://github.com/alelk/pws-android/compare/v3.4.0...v3.4.1) (2026-07-11)
 
 
