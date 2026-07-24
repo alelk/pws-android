@@ -146,6 +146,16 @@ DEVICE_ID="$(adb devices | awk 'NR>1 && $2=="device" {print $1; exit}')"
 [[ -z "$DEVICE_ID" ]] && { echo "[ERROR] No online adb device. Start emulator first." >&2; exit 1; }
 echo "[INFO] Device: $DEVICE_ID"
 
+# Safety net: flows such as 19-onboarding-offline-skip toggle airplane mode. If one
+# fails mid-way the device could be left offline, breaking every subsequent flow (and
+# the next run). Always restore connectivity on exit.
+restore_network() {
+  adb -s "$DEVICE_ID" shell cmd connectivity airplane-mode disable >/dev/null 2>&1 \
+    || adb -s "$DEVICE_ID" shell "settings put global airplane_mode_on 0; am broadcast -a android.intent.action.AIRPLANE_MODE --ez state false" >/dev/null 2>&1 \
+    || true
+}
+trap restore_network EXIT
+
 SCREENSHOTS_DIR="$E2E_DIR/screenshots"
 mkdir -p "$ARTIFACTS_DIR" "$REPORTS_DIR" "$SCREENSHOTS_DIR"
 RUN_ID="$(now_ts)-compose"
@@ -207,6 +217,8 @@ FULL_FLOWS=(
   13-tag-to-songs.yaml
   14-history-clear-all.yaml
   17-backup-restore.yaml
+  # Toggles airplane mode — keep last so a connectivity hiccup can't cascade to others.
+  19-onboarding-offline-skip.yaml
 )
 
 FLOWS_TO_RUN=()

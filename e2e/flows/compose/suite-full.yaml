@@ -32,4 +32,6 @@ name: "Compose full suite (Phase 2 — including mutating tests)"
 - runFlow: 14-history-clear-all.yaml
 - runFlow: 17-backup-restore.yaml
 
+# --- Resilience — offline onboarding must stay skippable (toggles airplane mode; keep last) ---
+- runFlow: 19-onboarding-offline-skip.yaml
 
