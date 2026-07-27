@@ -42,14 +42,22 @@ name: "17 - Backup restore verify (phase 2 of 2)"
 - tapOn:
     id: "${ACTION_IMPORT_BACKUP}"
 
-# File picker opens — wait for it to load, then tap the backup file
+# File picker opens — wait for it to load, then tap the backup file.
+#
+# Match the file-name label (android:id/title) explicitly, with a regex anchored at
+# "pws_backup". In grid view each tile also carries a clickable preview button whose
+# accessibility text is "Preview the file pws_backup_....pws" — a loose ".*pws_backup.*"
+# matches that button first and opens an "Open with" chooser instead of picking the
+# file, leaving the flow stranded outside the app.
 - extendedWaitUntil:
     visible:
-      text: ".*pws_backup.*"
+      id: "android:id/title"
+      text: "pws_backup.*"
     timeout: ${TIMEOUT_LONG}
 
 - tapOn:
-    text: ".*pws_backup.*"
+    id: "android:id/title"
+    text: "pws_backup.*"
 
 - waitForAnimationToEnd
 

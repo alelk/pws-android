@@ -16,3 +16,6 @@ name: "_helper: open song #1 and dwell for HistoryRecorder"
     optional: true
 
 - back
+# Back lands on the Search tab, whose field keeps focus and can reopen the keyboard
+# over the bottom nav bar. Dismiss it so callers can tap nav tabs.
+- runFlow: dismiss-keyboard.yaml

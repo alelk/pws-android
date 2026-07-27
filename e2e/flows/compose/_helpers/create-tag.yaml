@@ -7,8 +7,8 @@ name: "_helper: create tag TEST_TAG_NAME"
 
 # The caller may arrive with the search field focused (e.g. after backing out of
 # a song opened via Search) — the soft keyboard then covers the bottom nav bar
-# and hides NAV_LIBRARY. Dismiss it first so the tab is tappable.
-- hideKeyboard
+# and hides NAV_LIBRARY. Dismiss it first so the tab is reachable.
+- runFlow: dismiss-keyboard.yaml
 
 - tapOn:
     id: "${NAV_LIBRARY}"

@@ -17,9 +17,16 @@ name: "15 - Search: empty results state"
 - tapOn:
     id: "${FIELD_SEARCH}"
 - inputText: "zzz999"
-- hideKeyboard
+# Uncover the result area before asserting on it — the assertion below is
+# `assertNotVisible`, so anything that hides the list would pass it for the wrong reason.
+- runFlow: _helpers/dismiss-keyboard.yaml
 
 - waitForAnimationToEnd
+
+# Anchor first: prove we are still on the Search screen, so the empty-list assertion
+# below can only pass because the query returned nothing.
+- assertVisible:
+    id: "${FIELD_SEARCH}"
 
 - assertNotVisible:
     id: "${SONG_ITEM_ONE}"
