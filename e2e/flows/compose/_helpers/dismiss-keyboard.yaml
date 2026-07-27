@@ -1,0 +1,30 @@
+appId: ${APP_ID}
+name: "_helper: free the bottom nav bar from the soft keyboard"
+---
+# Call this on a root tab before tapping a bottom-nav tab, whenever the previous step
+# may have left a text field focused (the Search tab auto-focuses its field).
+#
+# Why it is needed: a full-size soft keyboard covers the bottom nav bar, and Maestro
+# drops occluded nodes from the view hierarchy. The nav tabs then fail with
+# "Element not found: Id matching regex: home|library" — they are missing, not merely
+# untappable, so no timeout or retry helps.
+#
+# Do NOT use `hideKeyboard` here. In Maestro 2.5.1 it sends the app to the launcher,
+# so every following command fails with that same misleading "not found" error — and a
+# flow whose remaining assertions are all `assertNotVisible` goes green against the
+# launcher instead.
+#
+# A single Back press is consumed by the IME while the keyboard is up: it closes the
+# keyboard without popping the navigation stack.
+#
+# The guard keys off the keyboard itself (its space bar), NOT off the nav bar being
+# missing. That distinction matters: the nav bar is also missing while the app is still
+# rendering — on a loaded emulator that check can take minutes — and pressing Back there
+# exits the app, reproducing the exact bug this helper exists to prevent. Keying off the
+# keyboard means Back fires only when a keyboard is genuinely in the way.
+- runFlow:
+    when:
+      visible:
+        id: "${IME_SPACE_KEY}"
+    commands:
+      - back

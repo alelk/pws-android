@@ -1,7 +1,9 @@
 package io.github.alelk.pws.contentdelivery.di
 
+import android.content.Context
 import io.github.alelk.pws.contentdelivery.ContentKeyProvider
 import io.github.alelk.pws.contentdelivery.catalog.MultiSourceBookCatalogRepository
+import io.github.alelk.pws.contentdelivery.catalog.SharedPrefsPreferredCatalogSourceStore
 import io.github.alelk.pws.contentdelivery.install.BookImporterImpl
 import io.github.alelk.pws.contentdelivery.install.BookUninstallerImpl
 import io.github.alelk.pws.contentdelivery.install.ImportBundleFromFileUseCase
@@ -42,7 +44,13 @@ fun contentDeliveryModule(
         val sources = catalogUrls.mapIndexed { index, url ->
             ContentSource(name = "source-$index", catalogUrl = url, priority = index)
         }
-        MultiSourceBookCatalogRepository(sources, bundleVariant, get<HttpClient>())
+        val prefs = androidContext().getSharedPreferences("pws_catalog_source", Context.MODE_PRIVATE)
+        MultiSourceBookCatalogRepository(
+            sources = sources,
+            bundleVariant = bundleVariant,
+            httpClient = get<HttpClient>(),
+            preferredSourceStore = SharedPrefsPreferredCatalogSourceStore(prefs),
+        )
     } bind BookCatalogRepository::class
 
     single { BookImporterImpl(get<PwsDatabase>()) }

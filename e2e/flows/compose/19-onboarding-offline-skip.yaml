@@ -1,0 +1,65 @@
+appId: ${APP_ID}
+name: "19 - Onboarding stays skippable while the catalog loads offline"
+---
+# Regression guard for the "hanging install window" bug.
+#
+# On a fresh install with no network, the onboarding catalog fetch stays in the
+# Loading state (and only much later flips to Error) because every source times
+# out and retries with back-off. The Skip button MUST remain reachable the whole
+# time so the user is never trapped behind a spinner on a bad network.
+#
+# We force the device offline with airplane mode so the fetch cannot complete,
+# then assert the Skip button is visible *while the catalog is still loading* and
+# that tapping it reaches Home without any successful download.
+#
+# Before the fix the bottom bar (and Skip) was hidden during Loading, so the
+# short-timeout wait below would fail — which is exactly what this flow protects.
+#
+# Note: a user migrated from an older version (who already has books) never sees
+# onboarding at all — that gate reads the local DB, not the network. This flow
+# covers the only path where the loading window is actually shown: a fresh user.
+#
+# Network is restored right after the critical assertion; run-compose.sh also has
+# an EXIT trap that re-enables connectivity in case this flow fails mid-way.
+
+- setAirplaneMode: enabled
+
+# Fresh state → empty DB → onboarding appears; offline → catalog fetch can't finish.
+- launchApp:
+    clearState: true
+
+# Critical assertion: Skip is reachable *while the catalog is still loading* offline.
+#
+# We first wait for the loading spinner itself (generous timeout — a cold clearState
+# launch has to create the Room DB before the onboarding gate resolves, which can take
+# several seconds on a loaded machine). Anchoring on the spinner decouples this check
+# from that DB-init race: the offline fetch keeps the screen in Loading for ~15s of
+# back-off, far longer than the poll needs.
+#
+# Then we assert Skip is visible in that same Loading frame. A regression (Skip hidden
+# during Loading) fails the assertVisible — it cannot slip through via the Error state,
+# because the Error state has no loading spinner, so we'd never get past the wait in it.
+- extendedWaitUntil:
+    visible:
+      id: "${ONBOARDING_LOADING}"
+    timeout: ${TIMEOUT_COLD_START}
+
+- assertVisible:
+    id: "${ACTION_SKIP_ONBOARDING}"
+
+# Restore connectivity as soon as the key assertion passes so later steps / flows are online.
+- setAirplaneMode: disabled
+
+- tapOn:
+    id: "${ACTION_SKIP_ONBOARDING}"
+
+# Skipping must land on the main app without needing any successful download.
+- extendedWaitUntil:
+    visible:
+      id: "${NAV_HOME}"
+    timeout: ${TIMEOUT_COLD_START}
+
+- assertVisible:
+    id: "${NAV_HOME}"
+
+- takeScreenshot: "${SCREENSHOTS_DIR}/19-onboarding-offline-skip-home"

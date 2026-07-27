@@ -12,6 +12,9 @@ name: "12 - Remove from favorites and verify empty"
 
 # --- Step 2: verify song appears in Favorites section (Library tab) ---
 - back
+# Back lands on the Search tab, which re-focuses its field and can reopen the keyboard
+# over the bottom nav bar.
+- runFlow: _helpers/dismiss-keyboard.yaml
 
 - tapOn:
     id: "${NAV_LIBRARY}"

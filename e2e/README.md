@@ -183,3 +183,14 @@ The simplest way — pass the flow number(s) as positional arguments:
 - `No adb device ready` — start the Android emulator and wait for boot to complete.
 - `Unable to launch app` — restart adb: `adb kill-server && adb start-server`.
 - Nav tap fails — rebuild `pws-core` after the `contentDescription` changes and reinstall the APK.
+- `Element not found: Id matching regex: home|library` — the soft keyboard is covering the
+  bottom nav bar. Maestro drops occluded nodes from the hierarchy, so the nav tabs go
+  *missing* rather than just untappable, and no timeout helps. Insert
+  `- runFlow: _helpers/dismiss-keyboard.yaml` before the nav tap.
+  Note this only reproduces with a full-size keyboard: on an emulator with
+  `hw.keyboard=yes` Gboard often shows a floating toolbar instead, the nav bar stays
+  visible, and the same flow passes — which is why the failure looks flaky.
+- **Never use `hideKeyboard`.** In Maestro 2.5.1 it sends the app to the launcher. Every
+  later command then fails with the same misleading "not found" error, and a flow whose
+  remaining assertions are all `assertNotVisible` goes *green against the launcher*.
+  Use `_helpers/dismiss-keyboard.yaml` (a `notVisible`-guarded Back press) instead.

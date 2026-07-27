@@ -16,7 +16,9 @@ name: "08 - Navigation tabs - all tabs reachable"
       id: "${FIELD_SEARCH}"
     timeout: ${TIMEOUT_MEDIUM}
 
-# Navigate Home first: dismisses keyboard cleanly via navigation (no hideKeyboard needed).
+# Search auto-focuses its field, so the soft keyboard can cover the bottom nav bar —
+# the Home tab then drops out of the hierarchy entirely.
+- runFlow: _helpers/dismiss-keyboard.yaml
 - tapOn:
     id: "${NAV_HOME}"
 - extendedWaitUntil:
