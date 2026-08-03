@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  RuStore-flavor manifest overlay. Merged into the main manifest by the AGP
+  manifest merger (matched on activity name). Adds:
+   - the RuStore Pay SDK auto-init meta-data (no explicit RuStorePayClient.init),
+   - a VIEW + BROWSABLE deeplink intent-filter on the launcher activity so the
+     user is returned to the app after paying in RuStore.
+  The scheme MUST equal `sdk_pay_scheme_value` below.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <application>
+
+    <activity
+      android:name=".MainActivity">
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data android:scheme="io.github.alelk.pws.app" />
+      </intent-filter>
+    </activity>
+
+    <activity
+      android:name=".payment.PaymentActivity"
+      android:exported="false"
+      android:label="@string/screen_payments_title"
+      android:parentActivityName=".MainActivity" />
+
+    <!-- RuStore Pay SDK auto-initialisation -->
+    <meta-data
+      android:name="sdk_pay_scheme_value"
+      android:value="io.github.alelk.pws.app" />
+    <meta-data
+      android:name="console_app_id_value"
+      android:value="@string/CONSOLE_APPLICATION_ID" />
+
+  </application>
+
+</manifest>

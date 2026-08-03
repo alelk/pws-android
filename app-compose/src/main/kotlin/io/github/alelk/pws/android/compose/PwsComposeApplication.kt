@@ -15,6 +15,7 @@ import io.github.alelk.pws.domain.donationprompt.config.DonationConfig
 import io.github.alelk.pws.domain.donationprompt.repository.DonationPromptStateReadRepository
 import io.github.alelk.pws.domain.donationprompt.repository.DonationPromptStateWriteRepository
 import io.github.alelk.pws.features.app.PwsAppInfo
+import io.github.alelk.pws.android.compose.flavor.flavorKoinModules
 import io.github.alelk.pws.features.di.appScreenModule
 import io.github.alelk.pws.features.di.featuresModule
 import io.github.alelk.pws.features.di.useCasesModule
@@ -86,6 +87,8 @@ class PwsComposeApplication : Application() {
         ),
         useCasesModule,
         featuresModule,
+        // Flavor overrides load last so they win (e.g. rustore overrides EntitlementRepository).
+        *flavorKoinModules().toTypedArray(),
       )
     }
 

@@ -39,8 +39,8 @@ cp app-compose/build/outputs/apk/uk/release/app-compose-uk-release.apk     "$DES
 #cp app-compose/build/outputs/apk/full/release/app-compose-full-release.apk     "$DEST_FULL.apk"
 
 # rustore
-#cp app-compose/build/outputs/bundle/rustoreRelease/app-compose-rustore-release.aab   "$DEST_RUSTORE.aab"
-#cp app-compose/build/outputs/apk/rustore/release/app-compose-rustore-release.apk     "$DEST_RUSTORE.apk"
+cp app-compose/build/outputs/bundle/rustoreRelease/app-compose-rustore-release.aab   "$DEST_RUSTORE.aab"
+cp app-compose/build/outputs/apk/rustore/release/app-compose-rustore-release.apk     "$DEST_RUSTORE.apk"
 
 echo ""
 echo "Build complete: $APP_VERSION"

@@ -18,9 +18,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import io.github.alelk.pws.android.compose.flavor.IS_PAYMENT_FLAVOR
+import io.github.alelk.pws.android.compose.flavor.flavorShowPaywall
 import io.github.alelk.pws.contentdelivery.install.ImportBundleFromFileUseCase
 import io.github.alelk.pws.domain.booklibrary.usecase.ObserveInstalledBooksUseCase
 import io.github.alelk.pws.features.booklibrary.BookLibraryExternalActions
+import io.github.alelk.pws.features.premium.PremiumGate
 import kotlinx.coroutines.flow.map
 import org.koin.android.ext.android.get
 import java.text.SimpleDateFormat
@@ -50,6 +53,13 @@ class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     enableEdgeToEdge()
     super.onCreate(savedInstanceState)
+
+    // Show the paywall when a premium gate is blocked. In the free builds the entitlement is
+    // always active, so DefaultPremiumGate never emits and flavorShowPaywall is a no-op anyway.
+    lifecycleScope.launch {
+      get<PremiumGate>().paywallRequests.collect { flavorShowPaywall(this@MainActivity) }
+    }
+
     setContent {
       val context = LocalContext.current
       val backupService = remember { BackupService() }
@@ -170,6 +180,12 @@ class MainActivity : ComponentActivity() {
           },
           importBackup = {
             importLauncher.launch(arrayOf("application/octet-stream", "*/*"))
+          },
+          // Only the payment flavor exposes a paywall entry; free builds leave this null → entry hidden.
+          openPaywall = if (IS_PAYMENT_FLAVOR) {
+            { flavorShowPaywall(this@MainActivity) }
+          } else {
+            null
           },
         )
       }

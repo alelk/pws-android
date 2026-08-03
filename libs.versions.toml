@@ -102,6 +102,7 @@ material-icons-extended = { group = "androidx.compose.material", name = "materia
 
 # Payment
 rustore-sdk-bom = { group = "ru.rustore.sdk", name = "bom", version = "2025.08.01" }
+rustore-sdk-pay = { module = "ru.rustore.sdk:pay" } # version supplied by rustore-sdk-bom platform
 
 # Test
 kotest-framework-datatest = { module = "io.kotest:kotest-framework-datatest", version.ref = "kotest-framework-datatest" } # https://search.maven.org/artifact/io.kotest/kotest-framework-datatest

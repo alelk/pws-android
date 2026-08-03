@@ -107,6 +107,35 @@ E2E для `ru` — **quality gate**: падение тестов блокиру
 | `RELEASE_KEY_ALIAS_RUSTORE`       | Alias ключа для `rustore` flavor                        |
 | `RELEASE_KEY_PASSWORD_RUSTORE`    | Пароль ключа для RuStore                                |
 
+> ⚠️ **Инвариант совместимости I1 (блокер релиза).** RuStore-сборка обновляется «на месте» поверх
+> опубликованной версии 2.3.1. Обновление установится у пользователей **только** если сертификат
+> подписи совпадает с уже опубликованным:
+> `CN=Vera Elkina`, SHA-256 `A2:E3:5B:7E:BA:1C:34:97:29:90:0D:4E:4A:70:DC:6F:97:4B:90:C6:E7:79:D3:95:0E:E0:73:27:6A:46:0A:A5`.
+> Перед публикацией сверить:
+> ```shell
+> ./gradlew :app-compose:assembleRustoreRelease
+> apksigner verify --print-certs app-compose/build/outputs/apk/rustore/release/app-compose-rustore-release.apk \
+>   | grep -i 'SHA-256'
+> ```
+> Несовпадение = обновление не встанет ни у кого. `applicationId` (`io.github.alelk.pws.app`) и
+> `versionCode` (> 38) менять нельзя по той же причине.
+
+### Монетизация (rustore flavor)
+
+RuStore-сборка — единственный flavor с платными функциями. Механизм универсальный и офлайн-стойкий:
+
+- Статус премиума хранится в DataStore `pws-app-preferences` (ключи `purchase_full_access`,
+  `purchase_subscription_until`) — **тот же файл**, что писал форк 2.3.1, поэтому оплаченный статус
+  переживает обновление и читается **без сети и без Pay SDK**
+  (`RuStoreCompatEntitlementRepository`).
+- Гейт-точки (избранное, редактирование песни/тегов, «поделиться», смена темы) реализованы в
+  публичном `pws-core:features` через generic `PremiumGate`/`EntitlementRepository` — без RuStore-типов.
+- RuStore Pay SDK (`RuStorePaymentProvider`, пейволл) подключается только во flavor
+  `app-compose/src/rustore`. Монетизация на аккаунте сейчас выключена → SDK деградирует мягко,
+  офлайн-разблокировка продолжает работать.
+- Google Play flavors (ru/uk/full) остаются **полностью бесплатными** (`AlwaysActiveEntitlementRepository`),
+  гейты прозрачны.
+
 ### Как закодировать keystore в base64
 
 ```shell

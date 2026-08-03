@@ -152,6 +152,12 @@ dependencies {
   implementation(libs.voyager.navigator)
   implementation(libs.voyager.koin)
 
+  // RuStore Pay SDK — only the `rustore` flavor pulls this in; the Google Play
+  // flavors (ru/uk/full) stay free of any payment SDK. Flavor-scoped config names
+  // are created by AGP and referenced here as strings.
+  "rustoreImplementation"(platform(libs.rustore.sdk.bom))
+  "rustoreImplementation"(libs.rustore.sdk.pay)
+
   // Android
   implementation(libs.appcompat)
   implementation(libs.activity.compose)
