@@ -18,7 +18,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import io.github.alelk.pws.android.compose.flavor.IS_PAYMENT_FLAVOR
+import io.github.alelk.pws.android.compose.flavor.MONETIZATION
 import io.github.alelk.pws.android.compose.flavor.flavorShowPaywall
 import io.github.alelk.pws.contentdelivery.install.ImportBundleFromFileUseCase
 import io.github.alelk.pws.domain.booklibrary.usecase.ObserveInstalledBooksUseCase
@@ -181,8 +181,8 @@ class MainActivity : ComponentActivity() {
           importBackup = {
             importLauncher.launch(arrayOf("application/octet-stream", "*/*"))
           },
-          // Only the payment flavor exposes a paywall entry; free builds leave this null → entry hidden.
-          openPaywall = if (IS_PAYMENT_FLAVOR) {
+          // Only a premium-selling build exposes a paywall entry; other builds leave this null → entry hidden.
+          openPaywall = if (MONETIZATION.premiumSalesEnabled) {
             { flavorShowPaywall(this@MainActivity) }
           } else {
             null

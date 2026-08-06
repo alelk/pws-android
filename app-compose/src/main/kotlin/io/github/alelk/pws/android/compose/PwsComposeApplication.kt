@@ -15,6 +15,7 @@ import io.github.alelk.pws.domain.donationprompt.config.DonationConfig
 import io.github.alelk.pws.domain.donationprompt.repository.DonationPromptStateReadRepository
 import io.github.alelk.pws.domain.donationprompt.repository.DonationPromptStateWriteRepository
 import io.github.alelk.pws.features.app.PwsAppInfo
+import io.github.alelk.pws.android.compose.flavor.MONETIZATION
 import io.github.alelk.pws.android.compose.flavor.flavorKoinModules
 import io.github.alelk.pws.features.di.appScreenModule
 import io.github.alelk.pws.features.di.featuresModule
@@ -64,7 +65,8 @@ class PwsComposeApplication : Application() {
     }
 
     val donationModule = module {
-      single { DonationConfig(enabled = true, boostyUrl = "https://boosty.to/hymna") }
+      // Donation prompt is on only for donation-mode builds; premium-selling builds suppress it.
+      single { DonationConfig(enabled = MONETIZATION.donationsEnabled, boostyUrl = "https://boosty.to/hymna") }
       single {
         SharedPrefsDonationPromptStateRepository(
           androidContext().getSharedPreferences("pws_donation", Context.MODE_PRIVATE)

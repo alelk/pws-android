@@ -8,6 +8,7 @@ import io.github.alelk.pws.android.compose.payment.PaymentProvider
 import io.github.alelk.pws.android.compose.payment.PurchaseSyncService
 import io.github.alelk.pws.android.compose.payment.RuStoreCompatEntitlementRepository
 import io.github.alelk.pws.android.compose.payment.RuStorePaymentProvider
+import io.github.alelk.pws.features.monetization.MonetizationMode
 import io.github.alelk.pws.features.premium.EntitlementRepository
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.Module
@@ -34,5 +35,5 @@ fun flavorShowPaywall(context: Context) {
   )
 }
 
-/** This flavor sells premium features — the paywall settings entry is shown. */
-const val IS_PAYMENT_FLAVOR: Boolean = true
+/** This flavor sells premium features and suppresses the donation prompt. */
+val MONETIZATION: MonetizationMode = MonetizationMode.PremiumSales
