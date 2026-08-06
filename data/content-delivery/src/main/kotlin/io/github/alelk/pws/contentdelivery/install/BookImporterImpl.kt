@@ -18,8 +18,16 @@ class BookImporterImpl(private val db: PwsDatabase) {
 
     private val smartSongBinder = SmartSongBinder(db.songNumberDao(), db.songDao())
 
-    suspend fun import(bundle: BookBundle) {
-        Timber.i("Importing book ${bundle.book.id} (${bundle.songs.size} songs)")
+    /**
+     * Imports [bundle] into the database.
+     *
+     * @param source how this book reached the device. Defaults to [BookInstallSource.DOWNLOADED]
+     *   (catalog download / file import). Preloaded APK bundles pass [BookInstallSource.ASSET] to
+     *   mark the book as a non-removable built-in (see BookUninstallerImpl). An existing ASSET
+     *   marker is never downgraded on re-import (see step 7).
+     */
+    suspend fun import(bundle: BookBundle, source: BookInstallSource = BookInstallSource.DOWNLOADED) {
+        Timber.i("Importing book ${bundle.book.id} (${bundle.songs.size} songs) as $source")
         db.withTransaction {
             val book = bundle.book
 
@@ -137,13 +145,17 @@ class BookImporterImpl(private val db: PwsDatabase) {
                 }
             }
 
-            // 7. Mark as installed (DOWNLOADED)
+            // 7. Mark as installed. Preserve an existing ASSET (built-in) marker: a catalog re-import
+            //    or re-seed must never downgrade a non-removable preloaded book into a removable one.
+            val existingSource = db.installedBookDao().getByBookId(book.id)?.source
+            val effectiveSource =
+                if (existingSource == BookInstallSource.ASSET) BookInstallSource.ASSET else source
             db.installedBookDao().upsert(
                 InstalledBookEntity(
                     bookId = book.id,
                     bundleVersion = book.version,
                     installedAt = System.currentTimeMillis(),
-                    source = BookInstallSource.DOWNLOADED,
+                    source = effectiveSource,
                 )
             )
 

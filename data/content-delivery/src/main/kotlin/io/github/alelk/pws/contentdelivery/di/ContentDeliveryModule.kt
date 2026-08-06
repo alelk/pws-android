@@ -8,6 +8,7 @@ import io.github.alelk.pws.contentdelivery.install.BookImporterImpl
 import io.github.alelk.pws.contentdelivery.install.BookUninstallerImpl
 import io.github.alelk.pws.contentdelivery.install.ImportBundleFromFileUseCase
 import io.github.alelk.pws.contentdelivery.install.InstallBookUseCaseImpl
+import io.github.alelk.pws.contentdelivery.install.SeedBooksFromAssetsUseCase
 import io.github.alelk.pws.contentdelivery.install.UninstallBookUseCaseImpl
 import io.github.alelk.pws.contentdelivery.install.UpdateBookUseCaseImpl
 import io.github.alelk.pws.database.PwsDatabase
@@ -60,6 +61,15 @@ fun contentDeliveryModule(
     single {
         ImportBundleFromFileUseCase(
             context = androidContext(),
+            importer = get<BookImporterImpl>(),
+            keyProvider = keyProvider,
+        )
+    }
+
+    single {
+        SeedBooksFromAssetsUseCase(
+            context = androidContext(),
+            db = get<PwsDatabase>(),
             importer = get<BookImporterImpl>(),
             keyProvider = keyProvider,
         )

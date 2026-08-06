@@ -21,6 +21,7 @@ import androidx.datastore.preferences.core.Preferences
 import io.github.alelk.pws.android.compose.flavor.MONETIZATION
 import io.github.alelk.pws.android.compose.flavor.flavorShowPaywall
 import io.github.alelk.pws.contentdelivery.install.ImportBundleFromFileUseCase
+import io.github.alelk.pws.contentdelivery.install.SeedBooksFromAssetsUseCase
 import io.github.alelk.pws.domain.booklibrary.usecase.ObserveInstalledBooksUseCase
 import io.github.alelk.pws.features.booklibrary.BookLibraryExternalActions
 import io.github.alelk.pws.features.premium.PremiumGate
@@ -78,10 +79,23 @@ class MainActivity : ComponentActivity() {
         get<ObserveInstalledBooksUseCase>().invoke().map { it.size }
       }.collectAsState(initial = 0)
 
-      // True once we know the user has no books — keeps us in onboarding until explicit skip.
+      // First-launch import of bundles preloaded into the APK. Only "preloaded" build variants ship
+      // them (a Gradle task bakes selected bundles into assets/seed-books/); for clean variants this
+      // is a fast no-op. Tri-state gate:
+      //   null  = still checking/seeding — show the loading surface, never flash onboarding
+      //   true  = built-in (ASSET) content present → skip onboarding, open the app directly
+      //   false = clean build → fall through to the normal empty-DB onboarding flow
+      var preloadedReady by remember { mutableStateOf<Boolean?>(null) }
+      LaunchedEffect(Unit) {
+        preloadedReady = get<SeedBooksFromAssetsUseCase>().invoke()
+      }
+
+      // True once we know the user has no books AND there is no preloaded content — keeps us in
+      // onboarding until explicit skip. Gated on `preloadedReady == false` so a preloaded build's
+      // brief empty-DB window (before seeding commits) never latches us into onboarding.
       var onboardingActive by remember { mutableStateOf(false) }
-      LaunchedEffect(hasInstalledBooks) {
-        if (hasInstalledBooks == false) onboardingActive = true
+      LaunchedEffect(hasInstalledBooks, preloadedReady) {
+        if (preloadedReady == false && hasInstalledBooks == false) onboardingActive = true
       }
 
       // Re-apply pending backup restore on every new book install — the backup file is kept
@@ -307,6 +321,8 @@ class MainActivity : ComponentActivity() {
           songDetailDisplaySettings = songDetailDisplaySettings,
           favoritesDisplaySettings = favoritesDisplaySettings,
           hasInstalledBooks = when {
+            preloadedReady == null -> null      // still seeding/checking preloaded bundles
+            preloadedReady == true -> true      // preloaded (built-in) content present → open app
             onboardingSkipped -> true           // user tapped Skip / Continue
             onboardingActive -> false           // in onboarding: stay until explicit skip
             else -> hasInstalledBooks           // existing users: pass through as-is
