@@ -10,6 +10,8 @@ Documentation index. Agents should start with the root [`AGENTS.md`](../AGENTS.m
 | [`MODULES.md`](MODULES.md)                    | Local modules + composite dependencies from `pws-core`, dependency direction, code locations |
 | [`data-security.md`](data-security.md)        | Two-layer protection: asset encryption (`.dbz.enc`/`BuildConfig`) + SQLCipher + Keystore |
 | [`release-workflow.md`](release-workflow.md)  | Signing, GitHub Actions release build, RuStore / Play artifacts          |
+| [`monitoring.md`](monitoring.md)              | Telemetry architecture, AppMetrica setup, alerts, mapping upload, release checklist |
+| [`privacy-policy.md`](privacy-policy.md)      | User-facing privacy policy — source of truth for Play Data Safety / RuStore declarations |
 | [`ai/plans/`](ai/plans/)                      | **In-flight execution plans** — read first when a task references current work |
 
 ## Cross-repo

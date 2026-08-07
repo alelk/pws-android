@@ -22,7 +22,7 @@ import org.koin.dsl.module
 private val rustorePaymentModule: Module = module {
   single<PaymentProvider> { RuStorePaymentProvider(androidContext()) }
   single { PurchaseSyncService(androidContext()) }
-  single { PaymentController(get(), get()) }
+  single { PaymentController(get(), get(), get()) }
   single<EntitlementRepository> { RuStoreCompatEntitlementRepository(androidContext()) }
 }
 

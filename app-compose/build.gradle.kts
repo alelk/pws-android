@@ -1,11 +1,15 @@
+import com.android.build.api.artifact.SingleArtifact
 import java.net.HttpURLConnection
 import java.net.URI
 import java.security.MessageDigest
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 
@@ -37,6 +41,15 @@ fun catalogUrl(variant: String) = catalogUrlsFor(variant).joinToString(",")
 // Flavors absent from this map produce the universal "clean" APK, unchanged.
 //   - key   = product flavor name (contentLevel dimension): ru | uk | full | rustore
 //   - value = book IDs that must exist in books-catalog-{release|debug}.json
+// AppMetrica API key — the SDK's write key. Never committed: supply it via the
+// `appmetrica.apiKey` Gradle property (local.properties / ~/.gradle/gradle.properties) or the
+// APPMETRICA_API_KEY environment variable (CI secret). When it is absent the app compiles and runs
+// exactly as before: PwsComposeApplication skips SDK activation and binds NoOpTelemetry.
+val appMetricaApiKey: String =
+  (project.findProperty("appmetrica.apiKey") as String?)
+    ?: System.getenv("APPMETRICA_API_KEY")
+    ?: ""
+
 val seedBooksByFlavor: Map<String, List<String>> = mapOf(
   "rustore" to listOf("PV3300"),   // Песнь Возрождения 3300 (main Russian songbook)
   "uk" to listOf("Psalmovivi"),    // Псалмоспіви (main Ukrainian songbook)
@@ -124,6 +137,29 @@ abstract class DownloadSeedBundlesTask : DefaultTask() {
   }
 }
 
+/**
+ * Copies a minified variant's R8 `mapping.txt` out of `build/` into a stable, release-labelled
+ * location so it can be uploaded to the AppMetrica console (Settings → "Mapping files"). Without a
+ * mapping, release crash reports arrive obfuscated and are effectively unreadable.
+ *
+ * We deliberately do not use the official AppMetrica Gradle plugin: its current release (1.0.1)
+ * drives the removed `com.android.build.gradle.api.ApplicationVariant` API and does not work on
+ * AGP 9. Staging the file is AGP-version-proof; the upload itself is a manual (or CI) step,
+ * documented in docs/monitoring.md.
+ */
+abstract class StageMappingFileTask : DefaultTask() {
+  @get:InputFile abstract val mappingFile: RegularFileProperty
+  @get:OutputFile abstract val stagedFile: RegularFileProperty
+
+  @TaskAction
+  fun stage() {
+    val target = stagedFile.get().asFile
+    target.parentFile?.mkdirs()
+    mappingFile.get().asFile.copyTo(target, overwrite = true)
+    logger.lifecycle("AppMetrica: mapping staged at ${target.absolutePath} — upload it to the AppMetrica console for this release")
+  }
+}
+
 android {
   namespace = "io.github.alelk.pws.android.compose"
   compileSdk = rootProject.extra["sdkVersion"] as Int
@@ -156,6 +192,7 @@ android {
     versionCode = rootProject.extra["versionCode"] as Int
     versionName = "${rootProject.extra["versionName"]}-${rootProject.extra["versionNameSuffix"]}"
     resValue("string", "db_authority", "com.alelk.pws.database")
+    buildConfigField("String", "APPMETRICA_API_KEY", "\"$appMetricaApiKey\"")
   }
 
   flavorDimensions.add("contentLevel")
@@ -239,6 +276,22 @@ androidComponents {
       com.android.build.api.variant.ResValue(variant.name)
     )
 
+    // Minified variants: stage mapping.txt under output/appmetrica-mapping/, named by variant and
+    // release, so the file uploaded to AppMetrica is unambiguously tied to a versionName/versionCode.
+    if (variant.buildType == "release") {
+      val release = "${rootProject.extra["versionName"]}-${rootProject.extra["versionCode"]}"
+      tasks.register<StageMappingFileTask>(
+        "stageAppMetricaMapping${variant.name.replaceFirstChar { it.uppercase() }}"
+      ) {
+        mappingFile.set(variant.artifacts.get(SingleArtifact.OBFUSCATION_MAPPING_FILE))
+        stagedFile.set(
+          rootProject.layout.projectDirectory.file(
+            "output/appmetrica-mapping/mapping-${variant.name}-$release.txt"
+          )
+        )
+      }
+    }
+
     // Preloaded-content variants: download the flavor's seed bundles at build time and add them as
     // generated assets (assets/seed-books/). Variants whose flavor isn't in seedBooksByFlavor
     // register no task and stay clean/universal.
@@ -283,6 +336,9 @@ dependencies {
   // are created by AGP and referenced here as strings.
   "rustoreImplementation"(platform(libs.rustore.sdk.bom))
   "rustoreImplementation"(libs.rustore.sdk.pay)
+
+  // Monitoring — crashes/ANR/non-fatals/analytics for every flavor (no Google Play Services needed)
+  implementation(libs.appmetrica.analytics)
 
   // Android
   implementation(libs.appcompat)

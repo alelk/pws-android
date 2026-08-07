@@ -136,6 +136,12 @@ E2E для `ru` — **quality gate**: падение тестов блокиру
 | `RELEASE_KEY_ALIAS_UK`    | Alias ключа для `uk` flavor                                                            |
 | `RELEASE_KEY_PASSWORD`    | Пароль ключа (общий для ru и uk)                                                       |
 
+### Мониторинг
+
+| Secret                | Описание                                                                                    |
+|-----------------------|---------------------------------------------------------------------------------------------|
+| `APPMETRICA_API_KEY`  | API key приложения в AppMetrica. Если секрет не задан — сборка проходит, но телеметрия выключена (`NoOpTelemetry`). См. [`monitoring.md`](monitoring.md) |
+
 ### Keystore — rustore (отдельный файл)
 
 | Secret                            | Описание                                                |
@@ -183,6 +189,33 @@ base64 -i release.jks | pbcopy   # копирует в буфер обмена
 # Linux
 base64 release.jks | xclip -selection clipboard
 ```
+
+---
+
+## Мониторинг и приватность — чек-лист перед публичным релизом
+
+Обязателен для каждого релиза, где сбор телеметрии включён (есть `APPMETRICA_API_KEY`).
+Подробности — [`monitoring.md`](monitoring.md) и [`privacy-policy.md`](privacy-policy.md).
+
+- [ ] `APPMETRICA_API_KEY` задан в GitHub Secrets (иначе сборка тихо уйдёт без телеметрии —
+      `NoOpTelemetry`, это не ошибка сборки).
+- [ ] `mapping.txt` загружен в AppMetrica для каждого выпускаемого flavor:
+      `./gradlew :app-compose:stageAppMetricaMapping<Flavor>Release` → `output/appmetrica-mapping/`
+      → AppMetrica → Настройки приложения → Файлы mapping. Без этого release-стектрейсы нечитаемы.
+- [ ] Алерты в AppMetrica включены (новая ошибка / рост падений / crash-free < 99%),
+      канал доставки проверен.
+- [ ] Android Vitals (Play) и отчёты о сбоях RuStore включены.
+- [ ] Политика конфиденциальности опубликована и доступна по ссылке из приложения
+      (`MainActivity.PRIVACY_POLICY_URL`) и из карточки магазина.
+- [ ] **Play Data Safety** заполнено: Crash logs = Yes, App interactions/Diagnostics = Yes,
+      «данные не продаются», шифрование в транзите = Yes, удаление по запросу = Yes.
+      Формулировки совпадают с `privacy-policy.md` — расхождение приводит к отклонению при ревью.
+- [ ] Аналог декларации заполнен в RuStore Console.
+- [ ] PII-аудит пройден: новые вызовы `telemetry.event/recordError/log` используют только константы
+      из `TelemetryEvent`/`TelemetryAttr`; ни один вызов не передаёт текст песни, правку
+      пользователя или поисковый запрос.
+- [ ] Тумблер «Отправлять отчёты о сбоях и анонимную статистику» проверен вручную на устройстве
+      (выключение реально останавливает отправку).
 
 ---
 

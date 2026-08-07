@@ -4,6 +4,9 @@ import android.content.Context
 import io.github.alelk.pws.contentdelivery.ContentKeyProvider
 import io.github.alelk.pws.database.PwsDatabase
 import io.github.alelk.pws.domain.booklibrary.model.BookInstallSource
+import io.github.alelk.pws.domain.telemetry.NoOpTelemetry
+import io.github.alelk.pws.domain.telemetry.Telemetry
+import io.github.alelk.pws.domain.telemetry.TelemetryAttr
 import io.github.alelk.pws.portable.serialization.BundleCrypto
 import io.github.alelk.pws.portable.serialization.BundleSerializer
 import kotlinx.coroutines.Dispatchers
@@ -31,6 +34,7 @@ class SeedBooksFromAssetsUseCase(
     private val db: PwsDatabase,
     private val importer: BookImporterImpl,
     private val keyProvider: ContentKeyProvider,
+    private val telemetry: Telemetry = NoOpTelemetry,
 ) {
     /**
      * Ensures preloaded bundles are imported.
@@ -75,6 +79,13 @@ class SeedBooksFromAssetsUseCase(
                 seeded += name
             }.onFailure {
                 Timber.e(it, "Failed to seed built-in book from asset $name")
+                // A failed seed leaves a preloaded build with no content — the user sees an empty
+                // app. Worth a non-fatal even though the flow degrades gracefully.
+                telemetry.recordError(
+                    it,
+                    "seed_book_failed",
+                    mapOf(TelemetryAttr.SOURCE to "asset", TelemetryAttr.STAGE to "decode_import"),
+                )
             }
         }
         prefs.edit().putStringSet(KEY_SEEDED, seeded).apply()

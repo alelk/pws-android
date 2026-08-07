@@ -5,6 +5,9 @@ import io.github.alelk.pws.contentdelivery.ContentKeyProvider
 import io.github.alelk.pws.domain.booklibrary.model.BookCatalogEntry
 import io.github.alelk.pws.domain.booklibrary.model.DownloadState
 import io.github.alelk.pws.domain.booklibrary.usecase.InstallBookUseCase
+import io.github.alelk.pws.domain.telemetry.NoOpTelemetry
+import io.github.alelk.pws.domain.telemetry.Telemetry
+import io.github.alelk.pws.domain.telemetry.TelemetryAttr
 import io.github.alelk.pws.portable.serialization.BundleCrypto
 import io.github.alelk.pws.portable.serialization.BundleSerializer
 import io.ktor.client.HttpClient
@@ -29,12 +32,16 @@ class InstallBookUseCaseImpl(
   private val importer: BookImporterImpl,
   private val keyProvider: ContentKeyProvider,
   private val httpClient: HttpClient,
+  private val telemetry: Telemetry = NoOpTelemetry,
 ) : InstallBookUseCase {
 
   override fun invoke(entry: BookCatalogEntry): Flow<DownloadState> =
     channelFlow {
       val tmpFile = File(context.cacheDir, "books/${entry.bookId}.book.yaml.gz.enc.tmp")
       tmpFile.parentFile?.mkdirs()
+      // Tracks which step failed, so a non-fatal says download vs checksum vs decode vs import
+      // without ever carrying the bundle content itself.
+      var stage = STAGE_DOWNLOAD
       try {
         send(DownloadState.Downloading(0L, entry.fileSizeBytes))
 
@@ -48,22 +55,42 @@ class InstallBookUseCaseImpl(
         }
 
         tmpFile.writeBytes(bytes)
+        stage = STAGE_VERIFY
         verifyChecksum(bytes, entry.checksum)
 
+        stage = STAGE_DECODE
         val key = BundleCrypto.keyFromHex(keyProvider.keyHex())
         val bundle = BundleSerializer.decodeBookGzipEncrypted(bytes, key)
+        stage = STAGE_IMPORT
         importer.import(bundle)
         send(DownloadState.Done)
       } catch (e: Exception) {
         Timber.e(e, "Install failed for ${entry.bookId}")
+        telemetry.recordError(
+          e,
+          "book_install_failed",
+          mapOf(TelemetryAttr.BOOK_ID to entry.bookId.toString(), TelemetryAttr.STAGE to stage),
+        )
         send(DownloadState.Error(e.message ?: "Unknown error"))
       } finally {
         tmpFile.delete()
       }
     }.catch { e ->
       Timber.e(e, "Unexpected error during install of ${entry.bookId}")
+      telemetry.recordError(
+        e,
+        "book_install_unexpected_error",
+        mapOf(TelemetryAttr.BOOK_ID to entry.bookId.toString()),
+      )
       emit(DownloadState.Error(e.message ?: "Unknown error"))
     }.flowOn(Dispatchers.IO)
+
+  private companion object {
+    const val STAGE_DOWNLOAD = "download"
+    const val STAGE_VERIFY = "verify_checksum"
+    const val STAGE_DECODE = "decode"
+    const val STAGE_IMPORT = "import"
+  }
 
   private fun verifyChecksum(bytes: ByteArray, expected: String) {
     val actual = MessageDigest.getInstance("SHA-256").digest(bytes)

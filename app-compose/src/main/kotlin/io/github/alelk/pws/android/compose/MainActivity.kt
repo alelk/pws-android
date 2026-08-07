@@ -19,12 +19,19 @@ import androidx.compose.runtime.setValue
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import io.github.alelk.pws.android.compose.flavor.MONETIZATION
+import io.github.alelk.pws.android.compose.telemetry.AppMetricaTelemetry
+import io.github.alelk.pws.android.compose.telemetry.TelemetryConsentStore
 import io.github.alelk.pws.android.compose.flavor.flavorShowPaywall
 import io.github.alelk.pws.contentdelivery.install.ImportBundleFromFileUseCase
 import io.github.alelk.pws.contentdelivery.install.SeedBooksFromAssetsUseCase
 import io.github.alelk.pws.domain.booklibrary.usecase.ObserveInstalledBooksUseCase
 import io.github.alelk.pws.features.booklibrary.BookLibraryExternalActions
+import io.github.alelk.pws.domain.telemetry.Telemetry
+import io.github.alelk.pws.domain.telemetry.TelemetryAttr
+import io.github.alelk.pws.domain.telemetry.TelemetryEvent
+import io.github.alelk.pws.domain.telemetry.TelemetryResult
 import io.github.alelk.pws.features.premium.PremiumGate
+import io.github.alelk.pws.features.telemetry.TelemetrySettings
 import kotlinx.coroutines.flow.map
 import org.koin.android.ext.android.get
 import java.text.SimpleDateFormat
@@ -51,6 +58,14 @@ import kotlinx.coroutines.withContext
 
 class MainActivity : ComponentActivity() {
 
+  companion object {
+    /**
+     * Public privacy policy, linked from Settings → Privacy and from the store listings. Must stay
+     * in sync with docs/privacy-policy.md and with the Play Data Safety / RuStore declarations.
+     */
+    const val PRIVACY_POLICY_URL = "https://github.com/alelk/pws-android/blob/master/docs/privacy-policy.md"
+  }
+
   override fun onCreate(savedInstanceState: Bundle?) {
     enableEdgeToEdge()
     super.onCreate(savedInstanceState)
@@ -58,7 +73,10 @@ class MainActivity : ComponentActivity() {
     // Show the paywall when a premium gate is blocked. In the free builds the entitlement is
     // always active, so DefaultPremiumGate never emits and flavorShowPaywall is a no-op anyway.
     lifecycleScope.launch {
-      get<PremiumGate>().paywallRequests.collect { flavorShowPaywall(this@MainActivity) }
+      get<PremiumGate>().paywallRequests.collect {
+        get<Telemetry>().event(TelemetryEvent.PAYWALL_SHOWN)
+        flavorShowPaywall(this@MainActivity)
+      }
     }
 
     setContent {
@@ -69,6 +87,20 @@ class MainActivity : ComponentActivity() {
 
       val appVersion = remember {
         packageManager.getPackageInfo(packageName, 0).versionName ?: "Unknown"
+      }
+
+      val telemetry = remember { get<Telemetry>() }
+      val telemetryConsent = remember { get<TelemetryConsentStore>() }
+      val telemetryEnabled by telemetryConsent.enabled.collectAsState()
+      val telemetrySettings = remember(telemetryEnabled) {
+        TelemetrySettings(
+          dataSendingEnabled = telemetryEnabled,
+          onDataSendingEnabledChange = { enabled ->
+            telemetryConsent.setEnabled(enabled)
+            AppMetricaTelemetry.setDataSendingEnabled(enabled)
+          },
+          privacyPolicyUrl = PRIVACY_POLICY_URL,
+        )
       }
 
       val hasInstalledBooks: Boolean? by remember {
@@ -96,6 +128,11 @@ class MainActivity : ComponentActivity() {
       var onboardingActive by remember { mutableStateOf(false) }
       LaunchedEffect(hasInstalledBooks, preloadedReady) {
         if (preloadedReady == false && hasInstalledBooks == false) onboardingActive = true
+      }
+
+      // Coarse audience slice: how much content this user has installed. A count, never the titles.
+      LaunchedEffect(installedBookCount) {
+        telemetry.setUserProperty(TelemetryAttr.INSTALLED_BOOKS, installedBookCount.toString())
       }
 
       // Re-apply pending backup restore on every new book install — the backup file is kept
@@ -156,8 +193,17 @@ class MainActivity : ComponentActivity() {
           runCatching {
             importBundleFromFile.invoke(uri)
           }.onSuccess {
+            telemetry.event(
+              TelemetryEvent.BOOK_IMPORT,
+              mapOf(TelemetryAttr.RESULT to TelemetryResult.OK, TelemetryAttr.SOURCE to "file"),
+            )
             Toast.makeText(context, "Bundle imported", Toast.LENGTH_SHORT).show()
           }.onFailure {
+            telemetry.event(
+              TelemetryEvent.BOOK_IMPORT,
+              mapOf(TelemetryAttr.RESULT to TelemetryResult.ERROR, TelemetryAttr.SOURCE to "file"),
+            )
+            telemetry.recordError(it, "book_import_from_file_failed")
             Toast.makeText(context, "Import failed: ${it.message}", Toast.LENGTH_SHORT).show()
           }
         }
@@ -329,6 +375,7 @@ class MainActivity : ComponentActivity() {
           },
           onSkipOnboarding = { onboardingSkipped = true },
           bookLibraryExternalActions = bookLibraryExternalActions,
+          telemetrySettings = telemetrySettings,
         )
       }
     }

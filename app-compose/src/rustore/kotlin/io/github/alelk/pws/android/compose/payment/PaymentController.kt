@@ -1,5 +1,10 @@
 package io.github.alelk.pws.android.compose.payment
 
+import io.github.alelk.pws.domain.telemetry.NoOpTelemetry
+import io.github.alelk.pws.domain.telemetry.Telemetry
+import io.github.alelk.pws.domain.telemetry.TelemetryAttr
+import io.github.alelk.pws.domain.telemetry.TelemetryEvent
+import io.github.alelk.pws.domain.telemetry.TelemetryResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -43,6 +48,7 @@ data class PaymentUiState(
 class PaymentController(
   private val provider: PaymentProvider,
   private val purchaseSync: PurchaseSyncService,
+  private val telemetry: Telemetry = NoOpTelemetry,
 ) {
   private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
@@ -69,6 +75,9 @@ class PaymentController(
       provider.authStatus() == AuthStatus.AUTHORIZED
     } catch (e: Throwable) {
       _uiState.update { it.copy(isAuthorized = false, error = PaymentError.AuthCheckFailed(e)) }
+      // Store-SDK failures degrade silently for the user; without a non-fatal they would be
+      // invisible to us too.
+      telemetry.recordError(e, "payment_auth_check_failed", mapOf(TelemetryAttr.STAGE to "auth"))
       return
     }
     _uiState.update { it.copy(isAuthorized = authorized) }
@@ -82,6 +91,7 @@ class PaymentController(
       purchaseSync.sync(purchases)
     } catch (e: Throwable) {
       _uiState.update { it.copy(error = PaymentError.PurchasesLoadingFailed(e)) }
+      telemetry.recordError(e, "payment_purchases_load_failed", mapOf(TelemetryAttr.STAGE to "purchases"))
     }
   }
 
@@ -90,6 +100,7 @@ class PaymentController(
       _uiState.update { it.copy(products = provider.products(ProductIds.ALL)) }
     } catch (e: Throwable) {
       _uiState.update { it.copy(error = PaymentError.ProductsLoadingFailed(e)) }
+      telemetry.recordError(e, "payment_products_load_failed", mapOf(TelemetryAttr.STAGE to "products"))
     }
   }
 
@@ -98,19 +109,37 @@ class PaymentController(
     scope.launch {
       _uiState.update { it.copy(isLoading = true, error = null) }
       when (val result = provider.purchase(productId)) {
-        is PurchaseResult.Success -> loadPurchases()
-        is PurchaseResult.Cancelled ->
+        is PurchaseResult.Success -> {
+          reportPurchase(TelemetryResult.OK)
+          loadPurchases()
+        }
+
+        is PurchaseResult.Cancelled -> {
+          reportPurchase(TelemetryResult.CANCELLED)
           _uiState.update { it.copy(error = PaymentError.PurchaseCancelled) }
-        is PurchaseResult.Failed ->
+        }
+
+        is PurchaseResult.Failed -> {
+          reportPurchase(TelemetryResult.ERROR)
+          telemetry.recordError(result.cause, "purchase_failed", mapOf(TelemetryAttr.STAGE to "purchase"))
           _uiState.update { it.copy(error = PaymentError.PurchaseFailed(result.cause)) }
+        }
       }
       _uiState.update { it.copy(isLoading = false) }
     }
   }
 
+  /** Product id is a build constant, never user data — safe to omit; only the outcome is reported. */
+  private fun reportPurchase(result: String) {
+    telemetry.event(TelemetryEvent.PURCHASE, mapOf(TelemetryAttr.RESULT to result))
+  }
+
   fun authorize() {
     runCatching { provider.openAuthorization() }
-      .onFailure { _uiState.update { s -> s.copy(error = PaymentError.NoStoreApp) } }
+      .onFailure { e ->
+        _uiState.update { s -> s.copy(error = PaymentError.NoStoreApp) }
+        telemetry.recordError(e, "payment_authorization_unavailable")
+      }
   }
 
   fun proceedIntent(intent: android.content.Intent) {

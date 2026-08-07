@@ -6,6 +6,8 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import cafe.adriel.voyager.core.registry.ScreenRegistry
 import io.github.alelk.pws.android.compose.donation.SharedPrefsDonationPromptStateRepository
+import io.github.alelk.pws.android.compose.telemetry.AppMetricaTelemetry
+import io.github.alelk.pws.android.compose.telemetry.TelemetryConsentStore
 import io.github.alelk.pws.contentdelivery.di.contentDeliveryModule
 import io.github.alelk.pws.data.repository.room.di.repoRoomModule
 import io.github.alelk.pws.database.PwsDatabase
@@ -14,6 +16,9 @@ import io.github.alelk.pws.database.pwsContentKeyHex
 import io.github.alelk.pws.domain.donationprompt.config.DonationConfig
 import io.github.alelk.pws.domain.donationprompt.repository.DonationPromptStateReadRepository
 import io.github.alelk.pws.domain.donationprompt.repository.DonationPromptStateWriteRepository
+import io.github.alelk.pws.domain.telemetry.NoOpTelemetry
+import io.github.alelk.pws.domain.telemetry.Telemetry
+import io.github.alelk.pws.domain.telemetry.TelemetryAttr
 import io.github.alelk.pws.features.app.PwsAppInfo
 import io.github.alelk.pws.android.compose.flavor.MONETIZATION
 import io.github.alelk.pws.android.compose.flavor.flavorKoinModules
@@ -34,15 +39,47 @@ import org.koin.dsl.module
 
 class PwsComposeApplication : Application() {
 
+  /**
+   * Set once telemetry is activated in [onCreate]. Read (not captured) by the exception handler
+   * below, which is constructed before activation happens.
+   */
+  @Volatile
+  private var telemetry: Telemetry = NoOpTelemetry
+
   private val applicationScope =
     CoroutineScope(
       SupervisorJob() +
         Dispatchers.IO +
-        CoroutineExceptionHandler { _, e -> android.util.Log.e("PwsApp", "Background task failed", e) }
+        CoroutineExceptionHandler { _, e ->
+          android.util.Log.e("PwsApp", "Background task failed", e)
+          // Background failures used to die in logcat only; now they surface as non-fatals.
+          telemetry.recordError(e, "background_task_failed")
+        }
     )
 
   override fun onCreate() {
     super.onCreate()
+
+    val appVersion = packageManager.getPackageInfo(packageName, 0).versionName ?: "Unknown"
+
+    // Telemetry first: activation installs the crash/ANR handlers, so anything initialised before
+    // it would crash invisibly. Debug builds default to not sending, to keep dev runs out of the
+    // production statistics (flip the settings toggle to test the pipeline).
+    val telemetryConsent = TelemetryConsentStore(this, defaultEnabled = !BuildConfig.DEBUG)
+    telemetry = AppMetricaTelemetry.activate(
+      application = this,
+      apiKey = BuildConfig.APPMETRICA_API_KEY,
+      dataSendingEnabled = telemetryConsent.isEnabled(),
+      appVersion = appVersion,
+      environment = mapOf(
+        TelemetryAttr.FLAVOR to BuildConfig.FLAVOR,
+        TelemetryAttr.BUNDLE_VARIANT to BuildConfig.BUNDLE_VARIANT,
+        TelemetryAttr.APP_VERSION to appVersion,
+      ),
+    )
+    telemetry.setUserProperty(TelemetryAttr.FLAVOR, BuildConfig.FLAVOR)
+    telemetry.setUserProperty(TelemetryAttr.BUNDLE_VARIANT, BuildConfig.BUNDLE_VARIANT)
+    telemetry.setUserProperty(TelemetryAttr.DEVICE_LANGUAGE, java.util.Locale.getDefault().language)
 
     // Register Voyager screen registry
     ScreenRegistry {
@@ -56,8 +93,12 @@ class PwsComposeApplication : Application() {
     }
 
     val appInfoModule = module {
-      val version = packageManager.getPackageInfo(packageName, 0).versionName ?: "Unknown"
-      single { PwsAppInfo(version) }
+      single { PwsAppInfo(appVersion) }
+    }
+
+    val telemetryModule = module {
+      single<Telemetry> { telemetry }
+      single { telemetryConsent }
     }
 
     val deviceLanguageModule = module {
@@ -89,6 +130,9 @@ class PwsComposeApplication : Application() {
         ),
         useCasesModule,
         featuresModule,
+        // After featuresModule (overrides its NoOpTelemetry default), before the flavor modules so
+        // a flavor could still substitute its own provider.
+        telemetryModule,
         // Flavor overrides load last so they win (e.g. rustore overrides EntitlementRepository).
         *flavorKoinModules().toTypedArray(),
       )

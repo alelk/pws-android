@@ -30,6 +30,7 @@ kotest-framework-datatest = "5.9.1"
 robolectric = "4.16.1"
 
 sqlcipher = "4.16.0"
+appmetrica = "8.5.0" # check https://repo1.maven.org/maven2/io/appmetrica/analytics/analytics/maven-metadata.xml (search.maven.org lags behind)
 security-crypto = "1.1.0"
 
 kaml = "0.97.0"
@@ -63,6 +64,10 @@ security-crypto = { module = "androidx.security:security-crypto", version.ref = 
 
 # Logging
 timber = { module = "com.jakewharton.timber:timber", version = "5.0.1" }
+
+# Monitoring — crashes, ANR, non-fatals and product analytics. Works without Google Play Services,
+# so a single SDK covers both the Google Play flavors and rustore.
+appmetrica-analytics = { module = "io.appmetrica.analytics:analytics", version.ref = "appmetrica" }
 
 # Ktor
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
