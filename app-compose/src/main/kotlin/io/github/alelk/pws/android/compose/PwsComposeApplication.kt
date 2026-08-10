@@ -76,6 +76,7 @@ class PwsComposeApplication : Application() {
         TelemetryAttr.BUNDLE_VARIANT to BuildConfig.BUNDLE_VARIANT,
         TelemetryAttr.APP_VERSION to appVersion,
       ),
+      verboseLogs = BuildConfig.DEBUG,
     )
     telemetry.setUserProperty(TelemetryAttr.FLAVOR, BuildConfig.FLAVOR)
     telemetry.setUserProperty(TelemetryAttr.BUNDLE_VARIANT, BuildConfig.BUNDLE_VARIANT)

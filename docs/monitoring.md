@@ -53,18 +53,32 @@ User properties: `flavor`, `bundle_variant`, `device_language`, `installed_books
 
 ## 3. API-ключ
 
-Ключ **не коммитится**. Источники, в порядке приоритета:
+Ключ **не коммитится**. Источники, в порядке приоритета (тот же паттерн, что у ключа расшифровки БД
+в `:data:db-android`):
 
-1. Gradle-property `appmetrica.apiKey` (положить в `local.properties` или
-   `~/.gradle/gradle.properties`);
-2. переменная окружения `APPMETRICA_API_KEY` (CI-секрет).
-
-Если ключа нет, приложение собирается и работает как раньше: SDK не активируется,
-биндится `NoOpTelemetry`. Это дефолт для форков и локальных сборок.
+1. переменная окружения `APPMETRICA_API_KEY` (CI-секрет);
+2. `local.properties` → `appmetrica.apiKey` (локальная разработка);
+3. gradle-property `appmetrica.apiKey` (`-P…` или `~/.gradle/gradle.properties`).
 
 ```properties
 # local.properties
-appmetrica.apiKey=<32-символьный API key из AppMetrica → Настройки → Приложение>
+appmetrica.apiKey=<API key из AppMetrica → Настройки → Основное>
+```
+
+> ⚠️ **Грабли, на которые уже наступили.** Gradle **не** отдаёт содержимое `local.properties` как
+> project properties — `project.findProperty("appmetrica.apiKey")` для него всегда возвращает `null`.
+> Файл нужно читать явно через `Properties()`. Симптом: ключ в `local.properties` есть, а
+> `BuildConfig.APPMETRICA_API_KEY` пустой и в консоли тишина. Чтобы это не повторилось молча, при
+> пустом ключе сборка теперь печатает предупреждение на этапе конфигурации.
+
+Если ключа нет, приложение собирается и работает как раньше: SDK не активируется, биндится
+`NoOpTelemetry`.
+
+Проверить, что ключ доехал до сборки:
+
+```shell
+./gradlew :app-compose:generateRuDebugBuildConfig
+grep APPMETRICA_API_KEY app-compose/build/generated/source/buildConfig/ru/debug/io/github/alelk/pws/android/compose/BuildConfig.java
 ```
 
 ## 4. Деобфускация release-сборок (mapping.txt)
@@ -184,7 +198,8 @@ mapping-файлов и загрузить `output/appmetrica-mapping/mapping-*.
    dev-запусками).
 3. Открыть любую песню, подождать 5 секунд (`viewDelay`) — уйдёт `song_open`; переход между
    экранами даст `screen_view`.
-4. Посмотреть в консоли отчёт по событиям.
+4. Убедиться по logcat, что событие действительно ушло (см. §6.2), и только потом искать его в
+   консоли.
 
 > **События появляются не мгновенно.** SDK копит их в буфере и отправляет пачками; сервис принимает
 > события задним числом до 7 дней и показывает их по времени возникновения. Первые события обычно
@@ -208,14 +223,56 @@ mapping-файлов и загрузить `output/appmetrica-mapping/mapping-*.
 
 ## 6. Проверка
 
-| Что                   | Как                                                                                                                            |
-|-----------------------|--------------------------------------------------------------------------------------------------------------------------------|
-| Компиляция            | `./gradlew :app-compose:compileRuDebugKotlin`                                                                                  |
-| Сборка rustore        | `./gradlew :app-compose:assembleRustoreRelease`                                                                                |
-| Юнит-тесты телеметрии | `./gradlew :app-compose:testRuDebugUnitTest` и (в pws-core) `./gradlew :domain:jvmTest`                                        |
-| Событие долетает      | debug-сборка → включить тумблер в Настройках → открыть песню → событие `song_open` в AppMetrica (задержка до нескольких минут) |
-| Деобфускация          | искусственный краш в release → стектрейс читаем после загрузки маппинга                                                        |
-| Тумблер работает      | выключить → события перестают приходить (`AppMetrica.setDataSendingEnabled(false)`)                                            |
+### 6.1. «Работает ли мониторинг прямо сейчас?» — один взгляд в logcat
+
+При старте приложение печатает ровно одну строку о состоянии телеметрии:
+
+```shell
+adb logcat -c && adb shell am force-stop com.alelk.pws.pwapp
+adb shell monkey -p com.alelk.pws.pwapp -c android.intent.category.LAUNCHER 1
+adb logcat -d | grep PwsTelemetry
+```
+
+| Строка в логе | Что это значит | Что делать |
+|---|---|---|
+| `AppMetrica API key is not configured` | ключ не доехал до сборки | см. §3 |
+| `AppMetrica activated (… dataSending=false) — nothing will be sent…` | ключ есть, но **согласие выключено** | Настройки → Приватность → включить тумблер |
+| `AppMetrica activated (… dataSending=true)` | всё включено | смотреть §6.2 |
+| `AppMetrica activation failed` | SDK не поднялся (стектрейс рядом) | приложение работает, телеметрии нет |
+
+> **Debug-сборки по умолчанию НЕ отправляют данные** (`defaultEnabled = !BuildConfig.DEBUG`) —
+> это осознанное решение, чтобы dev-запуски не искажали продуктовую статистику. Для проверки
+> пайплайна тумблер нужно включить вручную. Именно это, а не поломка, — самая частая причина
+> «ничего не вижу в AppMetrica».
+
+### 6.2. Убедиться, что события реально уходят на сервер
+
+В debug-сборках включён подробный лог SDK (`withLogs()`), поэтому виден весь путь события:
+
+```shell
+adb logcat -d | grep -i AppMetrica | grep -E "Event saved to db|Event sent"
+```
+
+Рабочий вывод выглядит так:
+
+```
+Event saved to db: EVENT_TYPE_REGULAR with name screen_view with value {"screen":"HomeScreen"}
+Event sent: screen_view with value {"screen":"HomeScreen"}
+```
+
+`Event saved to db` без последующего `Event sent` = событие записано в буфер, но не отправлено
+(нет сети / отправка отключена).
+
+### 6.3. Остальное
+
+| Что | Как |
+|---|---|
+| Компиляция | `./gradlew :app-compose:compileRuDebugKotlin` |
+| Сборка rustore | `./gradlew :app-compose:assembleRustoreRelease` |
+| Юнит-тесты телеметрии | `./gradlew :app-compose:testRuDebugUnitTest`, в pws-core `./gradlew :domain:jvmTest :features:jvmTest` |
+| Событие в консоли | после §6.2 — отчёт в AppMetrica; помнить про задержку (события идут пачками, принимаются задним числом до 7 дней) |
+| Деобфускация | искусственный краш в release → стектрейс читаем после загрузки маппинга |
+| Тумблер работает | выключить → в логе пропадают `Event sent` |
 
 ## 7. Чек-лист перед публичным релизом
 

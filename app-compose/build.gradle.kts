@@ -2,6 +2,7 @@ import com.android.build.api.artifact.SingleArtifact
 import java.net.HttpURLConnection
 import java.net.URI
 import java.security.MessageDigest
+import java.util.Properties
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
@@ -34,6 +35,32 @@ fun catalogUrlsFor(variant: String): List<String> =
   listOf(catalogGhPages, catalogCloudflare, catalogYandex).map { "$it/books-catalog-$variant.json" }
 fun catalogUrl(variant: String) = catalogUrlsFor(variant).joinToString(",")
 
+// ── AppMetrica API key ────────────────────────────────────────────────────────
+// The SDK's write key. Never committed. Sources, in priority order (same pattern as the DB decrypt
+// key in :data:db-android):
+//   1. Environment variable APPMETRICA_API_KEY        (CI / GitHub Actions secret)
+//   2. local.properties → appmetrica.apiKey           (local dev only, not in VCS)
+//   3. Gradle property appmetrica.apiKey              (-P… or ~/.gradle/gradle.properties)
+// NB: Gradle does NOT expose local.properties as project properties — findProperty() alone silently
+// returns null for it, which is exactly how this key ended up empty in a build that had it set.
+val appMetricaLocalProps = Properties().also { props ->
+  rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { props.load(it) }
+}
+val appMetricaApiKey: String =
+  System.getenv("APPMETRICA_API_KEY")
+    ?: appMetricaLocalProps.getProperty("appmetrica.apiKey")
+    ?: project.findProperty("appmetrica.apiKey") as String?
+    ?: ""
+
+// Loud at configuration time: a silently keyless build looks identical to a working one until you
+// stare at an empty AppMetrica console.
+if (appMetricaApiKey.isBlank()) {
+  logger.lifecycle(
+    "AppMetrica: no API key (env APPMETRICA_API_KEY / local.properties appmetrica.apiKey) — " +
+      "this build ships WITHOUT telemetry (NoOpTelemetry). See docs/monitoring.md."
+  )
+}
+
 // Books preloaded straight into the APK for specific flavors. For each listed flavor the
 // `generateSeedBundles<Variant>` task downloads the named bundles from the catalog at build time and
 // bakes them into `assets/seed-books/`, so the app ships with that content already installed as a
@@ -41,15 +68,6 @@ fun catalogUrl(variant: String) = catalogUrlsFor(variant).joinToString(",")
 // Flavors absent from this map produce the universal "clean" APK, unchanged.
 //   - key   = product flavor name (contentLevel dimension): ru | uk | full | rustore
 //   - value = book IDs that must exist in books-catalog-{release|debug}.json
-// AppMetrica API key — the SDK's write key. Never committed: supply it via the
-// `appmetrica.apiKey` Gradle property (local.properties / ~/.gradle/gradle.properties) or the
-// APPMETRICA_API_KEY environment variable (CI secret). When it is absent the app compiles and runs
-// exactly as before: PwsComposeApplication skips SDK activation and binds NoOpTelemetry.
-val appMetricaApiKey: String =
-  (project.findProperty("appmetrica.apiKey") as String?)
-    ?: System.getenv("APPMETRICA_API_KEY")
-    ?: ""
-
 val seedBooksByFlavor: Map<String, List<String>> = mapOf(
   "rustore" to listOf("PV3300"),   // Песнь Возрождения 3300 (main Russian songbook)
   "uk" to listOf("Psalmovivi"),    // Псалмоспіви (main Ukrainian songbook)

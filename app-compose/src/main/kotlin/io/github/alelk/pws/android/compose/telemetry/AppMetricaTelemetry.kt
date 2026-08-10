@@ -86,6 +86,7 @@ class AppMetricaTelemetry : Telemetry {
       dataSendingEnabled: Boolean,
       appVersion: String,
       environment: Map<String, String> = emptyMap(),
+      verboseLogs: Boolean = false,
     ): Telemetry {
       if (apiKey.isBlank()) {
         Log.i(TAG, "AppMetrica API key is not configured — telemetry disabled for this build")
@@ -101,11 +102,22 @@ class AppMetricaTelemetry : Telemetry {
           .withLocationTracking(false)   // the app has no location feature; never ask for one
           .withAdvIdentifiersTracking(false) // no ads, no advertising identifiers
           .apply {
+            // Debug only: makes the SDK log buffering and dispatch, so "is anything actually being
+            // sent?" is answerable from logcat instead of by staring at the console.
+            if (verboseLogs) withLogs()
             TelemetryPrivacy.sanitizeAttributes(environment)
               .forEach { (key, value) -> withAppEnvironmentValue(key, value) }
           }
           .build()
         AppMetrica.activate(application, config)
+        // One unambiguous line in logcat answering "is monitoring on right now?". Without it a
+        // key-less build, a consent-off build and a working build all look identical at runtime.
+        Log.i(
+          TAG,
+          "AppMetrica activated (key ${apiKey.take(8)}…, appVersion=$appVersion, " +
+            "dataSending=$dataSendingEnabled)" +
+            if (dataSendingEnabled) "" else " — nothing will be sent until the consent toggle is on",
+        )
         AppMetricaTelemetry()
       } catch (e: Throwable) {
         // Telemetry must never be the reason the app fails to start.
