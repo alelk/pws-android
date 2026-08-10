@@ -1,5 +1,20 @@
 # PWS Android
 
+# [3.6.0-rc.1](https://github.com/alelk/pws-android/compare/v3.5.0...v3.6.0-rc.1) (2026-08-10)
+
+
+### Bug Fixes
+
+* fix appmetrica monitoring ([bc2e71d](https://github.com/alelk/pws-android/commit/bc2e71debdaf29b743f7b28002050b380c46f8ef))
+
+
+### Features
+
+* implement observability ([3da50e6](https://github.com/alelk/pws-android/commit/3da50e634934b4d48e28b35092814c9cbca9ed7f))
+* monetization mode ([d9b3abf](https://github.com/alelk/pws-android/commit/d9b3abffc04832c0b31795dce93537588e677952))
+* premium gate ([a9a9d48](https://github.com/alelk/pws-android/commit/a9a9d48b00679e1147cdff01fc115f78c70e132d))
+* provide books with assets ([a97f69b](https://github.com/alelk/pws-android/commit/a97f69b6dd90f10cb9d12ffffccee6cf0370c2a4))
+
 # [3.5.0](https://github.com/alelk/pws-android/compare/v3.4.1...v3.5.0) (2026-07-27)
 
 
