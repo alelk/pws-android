@@ -1,5 +1,12 @@
 # PWS Android
 
+# [3.6.0-rc.2](https://github.com/alelk/pws-android/compare/v3.6.0-rc.1...v3.6.0-rc.2) (2026-08-11)
+
+
+### Bug Fixes
+
+* fix db crash ([ca8db7e](https://github.com/alelk/pws-android/commit/ca8db7e62d631d08770c572c6d862082de2b2d36))
+
 # [3.6.0-rc.1](https://github.com/alelk/pws-android/compare/v3.5.0...v3.6.0-rc.1) (2026-08-10)
 
 
