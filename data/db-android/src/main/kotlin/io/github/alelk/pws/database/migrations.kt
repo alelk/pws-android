@@ -6,8 +6,11 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 // History:
 //   v14 — initial schema. Upgrades from older releases (pws.1.8.0.db etc.) get
 //     a fresh v14 DB; books and user data are replayed by `migrateDataFromPrevDatabase`.
-//   v15 — fix FTS4 songs_fts: drop backtick-quoted tokenizer arg that caused SQLiteException
-//     on createAllTables for fresh installs (unicode61 tokenizer without extra args).
+//   v15 — songs_fts declared without the default `remove_diacritics=1` tokenizer argument.
+//     Shipped as a fix for a SQLiteException on createAllTables, but that crash comes from a
+//     half-created database file, not from the FTS declaration — the v14 statement is accepted
+//     by the bundled SQLCipher engine (see `discardHalfCreatedDatabase`). The version stays: the
+//     schema is already at 15 on devices.
 
 val MIGRATION_14_15 = object : Migration(14, 15) {
   override fun migrate(db: SupportSQLiteDatabase) {
