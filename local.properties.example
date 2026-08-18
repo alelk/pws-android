@@ -11,3 +11,8 @@ db.decrypt.key.prod=<hex-encoded-32-byte-key>
 # GitHub Packages auth (to resolve pws-core library)
 gpr.user=your-github-username
 gpr.token=ghp_your_pat_with_read_packages_scope
+# AppMetrica (crash reporting + product analytics) — optional.
+# Without it the app builds and runs with telemetry disabled (NoOpTelemetry).
+# In CI this is supplied via the APPMETRICA_API_KEY GitHub Actions secret.
+# See docs/monitoring.md.
+appmetrica.apiKey=<32-char API key from the AppMetrica console>

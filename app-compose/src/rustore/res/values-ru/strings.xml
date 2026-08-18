@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="common_close">Закрыть</string>
+  <string name="screen_payments_title">Покупки</string>
+  <string name="payment_settings_entry">Покупки и подписка</string>
+  <string name="payment_products_title">Доступные опции</string>
+  <string name="payment_active_purchases_title">Ваши активные подписки</string>
+  <string name="payment_products_empty">Не удалось загрузить продукты.</string>
+  <string name="payment_auth_prompt_title">Авторизуйтесь в RuStore</string>
+  <string name="payment_auth_prompt_description">Если у вас уже приобретена подписка на приложение, войдите в свой аккаунт RuStore.</string>
+  <string name="payment_auth_button">Войти в RuStore</string>
+  <string name="payment_active_purchase_valid_until">Действует до %1$s</string>
+  <string name="payment_purchase_id">ID заказа: %1$s</string>
+  <string name="payment_multiple_subscriptions_title">Обнаружено несколько активных подписок</string>
+  <string name="payment_multiple_subscriptions_description">Пожалуйста, проверьте ваши подписки в RuStore и отмените лишние, чтобы избежать двойных списаний. Активной должна остаться только одна подписка.</string>
+  <string name="payment_required_title">Платная функция</string>
+  <string name="payment_required_description">Эта функция доступна при полном доступе или активной подписке.</string>
+  <string name="payment_required_open">Посмотреть опции</string>
+
+  <string name="error_auth_check_failed">Не удалось проверить статус авторизации.</string>
+  <string name="error_products_loading_failed">Ошибка при загрузке списка продуктов.</string>
+  <string name="error_purchases_loading_failed">Ошибка при загрузке ваших покупок.</string>
+  <string name="error_purchase_failed">Во время покупки произошла ошибка.</string>
+  <string name="error_authorization_required">Для этого действия необходима авторизация.</string>
+  <string name="error_no_rustore_app">Приложение RuStore не установлено.</string>
+  <string name="info_purchase_cancelled">Покупка отменена.</string>
+</resources>

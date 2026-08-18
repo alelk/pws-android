@@ -77,8 +77,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DB_DECRYPT_KEY_PROD: ${{ secrets.DB_DECRYPT_KEY_PROD }}
+          # Absent secret → app ships with telemetry disabled (NoOpTelemetry), build still succeeds.
+          APPMETRICA_API_KEY: ${{ secrets.APPMETRICA_API_KEY }}
         run: |
           ./gradlew :app-compose:assembleRuRelease :app-compose:bundleRuRelease \
+            :app-compose:stageAppMetricaMappingRuRelease \
             -Pandroid.release.keystorePath=/tmp/release.jks \
             -Pandroid.release.storePassword="${{ secrets.RELEASE_STORE_PASSWORD }}" \
             -Pandroid.release.keyAliasRu="pws" \
@@ -89,8 +92,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DB_DECRYPT_KEY_PROD: ${{ secrets.DB_DECRYPT_KEY_PROD }}
+          # Absent secret → app ships with telemetry disabled (NoOpTelemetry), build still succeeds.
+          APPMETRICA_API_KEY: ${{ secrets.APPMETRICA_API_KEY }}
         run: |
           ./gradlew :app-compose:assembleUkRelease :app-compose:bundleUkRelease \
+            :app-compose:stageAppMetricaMappingUkRelease \
             -Pandroid.release.keystorePath=/tmp/release.jks \
             -Pandroid.release.storePassword="${{ secrets.RELEASE_STORE_PASSWORD }}" \
             -Pandroid.release.keyAliasUk="pws-uk" \
@@ -101,8 +107,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DB_DECRYPT_KEY_PROD: ${{ secrets.DB_DECRYPT_KEY_PROD }}
+          # Absent secret → app ships with telemetry disabled (NoOpTelemetry), build still succeeds.
+          APPMETRICA_API_KEY: ${{ secrets.APPMETRICA_API_KEY }}
         run: |
           ./gradlew :app-compose:assembleRustoreRelease :app-compose:bundleRustoreRelease \
+            :app-compose:stageAppMetricaMappingRustoreRelease \
             -Pandroid.release.keystorePathRustore=/tmp/rustore.jks \
             -Pandroid.release.storePasswordRustore="${{ secrets.RELEASE_STORE_PASSWORD_RUSTORE }}" \
             -Pandroid.release.keyAliasRuRustore="pws" \
@@ -133,6 +142,16 @@ jobs:
           fi
           echo "Artifacts ready:"
           ls -lh output/release/
+
+      # R8 mappings — needed to deobfuscate release crash reports. Kept as a workflow artifact
+      # (not attached to the public release) and uploaded to AppMetrica manually; see docs/monitoring.md.
+      - name: Upload R8 mappings
+        uses: actions/upload-artifact@v4
+        with:
+          name: appmetrica-mappings-${{ inputs.tag }}
+          path: output/appmetrica-mapping/
+          if-no-files-found: warn
+          retention-days: 90
 
       # ── E2E tests ─────────────────────────────────────────────────────────
       # TODO: re-enable when E2E infrastructure is ready (requires macOS runner for emulator)

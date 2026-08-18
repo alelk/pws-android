@@ -6,7 +6,7 @@ import java.util.Locale
 import java.util.TimeZone
 
 val sdkVersion by extra(36)
-val versionCode by extra(45)
+val versionCode by extra(46)
 val versionName by extra(checkNotNull(projectDir.resolve("app.version").readText().lines().firstOrNull()?.trim()?.takeIf { it.isNotBlank() }) { "app.version empty" })
 val versionNameSuffix by extra(getDate().lowercase())
 val kotlinVersion = libs.versions.kotlin.get()
@@ -34,8 +34,13 @@ allprojects {
         password = findProperty("gpr.token") as String? ?: System.getenv("GITHUB_TOKEN")
       }
     }
-    // rustore sdk
-    maven(uri("https://artifactory-external.vkpartner.ru/artifactory/maven"))
+    // rustore sdk — restricted to ru.rustore.sdk so the external Artifactory is
+    // never queried for any other dependency (perf + isolation). Only the
+    // `rustore` flavor pulls these artifacts (see :app-compose flavor-scoped deps).
+    maven {
+      url = uri("https://artifactory-external.vkpartner.ru/artifactory/maven")
+      content { includeGroup("ru.rustore.sdk") }
+    }
   }
 
   tasks.withType<KotlinCompile> {

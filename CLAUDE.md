@@ -46,6 +46,10 @@ In [`docs/ai/plans/`](docs/ai/plans/):
   ** в коде.
 - `2026-07-08_universal-apk-onboarding_plan.md` — **ACTIVE** — удаление встроенных DB-ассетов из
   APK, универсальный APK, онбординг первого запуска с locale-aware установкой сборника. Phases A–F.
+- `2026-08-07_crash-reporting-and-analytics_plan.md` — **РЕАЛИЗОВАН (код)** — телеметрия на
+  AppMetrica: `Telemetry` в `pws-core:domain`, non-fatal/breadcrumbs, продуктовые события, тумблер
+  согласия, privacy policy. Осталась ручная настройка консолей. Итог →
+  [`docs/monitoring.md`](docs/monitoring.md).
 
 When the user references "current plan" without a name, use the **universal-apk-onboarding** plan (most recent). All tasks T-001..T-011 and T-013 реализованы.
 

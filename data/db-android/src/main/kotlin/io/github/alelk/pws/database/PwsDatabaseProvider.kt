@@ -21,7 +21,7 @@ object PwsDatabaseProvider {
     val passphrase = if (BuildConfig.DB_ENCRYPTED) KeyManager.getOrCreatePassphrase(context) else ByteArray(0)
     return Room
       .databaseBuilder(context.applicationContext, PwsDatabase::class.java, DATABASE_NAME)
-      .openHelperFactory(SupportOpenHelperFactory(passphrase))
+      .openHelperFactory(SelfHealingOpenHelperFactory(SupportOpenHelperFactory(passphrase), passphrase))
       .addMigrations(MIGRATION_14_15)
       .build()
   }

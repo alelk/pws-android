@@ -18,9 +18,20 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import io.github.alelk.pws.android.compose.flavor.MONETIZATION
+import io.github.alelk.pws.android.compose.telemetry.AppMetricaTelemetry
+import io.github.alelk.pws.android.compose.telemetry.TelemetryConsentStore
+import io.github.alelk.pws.android.compose.flavor.flavorShowPaywall
 import io.github.alelk.pws.contentdelivery.install.ImportBundleFromFileUseCase
+import io.github.alelk.pws.contentdelivery.install.SeedBooksFromAssetsUseCase
 import io.github.alelk.pws.domain.booklibrary.usecase.ObserveInstalledBooksUseCase
 import io.github.alelk.pws.features.booklibrary.BookLibraryExternalActions
+import io.github.alelk.pws.domain.telemetry.Telemetry
+import io.github.alelk.pws.domain.telemetry.TelemetryAttr
+import io.github.alelk.pws.domain.telemetry.TelemetryEvent
+import io.github.alelk.pws.domain.telemetry.TelemetryResult
+import io.github.alelk.pws.features.premium.PremiumGate
+import io.github.alelk.pws.features.telemetry.TelemetrySettings
 import kotlinx.coroutines.flow.map
 import org.koin.android.ext.android.get
 import java.text.SimpleDateFormat
@@ -47,9 +58,27 @@ import kotlinx.coroutines.withContext
 
 class MainActivity : ComponentActivity() {
 
+  companion object {
+    /**
+     * Public privacy policy, linked from Settings → Privacy and from the store listings. Must stay
+     * in sync with docs/privacy-policy.md and with the Play Data Safety / RuStore declarations.
+     */
+    const val PRIVACY_POLICY_URL = "https://github.com/alelk/pws-android/blob/master/docs/privacy-policy.md"
+  }
+
   override fun onCreate(savedInstanceState: Bundle?) {
     enableEdgeToEdge()
     super.onCreate(savedInstanceState)
+
+    // Show the paywall when a premium gate is blocked. In the free builds the entitlement is
+    // always active, so DefaultPremiumGate never emits and flavorShowPaywall is a no-op anyway.
+    lifecycleScope.launch {
+      get<PremiumGate>().paywallRequests.collect {
+        get<Telemetry>().event(TelemetryEvent.PAYWALL_SHOWN)
+        flavorShowPaywall(this@MainActivity)
+      }
+    }
+
     setContent {
       val context = LocalContext.current
       val backupService = remember { BackupService() }
@@ -60,6 +89,27 @@ class MainActivity : ComponentActivity() {
         packageManager.getPackageInfo(packageName, 0).versionName ?: "Unknown"
       }
 
+      val telemetry = remember { get<Telemetry>() }
+      val telemetryConsent = remember { get<TelemetryConsentStore>() }
+      val telemetryEnabled by telemetryConsent.enabled.collectAsState()
+      val telemetryPending by telemetryConsent.pending.collectAsState()
+      val applyTelemetryConsent = remember<(Boolean) -> Unit> {
+        { enabled ->
+          telemetryConsent.setEnabled(enabled)
+          AppMetricaTelemetry.setDataSendingEnabled(enabled)
+        }
+      }
+      val telemetrySettings = remember(telemetryEnabled, telemetryPending) {
+        TelemetrySettings(
+          dataSendingEnabled = telemetryEnabled,
+          onDataSendingEnabledChange = applyTelemetryConsent,
+          privacyPolicyUrl = PRIVACY_POLICY_URL,
+          // Non-null only until the first-launch disclosure in onboarding is answered; nothing is
+          // transmitted while it is.
+          pendingConsentDefault = if (telemetryPending) telemetryConsent.defaultConsent else null,
+        )
+      }
+
       val hasInstalledBooks: Boolean? by remember {
         get<ObserveInstalledBooksUseCase>().invoke().map { it.isNotEmpty() }
       }.collectAsState(initial = null)
@@ -68,10 +118,28 @@ class MainActivity : ComponentActivity() {
         get<ObserveInstalledBooksUseCase>().invoke().map { it.size }
       }.collectAsState(initial = 0)
 
-      // True once we know the user has no books — keeps us in onboarding until explicit skip.
+      // First-launch import of bundles preloaded into the APK. Only "preloaded" build variants ship
+      // them (a Gradle task bakes selected bundles into assets/seed-books/); for clean variants this
+      // is a fast no-op. Tri-state gate:
+      //   null  = still checking/seeding — show the loading surface, never flash onboarding
+      //   true  = built-in (ASSET) content present → skip onboarding, open the app directly
+      //   false = clean build → fall through to the normal empty-DB onboarding flow
+      var preloadedReady by remember { mutableStateOf<Boolean?>(null) }
+      LaunchedEffect(Unit) {
+        preloadedReady = get<SeedBooksFromAssetsUseCase>().invoke()
+      }
+
+      // True once we know the user has no books AND there is no preloaded content — keeps us in
+      // onboarding until explicit skip. Gated on `preloadedReady == false` so a preloaded build's
+      // brief empty-DB window (before seeding commits) never latches us into onboarding.
       var onboardingActive by remember { mutableStateOf(false) }
-      LaunchedEffect(hasInstalledBooks) {
-        if (hasInstalledBooks == false) onboardingActive = true
+      LaunchedEffect(hasInstalledBooks, preloadedReady) {
+        if (preloadedReady == false && hasInstalledBooks == false) onboardingActive = true
+      }
+
+      // Coarse audience slice: how much content this user has installed. A count, never the titles.
+      LaunchedEffect(installedBookCount) {
+        telemetry.setUserProperty(TelemetryAttr.INSTALLED_BOOKS, installedBookCount.toString())
       }
 
       // Re-apply pending backup restore on every new book install — the backup file is kept
@@ -86,6 +154,23 @@ class MainActivity : ComponentActivity() {
       }
 
       var onboardingSkipped by remember { mutableStateOf(false) }
+
+      // First-launch gate, resolved once for both the UI and the telemetry disclosure below.
+      val booksGate: Boolean? = when {
+        preloadedReady == null -> null      // still seeding/checking preloaded bundles
+        preloadedReady == true -> true      // preloaded (built-in) content present → open app
+        onboardingSkipped -> true           // user tapped Skip / Continue
+        onboardingActive -> false           // in onboarding: stay until explicit skip
+        else -> hasInstalledBooks           // existing users: pass through as-is
+      }
+
+      // The telemetry disclosure lives in onboarding, so paths that never show it — an existing
+      // install being updated, or a build with preloaded songbooks — would leave consent pending
+      // (and telemetry off) forever. Those users get the opt-out default instead; their disclosure
+      // is Settings → Privacy and the store listing.
+      LaunchedEffect(telemetryPending, booksGate) {
+        if (telemetryPending && booksGate == true) applyTelemetryConsent(telemetryConsent.defaultConsent)
+      }
 
       var pendingBackupText by remember { mutableStateOf<String?>(null) }
 
@@ -132,8 +217,17 @@ class MainActivity : ComponentActivity() {
           runCatching {
             importBundleFromFile.invoke(uri)
           }.onSuccess {
+            telemetry.event(
+              TelemetryEvent.BOOK_IMPORT,
+              mapOf(TelemetryAttr.RESULT to TelemetryResult.OK, TelemetryAttr.SOURCE to "file"),
+            )
             Toast.makeText(context, "Bundle imported", Toast.LENGTH_SHORT).show()
           }.onFailure {
+            telemetry.event(
+              TelemetryEvent.BOOK_IMPORT,
+              mapOf(TelemetryAttr.RESULT to TelemetryResult.ERROR, TelemetryAttr.SOURCE to "file"),
+            )
+            telemetry.recordError(it, "book_import_from_file_failed")
             Toast.makeText(context, "Import failed: ${it.message}", Toast.LENGTH_SHORT).show()
           }
         }
@@ -170,6 +264,12 @@ class MainActivity : ComponentActivity() {
           },
           importBackup = {
             importLauncher.launch(arrayOf("application/octet-stream", "*/*"))
+          },
+          // Only a premium-selling build exposes a paywall entry; other builds leave this null → entry hidden.
+          openPaywall = if (MONETIZATION.premiumSalesEnabled) {
+            { flavorShowPaywall(this@MainActivity) }
+          } else {
+            null
           },
         )
       }
@@ -290,13 +390,10 @@ class MainActivity : ComponentActivity() {
           songDetailExternalActions = songDetailExternalActions,
           songDetailDisplaySettings = songDetailDisplaySettings,
           favoritesDisplaySettings = favoritesDisplaySettings,
-          hasInstalledBooks = when {
-            onboardingSkipped -> true           // user tapped Skip / Continue
-            onboardingActive -> false           // in onboarding: stay until explicit skip
-            else -> hasInstalledBooks           // existing users: pass through as-is
-          },
+          hasInstalledBooks = booksGate,
           onSkipOnboarding = { onboardingSkipped = true },
           bookLibraryExternalActions = bookLibraryExternalActions,
+          telemetrySettings = telemetrySettings,
         )
       }
     }

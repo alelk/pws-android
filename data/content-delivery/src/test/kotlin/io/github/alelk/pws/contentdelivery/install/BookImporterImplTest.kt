@@ -91,6 +91,26 @@ class BookImporterImplTest : FeatureSpec({
     }
   }
 
+  feature("install source") {
+    scenario("marks the book ASSET when imported as a preloaded built-in") {
+      withDb { db ->
+        BookImporterImpl(db).import(bundleForBook(bookId).next(rs), source = BookInstallSource.ASSET)
+        db.installedBookDao().getByBookId(bookId).shouldNotBeNull().source shouldBe BookInstallSource.ASSET
+      }
+    }
+
+    scenario("never downgrades an existing ASSET book to DOWNLOADED on re-import") {
+      withDb { db ->
+        val importer = BookImporterImpl(db)
+        val bundle = bundleForBook(bookId).next(rs)
+        importer.import(bundle, source = BookInstallSource.ASSET)
+        // a later catalog update / re-seed imports the same book with the default source
+        importer.import(bundle)   // default DOWNLOADED — must not make the built-in removable
+        db.installedBookDao().getByBookId(bookId).shouldNotBeNull().source shouldBe BookInstallSource.ASSET
+      }
+    }
+  }
+
   feature("user-edited songs are preserved on re-import") {
     scenario("does not overwrite the lyric of a song marked edited") {
       withDb { db ->
