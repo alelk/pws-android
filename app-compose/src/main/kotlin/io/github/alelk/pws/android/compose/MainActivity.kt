@@ -92,14 +92,21 @@ class MainActivity : ComponentActivity() {
       val telemetry = remember { get<Telemetry>() }
       val telemetryConsent = remember { get<TelemetryConsentStore>() }
       val telemetryEnabled by telemetryConsent.enabled.collectAsState()
-      val telemetrySettings = remember(telemetryEnabled) {
+      val telemetryPending by telemetryConsent.pending.collectAsState()
+      val applyTelemetryConsent = remember<(Boolean) -> Unit> {
+        { enabled ->
+          telemetryConsent.setEnabled(enabled)
+          AppMetricaTelemetry.setDataSendingEnabled(enabled)
+        }
+      }
+      val telemetrySettings = remember(telemetryEnabled, telemetryPending) {
         TelemetrySettings(
           dataSendingEnabled = telemetryEnabled,
-          onDataSendingEnabledChange = { enabled ->
-            telemetryConsent.setEnabled(enabled)
-            AppMetricaTelemetry.setDataSendingEnabled(enabled)
-          },
+          onDataSendingEnabledChange = applyTelemetryConsent,
           privacyPolicyUrl = PRIVACY_POLICY_URL,
+          // Non-null only until the first-launch disclosure in onboarding is answered; nothing is
+          // transmitted while it is.
+          pendingConsentDefault = if (telemetryPending) telemetryConsent.defaultConsent else null,
         )
       }
 
@@ -147,6 +154,23 @@ class MainActivity : ComponentActivity() {
       }
 
       var onboardingSkipped by remember { mutableStateOf(false) }
+
+      // First-launch gate, resolved once for both the UI and the telemetry disclosure below.
+      val booksGate: Boolean? = when {
+        preloadedReady == null -> null      // still seeding/checking preloaded bundles
+        preloadedReady == true -> true      // preloaded (built-in) content present → open app
+        onboardingSkipped -> true           // user tapped Skip / Continue
+        onboardingActive -> false           // in onboarding: stay until explicit skip
+        else -> hasInstalledBooks           // existing users: pass through as-is
+      }
+
+      // The telemetry disclosure lives in onboarding, so paths that never show it — an existing
+      // install being updated, or a build with preloaded songbooks — would leave consent pending
+      // (and telemetry off) forever. Those users get the opt-out default instead; their disclosure
+      // is Settings → Privacy and the store listing.
+      LaunchedEffect(telemetryPending, booksGate) {
+        if (telemetryPending && booksGate == true) applyTelemetryConsent(telemetryConsent.defaultConsent)
+      }
 
       var pendingBackupText by remember { mutableStateOf<String?>(null) }
 
@@ -366,13 +390,7 @@ class MainActivity : ComponentActivity() {
           songDetailExternalActions = songDetailExternalActions,
           songDetailDisplaySettings = songDetailDisplaySettings,
           favoritesDisplaySettings = favoritesDisplaySettings,
-          hasInstalledBooks = when {
-            preloadedReady == null -> null      // still seeding/checking preloaded bundles
-            preloadedReady == true -> true      // preloaded (built-in) content present → open app
-            onboardingSkipped -> true           // user tapped Skip / Continue
-            onboardingActive -> false           // in onboarding: stay until explicit skip
-            else -> hasInstalledBooks           // existing users: pass through as-is
-          },
+          hasInstalledBooks = booksGate,
           onSkipOnboarding = { onboardingSkipped = true },
           bookLibraryExternalActions = bookLibraryExternalActions,
           telemetrySettings = telemetrySettings,

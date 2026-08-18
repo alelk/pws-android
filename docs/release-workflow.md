@@ -214,8 +214,15 @@ base64 release.jks | xclip -selection clipboard
 - [ ] PII-аудит пройден: новые вызовы `telemetry.event/recordError/log` используют только константы
       из `TelemetryEvent`/`TelemetryAttr`; ни один вызов не передаёт текст песни, правку
       пользователя или поисковый запрос.
-- [ ] Тумблер «Отправлять отчёты о сбоях и анонимную статистику» проверен вручную на устройстве
+- [ ] Тумблер «Отправлять отчёты о сбоях и статистику использования» проверен вручную на устройстве
       (выключение реально останавливает отправку).
+- [ ] Раскрытие на первом запуске проверено на **чистой** установке: блок с чекбоксом виден на
+      экране онбординга, до выхода с него в логе `dataSending=false`, снятая отметка сохраняется.
+- [ ] В merged manifest нет `com.google.android.gms.permission.AD_ID` (его приносит AppMetrica,
+      удаляется через `tools:node="remove"` в `app-compose/src/main/AndroidManifest.xml`):
+      `./gradlew :app-compose:processRuReleaseManifest` →
+      `grep AD_ID app-compose/build/intermediates/merged_manifests/ruRelease/*/AndroidManifest.xml`.
+      Если permission вернётся — Play потребует декларировать сбор Advertising ID.
 
 ---
 

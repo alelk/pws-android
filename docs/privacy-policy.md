@@ -2,7 +2,7 @@
 
 **Приложение:** P&W Songs (Песнь Возрождения / Псалмоспіви) — Android
 **Разработчик:** Alex Elkin · alelkdev@gmail.com
-**Действует с:** 2026-08-07 · **Последнее обновление:** 2026-08-07
+**Действует с:** 2026-08-07 · **Последнее обновление:** 2026-08-15
 
 > Этот документ — единственный источник правды для формулировок в Google Play Data Safety и в
 > карточке RuStore. Любое изменение здесь должно быть отражено в декларациях магазинов (и наоборот),
@@ -56,16 +56,24 @@ crash-репортинга по нашему поручению. Первичн�
 
 - **Отчёты о сбоях** — законный интерес разработчика в обеспечении работоспособности и безопасности
   приложения (для пользователей ЕС — ст. 6(1)(f) GDPR).
-- **Продуктовая аналитика** — согласие, выраженное продолжением использования при включённом по
-  умолчанию переключателе; отзывается в один тап (см. §5).
+- **Продуктовая аналитика** — согласие: при первом запуске приложение показывает, что именно
+  собирается, с переключателем (включён по умолчанию); отзывается в один тап (см. §5).
 - Для пользователей из России обработка ведётся в соответствии с Федеральным законом № 152-ФЗ
   «О персональных данных».
 
-### 5. Как отказаться
+### 5. Когда мы спрашиваем и как отказаться
 
-**Настройки → Приватность → «Отправлять отчёты о сбоях и анонимную статистику»** — выключите
-переключатель. После этого приложение немедленно прекращает передачу отчётов о сбоях и продуктовых
-событий. Все функции приложения продолжают работать без ограничений.
+**При первом запуске** на экране выбора сборника показывается, что собирается, с переключателем
+«Отправлять отчёты о сбоях и статистику использования». До того, как вы уйдёте с этого экрана,
+**не отправляется ничего**. Снимите отметку — и сбор не начнётся.
+
+**В любой момент: Настройки → Приватность** — тот же переключатель. После выключения приложение
+немедленно прекращает передачу отчётов о сбоях и продуктовых событий. Все функции приложения
+продолжают работать без ограничений.
+
+Если приложение обновлено с более ранней версии (экран первого запуска уже пройден) или сборник
+встроен в саму сборку, экран первого запуска не показывается — сбор включён по умолчанию и
+выключается тем же переключателем в настройках.
 
 Отладочные (debug) сборки по умолчанию **ничего не отправляют**.
 
@@ -125,13 +133,22 @@ the Russian Federation (Federal Law 152-FZ). Data is encrypted in transit (HTTPS
 ### 4. Legal basis
 
 Crash reporting relies on the developer's legitimate interest in keeping the app functional and
-secure (GDPR Art. 6(1)(f)). Product analytics relies on consent, which is granted by leaving the
-default-on toggle enabled and can be withdrawn at any time (§5).
+secure (GDPR Art. 6(1)(f)). Product analytics relies on consent: the first-launch screen states what
+is collected and carries a default-on checkbox, and consent can be withdrawn at any time (§5).
 
-### 5. How to opt out
+### 5. When we ask, and how to opt out
 
-**Settings → Privacy → "Send crash reports and anonymous statistics"** — turn the switch off.
-Transmission of crash reports and product events stops immediately; every app feature keeps working.
+**On first launch** the songbook-selection screen states what is collected and shows a "Send crash
+reports and usage statistics" checkbox. **Nothing is transmitted until you leave that screen** —
+clear the checkbox and collection never starts.
+
+**At any time: Settings → Privacy** — the same switch. Transmission of crash reports and product
+events stops immediately; every app feature keeps working.
+
+If the app was updated from an earlier version (the first-launch screen is already behind you), or
+the build ships with a bundled songbook, that screen is not shown — collection is on by default and
+is turned off with the same switch in settings.
+
 Debug builds send nothing by default.
 
 ### 6. Contact
@@ -140,4 +157,4 @@ Debug builds send nothing by default.
 
 ---
 
-Last reviewed: 2026-08-07
+Last reviewed: 2026-08-15

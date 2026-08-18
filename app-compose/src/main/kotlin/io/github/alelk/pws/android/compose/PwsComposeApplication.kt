@@ -65,7 +65,10 @@ class PwsComposeApplication : Application() {
     // Telemetry first: activation installs the crash/ANR handlers, so anything initialised before
     // it would crash invisibly. Debug builds default to not sending, to keep dev runs out of the
     // production statistics (flip the settings toggle to test the pipeline).
-    val telemetryConsent = TelemetryConsentStore(this, defaultEnabled = !BuildConfig.DEBUG)
+    //
+    // On a first launch the store is still "pending" — isEnabled() is false — so the SDK activates
+    // without transmitting anything until the user has seen the disclosure (MainActivity resolves it).
+    val telemetryConsent = TelemetryConsentStore(this, defaultConsent = !BuildConfig.DEBUG)
     telemetry = AppMetricaTelemetry.activate(
       application = this,
       apiKey = BuildConfig.APPMETRICA_API_KEY,

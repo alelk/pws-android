@@ -1,9 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools">
 
   <!-- Required by :data:content-delivery to fetch the book catalog and bundles from pws-catalog. -->
   <uses-permission android:name="android.permission.INTERNET" />
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+  <!--
+    AppMetrica's analytics-identifiers module merges com.google.android.gms.permission.AD_ID into the
+    manifest. We never read the advertising id (AppMetricaTelemetry sets withAdvIdentifiersTracking(false))
+    and the app shows no ads, so the permission is removed here. Keeping it would force an
+    "Advertising ID collected" answer in the Play Data Safety form and contradict docs/privacy-policy.md.
+  -->
+  <uses-permission
+    android:name="com.google.android.gms.permission.AD_ID"
+    tools:node="remove" />
 
   <application
     android:name=".PwsComposeApplication"
