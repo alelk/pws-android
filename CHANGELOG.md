@@ -1,5 +1,12 @@
 # PWS Android
 
+# [3.6.0-rc.3](https://github.com/alelk/pws-android/compare/v3.6.0-rc.2...v3.6.0-rc.3) (2026-08-18)
+
+
+### Features
+
+* update onboarding screen ([c3773c8](https://github.com/alelk/pws-android/commit/c3773c88f6464dd5cbd2362ebd2781bc8b5046f1))
+
 # [3.6.0-rc.2](https://github.com/alelk/pws-android/compare/v3.6.0-rc.1...v3.6.0-rc.2) (2026-08-11)
 
 
