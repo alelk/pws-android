@@ -53,3 +53,7 @@ yarn-debug.log*
 
 # Claude
 .claude/skills
+
+# Junie
+.junie/skills
+.junie/mcp

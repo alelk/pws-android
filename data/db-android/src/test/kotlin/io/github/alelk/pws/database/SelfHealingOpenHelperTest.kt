@@ -43,7 +43,7 @@ private class FakeOpenHelper(
   }
 }
 
-@RobolectricTest(sdk = 34)
+@RobolectricTest(sdk = [34, 37])
 class SelfHealingOpenHelperTest : FeatureSpec({
 
   beforeContainer { setupTimberForTest() }

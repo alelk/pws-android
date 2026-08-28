@@ -26,7 +26,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import io.github.alelk.pws.portable.model.BookCatalogEntry as PortableEntry
 
-@RobolectricTest(sdk = 34)
+@RobolectricTest(sdk = [34, 37])
 class MultiSourceBookCatalogRepositoryTest : FeatureSpec({
 
   val primaryUrl = "https://primary.test/catalog/index.json"

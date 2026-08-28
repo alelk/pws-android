@@ -15,7 +15,7 @@ import java.io.File
  * `14.json` schema and throws if they diverge. So this test fails loudly whenever the asset DB
  * goes out of sync with the Room entities/schema.
  */
-@RobolectricTest(sdk = 34)
+@RobolectricTest(sdk = [34, 37])
 class CurrentDatabaseTest : FeatureSpec({
 
   beforeContainer {

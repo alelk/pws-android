@@ -1,65 +1,69 @@
 [versions]
 
+# Project
 pws = "3.3.0"
 
+# Toolchain
 android-application = "9.2.1"
-kotlin = "2.3.21" # 2.4.0 blocked: Hilt/Dagger 2.59.2 bundles kotlin-metadata-jvm that only supports metadata <= 2.3.0
+kotlin              = "2.4.10"
+ksp                 = "2.3.9" # https://central.sonatype.com/artifact/com.google.devtools.ksp/com.google.devtools.ksp.gradle.plugin/versions
+
+# Kotlin ecosystem
 kotlinx-coroutines = "1.11.0"
-ktor = "3.5.0"
+kotlinx-datetime   = "0.8.0"
+kaml               = "0.97.0"
 
-ksp = "2.3.9" # https://central.sonatype.com/artifact/com.google.devtools.ksp/com.google.devtools.ksp.gradle.plugin/versions
+# Networking
+ktor = "3.5.2"
 
-hilt = "2.59.2"
-
+# Dependency Injection
+hilt = "2.60.1"
 koin = "4.2.0"
-voyager = "2.2.21-1.10.3"
+
+# Navigation & UI
+voyager              = "2.2.21-1.10.3"
 composeMultiplatform = "1.10.3"
+navigation           = "2.10.0"
+navigation-fragment-ktx = "2.10.0"
+navigation-ui-ktx       = "2.10.0"
 
-navigation = "2.9.8"
-
-room = "2.8.4"
-
-kotlinx-datetime = "0.8.0"
-
-kotest = "6.2.1"
-kotest-runner-android = "1.2.2"
-kotest-extensions-android = "0.1.9"
-kotest-multiplatform = "6.0.0.M4"
-kotest-framework-datatest = "5.9.1"
-
-robolectric = "4.16.1"
-
-sqlcipher = "4.16.0"
-appmetrica = "8.5.0" # check https://repo1.maven.org/maven2/io/appmetrica/analytics/analytics/maven-metadata.xml (search.maven.org lags behind)
+# Database
+room          = "2.8.4"
+sqlcipher     = "4.18.0"
 security-crypto = "1.1.0"
 
-kaml = "0.97.0"
-navigation-fragment-ktx = "2.9.8"
-navigation-ui-ktx = "2.9.8"
+# Testing
+kotest                    = "6.2.4"
+kotest-runner-android     = "1.2.3"
+kotest-extensions-android = "0.1.12"
+kotest-multiplatform      = "6.0.0.M4"
+kotest-framework-datatest = "5.9.1"
+robolectric               = "4.17-beta-3"
+
+# Monitoring
+appmetrica = "8.5.1" # check https://repo1.maven.org/maven2/io/appmetrica/analytics/analytics/maven-metadata.xml (search.maven.org lags behind)
 
 [libraries]
 
-# PWS Libraries
-pws-domain = { module = "io.github.alelk.pws.domain:domain", version.ref = "pws" }
-pws-dbRoom = { module = "io.github.alelk.pws.data:db-room", version.ref = "pws" }
+# PWS
+pws-domain             = { module = "io.github.alelk.pws.domain:domain", version.ref = "pws" }
+pws-dbRoom             = { module = "io.github.alelk.pws.data:db-room", version.ref = "pws" }
 pws-dbRoomTestFixtures = { module = "io.github.alelk.pws.data:db-room-test-fixtures", version.ref = "pws" }
-pws-repoRoom = { module = "io.github.alelk.pws.data:repo-room", version.ref = "pws" }
-pws-portableData = { module = "io.github.alelk.pws.portable:portable-data", version.ref = "pws" }
-
-pws-features = { module = "io.github.alelk.pws.features:features", version.ref = "pws" }
-# Android
+pws-repoRoom           = { module = "io.github.alelk.pws.data:repo-room", version.ref = "pws" }
+pws-portableData       = { module = "io.github.alelk.pws.portable:portable-data", version.ref = "pws" }
+pws-features           = { module = "io.github.alelk.pws.features:features", version.ref = "pws" }
 
 # Kotlin Coroutines
-kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-core    = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
-kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-test    = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
 
 # Date Time
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
 
 # Database
-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" } # https://mvnrepository.com/artifact/androidx.room/room-runtime
-sqlcipher = { module = "net.zetetic:sqlcipher-android", version.ref = "sqlcipher" }
+room-runtime   = { module = "androidx.room:room-runtime", version.ref = "room" } # https://mvnrepository.com/artifact/androidx.room/room-runtime
+sqlcipher      = { module = "net.zetetic:sqlcipher-android", version.ref = "sqlcipher" }
 security-crypto = { module = "androidx.security:security-crypto", version.ref = "security-crypto" }
 
 # Logging
@@ -70,40 +74,44 @@ timber = { module = "com.jakewharton.timber:timber", version = "5.0.1" }
 appmetrica-analytics = { module = "io.appmetrica.analytics:analytics", version.ref = "appmetrica" }
 
 # Ktor
-ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
-ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
+ktor-client-core             = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-cio              = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
 ktor-client-contentNegotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
-ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
+ktor-client-mock             = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 
-# DI
-hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" } # https://mvnrepository.com/artifact/com.google.dagger/hilt-android
+# Dependency Injection
+hilt-android  = { module = "com.google.dagger:hilt-android", version.ref = "hilt" } # https://mvnrepository.com/artifact/com.google.dagger/hilt-android
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" } # https://mvnrepository.com/artifact/com.google.dagger/hilt-compiler
-koin-android = { module = "io.insert-koin:koin-android", version = "4.2.1" }
-koin-compose = { module = "io.insert-koin:koin-compose", version = "4.2.1" }
+koin-android  = { module = "io.insert-koin:koin-android", version = "4.2.2" }
+koin-compose  = { module = "io.insert-koin:koin-compose", version = "4.2.2" }
+
+# Voyager
 voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
-voyager-koin = { module = "cafe.adriel.voyager:voyager-koin", version.ref = "voyager" }
-appcompat = { group = "androidx.appcompat", name = "appcompat", version = "1.7.1" }
-material = { group = "com.google.android.material", name = "material", version = "1.13.0" }
-android-material = { group = "com.google.android.material", name = "material", version = "1.13.0" }
-ambilwarna = { group = "com.github.yukuku", name = "ambilwarna", version = "2.0.1" }
-flexbox = { group = "com.google.android.flexbox", name = "flexbox", version = "3.0.0" }
+voyager-koin      = { module = "cafe.adriel.voyager:voyager-koin", version.ref = "voyager" }
+
+# UI — Legacy Views (app module)
+appcompat      = { group = "androidx.appcompat", name = "appcompat", version = "1.8.0" }
+material       = { group = "com.google.android.material", name = "material", version = "1.14.0" }
+android-material = { group = "com.google.android.material", name = "material", version = "1.14.0" }
+ambilwarna     = { group = "com.github.yukuku", name = "ambilwarna", version = "2.0.1" }
+flexbox        = { group = "com.google.android.flexbox", name = "flexbox", version = "3.0.0" }
 
 # Navigation
-navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigation" } # https://mvnrepository.com/artifact/androidx.navigation/navigation-fragment
-navigation-ui = { group = "androidx.navigation", name = "navigation-ui", version.ref = "navigation" } # https://mvnrepository.com/artifact/androidx.navigation/navigation-ui
+navigation-fragment              = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigation" } # https://mvnrepository.com/artifact/androidx.navigation/navigation-fragment
+navigation-ui                    = { group = "androidx.navigation", name = "navigation-ui", version.ref = "navigation" } # https://mvnrepository.com/artifact/androidx.navigation/navigation-ui
 androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigation-fragment-ktx" }
-androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigation-ui-ktx" }
+androidx-navigation-ui-ktx       = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigation-ui-ktx" }
 
 # Compose
-compose-bom = { group = "androidx.compose", name = "compose-bom", version = "2026.04.01" }
-activity-compose = { group = "androidx.activity", name = "activity-compose", version = "1.13.0" }
-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version = "2.10.0" }
-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version = "2.10.0" }
-preference-ktx = { group = "androidx.preference", name = "preference-ktx", version = "1.2.1" }
-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version = "1.2.1" }
-material3 = { group = "androidx.compose.material3", name = "material3", version = "1.4.0" }
-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version = "1.7.8" }
+compose-bom                = { group = "androidx.compose", name = "compose-bom", version = "2026.08.00" }
+activity-compose            = { group = "androidx.activity", name = "activity-compose", version = "1.13.0" }
+lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version = "2.11.0" }
+lifecycle-viewmodel-ktx     = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version = "2.11.0" }
+preference-ktx              = { group = "androidx.preference", name = "preference-ktx", version = "1.2.1" }
+datastore-preferences        = { group = "androidx.datastore", name = "datastore-preferences", version = "1.2.1" }
+material3                   = { group = "androidx.compose.material3", name = "material3", version = "1.4.0" }
+material-icons-extended     = { group = "androidx.compose.material", name = "material-icons-extended", version = "1.7.8" }
 
 # Payment
 rustore-sdk-bom = { group = "ru.rustore.sdk", name = "bom", version = "2025.08.01" }
@@ -111,22 +119,21 @@ rustore-sdk-pay = { module = "ru.rustore.sdk:pay" } # version supplied by rustor
 
 # Test
 kotest-framework-datatest = { module = "io.kotest:kotest-framework-datatest", version.ref = "kotest-framework-datatest" } # https://search.maven.org/artifact/io.kotest/kotest-framework-datatest
-kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" } # https://search.maven.org/artifact/io.kotest/kotest-assertions-core
-kotest-property = { module = "io.kotest:kotest-property", version.ref = "kotest" } # https://search.maven.org/artifact/io.kotest/kotest-property
-kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
-
-androidx-test-core = { group = "androidx.test", name = "core", version = "1.7.0" } # https://mvnrepository.com/artifact/androidx.test/core
-robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" } # https://mvnrepository.com/artifact/org.robolectric/robolectric
-room-testing = { group = "androidx.room", name = "room-testing", version.ref = "room" }
-kotest-runner-android = { group = "br.com.colman", name = "kotest-runner-android", version.ref = "kotest-runner-android" }
+kotest-assertions-core    = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" } # https://search.maven.org/artifact/io.kotest/kotest-assertions-core
+kotest-property           = { module = "io.kotest:kotest-property", version.ref = "kotest" } # https://search.maven.org/artifact/io.kotest/kotest-property
+kotest-runner-junit5      = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
+androidx-test-core        = { group = "androidx.test", name = "core", version = "1.7.0" } # https://mvnrepository.com/artifact/androidx.test/core
+robolectric               = { module = "org.robolectric:robolectric", version.ref = "robolectric" } # https://mvnrepository.com/artifact/org.robolectric/robolectric
+room-testing              = { group = "androidx.room", name = "room-testing", version.ref = "room" }
+kotest-runner-android     = { group = "br.com.colman", name = "kotest-runner-android", version.ref = "kotest-runner-android" }
 kotest-extensions-android = { group = "br.com.colman", name = "kotest-extensions-android", version.ref = "kotest-extensions-android" } # https://search.maven.org/artifact/br.com.colman/kotest-extensions-android
 
 [plugins]
 
-android-application = { id = "com.android.application", version.ref = "android-application" } # https://mvnrepository.com/artifact/com.android.tools.build/gradle
-android-kmpLibrary = { id = "com.android.kotlin.multiplatform.library", version.ref = "android-application" }
+android-application  = { id = "com.android.application", version.ref = "android-application" } # https://mvnrepository.com/artifact/com.android.tools.build/gradle
+android-kmpLibrary   = { id = "com.android.kotlin.multiplatform.library", version.ref = "android-application" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" } # https://github.com/google/ksp
+ksp                  = { id = "com.google.devtools.ksp", version.ref = "ksp" } # https://github.com/google/ksp
 kotest-multiplatform = { id = "io.kotest.multiplatform", version.ref = "kotest-multiplatform" } # https://plugins.gradle.org/plugin/io.kotest.multiplatform
-hilt = { id = "com.google.dagger.hilt.android", version = "2.59.2" } # https://mvnrepository.com/artifact/com.google.dagger.hilt.android/com.google.dagger.hilt.android.gradle.plugin
-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+hilt                 = { id = "com.google.dagger.hilt.android", version.ref = "hilt" } # https://mvnrepository.com/artifact/com.google.dagger.hilt.android/com.google.dagger.hilt.android.gradle.plugin
+compose              = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

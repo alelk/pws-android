@@ -38,18 +38,18 @@ import io.kotest.property.checkAll
  * Test data is produced by the project's `Arb` bundle generators (see `bundleArb.kt`); structural
  * scenarios pin the fields under test with `Arb.constant(...)` and randomise the rest.
  */
-@RobolectricTest(sdk = 34)
+@RobolectricTest(sdk = [34, 37])
 class BookImporterImplTest : FeatureSpec({
 
   val rs = RandomSource.seeded(20260621L)
   val bookId = BookId.parse("Book-1")
 
-  // A bundle whose songs all belong to [bookId] and have distinct ids — the shape the importer
-  // expects for a single book.
+  // A bundle whose songs all belong to [bookId] and have distinct ids and numbers — the shape
+  // the importer expects for a single book.
   fun bundleForBook(id: BookId) = Arb.bookBundle(
     book = Arb.portableBook(id = Arb.constant(id)),
     songs = Arb.list(Arb.portableSong(number = Arb.portableSongNumber(bookId = Arb.constant(id))), 1..4)
-      .map { songs -> songs.distinctBy { it.id } },
+      .map { songs -> songs.distinctBy { it.id }.distinctBy { it.number } },
   )
 
   suspend fun <T> withDb(block: suspend (PwsDatabase) -> T): T {

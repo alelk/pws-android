@@ -6,7 +6,7 @@ import io.kotest.matchers.shouldBe
 import java.io.File
 import kotlin.io.path.createTempDirectory
 
-@RobolectricTest(sdk = 34)
+@RobolectricTest(sdk = [34, 37])
 class DiscardHalfCreatedDatabaseTest : FeatureSpec({
 
   beforeContainer { setupTimberForTest() }

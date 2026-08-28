@@ -30,7 +30,7 @@ import io.kotest.property.arbitrary.next
  * with in-memory bundle bytes (decoupled from `AssetManager`): ASSET marking, file-name idempotency,
  * version-aware re-seeding on an APK update, and the clean-variant return value.
  */
-@RobolectricTest(sdk = 34)
+@RobolectricTest(sdk = [34, 37])
 class SeedBooksFromAssetsUseCaseTest : FeatureSpec({
 
   val rs = RandomSource.seeded(20260807L)

@@ -5,8 +5,8 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
-val sdkVersion by extra(36)
-val versionCode by extra(46)
+val sdkVersion by extra(37)
+val versionCode by extra(47)
 val versionName by extra(checkNotNull(projectDir.resolve("app.version").readText().lines().firstOrNull()?.trim()?.takeIf { it.isNotBlank() }) { "app.version empty" })
 val versionNameSuffix by extra(getDate().lowercase())
 val kotlinVersion = libs.versions.kotlin.get()

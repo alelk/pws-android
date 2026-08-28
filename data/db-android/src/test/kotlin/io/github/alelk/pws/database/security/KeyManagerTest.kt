@@ -8,7 +8,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldMatch
 
-@RobolectricTest(sdk = 34)
+@RobolectricTest(sdk = [34, 37])
 class KeyManagerTest : FeatureSpec({
 
   fun freshPrefs(name: String = "test_key_manager_${System.nanoTime()}") =
