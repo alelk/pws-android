@@ -228,9 +228,15 @@ base64 release.jks | xclip -selection clipboard
 
 ## Добавление E2E для uk / rustore (в будущем)
 
+`run-compose.sh` уже поддерживает параметр `--flavor` (`ru` / `uk` / `full` / `rustore`) — путь к APK
+и `applicationId` подставляются автоматически (см. `e2e/README.md`). Осталось:
+
 1. Убедиться, что БД для нужного flavor присутствует в [pws-docs releases](https://github.com/alelk/pws-docs/releases).
-2. Добавить шаг в `run-compose.sh` с поддержкой `--flavor` параметра (или создать отдельный конфиг `e2e/config/compose-uk.env`).
-3. В воркфлоу заменить заглушку `E2E — uk (not yet implemented)` на полноценный шаг по образцу шага `E2E — ru`.
+2. Собрать APK нужного flavor (`./gradlew :app-compose:assemble<Flavor>Release`) и положить его в
+   `output/compose/pws-app-release-{version}-{flavor}.apk`, либо передать `--apk` явно.
+3. В воркфлоу заменить заглушку `E2E — uk` / `E2E — rustore` (`echo "::notice::..."`) на полноценный
+   шаг вида `./e2e/scripts/run-compose.sh --flavor uk --clean` по образцу шага `E2E — ru`, когда
+   E2E-инфраструктура в CI будет включена обратно (см. TODO в `release-build.yml`).
 
 ---
 

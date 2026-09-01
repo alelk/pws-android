@@ -1,5 +1,12 @@
 # PWS Android
 
+# [3.7.0-rc.1](https://github.com/alelk/pws-android/compare/v3.6.0...v3.7.0-rc.1) (2026-08-28)
+
+
+### Features
+
+* update sdk version ([e6a72e4](https://github.com/alelk/pws-android/commit/e6a72e4dc8b2deff86ebf591f5387f44f26fd3b0))
+
 # [3.6.0](https://github.com/alelk/pws-android/compare/v3.5.0...v3.6.0) (2026-08-18)
 
 

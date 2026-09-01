@@ -44,7 +44,7 @@ import java.util.UUID
  * export → restore cycle: favourites, edited song lyrics, custom tags, book priorities and the
  * theme setting.
  */
-@RobolectricTest(sdk = 34)
+@RobolectricTest(sdk = [34, 37])
 class BackupManagerTest : FeatureSpec({
 
   val bookId = BookId.parse("Book-1")

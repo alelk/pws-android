@@ -23,7 +23,9 @@ Positional FLOW arguments select specific flows by number or filename:
 When no positional args are given, runs the smoke suite (or full suite with --full).
 
 Options:
-  --apk PATH       Override APK path from compose.env
+  --flavor NAME    Build flavor to test: ru, uk, full, rustore (default: ru)
+  --apk PATH       Override APK path from compose.env / flavor default
+  --app-id ID      Override application id from compose.env / flavor default
   --flow PATH      [legacy] run a single flow (path relative to e2e/)
   --full           Run full suite including mutating tests
   --clean          adb pm clear $APP_ID before the first flow (recommended for CI / full suite)
@@ -32,12 +34,24 @@ Options:
   -h, --help       Show this help
 
 Examples:
-  ./e2e/scripts/run-compose.sh                       # smoke suite, install -r, no pm clear
-  ./e2e/scripts/run-compose.sh --full --clean        # full suite from a clean app state (CI)
+  ./e2e/scripts/run-compose.sh                       # smoke suite, ru flavor, install -r, no pm clear
+  ./e2e/scripts/run-compose.sh --flavor uk           # smoke suite against the uk flavor APK
+  ./e2e/scripts/run-compose.sh --flavor rustore --full --clean  # full suite, RuStore flavor, clean state (CI)
   ./e2e/scripts/run-compose.sh 2                     # single flow by number
   ./e2e/scripts/run-compose.sh 4 5 6 --clean         # several flows by number, with pm clear
   ./e2e/scripts/run-compose.sh 14 --retries 2        # one flow, retry on flake
 EOF
+}
+
+# Default applicationId per flavor (must match app-compose/build.gradle.kts productFlavors).
+default_app_id() {
+  case "$1" in
+    ru)      echo "com.alelk.pws.pwapp" ;;
+    full)    echo "com.alelk.pws.pwapp.full" ;;
+    uk)      echo "com.alelk.pws.pwapp.uk" ;;
+    rustore) echo "io.github.alelk.pws.app" ;;
+    *)       echo "[ERROR] Unknown flavor: $1 (expected: ru, uk, full, rustore)" >&2; return 1 ;;
+  esac
 }
 
 require_cmd() {
@@ -49,7 +63,9 @@ require_cmd() {
 now_ts() { date +"%Y%m%d-%H%M%S"; }
 
 APK_OVERRIDE=""
+APP_ID_OVERRIDE=""
 FLOW_OVERRIDE=""
+FLAVOR="ru"
 USE_FULL="false"
 DRY_RUN="false"
 CLEAN_STATE="false"
@@ -58,7 +74,9 @@ SELECTED_FLOWS=()
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
+    --flavor)  FLAVOR="${2:-}"; shift 2 ;;
     --apk)     APK_OVERRIDE="${2:-}"; shift 2 ;;
+    --app-id)  APP_ID_OVERRIDE="${2:-}"; shift 2 ;;
     --flow)    FLOW_OVERRIDE="${2:-}"; shift 2 ;;
     --full)    USE_FULL="true"; shift ;;
     --clean)   CLEAN_STATE="true"; shift ;;
@@ -69,6 +87,8 @@ while [[ $# -gt 0 ]]; do
     *)         SELECTED_FLOWS+=("$1"); shift ;;
   esac
 done
+
+DEFAULT_APP_ID="$(default_app_id "$FLAVOR")" || exit 1
 
 # Resolve a positional selector (number or basename) to a flow path.
 # Number: "2" → "02-*.yaml" (zero-padded prefix, glob match).
@@ -106,13 +126,14 @@ resolve_flow() {
 source "$CONFIG_FILE"
 
 APP_VERSION="$(cat "$ROOT_DIR/app.version" 2>/dev/null || true)"
-APK_PATH="${APK_OVERRIDE:-${APK_PATH:-$ROOT_DIR/output/compose/pws-app-release-${APP_VERSION}-ru.apk}}"
-APP_ID="${APP_ID:-}"
+APK_PATH="${APK_OVERRIDE:-${APK_PATH:-$ROOT_DIR/output/compose/pws-app-release-${APP_VERSION}-${FLAVOR}.apk}}"
+APP_ID="${APP_ID_OVERRIDE:-${APP_ID:-$DEFAULT_APP_ID}}"
 
 [[ -z "$APK_PATH" ]] && { echo "[ERROR] APK_PATH not set" >&2; exit 1; }
 [[ -z "$APP_ID" ]]   && { echo "[ERROR] APP_ID not set" >&2; exit 1; }
 
 if [[ "$DRY_RUN" == "true" ]]; then
+  echo "[DRY-RUN] FLAVOR=$FLAVOR"
   echo "[DRY-RUN] APK_PATH=$APK_PATH"
   echo "[DRY-RUN] APP_ID=$APP_ID"
   echo "[DRY-RUN] USE_FULL=$USE_FULL"
@@ -158,7 +179,7 @@ trap restore_network EXIT
 
 SCREENSHOTS_DIR="$E2E_DIR/screenshots"
 mkdir -p "$ARTIFACTS_DIR" "$REPORTS_DIR" "$SCREENSHOTS_DIR"
-RUN_ID="$(now_ts)-compose"
+RUN_ID="$(now_ts)-compose-$FLAVOR"
 RUN_DIR="$ARTIFACTS_DIR/$RUN_ID"
 REPORT_DIR="$REPORTS_DIR/$RUN_ID"
 mkdir -p "$RUN_DIR" "$REPORT_DIR"
@@ -189,6 +210,11 @@ while IFS= read -r line; do
   val="${!key:-}"
   MAESTRO_ENV+=(--env "$key=$val")
 done < "$CONFIG_FILE"
+# APP_ID is resolved by the script itself (flavor default / --app-id / compose.env
+# override) and is normally commented out in compose.env, so it would otherwise be
+# skipped by the loop above. Forward it explicitly — flows reference it as
+# "appId: ${APP_ID}" and fail with "Unable to launch app undefined" without it.
+MAESTRO_ENV+=(--env "APP_ID=$APP_ID")
 MAESTRO_ENV+=(--env "SCREENSHOTS_DIR=$SCREENSHOTS_DIR")
 
 # ---------------------------------------------------------------------------

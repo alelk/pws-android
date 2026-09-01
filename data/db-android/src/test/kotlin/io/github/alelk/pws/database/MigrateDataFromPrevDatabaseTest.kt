@@ -7,21 +7,21 @@ import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
 import java.io.File
 
-@RobolectricTest(sdk = 34)
+@RobolectricTest(sdk = [34, 37])
 class MigrateDataFromPrevDatabaseTest : FeatureSpec({
 
-  lateinit var db: PwsDatabase
+  beforeContainer { setupTimberForTest() }
 
-  beforeContainer {
-    db = pwsDbForTest(inMemory = true, "pws-db")
-    setupTimberForTest()
-  }
-  afterContainer { db.clean(); db.close() }
+  // Every feature below builds its own fresh in-memory DB (rather than sharing one set up in a
+  // `beforeContainer`) so it does not depend on container-level hook ordering, which is not
+  // reliable across the multiple SDKs exercised by `@RobolectricTest`.
+  fun freshDb() = pwsDbForTest(inMemory = true, "pws-db")
 
   // Tests 1–4: migration into an *empty* Room DB — verifies that books are installed
   // AND that user data is linked correctly, even before onboarding has ever run.
 
   feature("migrate data from database 1.8.0 (v6-with-user-data)") {
+    val db = freshDb()
     withSqliteDb(File("src/test/resources/test-db/v6-with-user-data/pws.1.8.0.dbz")) { prevDb ->
       val result = prevDb.migrateDataTo(db)
 
@@ -44,6 +44,7 @@ class MigrateDataFromPrevDatabaseTest : FeatureSpec({
   }
 
   feature("migrate data from database 2.0.0 (v11-with-user-data)") {
+    val db = freshDb()
     withSqliteDb(File("src/test/resources/test-db/v11-with-user-data/pws.2.0.0.dbz")) { prevDb ->
       val result = prevDb.migrateDataTo(db)
 
@@ -66,6 +67,7 @@ class MigrateDataFromPrevDatabaseTest : FeatureSpec({
   }
 
   feature("migrate data from database 3.0.0 (v12-with-user-data)") {
+    val db = freshDb()
     withSqliteDb(File("src/test/resources/test-db/v12-with-user-data/pws.3.0.0.dbz")) { prevDb ->
       val result = prevDb.migrateDataTo(db)
 
@@ -88,6 +90,7 @@ class MigrateDataFromPrevDatabaseTest : FeatureSpec({
   }
 
   feature("migrate data from database 3.2.3 (v13-with-user-data)") {
+    val db = freshDb()
     withSqliteDb(File("src/test/resources/test-db/v13-with-user-data/pws-ru-test-3.2.3.dbz")) { prevDb ->
       val result = prevDb.migrateDataTo(db)
 
@@ -132,6 +135,7 @@ class MigrateDataFromPrevDatabaseTest : FeatureSpec({
 
   // Test 6: idempotency — running migration twice should not duplicate books or user data.
   feature("migration is idempotent (v13)") {
+    val db = freshDb()
     withSqliteDb(File("src/test/resources/test-db/v13-with-user-data/pws-ru-test-3.2.3.dbz")) { prevDb ->
       prevDb.migrateDataTo(db)
       val bookCountAfterFirst = db.bookDao().count()

@@ -27,12 +27,14 @@ val catalogVersion: String = rootProject.file("catalog.version").readText().trim
 //   - Catalog filename:  books-catalog-{variant}.json
 //   - Bundle filename:   {bookId}-{variant}-{version}.book.yaml.gz.enc
 val catalogMajor = catalogVersion.split(".").first()
-val catalogGhPages    = "https://alelk.github.io/pws-catalog/v$catalogMajor"
+val catalogGhPages = "https://alelk.github.io/pws-catalog/v$catalogMajor"
 val catalogCloudflare = "https://pws-catalog.pages.dev/v$catalogMajor"
-val catalogYandex     = "https://pws-catalog.storage.yandexcloud.net/v$catalogMajor"
+val catalogYandex = "https://pws-catalog.storage.yandexcloud.net/v$catalogMajor"
+
 // Catalog mirrors for a bundle variant (release|debug), in fallback order.
 fun catalogUrlsFor(variant: String): List<String> =
   listOf(catalogGhPages, catalogCloudflare, catalogYandex).map { "$it/books-catalog-$variant.json" }
+
 fun catalogUrl(variant: String) = catalogUrlsFor(variant).joinToString(",")
 
 // ── AppMetrica API key ────────────────────────────────────────────────────────
@@ -68,10 +70,23 @@ if (appMetricaApiKey.isBlank()) {
 // Flavors absent from this map produce the universal "clean" APK, unchanged.
 //   - key   = product flavor name (contentLevel dimension): ru | uk | full | rustore
 //   - value = book IDs that must exist in books-catalog-{release|debug}.json
-val seedBooksByFlavor: Map<String, List<String>> = mapOf(
-  "rustore" to listOf("PV3300"),   // Песнь Возрождения 3300 (main Russian songbook)
-  "uk" to listOf("Psalmovivi"),    // Псалмоспіви (main Ukrainian songbook)
-)
+val seedBooksByFlavor: Map<String, List<String>> =
+  mapOf(
+    "rustore" to listOf("PV3300"),
+    "uk" to listOf(
+      "Psalmovivi",
+      "PisniSpasennyh",
+      "EvangelskiPisni",
+      "PV3300",
+      "PV3055",
+      "PV2555",
+      "PV2001",
+      "PV800",
+      "YunostIisusu",
+      "DerjisHrista",
+      "PesnHvaly"
+    ),
+  )
 
 /**
  * Downloads the seed bundles for one variant from the catalog and writes them into
@@ -84,10 +99,17 @@ val seedBooksByFlavor: Map<String, List<String>> = mapOf(
  * refresh when the catalog publishes newer bundles.
  */
 abstract class DownloadSeedBundlesTask : DefaultTask() {
-  @get:Input abstract val bookIds: ListProperty<String>
-  @get:Input abstract val bundleVariant: Property<String>
-  @get:Input abstract val catalogUrls: ListProperty<String>
-  @get:OutputDirectory abstract val outputDir: DirectoryProperty
+  @get:Input
+  abstract val bookIds: ListProperty<String>
+
+  @get:Input
+  abstract val bundleVariant: Property<String>
+
+  @get:Input
+  abstract val catalogUrls: ListProperty<String>
+
+  @get:OutputDirectory
+  abstract val outputDir: DirectoryProperty
 
   @TaskAction
   fun download() {
@@ -112,6 +134,7 @@ abstract class DownloadSeedBundlesTask : DefaultTask() {
     val parsed = groovy.json.JsonSlurper().parseText(catalogJson) as Map<String, Any?>
     val catalogVersion = parsed["version"] as? String
       ?: error("Seed: catalog has no 'version' field ($catalogUrl)")
+
     @Suppress("UNCHECKED_CAST")
     val books = parsed["books"] as? List<Map<String, Any?>>
       ?: error("Seed: catalog has no 'books' array ($catalogUrl)")
@@ -166,8 +189,11 @@ abstract class DownloadSeedBundlesTask : DefaultTask() {
  * documented in docs/monitoring.md.
  */
 abstract class StageMappingFileTask : DefaultTask() {
-  @get:InputFile abstract val mappingFile: RegularFileProperty
-  @get:OutputFile abstract val stagedFile: RegularFileProperty
+  @get:InputFile
+  abstract val mappingFile: RegularFileProperty
+
+  @get:OutputFile
+  abstract val stagedFile: RegularFileProperty
 
   @TaskAction
   fun stage() {
@@ -280,6 +306,21 @@ android {
 
   testOptions {
     unitTests.isIncludeAndroidResources = true
+    unitTests.all {
+      it.jvmArgs(
+        "--add-opens=java.base/java.lang=ALL-UNNAMED",
+        "--add-opens=java.base/java.util=ALL-UNNAMED",
+        "--add-opens=java.base/java.io=ALL-UNNAMED",
+        "--add-opens=java.base/java.net=ALL-UNNAMED",
+        "--add-opens=java.base/java.security=ALL-UNNAMED",
+        "--add-opens=java.base/java.text=ALL-UNNAMED",
+        "--add-opens=java.base/java.nio=ALL-UNNAMED",
+        "--add-opens=java.base/java.util.concurrent=ALL-UNNAMED",
+        "--add-opens=java.base/java.lang.reflect=ALL-UNNAMED",
+        "--add-opens=java.base/jdk.internal.access=ALL-UNNAMED",
+        "--add-opens=java.desktop/java.awt.font=ALL-UNNAMED"
+      )
+    }
   }
 }
 

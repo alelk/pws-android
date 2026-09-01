@@ -128,7 +128,8 @@ Edit a selector or timeout once in `_helpers/` instead of 11 times across flows.
 
 - Android emulator/device available via `adb`
 - Maestro CLI installed: `curl -Ls https://get.maestro.mobile.dev | bash`
-- APK at `output/compose/pws-app-release-<version>-ru.apk` (version from `app.version`)
+- APK at `output/compose/pws-app-release-<version>-<flavor>.apk` (version from `app.version`,
+  flavor defaults to `ru`)
 - **pws-core rebuilt** after Phase 2 testTag changes and APK reinstalled
 
 ### Run (smoke suite)
@@ -136,6 +137,18 @@ Edit a selector or timeout once in `_helpers/` instead of 11 times across flows.
 ```bash
 cd /Users/alexelkin/Projects/software-development/pws-android
 ./e2e/scripts/run-compose.sh
+```
+
+### Run against another flavor
+
+`--flavor` selects the build variant to test (`ru` default, or `uk` / `full` / `rustore`).
+The APK path and `applicationId` are resolved automatically for the chosen flavor
+(matching `app-compose/build.gradle.kts` `productFlavors`); override either with `--apk` /
+`--app-id` if needed.
+
+```bash
+./e2e/scripts/run-compose.sh --flavor uk
+./e2e/scripts/run-compose.sh --flavor rustore --full --clean
 ```
 
 ### Run full suite (includes mutation tests)
@@ -157,10 +170,11 @@ The simplest way — pass the flow number(s) as positional arguments:
 
 (Legacy form `--flow flows/compose/02-search-basic.yaml` still works.)
 
-### Override APK
+### Override APK / app id
 
 ```bash
 ./e2e/scripts/run-compose.sh --apk /path/to/other.apk
+./e2e/scripts/run-compose.sh --flavor uk --app-id custom.app.id
 ```
 
 ### Clean state + retries (recommended for CI)
@@ -175,8 +189,8 @@ The simplest way — pass the flow number(s) as positional arguments:
 
 ### Outputs
 
-- **JUnit reports** (one per flow): `e2e/reports/<timestamp>-compose/junit-<flow>.xml`
-- **Maestro debug output** (screenshots, hierarchy dumps): `e2e/artifacts/<timestamp>-compose/<flow>/`
+- **JUnit reports** (one per flow): `e2e/reports/<timestamp>-compose-<flavor>/junit-<flow>.xml`
+- **Maestro debug output** (screenshots, hierarchy dumps): `e2e/artifacts/<timestamp>-compose-<flavor>/<flow>/`
 
 ### Troubleshooting
 

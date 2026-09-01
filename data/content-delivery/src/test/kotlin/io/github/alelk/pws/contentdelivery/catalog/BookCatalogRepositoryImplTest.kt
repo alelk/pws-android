@@ -23,7 +23,7 @@ import kotlinx.coroutines.runBlocking
 import arrow.core.Either
 import io.github.alelk.pws.portable.model.BookCatalogEntry as PortableEntry
 
-@RobolectricTest(sdk = 34)
+@RobolectricTest(sdk = [34,37])
 class BookCatalogRepositoryImplTest : FeatureSpec({
 
   val catalogUrl = "https://example.test/catalog/index.json"

@@ -22,7 +22,7 @@ import io.kotest.matchers.string.shouldContain
 import kotlinx.datetime.LocalDateTime
 import java.io.File
 
-@RobolectricTest(sdk = 34)
+@RobolectricTest(sdk = [34, 37])
 class PwsDb1xDataProviderTest : FeatureSpec({
 
   beforeContainer {

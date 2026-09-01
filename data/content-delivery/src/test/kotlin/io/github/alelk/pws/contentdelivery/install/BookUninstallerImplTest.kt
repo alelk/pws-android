@@ -31,7 +31,7 @@ import io.kotest.property.arbitrary.next
  * is **orphan detection**: a song shared with another book must survive, while a song that belongs
  * only to the uninstalled book (and its favourites / tags via FK cascade) must be removed.
  */
-@RobolectricTest(sdk = 34)
+@RobolectricTest(sdk = [34, 37])
 class BookUninstallerImplTest : FeatureSpec({
 
   val rs = RandomSource.seeded(20260621L)

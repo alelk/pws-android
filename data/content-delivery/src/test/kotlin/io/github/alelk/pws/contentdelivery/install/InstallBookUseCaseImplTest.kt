@@ -37,7 +37,7 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import java.security.MessageDigest
 
-@RobolectricTest(sdk = 34)
+@RobolectricTest(sdk = [34, 37])
 class InstallBookUseCaseImplTest : FeatureSpec({
 
   val keyHex = "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff"

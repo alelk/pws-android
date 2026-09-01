@@ -32,7 +32,9 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
 import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.GlobalContext
 import org.koin.core.context.startKoin
+import org.koin.core.context.stopKoin
 import org.koin.core.qualifier.named
 import org.koin.dsl.binds
 import org.koin.dsl.module
@@ -118,6 +120,10 @@ class PwsComposeApplication : Application() {
         )
       } binds arrayOf(DonationPromptStateReadRepository::class, DonationPromptStateWriteRepository::class)
     }
+
+    // Defensive: guards against a stray already-started Koin instance (e.g. Robolectric
+    // re-instantiating the Application without a clean process restart between test runs).
+    if (GlobalContext.getOrNull() != null) stopKoin()
 
     startKoin {
       androidContext(this@PwsComposeApplication)
