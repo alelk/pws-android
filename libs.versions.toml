@@ -114,7 +114,7 @@ material3                   = { group = "androidx.compose.material3", name = "ma
 material-icons-extended     = { group = "androidx.compose.material", name = "material-icons-extended", version = "1.7.8" }
 
 # Payment
-rustore-sdk-bom = { group = "ru.rustore.sdk", name = "bom", version = "2025.08.01" }
+rustore-sdk-bom = { group = "ru.rustore.sdk", name = "bom", version = "2026.08.01" }
 rustore-sdk-pay = { module = "ru.rustore.sdk:pay" } # version supplied by rustore-sdk-bom platform
 
 # Test

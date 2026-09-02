@@ -34,11 +34,14 @@ allprojects {
         password = findProperty("gpr.token") as String? ?: System.getenv("GITHUB_TOKEN")
       }
     }
-    // rustore sdk — restricted to ru.rustore.sdk so the external Artifactory is
+
+    // RuStore SDK — restricted to ru.rustore.sdk so the external repository is
     // never queried for any other dependency (perf + isolation). Only the
     // `rustore` flavor pulls these artifacts (see :app-compose flavor-scoped deps).
     maven {
-      url = uri("https://artifactory-external.vkpartner.ru/artifactory/maven")
+      // New RuStore SDK releases are published here. The former
+      // artifactory-external.vkpartner.ru endpoint does not contain the 2026 BOMs.
+      url = uri("https://nexus-external.vkteam.ru/repository/maven-rustore-exposed/")
       content { includeGroup("ru.rustore.sdk") }
     }
   }

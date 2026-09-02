@@ -1,5 +1,17 @@
 # PWS Android
 
+# [3.7.0-rc.2](https://github.com/alelk/pws-android/compare/v3.7.0-rc.1...v3.7.0-rc.2) (2026-09-02)
+
+
+### Bug Fixes
+
+* fix rustore payment sdk issue ([e7b0203](https://github.com/alelk/pws-android/commit/e7b02039e36b0e7fadadd2ed2c7790cc3e6e5649))
+
+
+### Features
+
+* prepare uk build variant ([80b9bee](https://github.com/alelk/pws-android/commit/80b9beeef7281d649476c0bede4ddd7e40ca9161))
+
 # [3.7.0-rc.1](https://github.com/alelk/pws-android/compare/v3.6.0...v3.7.0-rc.1) (2026-08-28)
 
 

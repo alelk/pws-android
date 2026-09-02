@@ -174,7 +174,7 @@ class PaymentManager @Inject constructor(
       _uiState.update { it.copy(error = PaymentError.AuthorizationRequired) }
     } else {
       try {
-        val purchases = purchaseInteractor.getPurchases().coAwait()
+        val purchases = purchaseInteractor.getPurchases(null, null, null).coAwait()
         _uiState.update { s -> s.copy(purchases = purchases) }
         syncDataStoreWithPurchases(purchases)
       } catch (exc: Throwable) {

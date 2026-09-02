@@ -50,7 +50,7 @@ class RuStorePaymentProvider(
     }
 
   override suspend fun purchases(): List<ActivePurchase> =
-    purchaseInteractor.getPurchases().coAwait().mapNotNull { purchase ->
+    purchaseInteractor.getPurchases(null, null, null).coAwait().mapNotNull { purchase ->
       when (purchase) {
         is SubscriptionPurchase -> ActivePurchase(
           productId = purchase.productId.value,
