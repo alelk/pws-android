@@ -134,6 +134,9 @@ dependencies {
   implementation(libs.pws.portableData)
   implementation(libs.sqlcipher)
   implementation(libs.security.crypto)
+  // Cursor.getStringOrNull/getIntOrNull in PwsDb1x/2xDataProvider — was previously reaching the
+  // classpath transitively through android.material, which this module otherwise never used.
+  implementation(libs.androidx.core.ktx)
   implementation(libs.kotlinx.datetime)
   implementation(libs.kotlinx.coroutines.core)
   implementation(libs.kotlinx.coroutines.android)
