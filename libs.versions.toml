@@ -1,7 +1,7 @@
 [versions]
 
 # Project
-pws = "3.3.0"
+pws = "3.3.1"
 
 # Toolchain
 android-application = "9.2.1"
