@@ -134,7 +134,6 @@ dependencies {
   implementation(libs.pws.portableData)
   implementation(libs.sqlcipher)
   implementation(libs.security.crypto)
-  implementation(libs.android.material)
   implementation(libs.kotlinx.datetime)
   implementation(libs.kotlinx.coroutines.core)
   implementation(libs.kotlinx.coroutines.android)
