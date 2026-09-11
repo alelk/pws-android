@@ -205,6 +205,14 @@ Apply on the shell root composable so Maestro can address Compose nodes by `test
 - ❌ **Don't embed the prod DB decryption key** in source. It comes from the `DB_DECRYPT_KEY_PROD`
   GitHub Actions secret. Debug builds use the public debug key.
 
+### Build / R8
+
+- ❌ **Никогда не добавляй `-keep class <пакет>.** { *; }`** в
+  `app-compose/proguard-rules.pro`. Такое правило отключает и shrinking, и обфускацию для целого
+  дерева пакетов — именно так DEX однажды дорос до 36.8 МБ, а Google Play поставил
+  «App optimization: Low». Любое keep-правило — точечное и с комментарием «зачем».
+  См. `docs/ai/plans/2026-09-10_app-optimization-r8_plan.md`.
+
 ### Compose specifics for this host
 
 - ✅ **`enableEdgeToEdge()`** stays in `MainActivity`.
