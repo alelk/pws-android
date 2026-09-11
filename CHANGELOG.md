@@ -1,5 +1,19 @@
 # PWS Android
 
+## [3.7.1](https://github.com/alelk/pws-android/compare/v3.7.0...v3.7.1) (2026-09-11)
+
+
+### Bug Fixes
+
+* **db-android:** restore androidx.core-ktx after removing android.material ([6049698](https://github.com/alelk/pws-android/commit/60496983a9d063179044a79495c17fc2fc728e2b))
+* update app version ([39c87cf](https://github.com/alelk/pws-android/commit/39c87cf29f34eb41e11aab7bf234964759026d3f))
+
+
+### Performance Improvements
+
+* **build:** drop dead android.material and androidx.appcompat dependencies ([3693b88](https://github.com/alelk/pws-android/commit/3693b88064ac4e8f27dbe4ade7eda189f50eb0b3))
+* **build:** remove blanket R8 keep rules, scope RuStore rules to its flavor ([09dc030](https://github.com/alelk/pws-android/commit/09dc0304cd84f1056b603eaed533f9df21a75172))
+
 ## [3.7.1-rc.1](https://github.com/alelk/pws-android/compare/v3.7.0...v3.7.1-rc.1) (2026-09-11)
 
 
