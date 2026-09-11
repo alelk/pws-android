@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <!-- Splash/launch theme: AppCompat NoActionBar, Compose draws everything -->
-  <style name="Theme.PwsCompose" parent="Theme.AppCompat.DayNight.NoActionBar">
+  <!--
+    Splash/launch theme. MainActivity extends ComponentActivity (not AppCompatActivity), so this
+    no longer needs an AppCompat parent — dropping it removes androidx.appcompat + androidx.fragment
+    (~350 classes) from the DEX. Compose draws everything after onCreate.
+  -->
+  <style name="Theme.PwsCompose" parent="android:Theme.Material.Light.NoActionBar">
+    <item name="android:windowBackground">@color/splash_background</item>
     <item name="android:statusBarColor">@android:color/transparent</item>
     <item name="android:windowTranslucentStatus">false</item>
     <item name="android:windowTranslucentNavigation">false</item>

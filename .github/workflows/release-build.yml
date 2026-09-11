@@ -143,6 +143,17 @@ jobs:
           echo "Artifacts ready:"
           ls -lh output/release/
 
+      # Regression gate for docs/ai/plans/2026-09-10_app-optimization-r8_plan.md (T-G02): fails the
+      # build if uncompressed DEX size creeps back up — that's what tanked Google Play's
+      # "App optimization" score (18%) before Phase B removed the blanket -keep rules.
+      # ⚠️ 15 MB is a placeholder from the plan. Recalibrate to (actual Phase B size + 25%) once
+      # tools/dex-report.py has been run against a real release build — see plan §T-G02.
+      - name: DEX size gate
+        if: ${{ inputs.flavor_ru }}
+        run: |
+          python3 tools/dex-report.py "output/release/pws-app-${{ inputs.tag }}-ru.apk" \
+            --top 15 --max-dex-mb 15
+
       # R8 mappings — needed to deobfuscate release crash reports. Kept as a workflow artifact
       # (not attached to the public release) and uploaded to AppMetrica manually; see docs/monitoring.md.
       - name: Upload R8 mappings

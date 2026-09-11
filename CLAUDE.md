@@ -46,12 +46,17 @@ In [`docs/ai/plans/`](docs/ai/plans/):
   ** в коде.
 - `2026-07-08_universal-apk-onboarding_plan.md` — **ACTIVE** — удаление встроенных DB-ассетов из
   APK, универсальный APK, онбординг первого запуска с locale-aware установкой сборника. Phases A–F.
+  Задачи T-001..T-011 и T-013 реализованы.
 - `2026-08-07_crash-reporting-and-analytics_plan.md` — **РЕАЛИЗОВАН (код)** — телеметрия на
   AppMetrica: `Telemetry` в `pws-core:domain`, non-fatal/breadcrumbs, продуктовые события, тумблер
   согласия, privacy policy. Осталась ручная настройка консолей. Итог →
   [`docs/monitoring.md`](docs/monitoring.md).
+- `2026-09-10_app-optimization-r8_plan.md` — **ACTIVE** — Google Play «App optimization: Low»
+  (18% obfuscation / 19% shrinking / 36.8 MB DEX). Причина — широкие `-keep class X.** { *; }`
+  в `app-compose/proguard-rules.pro`. Phases A–G, готовый текст новых правил внутри.
+  Замер: `python3 tools/dex-report.py <apk>`.
 
-When the user references "current plan" without a name, use the **universal-apk-onboarding** plan (most recent). All tasks T-001..T-011 and T-013 реализованы.
+When the user references "current plan" without a name, use the **app-optimization-r8** plan (most recent).
 
 ### Don't waste tokens on
 

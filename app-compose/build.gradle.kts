@@ -262,6 +262,9 @@ android {
       applicationId = "io.github.alelk.pws.app"
       versionNameSuffix = "-rustore"
       resValue("string", "db_authority", "io.github.alelk.pws.database")
+      // Платёжный SDK RuStore живёт только в этом флейворе — и его keep-правила тоже.
+      // Флейворы ru/uk/full не должны платить размером за чужие правила.
+      proguardFiles("proguard-rules-rustore.pro")
     }
   }
 
@@ -297,6 +300,13 @@ android {
     compose = true
     resValues = true
     buildConfig = true
+  }
+
+  androidResources {
+    // Библиотечные строки (AndroidX и пр.) переводятся на ~70 языков — в APK нужны только наши.
+    // Список синхронизирован с pws-core/features/src/commonMain/composeResources/
+    // (values = en, values-pl, values-ru, values-uk).
+    localeFilters += listOf("en", "pl", "ru", "uk")
   }
 
   compileOptions {
@@ -400,7 +410,6 @@ dependencies {
   implementation(libs.appmetrica.analytics)
 
   // Android
-  implementation(libs.appcompat)
   implementation(libs.activity.compose)
   implementation(libs.kotlinx.coroutines.android)
   implementation(libs.kotlinx.datetime)
