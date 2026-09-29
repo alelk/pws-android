@@ -1,5 +1,12 @@
 # PWS Android
 
+# [3.8.0-rc.1](https://github.com/alelk/pws-android/compare/v3.7.1...v3.8.0-rc.1) (2026-09-29)
+
+
+### Features
+
+* support rustore flavor ([d547029](https://github.com/alelk/pws-android/commit/d547029eac9528471bf6ab241b2578566f37eab4))
+
 ## [3.7.1](https://github.com/alelk/pws-android/compare/v3.7.0...v3.7.1) (2026-09-11)
 
 
