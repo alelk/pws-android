@@ -1,0 +1,45 @@
+appId: ${APP_ID}
+name: "rustore 02 - With Pro (legacy fork file) premium actions work and no sheet appears"
+---
+# Precondition (run-compose.sh --flavor rustore does it with --rustore-entitlement lifetime):
+#   e2e/scripts/rustore-entitlement.sh lifetime
+# puts the fork's pws-app-preferences file with purchase_full_access=true into the app's data.
+# Needs a debuggable rustore build (rustoreDebug). Do NOT clear state here — it would delete the file.
+
+- launchApp:
+    clearState: false
+- waitForAnimationToEnd:
+    timeout: 5000
+- runFlow:
+    when:
+      visible:
+        id: "${ACTION_SKIP_ONBOARDING}"
+    file: ../_helpers/dismiss-onboarding.yaml
+- extendedWaitUntil:
+    visible:
+      id: "${NAV_HOME}"
+    timeout: ${TIMEOUT_COLD_START}
+
+- runFlow: ../_helpers/open-song-1-via-search.yaml
+
+# FAVORITES works (toggle twice to leave the state as it was).
+- tapOn:
+    id: "${ACTION_TOGGLE_FAVORITE}"
+- assertNotVisible:
+    id: "${SHEET_PRO_COMING_SOON}"
+- tapOn:
+    id: "${ACTION_TOGGLE_FAVORITE}"
+
+# SONG_EDIT opens the editor.
+- tapOn:
+    id: "${ACTION_MORE}"
+- tapOn:
+    id: "${ACTION_EDIT_SONG}"
+- extendedWaitUntil:
+    visible:
+      id: "${FIELD_SONG_EDIT_TITLE}"
+    timeout: ${TIMEOUT_MEDIUM}
+- assertNotVisible:
+    id: "${SHEET_PRO_COMING_SOON}"
+- back
+- takeScreenshot: "${SCREENSHOTS_DIR}/rustore-02-pro-edit"

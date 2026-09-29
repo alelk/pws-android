@@ -22,9 +22,12 @@ import io.github.alelk.pws.domain.telemetry.TelemetryAttr
 import io.github.alelk.pws.features.app.PwsAppInfo
 import io.github.alelk.pws.android.compose.flavor.MONETIZATION
 import io.github.alelk.pws.android.compose.flavor.flavorKoinModules
+import io.github.alelk.pws.android.compose.flavor.flavorStartupTasks
+import io.github.alelk.pws.features.monetization.MonetizationMode
 import io.github.alelk.pws.features.di.appScreenModule
 import io.github.alelk.pws.features.di.featuresModule
 import io.github.alelk.pws.features.di.useCasesModule
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -111,6 +114,19 @@ class PwsComposeApplication : Application() {
       single(named("deviceLanguage")) { java.util.Locale.getDefault().language }
     }
 
+    // Opens once the legacy-database migration has finished; seeding, onboarding and the pending
+    // backup restore wait for it (see LegacyMigrationGate).
+    val legacyMigrationDone = CompletableDeferred<Unit>()
+    val startupModule = module {
+      single { LegacyMigrationGate(legacyMigrationDone) }
+    }
+
+    // The build's monetization mode for pws-core (UpsellHost, Settings). Loaded after
+    // featuresModule so it overrides its `None` default.
+    val monetizationModule = module {
+      single<MonetizationMode> { MONETIZATION }
+    }
+
     val donationModule = module {
       // Donation prompt is on only for donation-mode builds; premium-selling builds suppress it.
       single { DonationConfig(enabled = MONETIZATION.donationsEnabled, boostyUrl = "https://boosty.to/hymna") }
@@ -140,6 +156,8 @@ class PwsComposeApplication : Application() {
         ),
         useCasesModule,
         featuresModule,
+        startupModule,
+        monetizationModule,
         // After featuresModule (overrides its NoOpTelemetry default), before the flavor modules so
         // a flavor could still substitute its own provider.
         telemetryModule,
@@ -148,8 +166,17 @@ class PwsComposeApplication : Application() {
       )
     }
 
+    // Legacy data first, strictly before anything installs books (C2 in the 2026-09-29 plan). The
+    // gate opens in `finally` — a failed migration must never keep the app on the loading screen.
     applicationScope.launch {
-      PwsDatabaseProvider.runLegacyMigration(this@PwsComposeApplication, get())
+      try {
+        runCatching { flavorStartupTasks(GlobalContext.get()) }
+          .onFailure { telemetry.recordError(it, "flavor_startup_failed") }
+        val outcomes = PwsDatabaseProvider.runLegacyMigration(this@PwsComposeApplication, get())
+        telemetry.reportLegacyMigration(outcomes)
+      } finally {
+        legacyMigrationDone.complete(Unit)
+      }
     }
   }
 }

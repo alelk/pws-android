@@ -30,7 +30,6 @@ import io.github.alelk.pws.domain.telemetry.Telemetry
 import io.github.alelk.pws.domain.telemetry.TelemetryAttr
 import io.github.alelk.pws.domain.telemetry.TelemetryEvent
 import io.github.alelk.pws.domain.telemetry.TelemetryResult
-import io.github.alelk.pws.features.premium.PremiumGate
 import io.github.alelk.pws.features.telemetry.TelemetrySettings
 import kotlinx.coroutines.flow.map
 import org.koin.android.ext.android.get
@@ -46,6 +45,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.lifecycle.lifecycleScope
 import io.github.alelk.pws.portable.BackupService
 import io.github.alelk.pws.database.PwsDatabase
+import io.github.alelk.pws.database.PwsDatabaseProvider
 import io.github.alelk.pws.features.app.AppRoot
 import io.github.alelk.pws.features.settings.SettingsExternalActions
 import io.github.alelk.pws.features.song.detail.FavoritesDisplaySettings
@@ -70,14 +70,8 @@ class MainActivity : ComponentActivity() {
     enableEdgeToEdge()
     super.onCreate(savedInstanceState)
 
-    // Show the paywall when a premium gate is blocked. In the free builds the entitlement is
-    // always active, so DefaultPremiumGate never emits and flavorShowPaywall is a no-op anyway.
-    lifecycleScope.launch {
-      get<PremiumGate>().paywallRequests.collect {
-        get<Telemetry>().event(TelemetryEvent.PAYWALL_SHOWN)
-        flavorShowPaywall(this@MainActivity)
-      }
-    }
+    // Blocked premium gates are handled by UpsellHost in AppRoot (paywall or "Pro — coming soon");
+    // the shell only supplies the paywall action below, when purchases are enabled.
 
     setContent {
       val context = LocalContext.current
@@ -124,9 +118,12 @@ class MainActivity : ComponentActivity() {
       //   null  = still checking/seeding — show the loading surface, never flash onboarding
       //   true  = built-in (ASSET) content present → skip onboarding, open the app directly
       //   false = clean build → fall through to the normal empty-DB onboarding flow
+      // Seeding waits for the legacy-database migration: a seeded book would make the new database
+      // non-empty and cost the user their data in every other book (2026-09-29 plan, C2).
+      val migrationGate = remember { get<LegacyMigrationGate>() }
       var preloadedReady by remember { mutableStateOf<Boolean?>(null) }
       LaunchedEffect(Unit) {
-        preloadedReady = get<SeedBooksFromAssetsUseCase>().invoke()
+        preloadedReady = migrationGate.afterMigration { get<SeedBooksFromAssetsUseCase>().invoke() }
       }
 
       // True once we know the user has no books AND there is no preloaded content — keeps us in
@@ -142,11 +139,18 @@ class MainActivity : ComponentActivity() {
         telemetry.setUserProperty(TelemetryAttr.INSTALLED_BOOKS, installedBookCount.toString())
       }
 
-      // Re-apply pending backup restore on every new book install — the backup file is kept
-      // until all referenced books are installed, so each new install may unlock more records.
+      // Re-apply pending user data on every new book install — a partially migrated legacy
+      // database and a pending backup restore are both kept until their books are installed, so
+      // each new install may unlock more records. Both only after the startup migration finished.
       LaunchedEffect(installedBookCount) {
         if (installedBookCount > 0) {
+          migrationGate.await()
           withContext(Dispatchers.IO) {
+            if (PwsDatabaseProvider.hasPendingLegacyMigration(context)) {
+              runCatching { PwsDatabaseProvider.runLegacyMigration(context, get<PwsDatabase>(), countAttempt = false) }
+                .onSuccess { telemetry.reportLegacyMigration(it) }
+                .onFailure { telemetry.recordError(it, "legacy_migration_retry_failed") }
+            }
             PwsBackupAgent
               .applyPendingRestoreIfNeeded(context, get<PwsDatabase>(), get<DataStore<Preferences>>())
           }
@@ -265,9 +269,10 @@ class MainActivity : ComponentActivity() {
           importBackup = {
             importLauncher.launch(arrayOf("application/octet-stream", "*/*"))
           },
-          // Only a premium-selling build exposes a paywall entry; other builds leave this null → entry hidden.
-          openPaywall = if (MONETIZATION.premiumSalesEnabled) {
-            { flavorShowPaywall(this@MainActivity) }
+          // Only a build that can sell premium right now gets a paywall; otherwise a blocked gate
+          // shows "Pro — coming soon" (rustore) or never fires (free builds).
+          openPaywall = if (MONETIZATION.purchasesEnabled) {
+            { feature -> flavorShowPaywall(this@MainActivity, feature) }
           } else {
             null
           },

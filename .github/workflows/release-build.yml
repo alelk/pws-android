@@ -22,6 +22,11 @@ on:
         required: false
         type: boolean
         default: false
+      rustore_purchases_enabled:
+        description: 'rustore: enable RuStore purchases (PremiumSales). Off = "Pro — coming soon", Pay SDK never called'
+        required: false
+        type: boolean
+        default: false
       release_title:
         description: 'Release title (optional, defaults to tag name)'
         required: false
@@ -115,7 +120,8 @@ jobs:
             -Pandroid.release.keystorePathRustore=/tmp/rustore.jks \
             -Pandroid.release.storePasswordRustore="${{ secrets.RELEASE_STORE_PASSWORD_RUSTORE }}" \
             -Pandroid.release.keyAliasRuRustore="pws" \
-            -Pandroid.release.keyPasswordRustore="${{ secrets.RELEASE_KEY_PASSWORD_RUSTORE }}"
+            -Pandroid.release.keyPasswordRustore="${{ secrets.RELEASE_KEY_PASSWORD_RUSTORE }}" \
+            -Ppws.rustore.purchasesEnabled=${{ inputs.rustore_purchases_enabled }}
 
       # ── Collect & rename artifacts ────────────────────────────────────────
       - name: Collect artifacts
@@ -142,6 +148,30 @@ jobs:
           fi
           echo "Artifacts ready:"
           ls -lh output/release/
+
+      # The rustore build must be signed with the key the RuStore fork was published with, or the update
+      # installs for nobody (plan 2026-09-29, invariant I1 / T-F03). Checks both the APK and the AAB.
+      - name: Verify rustore signing certificate
+        if: ${{ inputs.flavor_rustore }}
+        env:
+          EXPECTED_SHA256: "A2:E3:5B:7E:BA:1C:34:97:29:90:0D:4E:4A:70:DC:6F:97:4B:90:C6:E7:79:D3:95:0E:E0:73:27:6A:46:0A:A5"
+        run: |
+          set -euo pipefail
+          TAG="${{ inputs.tag }}"
+          APK="output/release/pws-app-${TAG}-rustore.apk"
+          AAB="output/release/pws-app-${TAG}-rustore.aab"
+          norm() { tr -d ': ' | tr '[:lower:]' '[:upper:]'; }
+          EXPECTED=$(echo "$EXPECTED_SHA256" | norm)
+          APKSIGNER=$(ls -1 "$ANDROID_HOME"/build-tools/*/apksigner | sort -V | tail -1)
+          APK_SHA=$("$APKSIGNER" verify --print-certs "$APK" | grep -m1 'certificate SHA-256 digest' | sed 's/.*digest: //' | norm)
+          AAB_SHA=$(keytool -printcert -jarfile "$AAB" | grep -m1 'SHA256:' | sed 's/.*SHA256: //' | norm)
+          echo "expected: $EXPECTED"
+          echo "apk:      $APK_SHA"
+          echo "aab:      $AAB_SHA"
+          if [[ "$APK_SHA" != "$EXPECTED" || "$AAB_SHA" != "$EXPECTED" ]]; then
+            echo "::error::rustore artifact is not signed with the RuStore release key (I1). Do NOT upload it."
+            exit 1
+          fi
 
       # Regression gate for docs/ai/plans/2026-09-10_app-optimization-r8_plan.md (T-G02): fails the
       # build if uncompressed DEX size creeps back up — that's what tanked Google Play's

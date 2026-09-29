@@ -1,0 +1,31 @@
+appId: ${APP_ID}
+name: "rustore 03 - Settings shows the Pro status and 'Learn more' opens the coming-soon sheet"
+---
+# The status text is localized; the expected string is passed per run, e.g.
+#   --env EXPECTED_PRO_STATUS="Pro активна навсегда"   (after rustore-entitlement.sh lifetime, ru UI)
+#   --env EXPECTED_PRO_STATUS="Pro-версия появится позже" (no entitlement, ru UI)
+
+- launchApp:
+    clearState: false
+- extendedWaitUntil:
+    visible:
+      id: "${NAV_LIBRARY}"
+    timeout: ${TIMEOUT_COLD_START}
+- tapOn:
+    id: "${NAV_LIBRARY}"
+- tapOn:
+    id: "${ACTION_OPEN_SETTINGS}"
+
+- scrollUntilVisible:
+    element:
+      id: "${TEXT_PRO_STATUS}"
+    direction: DOWN
+    timeout: ${TIMEOUT_MEDIUM}
+- assertVisible:
+    id: "${TEXT_PRO_STATUS}"
+    text: "${EXPECTED_PRO_STATUS}"
+- takeScreenshot: "${SCREENSHOTS_DIR}/rustore-03-pro-status"
+
+- tapOn:
+    id: "${ACTION_PRO_DETAILS}"
+- runFlow: _close-coming-soon.yaml

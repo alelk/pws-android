@@ -33,6 +33,11 @@ data class ActivePurchase(
   val title: String,
   /** Non-null only for subscriptions. */
   val expiration: Date?,
+  /**
+   * True only when the store confirms the purchase is paid (a product) or the subscription is
+   * currently active. Only such purchases may grant or extend premium (see [PurchaseSyncService]).
+   */
+  val isPaid: Boolean,
 )
 
 enum class AuthStatus { AUTHORIZED, UNAUTHORIZED }

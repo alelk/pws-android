@@ -1,0 +1,6 @@
+appId: ${APP_ID}
+name: "RuStore coming-soon suite (no entitlement)"
+---
+# Free user on a clean install. For the Pro scenarios run 02/03 after
+# e2e/scripts/rustore-entitlement.sh lifetime (see e2e/README.md → RuStore).
+- runFlow: 01-free-user-sees-coming-soon.yaml

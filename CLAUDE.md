@@ -56,6 +56,11 @@ In [`docs/ai/plans/`](docs/ai/plans/):
   в `app-compose/proguard-rules.pro`. Phases A–G, готовый текст новых правил внутри.
   Замер: `python3 tools/dex-report.py <apk>`.
 
+- `2026-09-29_rustore-release-compat-pro-coming-soon_plan.md` — **КОД РЕАЛИЗОВАН** — релиз rustore-флейвора
+  поверх форка 2.3.1: сохранность Pro-статуса (`pws-app-preferences`), миграция `pws.2.3.0.db` + порядок
+  старта (`LegacyMigrationGate`), режим `PremiumComingSoon` («Pro — скоро», флаг `pws.rustore.purchasesEnabled`).
+  Остались ручные шаги: апгрейд-матрица на устройстве (`tools/rustore-upgrade-test.md`), публикация. §10.
+
 When the user references "current plan" without a name, use the **app-optimization-r8** plan (most recent).
 
 ### Don't waste tokens on

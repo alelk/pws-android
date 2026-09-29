@@ -50,7 +50,8 @@ cd /Users/alexelkin/Projects/software-development/pws-android
 
 - `No adb device/emulator is ready` - start emulator and wait until it is fully booted.
 - `Required command is missing: maestro` - install Maestro CLI and ensure it is in `PATH`.
-- Search smoke fails with empty results - adjust `SEARCH_QUERY` in `e2e/config/local-apk.env` to a guaranteed dataset query.
+- Search smoke fails with empty results - adjust `SEARCH_QUERY` in `e2e/config/local-apk.env` to a
+  guaranteed dataset query.
 
 ---
 
@@ -87,40 +88,40 @@ Search query `"1"` is used because it is numeric and guaranteed to return result
 
 ### Flow catalogue
 
-| File                           | Type         | What it tests                                                          |
-|--------------------------------|--------------|------------------------------------------------------------------------|
-| `01-app-launch.yaml`           | smoke        | launch, all nav tabs visible                                           |
-| `02-search-basic.yaml`         | smoke        | search "1" → results → open song                                       |
-| `03-song-detail-actions.yaml`  | smoke        | open song, verify actions sheet                                        |
-| `04-favorites-add-verify.yaml` | mutation     | add favorite → verify in Favorites tab                                 |
-| `05-history-after-open.yaml`   | diagnostic   | history recorded after opening song (run separately while stabilizing) |
-| `06-tags-create-assign.yaml`   | mutation     | create tag → assign to song                                            |
-| `07-song-edit-title.yaml`      | mutation     | edit song title → verify                                               |
-| `08-navigation-tabs.yaml`      | smoke        | all 6 nav tabs open without error                                      |
-| `09-books-to-song.yaml`        | smoke        | Books → book song list → open song                                     |
-| `10-settings-open.yaml`        | smoke        | settings icon → open → back                                            |
-| `11-home-number-search.yaml`   | smoke        | home number-search modal → suggestion → song                           |
-| `12-favorites-remove.yaml`     | mutation     | add favorite → remove → verify gone                                    |
-| `13-tag-to-songs.yaml`         | mutation     | create tag → assign → tap tag → tag-songs screen                       |
-| `14-history-clear-all.yaml`    | mutation     | populate history → clear all → verify empty                            |
-| `15-search-empty-results.yaml` | smoke        | query with no matches → empty state                                    |
-| `16-home-recently-viewed.yaml` | smoke        | open song → home "recently viewed" → tap card                          |
-| `18-home-search-suggestions.yaml` | smoke     | home inline search → suggestion → song                                 |
-| `suite.yaml`                   | smoke bundle | flows 01 02 03 08 09 (read-only)                                       |
-| `suite-full.yaml`              | full bundle  | all smoke + mutation flows                                             |
+| File                              | Type         | What it tests                                                          |
+|-----------------------------------|--------------|------------------------------------------------------------------------|
+| `01-app-launch.yaml`              | smoke        | launch, all nav tabs visible                                           |
+| `02-search-basic.yaml`            | smoke        | search "1" → results → open song                                       |
+| `03-song-detail-actions.yaml`     | smoke        | open song, verify actions sheet                                        |
+| `04-favorites-add-verify.yaml`    | mutation     | add favorite → verify in Favorites tab                                 |
+| `05-history-after-open.yaml`      | diagnostic   | history recorded after opening song (run separately while stabilizing) |
+| `06-tags-create-assign.yaml`      | mutation     | create tag → assign to song                                            |
+| `07-song-edit-title.yaml`         | mutation     | edit song title → verify                                               |
+| `08-navigation-tabs.yaml`         | smoke        | all 6 nav tabs open without error                                      |
+| `09-books-to-song.yaml`           | smoke        | Books → book song list → open song                                     |
+| `10-settings-open.yaml`           | smoke        | settings icon → open → back                                            |
+| `11-home-number-search.yaml`      | smoke        | home number-search modal → suggestion → song                           |
+| `12-favorites-remove.yaml`        | mutation     | add favorite → remove → verify gone                                    |
+| `13-tag-to-songs.yaml`            | mutation     | create tag → assign → tap tag → tag-songs screen                       |
+| `14-history-clear-all.yaml`       | mutation     | populate history → clear all → verify empty                            |
+| `15-search-empty-results.yaml`    | smoke        | query with no matches → empty state                                    |
+| `16-home-recently-viewed.yaml`    | smoke        | open song → home "recently viewed" → tap card                          |
+| `18-home-search-suggestions.yaml` | smoke        | home inline search → suggestion → song                                 |
+| `suite.yaml`                      | smoke bundle | flows 01 02 03 08 09 (read-only)                                       |
+| `suite-full.yaml`                 | full bundle  | all smoke + mutation flows                                             |
 
 ### Shared subflows (`_helpers/`)
 
 Common sequences are factored out as Maestro `runFlow` subflows so that 11 main
 flows no longer duplicate the same 7-step search/open-song boilerplate.
 
-| Helper                              | What it does                                                                |
-|-------------------------------------|-----------------------------------------------------------------------------|
-| `cold-start.yaml`                   | `launchApp clearState:true` + wait Home (use as first step of mutation flow) |
-| `open-song-1-via-search.yaml`       | Search tab → numeric query → tap song-row-1 → wait detail                   |
-| `populate-history.yaml`             | open song + dwell past 5s HistoryRecorder threshold + back to root          |
-| `create-tag.yaml`                   | Tags tab → add → type TEST_TAG_NAME → save → scroll to it                   |
-| `assign-tag-to-song-1.yaml`         | open song → more → edit-tags → pick TEST_TAG_NAME → save                    |
+| Helper                        | What it does                                                                 |
+|-------------------------------|------------------------------------------------------------------------------|
+| `cold-start.yaml`             | `launchApp clearState:true` + wait Home (use as first step of mutation flow) |
+| `open-song-1-via-search.yaml` | Search tab → numeric query → tap song-row-1 → wait detail                    |
+| `populate-history.yaml`       | open song + dwell past 5s HistoryRecorder threshold + back to root           |
+| `create-tag.yaml`             | Tags tab → add → type TEST_TAG_NAME → save → scroll to it                    |
+| `assign-tag-to-song-1.yaml`   | open song → more → edit-tags → pick TEST_TAG_NAME → save                     |
 
 Edit a selector or timeout once in `_helpers/` instead of 11 times across flows.
 
@@ -150,6 +151,31 @@ The APK path and `applicationId` are resolved automatically for the chosen flavo
 ./e2e/scripts/run-compose.sh --flavor uk
 ./e2e/scripts/run-compose.sh --flavor rustore --full --clean
 ```
+
+### RuStore: "Pro — coming soon" flows (`flows/compose/rustore/`)
+
+Plan 2026-09-29, T-E03. Build: `rustore` with purchases disabled (default). Flows 02/03 need a
+debuggable build (`rustoreDebug`) because the Pro state is injected with `run-as`.
+
+| Flow                                         | Precondition                                  | What it checks                                                                                  |
+|----------------------------------------------|-----------------------------------------------|-------------------------------------------------------------------------------------------------|
+| `rustore/01-free-user-sees-coming-soon.yaml` | clean state (no entitlement)                  | favorites / edit / tags / share / theme each show `sheet:pro-coming-soon`; nothing is performed |
+| `rustore/02-pro-user-actions-work.yaml`      | `e2e/scripts/rustore-entitlement.sh lifetime` | actions work, no sheet                                                                          |
+| `rustore/03-settings-pro-status.yaml`        | any; pass `EXPECTED_PRO_STATUS`               | status line in Settings, "Learn more" opens the sheet                                           |
+
+```bash
+./e2e/scripts/run-compose.sh --flavor rustore --clean --flow flows/compose/rustore/01-free-user-sees-coming-soon.yaml
+e2e/scripts/rustore-entitlement.sh lifetime
+./e2e/scripts/run-compose.sh --flavor rustore --flow flows/compose/rustore/02-pro-user-actions-work.yaml
+# 03 with the expected (localized) status line, directly via maestro:
+maestro test e2e/flows/compose/rustore/03-settings-pro-status.yaml --env-file e2e/config/compose.env \
+  --env APP_ID=io.github.alelk.pws.app --env EXPECTED_PRO_STATUS="Pro активна навсегда"
+```
+
+`rustore-entitlement.sh <kind>` writes the fork's `pws-app-preferences` file (kinds: `none`,
+`lifetime`, `sub_future`, `sub_past`, `sub_and_full`, `bad_date`, `corrupted`; dates relative to
+today) and `rustore-entitlement.sh show` prints its SHA-256. Full upgrade procedure:
+[`tools/rustore-upgrade-test.md`](../tools/rustore-upgrade-test.md).
 
 ### Run full suite (includes mutation tests)
 
@@ -190,7 +216,8 @@ The simplest way — pass the flow number(s) as positional arguments:
 ### Outputs
 
 - **JUnit reports** (one per flow): `e2e/reports/<timestamp>-compose-<flavor>/junit-<flow>.xml`
-- **Maestro debug output** (screenshots, hierarchy dumps): `e2e/artifacts/<timestamp>-compose-<flavor>/<flow>/`
+- **Maestro debug output** (screenshots, hierarchy dumps):
+  `e2e/artifacts/<timestamp>-compose-<flavor>/<flow>/`
 
 ### Troubleshooting
 

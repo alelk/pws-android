@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Launcher icon: lyre on a background. The rustore flavor swaps the two (src/rustore/res). -->
     <color name="ic_launcher_background">#FFFFFF</color>
+    <color name="ic_launcher_foreground">#AB00AB</color>
     <color name="splash_background">#FFFFFF</color>
 </resources>

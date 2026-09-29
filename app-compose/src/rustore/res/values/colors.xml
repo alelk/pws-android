@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!--
+    RuStore launcher icon: the Google Play icon inverted (white lyre on purple), so that both apps
+    installed side by side — they have different applicationIds — are told apart at a glance.
+  -->
+  <color name="ic_launcher_background">#AB00AB</color>
+  <color name="ic_launcher_foreground">#FFFFFF</color>
+</resources>

@@ -13,9 +13,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 private val Context.dataStore by preferencesDataStore(name = "app-settings")
-private val appThemeKey = stringPreferencesKey("app-theme")
+internal val appThemeKey = stringPreferencesKey("app-theme")
 private val songTextScaleKey = floatPreferencesKey("song-text-scale")
-private val songTextExpandedKey = booleanPreferencesKey("song-text-expanded")
+internal val songTextExpandedKey = booleanPreferencesKey("song-text-expanded")
 private val favoritesSortModeKey = stringPreferencesKey("favorites-sort-mode")
 private val favoritesAscendingKey = booleanPreferencesKey("favorites-ascending")
 private val useDynamicColorKey = booleanPreferencesKey("use-dynamic-color")

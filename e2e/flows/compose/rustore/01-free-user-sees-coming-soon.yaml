@@ -1,0 +1,63 @@
+appId: ${APP_ID}
+name: "rustore 01 - Without Pro every premium action shows 'Pro - coming soon' and is not performed"
+---
+# Build: rustore with purchases disabled (default). Clean state = no legacy entitlement file.
+# Covers every gated entry point of the plan's Phase E table: favorites (song detail), edit song,
+# edit tags, share (song detail + song list context menu), theme.
+
+- runFlow: ../_helpers/cold-start.yaml
+- runFlow: ../_helpers/open-song-1-via-search.yaml
+
+# FAVORITES — the sheet appears and the song is NOT added.
+- tapOn:
+    id: "${ACTION_TOGGLE_FAVORITE}"
+- runFlow: _close-coming-soon.yaml
+- takeScreenshot: "${SCREENSHOTS_DIR}/rustore-01-favorites-blocked"
+
+# SONG_EDIT
+- tapOn:
+    id: "${ACTION_MORE}"
+- tapOn:
+    id: "${ACTION_EDIT_SONG}"
+- runFlow: _close-coming-soon.yaml
+- assertNotVisible:
+    id: "${FIELD_SONG_EDIT_TITLE}"
+
+# SONG_TAGS
+- tapOn:
+    id: "${ACTION_MORE}"
+- tapOn:
+    id: "${ACTION_EDIT_TAGS}"
+- runFlow: _close-coming-soon.yaml
+- assertNotVisible:
+    id: "${ACTION_SAVE_SONG_TAGS}"
+
+# SHARE (song detail) — no system share sheet opens.
+- tapOn:
+    id: "${ACTION_MORE}"
+- tapOn:
+    id: "${ACTION_SHARE_SONG}"
+- runFlow: _close-coming-soon.yaml
+
+- back
+- runFlow: ../_helpers/dismiss-keyboard.yaml
+
+# Nothing was added to favorites.
+- tapOn:
+    id: "${NAV_LIBRARY}"
+- tapOn:
+    id: "${LIBRARY_SECTION_FAVORITES}"
+- assertNotVisible:
+    id: "${SONG_ITEM_ONE}"
+
+# THEME
+- tapOn:
+    id: "${ACTION_OPEN_SETTINGS}"
+- extendedWaitUntil:
+    visible:
+      id: "${THEME_ROW_DARK}"
+    timeout: ${TIMEOUT_MEDIUM}
+- tapOn:
+    id: "${THEME_ROW_DARK}"
+- runFlow: _close-coming-soon.yaml
+- takeScreenshot: "${SCREENSHOTS_DIR}/rustore-01-theme-blocked"

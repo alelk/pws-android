@@ -63,6 +63,64 @@ if (appMetricaApiKey.isBlank()) {
   )
 }
 
+// ── RuStore purchases ─────────────────────────────────────────────────────────
+// Off by default: RuStore monetisation is not enabled on the account yet, so the rustore build ships
+// as MonetizationMode.PremiumComingSoon — paid users keep Pro, everyone else sees "Pro — coming soon",
+// and the RuStore Pay SDK is never called. Turning sales on = building with
+// -Ppws.rustore.purchasesEnabled=true (CI input `rustore_purchases_enabled`). See
+// docs/ai/plans/2026-09-29_rustore-release-compat-pro-coming-soon_plan.md.
+val rustorePurchasesEnabled: Boolean =
+  (project.findProperty("pws.rustore.purchasesEnabled") as String?)?.toBoolean() ?: false
+logger.lifecycle(
+  "RuStore purchases: ${if (rustorePurchasesEnabled) "ENABLED (PremiumSales)" else "disabled (PremiumComingSoon)"}" +
+    " — Gradle property pws.rustore.purchasesEnabled"
+)
+
+// Release invariants of the rustore build: it must install as an update over the published RuStore
+// fork (2.3.1, versionCode 38) — see plan 2026-09-29, §3 (I2–I5).
+object RustoreInvariants {
+  const val APPLICATION_ID = "io.github.alelk.pws.app"
+  const val DB_AUTHORITY = "io.github.alelk.pws.database"
+  const val LAST_FORK_VERSION_CODE = 38
+  const val MAX_MIN_SDK = 23
+}
+
+/**
+ * Fails the rustore release build when it could not be installed as an update of the RuStore fork
+ * (or would clash with its content provider). Wired into `preRustoreReleaseBuild`.
+ */
+abstract class VerifyRustoreInvariantsTask : DefaultTask() {
+  @get:Input
+  abstract val applicationId: Property<String>
+
+  @get:Input
+  abstract val versionCode: Property<Int>
+
+  @get:Input
+  abstract val minSdk: Property<Int>
+
+  @get:Input
+  abstract val dbAuthority: Property<String>
+
+  @TaskAction
+  fun verify() {
+    val problems = buildList {
+      if (applicationId.get() != RustoreInvariants.APPLICATION_ID)
+        add("applicationId = ${applicationId.get()}, must be ${RustoreInvariants.APPLICATION_ID}")
+      if (versionCode.get() <= RustoreInvariants.LAST_FORK_VERSION_CODE)
+        add("versionCode = ${versionCode.get()}, must be > ${RustoreInvariants.LAST_FORK_VERSION_CODE} (last RuStore fork release)")
+      if (minSdk.get() > RustoreInvariants.MAX_MIN_SDK)
+        add("minSdk = ${minSdk.get()}, must be <= ${RustoreInvariants.MAX_MIN_SDK} (fork users would lose updates)")
+      if (dbAuthority.get() != RustoreInvariants.DB_AUTHORITY)
+        add("db_authority = ${dbAuthority.get()}, must be ${RustoreInvariants.DB_AUTHORITY}")
+    }
+    check(problems.isEmpty()) {
+      "rustore release invariants violated (plan 2026-09-29 §3):\n - " + problems.joinToString("\n - ")
+    }
+    logger.lifecycle("rustore invariants OK: ${applicationId.get()} vc=${versionCode.get()} minSdk=${minSdk.get()}")
+  }
+}
+
 // Books preloaded straight into the APK for specific flavors. For each listed flavor the
 // `generateSeedBundles<Variant>` task downloads the named bundles from the catalog at build time and
 // bakes them into `assets/seed-books/`, so the app ships with that content already installed as a
@@ -237,6 +295,8 @@ android {
     versionName = "${rootProject.extra["versionName"]}-${rootProject.extra["versionNameSuffix"]}"
     resValue("string", "db_authority", "com.alelk.pws.database")
     buildConfigField("String", "APPMETRICA_API_KEY", "\"$appMetricaApiKey\"")
+    // Store purchases (paywall + payment SDK). Only the rustore flavor can turn this on.
+    buildConfigField("boolean", "PURCHASES_ENABLED", "false")
   }
 
   flavorDimensions.add("contentLevel")
@@ -259,9 +319,10 @@ android {
     }
     create("rustore") {
       dimension = "contentLevel"
-      applicationId = "io.github.alelk.pws.app"
+      applicationId = RustoreInvariants.APPLICATION_ID
       versionNameSuffix = "-rustore"
-      resValue("string", "db_authority", "io.github.alelk.pws.database")
+      resValue("string", "db_authority", RustoreInvariants.DB_AUTHORITY)
+      buildConfigField("boolean", "PURCHASES_ENABLED", "$rustorePurchasesEnabled")
       // Платёжный SDK RuStore живёт только в этом флейворе — и его keep-правила тоже.
       // Флейворы ru/uk/full не должны платить размером за чужие правила.
       proguardFiles("proguard-rules-rustore.pro")
@@ -338,8 +399,32 @@ kotlin {
   jvmToolchain(21)
 }
 
+// rustoreDebug is signed with the RuStore release key when it is configured (as the fork did), so a
+// debuggable build installs over the published fork 2.3.1 and `run-as io.github.alelk.pws.app` can
+// inspect its files (upgrade tests, tools/rustore-upgrade-test.md). Without the key: debug key.
+val rustoreSigningConfigured = listOf(
+  "android.release.keystorePathRustore", "android.release.keyAliasRuRustore",
+  "android.release.keyPasswordRustore", "android.release.storePasswordRustore",
+).all { !(project.findProperty(it) as String?).isNullOrBlank() }
+
 androidComponents {
   onVariants { variant ->
+    if (variant.name == "rustoreDebug" && rustoreSigningConfigured) {
+      variant.signingConfig.setConfig(android.signingConfigs.getByName("release-rustore"))
+    }
+
+    if (variant.name == "rustoreRelease") {
+      val guard = tasks.register<VerifyRustoreInvariantsTask>("verifyRustoreReleaseInvariants") {
+        applicationId.set(variant.applicationId)
+        versionCode.set(variant.outputs.single().versionCode.map { it })
+        minSdk.set(variant.minSdk.apiLevel)
+        dbAuthority.set(
+          variant.resValues.getting(variant.makeResValueKey("string", "db_authority")).map { it.value }
+        )
+      }
+      tasks.matching { it.name == "preRustoreReleaseBuild" }.configureEach { dependsOn(guard) }
+    }
+
     variant.resValues.put(
       variant.makeResValueKey("string", "versionName"),
       com.android.build.api.variant.ResValue(variant.name)

@@ -205,6 +205,18 @@ Apply on the shell root composable so Maestro can address Compose nodes by `test
 - ❌ **Don't embed the prod DB decryption key** in source. It comes from the `DB_DECRYPT_KEY_PROD`
   GitHub Actions secret. Debug builds use the public debug key.
 
+### RuStore (`rustore` flavor) — compatibility with the published fork
+
+- ❌ **Never rename, clear, delete or open a second DataStore on `pws-app-preferences`** (keys
+  `purchase_full_access`, `purchase_subscription_until`). It is the paid status of existing RuStore
+  users; `LegacyRuStoreEntitlementStore` is its only owner and writes are monotonic (grant/extend only).
+- ✅ **Anything that installs books or restores user data at startup awaits `LegacyMigrationGate`**
+  (legacy DB migration runs first). Keep `DATABASE_PREV_NAMES` complete — a missing legacy file name
+  silently loses users' favorites/history.
+- ✅ Purchases are a build flag: `-Ppws.rustore.purchasesEnabled=true` (default off →
+  `MonetizationMode.PremiumComingSoon`, the Pay SDK is not even in Koin).
+- See `docs/ai/plans/2026-09-29_rustore-release-compat-pro-coming-soon_plan.md` (§3 invariants).
+
 ### Build / R8
 
 - ❌ **Никогда не добавляй `-keep class <пакет>.** { *; }`** в

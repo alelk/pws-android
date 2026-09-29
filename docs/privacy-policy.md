@@ -116,7 +116,9 @@ device** (encrypted database) and leaves it only when you explicitly export a ba
   (`ru`/`uk`/`full`/`rustore`).
 - **Product events** — screen views, song opened, search performed (**query length and result count
   only, never the query text**), songbook installed/updated/removed, first-launch onboarding
-  completed, paywall shown, purchase outcome.
+  completed, paywall or "Pro — coming soon" message shown (which feature), purchase outcome, the kind
+  of Pro status found on the device (e.g. "lifetime", "none" — no dates or purchase ids), and counts
+  of records carried over from a previous app version's database (numbers only, never the records).
 - **Installation identifiers** — a pseudonymous device/installation id, and the IP address inherent
   to any network request.
 
