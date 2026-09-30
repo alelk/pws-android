@@ -201,7 +201,7 @@ pws-android :data:content-delivery      сеть/файлы/расшифровк
 | **00** | **[Гигиена и страховочная сетка](step-00-hygiene-and-safety-net.md)** | | | |
 | 00.1 | Удалить мёртвый код в pws-core | core | haiku | done |
 | 00.2 | Удалить legacy `:app` и его зависимости ∥ 00.1 | android | haiku | done |
-| 00.3 | Выровнять версии, перенести каталоги в `gradle/` | оба | sonnet | not started |
+| 00.3 | Выровнять версии, перенести каталоги в `gradle/` | оба | sonnet | done |
 | 00.4 | Характеризационные тесты ScreenModel'ей без покрытия | core | sonnet | not started |
 | 00.5 | Обновить копии скиллов и `AGENTS.md`/`CLAUDE.md` ∥ 00.4 | оба | haiku | not started |
 | **01** | **[Сборка: convention plugins, статанализ, один gate](step-01-build-system.md)** | | | |

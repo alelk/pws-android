@@ -16,14 +16,6 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
-dependencyResolutionManagement {
-  versionCatalogs {
-    create("libs") {
-      from(files("libs.versions.toml"))
-    }
-  }
-}
-
 val localCoreDir = File(rootDir.parent, "pws-core")
 if (localCoreDir.exists() && localCoreDir.isDirectory) {
   println("🔗 Local pws-core found – using composite build")

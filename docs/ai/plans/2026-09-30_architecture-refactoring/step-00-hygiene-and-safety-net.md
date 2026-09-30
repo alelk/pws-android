@@ -156,7 +156,24 @@ grep -rn "hilt\|:app\b" --include=*.kts --include=*.toml --include=*.sh --includ
 - Общие версии совпадают, inline-версий нет, задача выравнивания в `check`, gate зелёный.
 
 ### Заметки исполнителя
-<!-- -->
+
+**Статус: done.**
+
+**Выполнено:**
+1. ✓ `libs.versions.toml` → `gradle/libs.versions.toml` в обоих репо; убран ручной `versionCatalogs { create("libs") { from(files(...)) } }` из обоих `settings.gradle.kts` (Gradle подхватывает путь по умолчанию).
+2. ✓ Выровнены значения общих ключей (источник истины — pws-core): `ktor` 3.5.2→3.5.0, `koin` 4.2.0→4.2.2 (в pws-android ключ `koin` был объявлен, но не использован — `koin-android`/`koin-compose` жили на инлайн `"4.2.2"`), `composeMultiplatform` 1.10.3→1.11.1 (ключ в pws-android не используется ни одним `[libraries]`/`[plugins]` — это отдельный от Android Compose Compiler плагин `compose`), `kotest` 6.2.4→6.2.1, `kaml` 0.97.0→0.104.0 (ключ в pws-android не используется — dead key). `kotlin`, `ksp`, `kotlinx-coroutines`, `kotlinx-datetime` уже совпадали. `kotlinx-serialization` и `arrow` в pws-android не объявлены — не общие, не трогал.
+3. ✓ `kotlin`: 2.3.21 → **2.4.10** в pws-core (взял версию pws-android, т.к. комментарий-блокер про Hilt/Dagger 2.59.2 устарел — Hilt и `:app` удалены в этапе 00.2). Полный gate pws-core зелёный на 2.4.10.
+4. ✓ Убраны inline-версии: `koin-android`/`koin-compose` → `version.ref = "koin"` (были `version = "4.2.2"`); `id("com.google.devtools.ksp") version libs.versions.ksp.get() apply false` в pws-core/build.gradle.kts → добавлен алиас `ksp` в `[plugins]` pws-core и заменено на `alias(libs.plugins.ksp) apply false`. `"androidx.room:room-ktx:${...}"` из формулировки этапа не нашёл — `room-ktx` уже был через `version.ref` в обоих репо.
+5. ✓ Задача `verifyCoreVersionAlignment` в `pws-android/build.gradle.kts` (корень): сравнивает значения **только явно перечисленных в README §4 общих ключей** (`kotlin, ksp, kotlinx-coroutines, kotlinx-datetime, kotlinx-serialization, kaml, ktor, koin, voyager, composeMultiplatform, room, kotest, arrow`), а не всех совпадающих по имени ключей — см. «Отклонение» ниже. Подключена через `subprojects { tasks.matching { it.name == "check" }.configureEach { dependsOn(verifyCoreVersionAlignment) } }`. Если `../pws-core` нет — таск логирует и не падает (сборка pws-android без соседнего pws-core остаётся рабочей).
+6. ✓ Красная проверка: временно поднял `ktor` в pws-android до `3.5.9` → `./gradlew verifyCoreVersionAlignment` упал с явным перечнем расхождений → вернул `3.5.0` → зелёно.
+
+**Отклонение от буквального текста этапа:** первая версия таска сравнивала *все* ключи, совпадающие по имени в обоих `[versions]`, а не только список из README §4. Это заодно поймало `kotest-runner-android`, `kotest-extensions-android`, `robolectric` (в pws-android новее: 1.2.3/0.1.12/4.17-beta-3 против 1.2.2/0.1.9/4.16.1 в pws-core). Понижение этих версий в pws-android **ломает компиляцию** тестового кода (`@Config(sdk = [...])` — `Argument type mismatch: actual type is 'Array<Int>', but 'Int' was expected` в 4 модулях) — pws-android использует более новый API. Это подтверждает, что список из README §4 намеренно не включает эти ключи (тестовая инфраструктура — осознанно per-repo). Сузил таск до explicit allow-list из §4; версии robolectric/kotest-runner-android/kotest-extensions-android в pws-android не трогал.
+
+**Gate:**
+- pws-core: `./gradlew check assemble` (минус iOS) — BUILD SUCCESSFUL, kotlin 2.4.10, без реальных регрессий.
+- pws-android: `:data:db-android:testRuDebugUnitTest :data:content-delivery:check :app-compose:check :app-compose:assembleRuDebug :app-compose:assembleRustoreDebug` — Gradle репортит `BUILD FAILED` только из-за тестов с `UnsatisfiedLinkError` (baseline песочницы, 48 случаев, идентично этапу 00.1/00.2); `python3 check-tests.py` → **real failures: 0**. `assembleRuDebug` и `assembleRustoreDebug` — успешно.
+
+**Вопросы владельцу:** нет.
 
 ---
 

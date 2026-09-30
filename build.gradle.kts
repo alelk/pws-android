@@ -52,6 +52,74 @@ allprojects {
   }
 }
 
+// F2: pws-android keeps its own version catalog (must build without an adjacent pws-core
+// checkout), but values of the dependency keys explicitly shared with pws-core (README §4) must
+// not drift. pws-core is the source of truth for those shared values. Only this explicit list is
+// checked — other keys that happen to share a name (e.g. robolectric, kotest-runner-android) are
+// deliberately per-repo (pws-android's test code may depend on a newer API than pws-core uses).
+val sharedVersionKeys = listOf(
+  "kotlin", "ksp", "kotlinx-coroutines", "kotlinx-datetime", "kotlinx-serialization",
+  "kaml", "ktor", "koin", "voyager", "composeMultiplatform", "room", "kotest", "arrow"
+)
+
+val verifyCoreVersionAlignment = tasks.register("verifyCoreVersionAlignment") {
+  group = "verification"
+  description = "Fails if a version shared with pws-core's catalog has diverged (see README §4, F2)."
+
+  val androidCatalog = rootDir.resolve("gradle/libs.versions.toml")
+  val coreCatalog = rootDir.resolve("../pws-core/gradle/libs.versions.toml")
+  inputs.file(androidCatalog)
+  if (coreCatalog.exists()) inputs.file(coreCatalog)
+
+  doLast {
+    if (!coreCatalog.exists()) {
+      logger.lifecycle("verifyCoreVersionAlignment: ../pws-core not found next to pws-android — skipping (no local composite build)")
+      return@doLast
+    }
+
+    fun parseVersions(file: java.io.File): Map<String, String> {
+      val versions = mutableMapOf<String, String>()
+      var inVersionsSection = false
+      file.readLines().forEach { rawLine ->
+        val line = rawLine.substringBefore("#").trim()
+        if (line.isEmpty()) return@forEach
+        if (line.startsWith("[")) {
+          inVersionsSection = line == "[versions]"
+          return@forEach
+        }
+        if (!inVersionsSection) return@forEach
+        val eq = line.indexOf('=')
+        if (eq <= 0) return@forEach
+        val key = line.substring(0, eq).trim()
+        val value = line.substring(eq + 1).trim().trim('"')
+        versions[key] = value
+      }
+      return versions
+    }
+
+    val androidVersions = parseVersions(androidCatalog)
+    val coreVersions = parseVersions(coreCatalog)
+    val mismatches = sharedVersionKeys
+      .filter { androidVersions.containsKey(it) && coreVersions.containsKey(it) }
+      .filter { androidVersions[it] != coreVersions[it] }
+      .sorted()
+      .map { "  $it: pws-android=${androidVersions[it]} vs pws-core=${coreVersions[it]}" }
+
+    if (mismatches.isNotEmpty()) {
+      throw GradleException(
+        "Shared dependency versions diverged from pws-core's catalog (pws-core is the source of truth):\n" +
+          mismatches.joinToString("\n")
+      )
+    }
+  }
+}
+
+subprojects {
+  tasks.matching { it.name == "check" }.configureEach {
+    dependsOn(verifyCoreVersionAlignment)
+  }
+}
+
 fun getDate(): String {
   val df = SimpleDateFormat("MMM-d-yyyy", Locale.ENGLISH)
   df.timeZone = TimeZone.getTimeZone("UTC")

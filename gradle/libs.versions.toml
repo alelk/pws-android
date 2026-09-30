@@ -11,17 +11,17 @@ ksp                 = "2.3.9" # https://central.sonatype.com/artifact/com.google
 # Kotlin ecosystem
 kotlinx-coroutines = "1.11.0"
 kotlinx-datetime   = "0.8.0"
-kaml               = "0.97.0"
+kaml               = "0.104.0"
 
 # Networking
-ktor = "3.5.2"
+ktor = "3.5.0"
 
 # Dependency Injection
-koin = "4.2.0"
+koin = "4.2.2"
 
 # Navigation & UI
 voyager              = "2.2.21-1.10.3"
-composeMultiplatform = "1.10.3"
+composeMultiplatform = "1.11.1"
 
 # Database
 room          = "2.8.4"
@@ -30,7 +30,7 @@ security-crypto = "1.1.0"
 androidx-core-ktx = "1.15.0" # Cursor.getStringOrNull/getIntOrNull used by PwsDb1x/2xDataProvider (legacy DB migration readers)
 
 # Testing
-kotest                    = "6.2.4"
+kotest                    = "6.2.1"
 kotest-runner-android     = "1.2.3"
 kotest-extensions-android = "0.1.12"
 kotest-multiplatform      = "6.0.0.M4"
@@ -79,8 +79,8 @@ ktor-client-mock             = { module = "io.ktor:ktor-client-mock", version.re
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 
 # Dependency Injection
-koin-android  = { module = "io.insert-koin:koin-android", version = "4.2.2" }
-koin-compose  = { module = "io.insert-koin:koin-compose", version = "4.2.2" }
+koin-android  = { module = "io.insert-koin:koin-android", version.ref = "koin" }
+koin-compose  = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
 
 # Voyager
 voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
