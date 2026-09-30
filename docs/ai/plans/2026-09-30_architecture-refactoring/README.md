@@ -199,7 +199,7 @@ pws-android :data:content-delivery      сеть/файлы/расшифровк
 | Этап | Название | Репо | Модель | Статус |
 |------|----------|------|--------|--------|
 | **00** | **[Гигиена и страховочная сетка](step-00-hygiene-and-safety-net.md)** | | | |
-| 00.1 | Удалить мёртвый код в pws-core | core | haiku | not started |
+| 00.1 | Удалить мёртвый код в pws-core | core | haiku | done |
 | 00.2 | Удалить legacy `:app` и его зависимости ∥ 00.1 | android | haiku | not started |
 | 00.3 | Выровнять версии, перенести каталоги в `gradle/` | оба | sonnet | not started |
 | 00.4 | Характеризационные тесты ScreenModel'ей без покрытия | core | sonnet | not started |

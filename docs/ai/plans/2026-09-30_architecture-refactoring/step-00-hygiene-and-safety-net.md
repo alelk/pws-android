@@ -47,7 +47,17 @@ cd ../pws-android && ./gradlew :app-compose:assembleRuDebug :app-compose:assembl
 - Перечисленных каталогов/файлов нет; gate зелёный в обоих репо.
 
 ### Заметки исполнителя
-<!-- заполняет исполнитель -->
+
+**Статус: done** · Этап завершен. pws-core: ✓ BUILD SUCCESSFUL. pws-android: ✓ APK собраны (UnsatisfiedLinkError — baseline).
+
+**Выполнено:**
+1. ✓ Удалены: `backup/`, `commonMain/`, `src/` в корне pws-core
+2. ✓ Удалён модуль `:core:ui` (settings.gradle.kts + каталог)
+3. ✓ Удалены 16 неиспользуемых Koin-модулей per-feature
+4. ✓ Удалён SongNumberSetSerializer.kt из portable-data/
+5. ✓ Обновлены docs/MODULES.md и AGENTS.md
+6. ✓ pws-core: BUILD SUCCESSFUL в 1m 40s (366 tasks, 130 executed)
+7. ✓ pws-android: APK успешно собраны (assembleRuDebug, assembleRustoreDebug); test failures только UnsatisfiedLinkError (baseline; 97 случаев)
 
 ---
 
