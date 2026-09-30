@@ -1,0 +1,139 @@
+# Шаг 02 — Fitness-тесты: правила в сборке
+
+> Перед чтением этапа: [README](README.md) §4, §6, §7.2, §7.3.
+> Опорный скилл: `architecture-fitness-tests` (+ его `templates/`).
+
+**Цель.** Каждое правило из README §3 и «hard rules» `AGENTS.md` превращается в тест внутри
+`./gradlew build`. Сегодняшние нарушения записываются в списки `KNOWN_*`; дальнейшие шаги плана
+(03–09) измеряются тем, как эти списки пустеют.
+
+**Мина шага.** Тест, который не может упасть: неверный рабочий каталог или regex, не совпадающий ни
+с чем, — и все проверки «зелёные». Защита: у каждого теста guard непустоты и проверка «красным»
+(внести нарушение → увидеть красное → вернуть), рецепт записан в KDoc теста.
+
+**Правила для всех этапов шага**
+- Kotest `FunSpec`, source set `jvmTest` (или `test` в Android-модулях), сканирование исходников
+  через `java.io.File` относительно каталога модуля.
+- Сравнение фактического множества нарушений с `KNOWN_*` — **точным равенством** (тест падает и на
+  новое нарушение, и на исправленное, но не вычеркнутое).
+- `KNOWN_*` хранит относительные пути файлов (или `файл:правило`), отсортированные.
+- KDoc каждого теста: какое правило, зачем оно, как увидеть тест красным.
+- Прод-код в этом шаге **не исправляется** — только фиксируется.
+
+---
+
+## Этап 02.1 — Каркас и правила слоёв  · модель: sonnet
+
+### Прочитать
+- `architecture-fitness-tests/SKILL.md`, `references/source-scanning.md`, `templates/domain/*`
+- `pws-core/AGENTS.md` §5, §8; `pws-core/settings.gradle.kts`
+
+### Решения этапа
+- Новый модуль не создаём. Общий хелпер сканирования (`SourceScan.kt`: `ktFiles()`, `violations {}`,
+  guard непустоты) кладётся в `:domain:domain-test-fixtures` **только если** он не тянет `java.io` в
+  `commonMain`; иначе — копия по ~30 строк в `jvmTest` каждого модуля, где есть fitness-тесты.
+- Тесты этапа и их расположение:
+
+| Тест | Модуль | Правило |
+|------|--------|---------|
+| `DomainPurityTest` | `:domain` jvmTest | в `domain/src/commonMain` нет импортов `java.`, `android.`, `androidx.`, `platform.`, `io.ktor.`, `androidx.room.` |
+| `ModuleDependencyTest` | `:domain` jvmTest | по `build.gradle.kts` всех модулей: `:domain` не зависит ни от одного `project(...)`, кроме своих; `:features` не зависит от `:data:*` и `:api:*`; `:data:*` не зависит от `:features`; `:api:contract` не зависит от `:domain` |
+| `FeaturesLayerTest` | `:features` jvmTest | в `features/src/commonMain` нет импортов `io.github.alelk.pws.database.`, `…pws.data.`, `…pws.api.`; импорт `…domain.*.repository.*` разрешён только в `di/` |
+| `UseCaseShapeTest` | `:domain` jvmTest | файл в пакете `usecase` объявляет ровно один публичный класс/интерфейс с суффиксом `UseCase` |
+
+- Ожидаемый `KNOWN_*` для `FeaturesLayerTest` сегодня: `song/detail/SongDetailScreenModel.kt`,
+  `song/detail/SongDetailBySongIdScreenModel.kt`, `song/edit/songEditScreenModelModule.kt`
+  (последний исчезнет после 00.1). Фактический список берётся из кода, а не из этого текста.
+
+### Работа
+1. Хелпер сканирования + guard непустоты.
+2. Четыре теста со списками `KNOWN_*`.
+3. Каждый тест проверить «красным».
+4. В `AGENTS.md §8` у каждого закреплённого правила дописать имя теста.
+
+### Проверки
+```bash
+./gradlew :domain:jvmTest :features:jvmTest && ./gradlew build
+```
+
+### Готово, когда
+- Четыре теста в сборке; для каждого в заметках записан факт проверки «красным».
+
+### Заметки исполнителя
+<!-- -->
+
+---
+
+## Этап 02.2 — Правила UI-слоя и i18n  · модель: sonnet
+
+### Прочитать
+- `architecture-fitness-tests/templates/features/*`, `references/principles.md`
+- `pws-core/AGENTS.md §8` (ScreenModel / Compose), `features/src/commonMain/composeResources/`
+
+### Решения этапа
+Тесты в `:features` jvmTest:
+
+| Тест | Правило | Ожидаемый долг сегодня |
+|------|---------|------------------------|
+| `EffectsChannelTest` | в `*ScreenModel.kt` нет `MutableSharedFlow` | 5 файлов |
+| `NoSwallowedErrorsTest` | в `*ScreenModel.kt` нет `catch (…) {}` с пустым телом или телом только из комментария | ≈12 мест |
+| `ScreenFileSizeTest` | файлы в `features/src/commonMain` ≤ 600 строк (исключение: `theme/`) | `SongDetailScreen.kt`, `SettingsScreen.kt` |
+| `NoServiceLocatorInComposablesTest` | `koinInject(` встречается только в `telemetry/TelemetryCompose.kt` и `premium/` | `SettingsScreen.kt` |
+| `NoHardcodedUiStringsTest` | в `*Screen.kt` и `components/` нет `Text("…")` / `contentDescription = "…"` со строковым литералом, содержащим буквы | по факту |
+| `ResourceKeysParityTest` | `values/`, `values-pl/`, `values-ru/`, `values-uk/` содержат одинаковый набор ключей строк | по факту |
+| `ScreenModelPurityTest` | `*ScreenModel.kt` не импортирует `androidx.compose.ui`, `…foundation`, `…material3`, `org.jetbrains.compose.resources` | по факту |
+| `MaterialThemeRatchetTest` | счётчик: число файлов вне `theme/` с `MaterialTheme.` не растёт (список файлов) | 33 файла |
+
+- Regex-проверки намеренно грубые; ложное срабатывание лечится уточнением правила, а не
+  `@Suppress` в тесте.
+
+### Работа
+1. Восемь тестов, `KNOWN_*` по факту.
+2. Проверка «красным» каждого.
+3. Обновить `AGENTS.md §8`.
+
+### Проверки
+```bash
+./gradlew :features:jvmTest && ./gradlew build
+```
+
+### Готово, когда
+- Тесты в сборке; размеры `KNOWN_*` записаны в заметки (это базовая линия для шагов 03, 09).
+
+### Заметки исполнителя
+<!-- -->
+
+---
+
+## Этап 02.3 — Правила шелла и данных в pws-android  · модель: sonnet
+
+### Прочитать
+- `pws-android/AGENTS.md §8`, `app-compose/proguard-rules*.pro`
+- `app-compose/src/*/kotlin/.../flavor/FlavorIntegration.kt` (все 4)
+
+### Решения этапа
+Тесты в `:app-compose` (`src/test`), Kotest:
+
+| Тест | Правило |
+|------|---------|
+| `ProguardRulesTest` | ни в одном `*.pro` нет `-keep class <…>.** { *; }` и `-keep class ** ` (G13) |
+| `FlavorContractTest` | каждый каталог `src/{ru,uk,full,rustore}` содержит `flavor/FlavorIntegration.kt`, объявляющий один и тот же набор top-level имён (`MONETIZATION`, `flavorKoinModules`, `flavorStartupTasks`, `flavorShowPaywall`) |
+| `PaymentSdkIsolationTest` | импорт `ru.rustore.` встречается только под `src/rustore/` и `src/testRustore/` |
+| `DirectDaoAccessTest` | `Dao()` / импорт `io.github.alelk.pws.database.*.…Dao` вне `:data:db-android` — ratchet-список (сегодня: `BackupManager.kt`, `PwsBackupAgent.kt`, `BookImporterImpl.kt`, `BookUninstallerImpl.kt`, `SeedBooksFromAssetsUseCase.kt`); тест живёт в `:app-compose` и сканирует также `../data/content-delivery/src/main` |
+| `ShellStringsTest` | в `app-compose/src/main` нет `Toast.makeText(…, "…"` со строковым литералом — ratchet (сегодня `MainActivity.kt`) |
+| `StorageNamesPinnedTest` | закреплённый список строковых имён хранилищ (G3): имя DataStore из `ThemePreferences.kt`, `pws-app-preferences`, `pws_donation`, `pws_catalog_source`, `pws.db` — каждое найдено в исходниках ровно в ожидаемом файле |
+
+### Работа
+1. Шесть тестов; проверка «красным» каждого.
+2. Обновить `AGENTS.md §8` pws-android ссылками на тесты.
+
+### Проверки
+```bash
+./gradlew :app-compose:testRuDebugUnitTest :app-compose:testRustoreDebugUnitTest && ./gradlew build
+```
+
+### Готово, когда
+- Тесты в сборке обоих флейвор-наборов; базовые `KNOWN_*` записаны в заметки.
+
+### Заметки исполнителя
+<!-- -->
