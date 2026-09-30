@@ -17,15 +17,11 @@ kaml               = "0.97.0"
 ktor = "3.5.2"
 
 # Dependency Injection
-hilt = "2.60.1"
 koin = "4.2.0"
 
 # Navigation & UI
 voyager              = "2.2.21-1.10.3"
 composeMultiplatform = "1.10.3"
-navigation           = "2.10.0"
-navigation-fragment-ktx = "2.10.0"
-navigation-ui-ktx       = "2.10.0"
 
 # Database
 room          = "2.8.4"
@@ -83,27 +79,12 @@ ktor-client-mock             = { module = "io.ktor:ktor-client-mock", version.re
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 
 # Dependency Injection
-hilt-android  = { module = "com.google.dagger:hilt-android", version.ref = "hilt" } # https://mvnrepository.com/artifact/com.google.dagger/hilt-android
-hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" } # https://mvnrepository.com/artifact/com.google.dagger/hilt-compiler
 koin-android  = { module = "io.insert-koin:koin-android", version = "4.2.2" }
 koin-compose  = { module = "io.insert-koin:koin-compose", version = "4.2.2" }
 
 # Voyager
 voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
 voyager-koin      = { module = "cafe.adriel.voyager:voyager-koin", version.ref = "voyager" }
-
-# UI — Legacy Views (app module)
-appcompat      = { group = "androidx.appcompat", name = "appcompat", version = "1.8.0" }
-material       = { group = "com.google.android.material", name = "material", version = "1.14.0" }
-android-material = { group = "com.google.android.material", name = "material", version = "1.14.0" }
-ambilwarna     = { group = "com.github.yukuku", name = "ambilwarna", version = "2.0.1" }
-flexbox        = { group = "com.google.android.flexbox", name = "flexbox", version = "3.0.0" }
-
-# Navigation
-navigation-fragment              = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigation" } # https://mvnrepository.com/artifact/androidx.navigation/navigation-fragment
-navigation-ui                    = { group = "androidx.navigation", name = "navigation-ui", version.ref = "navigation" } # https://mvnrepository.com/artifact/androidx.navigation/navigation-ui
-androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigation-fragment-ktx" }
-androidx-navigation-ui-ktx       = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigation-ui-ktx" }
 
 # Compose
 compose-bom                = { group = "androidx.compose", name = "compose-bom", version = "2026.08.00" }
@@ -137,5 +118,4 @@ android-kmpLibrary   = { id = "com.android.kotlin.multiplatform.library", versio
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 ksp                  = { id = "com.google.devtools.ksp", version.ref = "ksp" } # https://github.com/google/ksp
 kotest-multiplatform = { id = "io.kotest.multiplatform", version.ref = "kotest-multiplatform" } # https://plugins.gradle.org/plugin/io.kotest.multiplatform
-hilt                 = { id = "com.google.dagger.hilt.android", version.ref = "hilt" } # https://mvnrepository.com/artifact/com.google.dagger.hilt.android/com.google.dagger.hilt.android.gradle.plugin
 compose              = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

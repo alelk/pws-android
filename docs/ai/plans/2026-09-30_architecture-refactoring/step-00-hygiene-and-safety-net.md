@@ -105,7 +105,17 @@ grep -rn "hilt\|:app\b" --include=*.kts --include=*.toml --include=*.sh --includ
 - В заметках записан результат экспресс-сверки платёжного кода.
 
 ### Заметки исполнителя
-<!-- -->
+
+**Статус: done** · Этап 00.2 завершён.
+
+**Экспресс-сверка платёжного кода (app/src/rustore vs app-compose/src/rustore):**
+1. **ID продуктов и параметры SDK** — совпадают: full_access_v1, monthly_subscription_v1, yearly_subscription_v1
+2. **Имена хранилищ и ключи** — совпадают: pws-app-preferences, purchase_full_access, purchase_subscription_until
+3. **Пользовательские сценарии** — новый код (LegacyRuStoreEntitlementStore, RuStoreCompatEntitlementRepository) реализует всю логику Pro-статуса
+
+**Удалено:** каталог `app/`, settings.gradle.kts (строка с комментарием), build.gradle.kts (hilt alias), libs.versions.toml (hilt, navigation, appcompat, material, ambilwarna, flexbox версии и зависимости), build.sh удален (остаётся build-compose.sh).
+
+**Gate:** ✓ BUILD SUCCESSFUL (ru/rustore debug APK собраны, тесты зелёные: baseline 29 UnsatisfiedLinkError).
 
 ---
 

@@ -13,7 +13,6 @@
 - **Role:** Android host for the PWS songbook. Provides DI bootstrap, DataStore, backup, intents,
   signing, flavors.
 - **Primary module:** `:app-compose` (Jetpack Compose + Voyager + Koin).
-- **Legacy module:** `:app` (View-based) — **don't add features here**.
 - **Cross-repo:** `../pws-core` is auto-linked as a Gradle composite build (see
   `settings.gradle.kts`). No `publishToMavenLocal` needed.
 - **Toolchain:** JDK 21 · AGP 8.x · Kotlin 2.3.x · Gradle wrapper (`./gradlew`).
@@ -28,9 +27,8 @@
 | Compile a flavor of the db module | `./gradlew :data:db-android:compileRuDebugKotlin` |
 | Build content-delivery module     | `./gradlew :data:content-delivery:assembleDebug`  |
 | Unit tests (db module)            | `./gradlew :data:db-android:testRuDebugUnitTest`  |
-| Full app build (all flavors)      | `./build.sh`                                      |
+| Full app build (all flavors)      | `./build-compose.sh`                              |
 | E2E smoke (Maestro)               | `./e2e/scripts/run-local.sh --flavor ru`          |
-| Compose-only convenience build    | `./build-compose.sh`                              |
 
 **Rule of thumb:** module-scoped tasks first. Only run app-wide `assemble` to verify integration
 before declaring work done.
@@ -85,7 +83,6 @@ Deep dive: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), [`docs/MODULES.md`](d
 | Module                   | Purpose                                                                                           |
 |--------------------------|---------------------------------------------------------------------------------------------------|
 | `:app-compose`           | **Primary** — Compose host activity, DI bootstrap, DataStore, backup                              |
-| `:app`                   | **Legacy View-based app — do not add features**                                                   |
 | `:data:db-android`       | Android Room provider, SQLCipher integration, asset decryption, migrations                        |
 | `:data:content-delivery` | Book catalog fetch (Ktor), download + verify + import of `.book.yaml.gz.enc` bundles, Koin wiring |
 
@@ -189,7 +186,6 @@ Apply on the shell root composable so Maestro can address Compose nodes by `test
 
 ### Architecture
 
-- ❌ **Don't add features to `:app`** (legacy View module). All new UI work goes to `:app-compose`.
 - ❌ **No Android-specific calls inside `pws-core`** — expose an `ExternalActions` interface in
   `pws-core` and implement it here.
 - ✅ **Domain + UI lives in `pws-core` first**; this repo only adds Android glue.
