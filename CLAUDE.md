@@ -33,35 +33,19 @@ glue.
 
 ### Active plans (read first when relevant)
 
-In [`docs/ai/plans/`](docs/ai/plans/):
+**Current priority:** [`2026-09-30_architecture-refactoring`](docs/ai/plans/2026-09-30_architecture-refactoring_plan.md)
+— Hygiene and architecture: pws-core + pws-android unified; read `README.md` §4, §6, §7.2–7.3 and your stage.
+
+Other plans in [`docs/ai/plans/`](docs/ai/plans/):
 
 - `2026-06-18_pluggable-book-library_plan.md` — book catalog, download, import into Room,
   BookLibraryScreen. **T-003–T-020 реализованы**; остались T-001/T-002 (pws-v2x-library-manager
   export commands) и T-019/T-021.
-- `2026-06-27_global-book-library_plan.md` — **ACTIVE** — global library: multi-source (GitHub
-  Pages + Cloudflare R2), smart ID remap on install/update, user-edit preservation, version-aware
-  updates, first-launch onboarding, empty DB. Phases A–F.
-- `2026-06-19_stable-db-filename-room-migrations_plan.md` — стабильное имя `pws.db`, Room
-  `exportSchema=true`, удаление мёртвой миграции. **Фаза 0** на стороне library-manager, **Фазы 1–2
-  ** в коде.
-- `2026-07-08_universal-apk-onboarding_plan.md` — **ACTIVE** — удаление встроенных DB-ассетов из
-  APK, универсальный APK, онбординг первого запуска с locale-aware установкой сборника. Phases A–F.
-  Задачи T-001..T-011 и T-013 реализованы.
-- `2026-08-07_crash-reporting-and-analytics_plan.md` — **РЕАЛИЗОВАН (код)** — телеметрия на
-  AppMetrica: `Telemetry` в `pws-core:domain`, non-fatal/breadcrumbs, продуктовые события, тумблер
-  согласия, privacy policy. Осталась ручная настройка консолей. Итог →
-  [`docs/monitoring.md`](docs/monitoring.md).
-- `2026-09-10_app-optimization-r8_plan.md` — **ACTIVE** — Google Play «App optimization: Low»
-  (18% obfuscation / 19% shrinking / 36.8 MB DEX). Причина — широкие `-keep class X.** { *; }`
-  в `app-compose/proguard-rules.pro`. Phases A–G, готовый текст новых правил внутри.
-  Замер: `python3 tools/dex-report.py <apk>`.
+- `2026-06-27_global-book-library_plan.md` — global library: multi-source (GitHub Pages + Cloudflare R2).
+- `2026-07-08_universal-apk-onboarding_plan.md` — первый запуск, универсальный APK.
+- `2026-09-10_app-optimization-r8_plan.md` — R8 optimization (18% obfuscation / 19% shrinking).
 
-- `2026-09-29_rustore-release-compat-pro-coming-soon_plan.md` — **КОД РЕАЛИЗОВАН** — релиз rustore-флейвора
-  поверх форка 2.3.1: сохранность Pro-статуса (`pws-app-preferences`), миграция `pws.2.3.0.db` + порядок
-  старта (`LegacyMigrationGate`), режим `PremiumComingSoon` («Pro — скоро», флаг `pws.rustore.purchasesEnabled`).
-  Остались ручные шаги: апгрейд-матрица на устройстве (`tools/rustore-upgrade-test.md`), публикация. §10.
-
-When the user references "current plan" without a name, use the **app-optimization-r8** plan (most recent).
+When the user references "current plan" without a name, default to the architecture refactoring plan.
 
 ### Don't waste tokens on
 

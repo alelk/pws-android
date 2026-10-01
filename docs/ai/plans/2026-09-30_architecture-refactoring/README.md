@@ -1,7 +1,7 @@
 ---
-status: stable          # развилки закрыты 2026-09-30; шаг 08 отложен (F3)
+status: in progress     # шаг 00 done (2026-10-01); следующий — 01.1; шаг 08 отложен (F3)
 owner: Alex
-updated: 2026-09-30
+updated: 2026-10-01
 scope: pws-core + pws-android (pws-server — вне объёма, см. §9)
 ---
 
@@ -202,8 +202,8 @@ pws-android :data:content-delivery      сеть/файлы/расшифровк
 | 00.1 | Удалить мёртвый код в pws-core | core | haiku | done |
 | 00.2 | Удалить legacy `:app` и его зависимости ∥ 00.1 | android | haiku | done |
 | 00.3 | Выровнять версии, перенести каталоги в `gradle/` | оба | sonnet | done |
-| 00.4 | Характеризационные тесты ScreenModel'ей без покрытия | core | sonnet | not started |
-| 00.5 | Обновить копии скиллов и `AGENTS.md`/`CLAUDE.md` ∥ 00.4 | оба | haiku | not started |
+| 00.4 | Характеризационные тесты ScreenModel'ей без покрытия | core | sonnet | done |
+| 00.5 | Обновить копии скиллов и `AGENTS.md`/`CLAUDE.md` ∥ 00.4 | оба | haiku | done |
 | **01** | **[Сборка: convention plugins, статанализ, один gate](step-01-build-system.md)** | | | |
 | 01.1 | Convention plugins в pws-core | core | sonnet | not started |
 | 01.2 | Convention plugins + вынос build-логики в pws-android [R8] | android | sonnet | not started |
@@ -265,6 +265,7 @@ use case'ы лежат в `infra/` (а не в домене); контракт �
 | 2026-09-30 | — | План создан, статус `draft`; ждут ответа развилки F2–F6 |
 | 2026-09-30 | 00.2 | F1 закрыта владельцем: `:app` удаляем, остаётся только Compose. Старый платёжный код в `app/src/rustore`, скорее всего, устарел — экспресс-сверка и удаление |
 | 2026-09-30 | — | Владелец закрыл развилки: F2 — два каталога + тест; F3 — пропускаем, шаг 08 `deferred`; F4 — делаем; F5 — iOS не в ближайший год; F6 — оставляем, 07.3 `skipped`. Статус плана → `stable` |
+| 2026-10-01 | 00 | Шаг 00 выполнен целиком (00.1–00.5), по коммиту на этап. Ручные прогоны 04/05/06 владелец разрешил отложить до мержа (список в заметках владельца). Гейты в песочнице linux-aarch64: без iOS-задач; Robolectric-тесты с нативным SQLite падают по окружению (UnsatisfiedLinkError) — перед мержем прогнать гейты на Mac. Находка 00.4: `TagsScreenModel.saveTag()` глотает ошибку `UpdateTagUseCase` → исправить в 03.2. **Следующий этап: 01.1** |
 
 ## 11. Отступления от скиллов (сознательные)
 

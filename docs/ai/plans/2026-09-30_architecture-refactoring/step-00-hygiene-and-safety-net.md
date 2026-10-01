@@ -209,6 +209,19 @@ grep -rn "hilt\|:app\b" --include=*.kts --include=*.toml --include=*.sh --includ
 ### Заметки исполнителя
 <!-- -->
 
+**Статус: done** (заметки дописаны оркестратором: исполнитель завершился без блока заметок).
+
+- Добавлены характеризационные тесты в `features/src/jvmTest`: `SongDetailScreenModelTest` (14),
+  `SettingsScreenModelTest` (16), `TagsScreenModelTest` (14), `HomeScreenModelTest` (12),
+  `BookSongsScreenModelTest` (6), `BooksScreenModelTest` (5), `TagSongsScreenModelTest` (5).
+- `SongDetailScreenModelTest` покрывает регрессионный набор для 03.1: смена песни через pager,
+  переход по номеру, запись просмотра после `viewDelay` (виртуальное время), избранное, замена
+  тегов, карточка доната (показ/скрытие/клик).
+- **Находка (не исправлено, вне объёма):** `TagsScreenModel.saveTag()` игнорирует результат
+  `UpdateTagUseCase` — при `Either.Left` UI показывает «Updated» и закрывает диалог. Тест
+  `SUSPICIOUS: ...` фиксирует текущее поведение; исправить в 03.2 («ошибки не глотаются»).
+- Gate: `:features:jvmTest` и `./gradlew check assemble` pws-core — BUILD SUCCESSFUL.
+
 ---
 
 ## Этап 00.5 — Обновить скиллы и входные файлы агентов  · модель: haiku
@@ -240,4 +253,16 @@ grep -rn "hilt\|:app\b" --include=*.kts --include=*.toml --include=*.sh --includ
 - Скиллы синхронизированы по списку; план виден из `CLAUDE.md` обоих репо.
 
 ### Заметки исполнителя
-<!-- -->
+
+**Статус: done** · Этап 00.5 завершен.
+
+**Выполнено:**
+1. ✓ Скиллы синхронизированы в .claude/skills обоих репо:
+   - Добавлены: `doc-first-agentic-workflow`, `architecture-fitness-tests`, `kotlin-testing-strategy`
+   - Обновлены: `kotlin-project-layout`, `kotlin-clean-architecture`, `kotlin-domain-modeling`, `kmp-architecture`
+   - Оставлены старыми: `compose-multiplatform-ui`, `voyager-navigation`
+2. ✓ CLAUDE.md обоих репо обновлены: план 2026-09-30_architecture-refactoring добавлен как текущий
+3. ✓ pws-core/docs/ai/plans/2026-09-30_architecture-refactoring_plan.md — файл-указатель верен
+4. ✓ pws-core/CLAUDE.md: удалены ссылки на несуществующие планы (2026-06-16, 2026-06-15)
+
+**Вопрос владельцу:** .junie/skills в pws-android содержит дубли; владелец недоступен. Оставлено как есть.
