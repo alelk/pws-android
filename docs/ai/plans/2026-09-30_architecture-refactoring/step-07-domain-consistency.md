@@ -85,7 +85,11 @@
 - Неиспользуемых use case'ов нет; список удалённого — в заметках.
 
 ### Заметки исполнителя
-<!-- -->
+**07.2 (sonnet, 2026-10-06) — done.**
+- Проверены все use case'ы `:domain` (grep по pws-core, pws-android, pws-android-rustore, pws-server; без потребителей — ни в коде, ни в тестах, ни в DI). Удалены 5: `AddFavoriteUseCase`, `ClearFavoritesUseCase`, `GetFavoritesUseCase`, `GetHistoryUseCase`, `GetSongReferenceUseCase` (регистраций в DI не было). Убраны их записи из `domain/ktlint-baseline.xml` (`<error` 987 -> 963) и строки из `docs/features/favorites.md`, `history.md`. `CreateSongUseCase` оставлен (используется в pws-server DI).
+- Многозапросные чтения без транзакции: не найдено. Use case'ы без `inRoTransaction` — это `Observe*` (Flow), одиночные чтения, и donation-prompt (одно чтение из БД + SharedPreferences). Транзакции/тесты не добавлялись.
+- Находки вне объёма: `pws-server/docs/ai/CONTRIBUTING.md:136` в примере упоминает `AddFavoriteUseCase` (только документация, не трогал). В окружении ktlint-задача `runKtlintCheckOverCommonMainSourceSet` считала себя up-to-date после удаления файлов и падала на устаревших нарушениях; помог `--rerun-tasks` для `:domain:ktlintCommonMainSourceSetCheck`.
+- Gate: pws-core `build $(corex)` — BUILD SUCCESSFUL; pws-android `:app-compose:compileRustoreDebugUnitTestKotlin :app-compose:compileRuDebugKotlin :data:content-delivery:compileDebugUnitTestKotlin` — успешно (assemble/тесты pws-android не гонялись: pws-android не менялся, кроме этих заметок). Не закоммичено.
 
 ---
 
