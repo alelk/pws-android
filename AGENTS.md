@@ -33,6 +33,8 @@
 **Rule of thumb:** module-scoped tasks first. Only run app-wide `assemble` to verify integration
 before declaring work done.
 
+**Gate (step 01+):** `./gradlew build -x assembleRuRelease -x assembleRustoreRelease -x assembleUkRelease -x assembleFullRelease` (release variants need signing; build them separately when signing is configured).
+
 ---
 
 ## 3. Flavors

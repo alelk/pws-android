@@ -61,6 +61,9 @@ val verifyCoreVersionAlignment = tasks.register("verifyCoreVersionAlignment") {
   val coreCatalog = rootDir.resolve("../pws-core/gradle/libs.versions.toml")
   inputs.file(androidCatalog)
   if (coreCatalog.exists()) inputs.file(coreCatalog)
+  // Local copy: referencing the script-level list from doLast would capture the script object,
+  // which the configuration cache cannot serialize.
+  val sharedKeys = sharedVersionKeys.toList()
 
   doLast {
     if (!coreCatalog.exists()) {
@@ -90,7 +93,7 @@ val verifyCoreVersionAlignment = tasks.register("verifyCoreVersionAlignment") {
 
     val androidVersions = parseVersions(androidCatalog)
     val coreVersions = parseVersions(coreCatalog)
-    val mismatches = sharedVersionKeys
+    val mismatches = sharedKeys
       .filter { androidVersions.containsKey(it) && coreVersions.containsKey(it) }
       .filter { androidVersions[it] != coreVersions[it] }
       .sorted()

@@ -178,17 +178,16 @@ pws-android :data:content-delivery      сеть/файлы/расшифровк
 
 ```bash
 # pws-core (из каталога pws-core)
-./gradlew check assemble
+./gradlew build
 
 # pws-android (из каталога pws-android; ../pws-core подключается composite build)
-./gradlew :data:db-android:testRuDebugUnitTest :data:content-delivery:check :app-compose:check \
-          :app-compose:assembleRuDebug :app-compose:assembleRustoreDebug
+./gradlew build -x assembleRuRelease -x assembleRustoreRelease -x assembleUkRelease -x assembleFullRelease
 
 # для этапов с пометкой [R8] дополнительно (если настроена подпись; иначе — отметить в заметках):
 ./gradlew :app-compose:assembleRuRelease :app-compose:assembleRustoreRelease
 ```
 
-После шага 01 gate сокращается до `./gradlew build` в каждом репозитории.
+После шага 01 gate = `./gradlew build` (или с исключением release-сборок в pws-android для CI без подписи).
 
 ## 8. Шаги, этапы, модели
 
@@ -208,7 +207,7 @@ pws-android :data:content-delivery      сеть/файлы/расшифровк
 | 01.1 | Convention plugins в pws-core | core | sonnet | done |
 | 01.2 | Convention plugins + вынос build-логики в pws-android [R8] | android | sonnet | done |
 | 01.3 | Detekt + ktlint с baseline в обоих репо | оба | sonnet | done |
-| 01.4 | CI запускает ровно `./gradlew build` | оба | haiku | not started |
+| 01.4 | CI запускает ровно `./gradlew build` | оба | haiku | done |
 | **02** | **[Fitness-тесты: правила в сборке](step-02-fitness-tests.md)** | | | |
 | 02.1 | Каркас + правила слоёв и зависимостей модулей | core | sonnet | not started |
 | 02.2 | Правила UI-слоя и i18n-паритет | core | sonnet | not started |

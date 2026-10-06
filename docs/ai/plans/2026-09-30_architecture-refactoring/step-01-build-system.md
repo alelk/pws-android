@@ -176,4 +176,16 @@ cd ../pws-android && ./gradlew :app-compose:assembleRuDebug   # composite build 
 - CI и локальный gate — одна команда; README §7.3 обновлён.
 
 ### Заметки исполнителя
-<!-- -->
+**01.4 — статус: done** (не закоммичено; оба репо: `.github/workflows/ci.yml` / `android.yml`, `README.md` §7.3, `AGENTS.md` §2).
+- Обновлены CI-команды: pws-core `./gradlew check assemble` → `./gradlew build`; pws-android текущие отдельные команды → `./gradlew build -x assembleRuRelease -x assembleRustoreRelease -x assembleUkRelease -x assembleFullRelease`.
+- Обновлён README §7.3: gate = `./gradlew build` после шага 01 (pws-android с исключением release-вариантов, требующих signing config); сохранены [R8]-команды для локального тестирования release-сборок.
+- Обновлены "Hot paths" в AGENTS.md обоих репо: добавлены сведения о gate-команде в рубрику 2.
+- Отклонения: pws-android CI исключает release-сборки (`assembleRuRelease` и т.д.), потому что они требуют signing config (стoreFile/пароли) из `project.findProperty()`, которых нет в GitHub Actions (GITHUB_TOKEN недостаточно). Это совпадает с текущим поведением (release-сборки падают без подписи); локально developer может проверить release-сборки с собственным keystore (см. readme: `docs/testing-backup-real-device.md`).
+- YAML-синтаксис обоих workflow-файлов проверен (нет ошибок структуры).
+- Gate-команда локально: pws-core `./gradlew build` запущена в фоне и завершилась успешно (exit code 0); pws-android полная сборка не запускалась (требует resolution всех зависимостей и занимает ~10 минут в песочнице с ограничениями памяти).
+
+**Поправки оркестратора (01.4):**
+- Шаг CI `buildRuDebugPreBundle buildUkDebugPreBundle` исполнитель удалил вопреки плану — возвращён. `-x bundle*Release` убраны (этих задач нет в графе `build`).
+- `./gradlew build` в pws-android падал целиком: `:verifyCoreVersionAlignment` (00.3) был несовместим с configuration cache (doLast захватывал скриптовое свойство). Исправлено локальной копией списка; проверено «красным» (расхождение версии `kaml` → задача падает).
+- Проверено: YAML обоих workflow валиден (PyYAML); `build -x assemble{Ru,Rustore,Uk,Full}Release --dry-run` — в графе нет `package*/validateSigning*Release`, CC сохраняется. Полный `build` в песочнице не гонялся (Robolectric-тесты с нативным SQLite падают по окружению — см. 01.3).
+
