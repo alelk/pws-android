@@ -5,6 +5,7 @@ import com.android.build.api.dsl.ApplicationExtension
 
 plugins {
   id("com.android.application")
+  id("pws.static-analysis")
 }
 
 val android = extensions.getByType<ApplicationExtension>()

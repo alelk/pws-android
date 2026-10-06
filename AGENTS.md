@@ -221,6 +221,17 @@ Apply on the shell root composable so Maestro can address Compose nodes by `test
   «App optimization: Low». Любое keep-правило — точечное и с комментарием «зачем».
   См. `docs/ai/plans/2026-09-10_app-optimization-r8_plan.md`.
 
+### Static analysis (Detekt + ktlint)
+
+- `./gradlew build` runs Detekt and ktlint over main **and** test sources; findings recorded before
+  step 01.3 live in per-module `detekt-baseline.xml` / `ktlint-baseline.xml`. The gate blocks only
+  *new* findings.
+- ❌ **Baselines only shrink.** Never regenerate one to absorb new findings and never add
+  `@Suppress` without a one-line reason — fix the code (or the shared `detekt.yml` / `.editorconfig`
+  if the rule is wrong for the whole repo).
+- Fix a module's debt, then re-record: `./gradlew :<module>:ktlintGenerateBaseline :<module>:detektBaseline`
+  (review the diff: it must only lose entries). Auto-format with `./gradlew :<module>:ktlintFormat`.
+
 ### Compose specifics for this host
 
 - ✅ **`enableEdgeToEdge()`** stays in `MainActivity`.

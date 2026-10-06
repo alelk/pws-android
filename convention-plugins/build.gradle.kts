@@ -9,6 +9,8 @@ dependencies {
   implementation(libs.plugins.android.application.toDep())
   // Kotlin Gradle plugin: AGP's built-in Kotlin exposes the `kotlin` extension (jvmToolchain).
   implementation(libs.plugins.kotlin.multiplatform.toDep())
+  implementation(libs.plugins.detekt.toDep())
+  implementation(libs.plugins.ktlint.toDep())
 }
 
 fun Provider<PluginDependency>.toDep() = map {

@@ -140,7 +140,17 @@ cd ../pws-android && ./gradlew :app-compose:assembleRuDebug   # composite build 
 - `./gradlew build` включает detekt + ktlint и зелёный; новый нарушающий код ломает сборку.
 
 ### Заметки исполнителя
-<!-- -->
+**01.3 — статус: done** (не закоммичено; оба репо: `detekt.yml`, `.editorconfig`, `gradle/libs.versions.toml`, `convention-plugins/` (`pws.static-analysis`), `AGENTS.md` §8, baseline'ы рядом с модулями).
+- Версии (одинаково в обоих каталогах): detekt `1.23.8` (плагин `io.gitlab.arturbosch.detekt`), ktlint-gradle `13.1.0` (`org.jlleitschuh.gradle.ktlint`); движок ktlint — по умолчанию плагина. Алиасы плагинов `detekt`, `ktlint`.
+- Подключение: precompiled-плагин `pws.static-analysis` применяется из `pws.kmp.base` (core) и `pws.android.library|application` (android). Detekt `source` = все существующие `src/*/kotlin` (main и test, все source set'ы, в т.ч. iosMain/flavors); ktlint — задачи по source set'ам (KMP) / см. отклонение 1 (android). `check` включает оба. Baseline: `detekt-baseline.xml` + `ktlint-baseline.xml` в каждом модуле, где есть находки (core: по 13 файлов detekt и ktlint; android: по 3).
+- `.editorconfig` (оба репо): `root = true`, `indent_style = space`, `indent_size = 2`, `insert_final_newline`, `ktlint_code_style = intellij_idea`. `detekt.yml` — профиль из скилла (одинаковый в обоих репо). Код не переформатировался.
+- Отклонения: (1) в pws-android плагин ktlint не видит source set'ы при встроенном Kotlin AGP 9 (создаёт только `ktlintKotlinScriptCheck` для `*.kts`), поэтому `kotlinScriptAdditionalPaths { include(fileTree("src") { include("**/*.kt") }) }` — все `.kt` проверяет задача «Kotlin scripts», baseline покрывает main/test/flavors; (2) `mustRunAfter` генерирующих задач (`generate*`, по именам, без реализации всех задач) для ktlint-задач — иначе implicit dependency на `generateI18n4kFiles`; (3) детектируются только дефолтные правила detekt (`UnusedImports` в detekt выключен по умолчанию — неиспользуемый импорт ловит ktlint `no-unused-imports`).
+- Проверка «красным» (откатена): неиспользуемый импорт + пустая функция в main и test: core `:domain:detekt` (EmptyFunctionBlock) и `ktlint*SourceSetCheck` (Unused import) красные; android `:app-compose:detekt` и `ktlintKotlinScriptCheck` красные.
+- Gate: pws-core `./gradlew build -x <4 iOS compileKotlin*> -x ktlint/runKtlintCheck для IosArm64/IosSimulatorArm64 (KSP для iOS не создаётся на linux-aarch64)` — BUILD SUCCESSFUL. pws-android `check :app-compose:assembleRuDebug :app-compose:assembleRustoreDebug --continue`: assemble и detekt/ktlint зелёные; упали только 9 `test*UnitTest` (Robolectric: UnsatisfiedLinkError нативного SQLite и «No space left on device» в /tmp/robolectric-* — диск песочницы 20 ГБ почти полон; `check` включает варианты full/uk, которых не было в gate 01.2). Сравнение с «до» — по типу падений (те же Robolectric), поимённого прогона базы не делал.
+- Окружение: нужен `-XX:MaxMetaspaceSize=1200m` и `--max-workers=1` для android `check`; чистил `/tmp/robolectric-nativeruntime*` и `/tmp/_karma_webpack_*`.
+- Для владельца: iOS source set'ы (`iosArm64Main` и т.п. без собственных исходников) в песочнице не проверялись; ktlint для iosMain/nativeMain проверяется через промежуточные source set'ы (прошли). Baseline'ы на macOS/CI стоит проверить `./gradlew build` один раз.
+- Находки вне объёма: `ktlintFormat`/`detekt` долг: см. baseline (core ~2.5 тыс. ktlint-находок в features, в основном trailing-comma/indent/function-signature).
+
 
 ---
 

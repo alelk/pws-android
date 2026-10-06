@@ -5,6 +5,7 @@ import com.android.build.api.dsl.LibraryExtension
 
 plugins {
   id("com.android.library")
+  id("pws.static-analysis")
 }
 
 configureAndroidCommon(extensions.getByType<LibraryExtension>())

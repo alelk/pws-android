@@ -37,6 +37,10 @@ kotest-multiplatform      = "6.0.0.M4"
 kotest-framework-datatest = "5.9.1"
 robolectric               = "4.17-beta-3"
 
+# Static analysis
+detekt        = "1.23.8" # https://github.com/detekt/detekt/releases (1.23.x: PSI analysis, tolerates newer Kotlin compilers)
+ktlint-gradle = "13.1.0" # https://github.com/JLLeitschuh/ktlint-gradle/releases
+
 # Monitoring
 appmetrica = "8.5.1" # check https://repo1.maven.org/maven2/io/appmetrica/analytics/analytics/maven-metadata.xml (search.maven.org lags behind)
 
@@ -119,3 +123,5 @@ kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref 
 ksp                  = { id = "com.google.devtools.ksp", version.ref = "ksp" } # https://github.com/google/ksp
 kotest-multiplatform = { id = "io.kotest.multiplatform", version.ref = "kotest-multiplatform" } # https://plugins.gradle.org/plugin/io.kotest.multiplatform
 compose              = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+detekt               = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+ktlint               = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint-gradle" }

@@ -207,7 +207,7 @@ pws-android :data:content-delivery      сеть/файлы/расшифровк
 | **01** | **[Сборка: convention plugins, статанализ, один gate](step-01-build-system.md)** | | | |
 | 01.1 | Convention plugins в pws-core | core | sonnet | done |
 | 01.2 | Convention plugins + вынос build-логики в pws-android [R8] | android | sonnet | done |
-| 01.3 | Detekt + ktlint с baseline в обоих репо | оба | sonnet | not started |
+| 01.3 | Detekt + ktlint с baseline в обоих репо | оба | sonnet | done |
 | 01.4 | CI запускает ровно `./gradlew build` | оба | haiku | not started |
 | **02** | **[Fitness-тесты: правила в сборке](step-02-fitness-tests.md)** | | | |
 | 02.1 | Каркас + правила слоёв и зависимостей модулей | core | sonnet | not started |
