@@ -216,7 +216,7 @@ pws-android :data:content-delivery      сеть/файлы/расшифровк
 | 03.1 | Объединить две модели SongDetail, убрать репозитории из UI | core | opus | done |
 | 03.2 | Эффекты через `Channel`, ошибки не глотаются | core | sonnet | done |
 | 03.3 | Разрезать `SongDetailScreen.kt` | core | sonnet | done |
-| 03.4 | Разрезать `SettingsScreen.kt`, `TagsScreen.kt`; убрать `koinInject` из composable | core | sonnet | not started |
+| 03.4 | Разрезать `SettingsScreen.kt`, `TagsScreen.kt`; убрать `koinInject` из composable | core | sonnet | done |
 | **04** | **[Настройки как порт домена](step-04-preferences-port.md)** — ручной прогон | | | |
 | 04.1 | Порт `UserPreferencesRepository` + Android-адаптер над существующим DataStore | оба | opus | not started |
 | 04.2 | Экраны читают настройки через use case; сузить `AppRoot` | оба | sonnet | not started |
@@ -267,6 +267,7 @@ use case'ы лежат в `infra/` (а не в домене); контракт �
 | 2026-10-01 | 00 | Шаг 00 выполнен целиком (00.1–00.5), по коммиту на этап. Ручные прогоны 04/05/06 владелец разрешил отложить до мержа (список в заметках владельца). Гейты в песочнице linux-aarch64: без iOS-задач; Robolectric-тесты с нативным SQLite падают по окружению (UnsatisfiedLinkError) — перед мержем прогнать гейты на Mac. Находка 00.4: `TagsScreenModel.saveTag()` глотает ошибку `UpdateTagUseCase` → исправить в 03.2. **Следующий этап: 01.1** |
 | 2026-10-06 | 01 | Шаг 01 выполнен (01.1–01.4). Convention plugins в обоих репо, detekt+ktlint с baseline, CI = `./gradlew build` (в pws-android без `assemble*Release` — подпись есть только в release-build.yml). Попутно: `verifyCoreVersionAlignment` сделан совместимым с configuration cache (иначе `build` падал). iOS-задачи и Robolectric+SQLite в песочнице не проверяемы — прогнать `./gradlew build` на Mac. **Следующий этап: 02.1** |
 | 2026-10-06 | 02 | Шаг 02 выполнен (02.1–02.3): fitness-тесты в обоих репо, ratchet-списки зафиксированы. Попутно по прогону владельца исправлена гонка тестовых БД в `:data:db-android` (общий каталог `test-db/` при параллельных flavor-задачах). `-keep class net.zetetic.database.** { *; }` (sqlcipher, существовал до плана) оставлен в ratchet `ProguardRulesTest`. **Следующий этап: 03.1** |
+| 2026-10-06 | 03 | Шаг 03 выполнен (03.1–03.4). Исправлены баги «ошибка проглочена»: Tags save/create/delete, SongDetail (вне сборника) onSaveTags, перехват `CancellationException` в экранных моделях — решение расширить 03.2 на create/delete и отмену принял оркестратор. Ratchet'ы `KNOWN_*` UI-слоя пусты, кроме `MaterialTheme` (шаг 09). Перед мержем — визуальная проверка экранов песни, настроек (ru/rustore) и тегов. **Следующие: 04 (ручной прогон перед мержем) и 06 (независим)** |
 
 ## 11. Отступления от скиллов (сознательные)
 

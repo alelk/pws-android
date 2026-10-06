@@ -203,4 +203,10 @@ Maestro `e2e/flows/compose`.
   что и до этапа (rustore — блок Pro).
 
 ### Заметки исполнителя
-<!-- -->
+**03.4 (sonnet, 2026-10-06) — done.**
+- Сделано (pws-core): `SettingsScreen.kt` 794 -> ~200 (Entry `SettingsScreen` + `SettingsContent`); секции `SettingsAppearanceSection`, `SettingsDevelopersSection`, `SettingsBooksSection`, `SettingsProSection`, `SettingsDataSection`, `SettingsDonationSection`, `SettingsPrivacySection`, `SettingsAboutSection` (+ `LicenseDialog`), общие `SettingsComponents.kt`. Три `koinInject` убраны: `SettingsScreenModel` получил `monetizationMode` и `entitlementRepository` (Koin: `get()`), `SettingsUiState.Content` — поля `monetizationMode`, `entitlementInfo`; телеметрия coming-soon идёт из модели по `SettingsEvent.ProAction(paywallAvailable)` -> эффекты `OpenPaywall` / `ShowProDetails`. `paywallAvailable` считает Entry (режим покупок + наличие `openPaywall` у шелла) — поведение прежнее. `TagsScreen.kt` 555 -> ~420, диалог и выбор цвета вынесены в `TagEditDialog.kt` (Entry/Content там уже были: `TagsScreen` / `TagsContent`).
+- Тесты: 5 новых в `SettingsScreenModelTest` (mode/entitlement в state, дефолты, реакция на смену entitlement, ProAction с paywall и без — с проверкой telemetry). `KNOWN_*` в `ScreenFileSizeTest` и `NoServiceLocatorInComposablesTest` пусты. `MaterialThemeRatchetTest`: запись SettingsScreen заменена записями новых файлов + `TagEditDialog.kt` (по числу файлов список вырос, число обращений нет; уйдёт в шаге 09).
+- Baselines features: ktlint 2496 -> 2348, detekt 156 -> 155. Новые записи ktlint: `function-naming` (Composable) и `function-signature` — конфликт: ktlint (160) склеивает сигнатуры в одну строку, detekt (120) требует короче; выбран detekt. Урок: `runKtlintFormatOver*SourceSet` игнорирует baseline и переформатирует весь модуль — я откатил чужие файлы через git checkout; переформатированы целиком только файлы settings/tags, которые я и так переписывал. Не запускать format на модуле.
+- Визуальная проверка (скриншоты ru/rustore) не выполнялась — за владельцем. Вопросов нет. Не закоммичено.
+- Gate: pws-core `build $(cat corex) --continue` — SUCCESS; pws-android `:app-compose:assembleRuDebug :app-compose:assembleRustoreDebug` — SUCCESS.
+
