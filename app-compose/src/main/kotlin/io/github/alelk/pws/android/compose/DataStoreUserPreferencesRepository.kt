@@ -3,10 +3,7 @@ package io.github.alelk.pws.android.compose
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.floatPreferencesKey
-import androidx.datastore.preferences.core.stringPreferencesKey
 import io.github.alelk.pws.domain.preferences.model.AppPreferences
 import io.github.alelk.pws.domain.preferences.model.FavoritesPreferences
 import io.github.alelk.pws.domain.preferences.model.FavoritesSortMode
@@ -22,8 +19,9 @@ import kotlinx.coroutines.flow.map
  * [UserPreferencesRepository] over the app settings DataStore — the single instance from
  * [appSettingsDataStore] (registered in Koin); never open a second DataStore on the same file.
  *
- * Key names, value formats and defaults are those of `ThemePreferences.kt` (G3): users' stored settings
- * are read with them. `app-theme` is also read and written by [BackupManager].
+ * Key names (declared in `ThemePreferences.kt`), value formats and defaults are those the app has always
+ * used (G3): users' stored settings are read with them. `app-theme` is also read and written by
+ * [BackupManager].
  */
 class DataStoreUserPreferencesRepository(private val dataStore: DataStore<Preferences>) : UserPreferencesRepository {
   // Mobile default: songs are paged by swipe, so the header arrows stay hidden unless enabled.
@@ -40,19 +38,19 @@ class DataStoreUserPreferencesRepository(private val dataStore: DataStore<Prefer
   }
 
   private fun Preferences.toAppPreferences(): AppPreferences = AppPreferences(
-    themeMode = ThemeMode.byIdentifier(this[THEME]),
-    useDynamicColor = this[USE_DYNAMIC_COLOR] ?: defaults.useDynamicColor,
-    keepScreenOn = this[KEEP_SCREEN_ON] ?: defaults.keepScreenOn,
+    themeMode = ThemeMode.byIdentifier(this[appThemeKey]),
+    useDynamicColor = this[useDynamicColorKey] ?: defaults.useDynamicColor,
+    keepScreenOn = this[keepScreenOnKey] ?: defaults.keepScreenOn,
     songText = SongTextPreferences(
-      scale = this[SONG_TEXT_SCALE] ?: defaults.songText.scale,
-      expanded = this[SONG_TEXT_EXPANDED] ?: defaults.songText.expanded,
-      lineHeightMultiplier = this[SONG_LINE_HEIGHT_MULTIPLIER] ?: defaults.songText.lineHeightMultiplier,
-      serifFont = this[SONG_SERIF_FONT] ?: defaults.songText.serifFont,
-      showNavButtons = this[SHOW_SONG_NAV_BUTTONS] ?: defaults.songText.showNavButtons,
+      scale = this[songTextScaleKey] ?: defaults.songText.scale,
+      expanded = this[songTextExpandedKey] ?: defaults.songText.expanded,
+      lineHeightMultiplier = this[songLineHeightMultiplierKey] ?: defaults.songText.lineHeightMultiplier,
+      serifFont = this[songSerifFontKey] ?: defaults.songText.serifFont,
+      showNavButtons = this[showSongNavButtonsKey] ?: defaults.songText.showNavButtons,
     ),
     favorites = FavoritesPreferences(
-      sortMode = FavoritesSortMode.byIdentifier(this[FAVORITES_SORT_MODE]),
-      ascending = this[FAVORITES_ASCENDING] ?: defaults.favorites.ascending,
+      sortMode = FavoritesSortMode.byIdentifier(this[favoritesSortModeKey]),
+      ascending = this[favoritesAscendingKey] ?: defaults.favorites.ascending,
     ),
   )
 
@@ -61,32 +59,19 @@ class DataStoreUserPreferencesRepository(private val dataStore: DataStore<Prefer
    * stay absent (and keep following the defaults) and the backup exports exactly what the user set.
    */
   private fun MutablePreferences.writeChanged(old: AppPreferences, new: AppPreferences) {
-    if (new.themeMode != old.themeMode) this[THEME] = new.themeMode.identifier
-    if (new.useDynamicColor != old.useDynamicColor) this[USE_DYNAMIC_COLOR] = new.useDynamicColor
-    if (new.keepScreenOn != old.keepScreenOn) this[KEEP_SCREEN_ON] = new.keepScreenOn
-    if (new.songText.scale != old.songText.scale) this[SONG_TEXT_SCALE] = new.songText.scale
-    if (new.songText.expanded != old.songText.expanded) this[SONG_TEXT_EXPANDED] = new.songText.expanded
+    if (new.themeMode != old.themeMode) this[appThemeKey] = new.themeMode.identifier
+    if (new.useDynamicColor != old.useDynamicColor) this[useDynamicColorKey] = new.useDynamicColor
+    if (new.keepScreenOn != old.keepScreenOn) this[keepScreenOnKey] = new.keepScreenOn
+    if (new.songText.scale != old.songText.scale) this[songTextScaleKey] = new.songText.scale
+    if (new.songText.expanded != old.songText.expanded) this[songTextExpandedKey] = new.songText.expanded
     if (new.songText.lineHeightMultiplier != old.songText.lineHeightMultiplier) {
-      this[SONG_LINE_HEIGHT_MULTIPLIER] = new.songText.lineHeightMultiplier
+      this[songLineHeightMultiplierKey] = new.songText.lineHeightMultiplier
     }
-    if (new.songText.serifFont != old.songText.serifFont) this[SONG_SERIF_FONT] = new.songText.serifFont
+    if (new.songText.serifFont != old.songText.serifFont) this[songSerifFontKey] = new.songText.serifFont
     if (new.songText.showNavButtons != old.songText.showNavButtons) {
-      this[SHOW_SONG_NAV_BUTTONS] = new.songText.showNavButtons
+      this[showSongNavButtonsKey] = new.songText.showNavButtons
     }
-    if (new.favorites.sortMode != old.favorites.sortMode) this[FAVORITES_SORT_MODE] = new.favorites.sortMode.identifier
-    if (new.favorites.ascending != old.favorites.ascending) this[FAVORITES_ASCENDING] = new.favorites.ascending
-  }
-
-  private companion object {
-    val THEME = stringPreferencesKey("app-theme")
-    val SONG_TEXT_SCALE = floatPreferencesKey("song-text-scale")
-    val SONG_TEXT_EXPANDED = booleanPreferencesKey("song-text-expanded")
-    val FAVORITES_SORT_MODE = stringPreferencesKey("favorites-sort-mode")
-    val FAVORITES_ASCENDING = booleanPreferencesKey("favorites-ascending")
-    val USE_DYNAMIC_COLOR = booleanPreferencesKey("use-dynamic-color")
-    val KEEP_SCREEN_ON = booleanPreferencesKey("keep-screen-on")
-    val SONG_LINE_HEIGHT_MULTIPLIER = floatPreferencesKey("song-line-height-multiplier")
-    val SONG_SERIF_FONT = booleanPreferencesKey("song-serif-font")
-    val SHOW_SONG_NAV_BUTTONS = booleanPreferencesKey("show-song-nav-buttons")
+    if (new.favorites.sortMode != old.favorites.sortMode) this[favoritesSortModeKey] = new.favorites.sortMode.identifier
+    if (new.favorites.ascending != old.favorites.ascending) this[favoritesAscendingKey] = new.favorites.ascending
   }
 }

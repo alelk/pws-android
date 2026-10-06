@@ -28,15 +28,13 @@
     </file>
     <file name="src/main/kotlin/io/github/alelk/pws/android/compose/MainActivity.kt">
         <error line="3" column="1" source="standard:import-ordering" />
-        <error line="164" column="40" source="standard:no-multi-spaces" />
-        <error line="165" column="40" source="standard:no-multi-spaces" />
-        <error line="166" column="35" source="standard:no-multi-spaces" />
-        <error line="167" column="35" source="standard:no-multi-spaces" />
-        <error line="168" column="35" source="standard:no-multi-spaces" />
-        <error line="290" column="12" source="standard:trailing-comma-on-call-site" />
-        <error line="347" column="12" source="standard:trailing-comma-on-call-site" />
-        <error line="364" column="12" source="standard:trailing-comma-on-call-site" />
-        <error line="372" column="53" source="standard:trailing-comma-on-call-site" />
+        <error line="160" column="40" source="standard:no-multi-spaces" />
+        <error line="161" column="40" source="standard:no-multi-spaces" />
+        <error line="162" column="35" source="standard:no-multi-spaces" />
+        <error line="163" column="35" source="standard:no-multi-spaces" />
+        <error line="164" column="35" source="standard:no-multi-spaces" />
+        <error line="286" column="12" source="standard:trailing-comma-on-call-site" />
+        <error line="306" column="53" source="standard:trailing-comma-on-call-site" />
     </file>
     <file name="src/main/kotlin/io/github/alelk/pws/android/compose/PwsBackupAgent.kt">
         <error line="20" column="5" source="standard:function-signature" />
@@ -60,18 +58,6 @@
         <error line="3" column="1" source="standard:import-ordering" />
         <error line="63" column="10" source="standard:trailing-comma-on-call-site" />
         <error line="142" column="86" source="standard:trailing-comma-on-call-site" />
-    </file>
-    <file name="src/main/kotlin/io/github/alelk/pws/android/compose/ThemePreferences.kt">
-        <error line="27" column="47" source="standard:function-signature" />
-        <error line="38" column="47" source="standard:function-signature" />
-        <error line="49" column="52" source="standard:function-signature" />
-        <error line="60" column="52" source="standard:function-signature" />
-        <error line="71" column="54" source="standard:function-signature" />
-        <error line="82" column="51" source="standard:function-signature" />
-        <error line="89" column="48" source="standard:function-signature" />
-        <error line="96" column="58" source="standard:function-signature" />
-        <error line="103" column="49" source="standard:function-signature" />
-        <error line="112" column="54" source="standard:function-signature" />
     </file>
     <file name="src/main/kotlin/io/github/alelk/pws/android/compose/donation/SharedPrefsDonationPromptStateRepository.kt">
         <error line="19" column="3" source="standard:class-signature" />
@@ -137,6 +123,9 @@
         <error line="107" column="21" source="standard:trailing-comma-on-call-site" />
         <error line="154" column="24" source="standard:statement-wrapping" />
         <error line="177" column="24" source="standard:statement-wrapping" />
+    </file>
+    <file name="src/test/kotlin/io/github/alelk/pws/android/compose/DataStoreUserPreferencesRepositoryTest.kt">
+        <error line="136" column="57" source="standard:function-signature" />
     </file>
     <file name="src/test/kotlin/io/github/alelk/pws/android/compose/LegacyMigrationGateTest.kt">
         <error line="21" column="33" source="standard:class-signature" />

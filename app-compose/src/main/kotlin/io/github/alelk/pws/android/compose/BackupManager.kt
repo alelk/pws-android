@@ -13,7 +13,7 @@ import io.github.alelk.pws.database.PwsDatabase
 import io.github.alelk.pws.database.history.HistoryEntity
 import io.github.alelk.pws.database.song_tag.SongTagEntity
 import io.github.alelk.pws.database.tag.TagEntity
-import io.github.alelk.pws.features.theme.ThemeMode
+import io.github.alelk.pws.domain.preferences.model.ThemeMode
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map

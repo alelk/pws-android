@@ -7,13 +7,15 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import io.github.alelk.pws.android.compose.MainActivity
 import io.github.alelk.pws.android.compose.flavor.MONETIZATION
-import io.github.alelk.pws.android.compose.themeModeFlow
+import io.github.alelk.pws.domain.preferences.model.ThemeMode
+import io.github.alelk.pws.domain.preferences.usecase.ObserveAppPreferencesUseCase
 import io.github.alelk.pws.domain.telemetry.Telemetry
 import io.github.alelk.pws.domain.telemetry.TelemetryEvent
 import io.github.alelk.pws.features.theme.AppTheme
-import io.github.alelk.pws.features.theme.ThemeMode
+import kotlinx.coroutines.flow.map
 import org.koin.android.ext.android.get
 
 /**
@@ -47,7 +49,8 @@ class PaymentActivity : ComponentActivity() {
     controller.proceedIntent(intent)
 
     setContent {
-      val themeMode by applicationContext.themeModeFlow().collectAsState(initial = ThemeMode.DEFAULT)
+      val themeMode by remember { get<ObserveAppPreferencesUseCase>()().map { it.themeMode } }
+        .collectAsState(initial = ThemeMode.DEFAULT)
       AppTheme(themeMode = themeMode) {
         PaymentScreen(controller = controller, onNavigateBack = { finish() })
       }

@@ -42,16 +42,12 @@ import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.lifecycle.lifecycleScope
 import io.github.alelk.pws.portable.BackupService
 import io.github.alelk.pws.database.PwsDatabase
 import io.github.alelk.pws.database.PwsDatabaseProvider
 import io.github.alelk.pws.features.app.AppRoot
 import io.github.alelk.pws.features.settings.SettingsExternalActions
-import io.github.alelk.pws.features.song.detail.FavoritesDisplaySettings
-import io.github.alelk.pws.features.song.detail.SongDetailDisplaySettings
 import io.github.alelk.pws.features.song.detail.SongDetailExternalActions
-import io.github.alelk.pws.features.theme.ThemeMode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -291,78 +287,16 @@ class MainActivity : ComponentActivity() {
         )
       }
 
-      val themeMode by applicationContext.themeModeFlow().collectAsState(initial = ThemeMode.DEFAULT)
-      val songTextScale by applicationContext.songTextScaleFlow().collectAsState(initial = 1.0f)
-      val songTextExpanded by applicationContext.songTextExpandedFlow().collectAsState(initial = true)
-      val favoritesSortMode by applicationContext.favoritesSortModeFlow().collectAsState(initial = "ADDED_DATE")
-      val favoritesAscending by applicationContext.favoritesAscendingFlow().collectAsState(initial = false)
-      val useDynamicColor by applicationContext.useDynamicColorFlow().collectAsState(initial = false)
-      val keepScreenOn by applicationContext.keepScreenOnFlow().collectAsState(initial = false)
-      val songLineHeightMultiplier by applicationContext.songLineHeightMultiplierFlow().collectAsState(initial = 1.0f)
-      val songSerifFont by applicationContext.songSerifFontFlow().collectAsState(initial = false)
-      val showSongNavButtons by applicationContext.showSongNavButtonsFlow().collectAsState(initial = false)
-
-      // Window FLAG_KEEP_SCREEN_ON is handled here, in the shell.
+      // Window FLAG_KEEP_SCREEN_ON is handled here, in the shell; AppRoot reports the preference.
       // iOS analog: UIApplication.shared.isIdleTimerDisabled
-      androidx.compose.runtime.DisposableEffect(keepScreenOn) {
-        if (keepScreenOn) {
-          window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        } else {
-          window.clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+      val onKeepScreenOnChanged = remember<(Boolean) -> Unit> {
+        { keepScreenOn ->
+          if (keepScreenOn) {
+            window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+          } else {
+            window.clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+          }
         }
-        onDispose { window.clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) }
-      }
-
-      val songDetailDisplaySettings = remember(songTextScale, songTextExpanded, songLineHeightMultiplier, songSerifFont, showSongNavButtons) {
-        SongDetailDisplaySettings(
-          fontScale = songTextScale,
-          expandedText = songTextExpanded,
-          onFontScaleChange = { newScale ->
-            lifecycleScope.launch {
-              applicationContext.setSongTextScale(newScale)
-            }
-          },
-          onExpandedTextChange = { expanded ->
-            lifecycleScope.launch {
-              applicationContext.setSongTextExpanded(expanded)
-            }
-          },
-          lineHeightMultiplier = songLineHeightMultiplier,
-          onLineHeightMultiplierChange = { multiplier ->
-            lifecycleScope.launch {
-              applicationContext.setSongLineHeightMultiplier(multiplier)
-            }
-          },
-          serifFont = songSerifFont,
-          onSerifFontChange = { enabled ->
-            lifecycleScope.launch {
-              applicationContext.setSongSerifFont(enabled)
-            }
-          },
-          showNavigationButtons = showSongNavButtons,
-          onShowNavigationButtonsChange = { visible ->
-            lifecycleScope.launch {
-              applicationContext.setShowSongNavButtons(visible)
-            }
-          }
-        )
-      }
-
-      val favoritesDisplaySettings = remember(favoritesSortMode, favoritesAscending) {
-        FavoritesDisplaySettings(
-          sortMode = favoritesSortMode,
-          ascending = favoritesAscending,
-          onSortModeChange = { newMode ->
-            lifecycleScope.launch {
-              applicationContext.setFavoritesSortMode(newMode)
-            }
-          },
-          onAscendingChange = { ascending ->
-            lifecycleScope.launch {
-              applicationContext.setFavoritesAscending(ascending)
-            }
-          }
-        )
       }
 
       @OptIn(ExperimentalComposeUiApi::class)
@@ -372,29 +306,10 @@ class MainActivity : ComponentActivity() {
           .semantics { testTagsAsResourceId = true }
       ) {
         AppRoot(
-          themeMode = themeMode,
           appVersion = appVersion,
-          onThemeModeChange = { newMode ->
-            lifecycleScope.launch {
-              applicationContext.setThemeMode(newMode)
-            }
-          },
-          useDynamicColor = useDynamicColor,
-          onUseDynamicColorChange = { enabled ->
-            lifecycleScope.launch {
-              applicationContext.setUseDynamicColor(enabled)
-            }
-          },
-          keepScreenOn = keepScreenOn,
-          onKeepScreenOnChange = { enabled ->
-            lifecycleScope.launch {
-              applicationContext.setKeepScreenOn(enabled)
-            }
-          },
+          onKeepScreenOnChanged = onKeepScreenOnChanged,
           settingsExternalActions = settingsExternalActions,
           songDetailExternalActions = songDetailExternalActions,
-          songDetailDisplaySettings = songDetailDisplaySettings,
-          favoritesDisplaySettings = favoritesDisplaySettings,
           hasInstalledBooks = booksGate,
           onSkipOnboarding = { onboardingSkipped = true },
           bookLibraryExternalActions = bookLibraryExternalActions,

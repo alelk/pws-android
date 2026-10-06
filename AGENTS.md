@@ -56,7 +56,7 @@ before declaring work done.
 ```text
 MainActivity (Android)
   ├─ initialises Koin via PwsComposeApplication
-  ├─ reads DataStore prefs (theme, font scale, …) via collectAsState
+  ├─ applies the keep-screen-on preference (window flag) when AppRoot reports it
   ├─ constructs *ExternalActions impls (share, intents, file pickers)
   └─ calls AppRoot(...)             ← from pws-core :features
         ↓
@@ -68,8 +68,10 @@ This repo only owns Android-specific glue. Anything platform-agnostic belongs in
 
 - **DI:** Koin, initialised in `PwsComposeApplication`. ScreenModels scoped to Voyager screens (in
   `pws-core`).
-- **Preferences:** Jetpack DataStore (Theme, Font Scale, …) — read in `MainActivity`, passed down to
-  `AppRoot`.
+- **Preferences:** Jetpack DataStore behind the `UserPreferencesRepository` port (pws-core `:domain`);
+  the adapter is `DataStoreUserPreferencesRepository`. Screens and `AppRoot` read/write them through
+  use cases (`ObserveAppPreferencesUseCase` / `UpdateAppPreferencesUseCase`); `MainActivity` does not
+  touch DataStore.
 - **Database:** Room provider lives in `:data:db-android`, schema/DAOs/repos in `pws-core` (
   `:data:db-room`, `:data:repo-room`).
 - **DB security:** SQLCipher + Android Keystore — see [
@@ -98,9 +100,10 @@ Composite-built dependencies from `../pws-core`:
 
 ```
 app-compose/src/main/kotlin/io/github/alelk/pws/android/compose/
-  ├ MainActivity.kt              activity + ExternalActions impls + DataStore reads
+  ├ MainActivity.kt              activity + ExternalActions impls
   ├ PwsComposeApplication.kt     Koin init + module wiring
-  ├ ThemePreferences.kt          DataStore keys / serialisers
+  ├ ThemePreferences.kt          app-settings DataStore + key names (G3)
+  ├ DataStoreUserPreferencesRepository.kt  UserPreferencesRepository adapter
   ├ BackupManager.kt             backup orchestration
   └ donation/                    flavor-specific donation flow
 
@@ -153,7 +156,7 @@ val songDetailActions = object : SongDetailExternalActions {
 AppRoot(
     songDetailExternalActions = songDetailActions,
     settingsExternalActions = settingsActions,
-    displaySettings = displaySettingsFromDataStore,
+    onKeepScreenOnChanged = { keep -> /* window FLAG_KEEP_SCREEN_ON */ },
     …
 )
 ```
@@ -161,14 +164,13 @@ AppRoot(
 If a feature needs a new Android-only capability, add the callback to the relevant `ExternalActions`
 interface in `pws-core`, then implement it here.
 
-### DataStore → AppRoot
+### Preferences (DataStore behind a port)
 
-```kotlin
-val theme by themePreferences.themeFlow.collectAsState(initial = Theme.System)
-val fontScale by themePreferences.fontScaleFlow.collectAsState(initial = 1f)
-
-AppRoot(displaySettings = DisplaySettings(theme = theme, fontScale = fontScale), …)
-```
+Display settings are not passed through `AppRoot`. The port lives in `pws-core` `:domain`
+(`UserPreferencesRepository`); `featuresModule` binds an in-memory default and `PwsComposeApplication`
+overrides it with `DataStoreUserPreferencesRepository` (module loaded after `featuresModule`). Screen
+models call the use cases; `AppRoot` observes the theme itself. The only platform effect left in the
+shell is `onKeepScreenOnChanged`. Key names live in `ThemePreferences.kt` (G3: never rename).
 
 ### Maestro testability
 
@@ -248,8 +250,8 @@ Apply on the shell root composable so Maestro can address Compose nodes by `test
 
 - ✅ **`enableEdgeToEdge()`** stays in `MainActivity`.
 - ✅ **`Modifier.semantics { testTagsAsResourceId = true }`** on the shell root for Maestro.
-- ✅ **DataStore reads** stay in `MainActivity` (single owner) and pass down via `AppRoot`
-  parameters.
+- ✅ **Display settings** go through `UserPreferencesRepository` (one DataStore instance from
+  `appSettingsDataStore()`); `MainActivity` does not read DataStore and `AppRoot` takes no settings.
 
 ---
 

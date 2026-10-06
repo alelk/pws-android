@@ -219,7 +219,7 @@ pws-android :data:content-delivery      сеть/файлы/расшифровк
 | 03.4 | Разрезать `SettingsScreen.kt`, `TagsScreen.kt`; убрать `koinInject` из composable | core | sonnet | done |
 | **04** | **[Настройки как порт домена](step-04-preferences-port.md)** — ручной прогон | | | |
 | 04.1 | Порт `UserPreferencesRepository` + Android-адаптер над существующим DataStore | оба | opus | done |
-| 04.2 | Экраны читают настройки через use case; сузить `AppRoot` | оба | sonnet | not started |
+| 04.2 | Экраны читают настройки через use case; сузить `AppRoot` | оба | sonnet | done |
 | **05** | **[Старт приложения и тонкий шелл](step-05-startup-and-shell.md)** — ручной прогон | | | |
 | 05.1 | Машина состояний старта: чистая функция + тесты | оба | opus | not started |
 | 05.2 | `AppStartupModel`, переключение `MainActivity` [R8] | оба | opus | not started |
