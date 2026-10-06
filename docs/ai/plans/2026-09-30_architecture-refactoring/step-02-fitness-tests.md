@@ -60,7 +60,13 @@
 - Четыре теста в сборке; для каждого в заметках записан факт проверки «красным».
 
 ### Заметки исполнителя
-<!-- -->
+**02.1 (sonnet, 2026-10-06) — done.**
+- Сделано (pws-core): в `:domain` jvmTest — `DomainPurityTest`, `ModuleDependencyTest`, `UseCaseShapeTest`; в `:features` jvmTest — `FeaturesLayerTest` (два теста: запрещённые импорты и репозитории вне `di/`). Хелпер `ScannedFile.kt` — копия в каждом модуле (в `domain-test-fixtures` нельзя: `java.io` в commonMain). Guard непустоты в каждом тесте. `AGENTS.md §8` дополнен именами тестов.
+- Фактические `KNOWN_*`: Purity, UseCaseShape, ModuleDependency, запрещённые импорты — пусто (нарушений нет, 74 usecase-файла все с одним `*UseCase`). Репозитории вне `di/`: `song/detail/SongDetailBySongIdScreenModel.kt`, `song/detail/SongDetailScreenModel.kt` (`songEditScreenModelModule.kt` уже исчез после 00.1).
+- Красным доказано (нарушение внесено, тест красный, откат): `java.util.UUID` в domain; лишний `class ExtraUseCase`; `internal class UpdateSongUseCase` (ноль public); `:features -> :data:repo-room`; `:api:contract -> :domain`; `:data:repo-room -> :features`; `:domain -> :api:contract`; `import ...pws.api.contract.Foo` в features (внесён в блок-комментарий, т.к. иначе не компилируется — regex по импортам видит и закомментированные строки); `import ...domain.song.repository.SongReadRepository` вне `di/`; лишняя «исчезнувшая» запись в KNOWN (ratchet краснеет на исчезнувшем нарушении).
+- Отклонение: в `domain/build.gradle.kts` и `features/build.gradle.kts` добавлены `inputs` для `Test`-задач (исходники commonMain; в domain ещё все `build.gradle.kts`). Без этого `jvmTest` оставался UP-TO-DATE/из кэша при правке build-скриптов или импорта, не меняющего байткод, — тест «не мог упасть» (мина шага). Обнаружено именно при проверке «красным».
+- Наблюдения: Kotest + `--tests '*X*'` не находит тесты (нужно гонять весь `:module:jvmTest`). Один прогон gate упал из-за гибели Gradle-демона на `jsBrowserTest` (окружение); повтор с `--max-workers=1` зелёный.
+- Gate pws-core: `./gradlew build $(cat /tmp/claude-1000/01.3/corex)` — BUILD SUCCESSFUL. pws-android не затрагивался. Вопросов владельцу нет. Не закоммичено.
 
 ---
 
