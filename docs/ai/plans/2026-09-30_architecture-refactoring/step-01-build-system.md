@@ -101,7 +101,14 @@ cd ../pws-android && ./gradlew :app-compose:assembleRuDebug   # composite build 
   совпадают с «до».
 
 ### Заметки исполнителя
-<!-- -->
+**01.2 — статус: done** (не закоммичено; `convention-plugins/` (новый), `settings.gradle.kts`, `build.gradle.kts`, `app-compose/`, `data/db-android/`, `data/content-delivery/` build-скрипты).
+- Included build `convention-plugins/` (каталог из `../gradle/libs.versions.toml`; AGP и KGP берутся через `toDep()` из каталога). Плагины: `pws.android.library`, `pws.android.application`; общее в `BuildConventions.kt` (compileSdk 37, minSdk 23, Java 21, `jvmToolchain(21)`, `isIncludeAndroidResources`, build type `localSeed`, `useJUnitPlatform()` + 11 `--add-opens`).
+- `VerifyRustoreInvariantsTask`, `RustoreInvariants`, `DownloadSeedBundlesTask`, `StageMappingFileTask` перенесены без изменения логики в пакет `io.github.alelk.pws.build` (импортируются в `app-compose/build.gradle.kts`); регистрация в `onVariants` осталась в app-compose.
+- Отклонения: (1) `--add-opens`/`useJUnitPlatform` заданы через `tasks.withType<Test>().configureEach`, а не `testOptions.unitTests.all` (тот же набор задач); (2) `localSeed` создаётся в конвенции, модули делают `getByName("localSeed")`; (3) удалены `sdkVersion` из корня и блок `KotlinCompile.jvmTarget` (заменён toolchain 21); `lint.targetSdk` в db-android = `compileSdk`; targetSdk приложения = compileSdk (оба 37); (4) `alias(libs.plugins.compose)` и kotest-плагин остались в модулях; test-зависимости не переносились (вне решений этапа); (5) db-android получил `jvmToolchain(21)` (jvmTarget уже был 21).
+- Проверки (снимки в /tmp/claude-1000/01.2/): списки задач `:app-compose`, `:data:db-android`, `:data:content-delivery` идентичны до/после; `aapt2 dump badging` ruDebug и rustoreDebug идентичны (package/versionCode 48/versionName/SDK). Для badging пришлось использовать /home/agent/tools/aapt2/aapt2 (aapt2 из .sbx-android-sdk x86, не запускается на aarch64).
+- Gate (без изменений относительно базы): те же 6 упавших test-задач (UnsatisfiedLinkError, Robolectric): 63 строки FAILED, множества совпадают до/после; assembleRuDebug/RustoreDebug зелёные. [R8]: `verifyRustoreReleaseInvariants` OK; `minify*ReleaseWithR8` проходит, `assemble*Release` падает на `SigningConfig ... missing storeFile` (нет секретов) — одинаково до и после.
+- Окружение: при 5 ГБ gradle OOM-убивался; запускал с `-Xmx2500m`, `--max-workers=2`, `-Pkotlin.daemon.jvmargs=-Xmx1200m`.
+- Находки вне объёма: уже до правок `:verifyCoreVersionAlignment` не совместим с configuration cache (ссылки на script object), кэш отбрасывается; предупреждения Kotlin о deprecated `extra(...)` делегатах в корневом build.gradle.kts.
 
 ---
 
