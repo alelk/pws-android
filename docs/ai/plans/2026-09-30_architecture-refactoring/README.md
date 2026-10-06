@@ -229,7 +229,7 @@ pws-android :data:content-delivery      сеть/файлы/расшифровк
 | 06.2 | Бэкап: use case'ы экспорта/восстановления в домене | оба | opus | done |
 | 06.3 | Импорт/удаление сборников через порты | оба | opus | done |
 | **07** | **[Согласованность домена](step-07-domain-consistency.md)** | | | |
-| 07.1 | Единая форма use case; `AGENTS.md` ↔ `Either` | core | sonnet | not started |
+| 07.1 | Единая форма use case; `AGENTS.md` ↔ `Either` | core | sonnet | done |
 | 07.2 | Убрать pass-through и чтение без use case | core | sonnet | not started |
 | 07.3 | (F6) generic id у тегов | core | — | skipped |
 | **08** | **[Navigation 3 + ViewModel](step-08-navigation3-viewmodel.md)** — отложен (F3) | | | |

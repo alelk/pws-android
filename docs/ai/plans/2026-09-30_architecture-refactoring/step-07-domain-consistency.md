@@ -48,7 +48,13 @@
 - Документы описывают фактический код; форма use case закреплена тестом.
 
 ### Заметки исполнителя
-<!-- -->
+**07.1 (sonnet, 2026-10-06) — done.**
+- pws-core: `UseCaseShapeTest` — правило формы: use case = `class` ровно с одним `operator fun invoke`; pinned `PLATFORM_USE_CASES` (Install/Uninstall/UpdateBookUseCase, с причиной) обязаны быть `fun interface`; `KNOWN_SHAPE_VIOLATIONS` пуст. Красным проверено: второй `operator fun invoke` в `ClearHistoryUseCase` ⇒ тест падает; откат. Три интерфейса booklibrary стали `fun interface` (источник и бинарно совместимо; реализации/`object :` не менялись).
+- `GetSongReferencesWithDetailsUseCase` — регистрация перенесена из `FeaturesModule` в `UseCasesModule` (явные типы `get<...>()`); неиспользуемый импорт убран.
+- Документы: `AGENTS.md` (§3 — `Either<XxxError, T>` с примерами + порты настроек/старта/бэкапа/импорта; §8 — правило формы и исключения поимённо), `docs/ARCHITECTURE.md` (раздел «Platform ports», форма use case), `docs/DATA_FLOW.md` (транзакции `inRw/inRoTransaction`, схема settings/startup/backup/import).
+- Отклонения: ktlint-baseline `features` регенерирован (сдвиг строк DI-модулей; `<error` 2347 → 2346, не вырос); мой длинный вызов в `UseCasesModule` отформатирован вручную, чтобы не плодить detekt MaxLineLength. `--tests '*UseCaseShapeTest*'` в песочнице пишет «No tests found» — гонять `:domain:jvmTest` целиком.
+- Мимоходом (не трогал): use case'ы `:portable-data` (`ExportBackup/RestoreBackup/ImportBookBundleUseCase`) вне `:domain` и не под `UseCaseShapeTest`; pws-server рядом есть, переименований/удалений публичных сигнатур нет.
+- Gate: pws-core `build $(corex)` — BUILD SUCCESSFUL; pws-android `:data:content-delivery:compileDebugUnitTestKotlin :app-compose:compileRustoreDebugUnitTestKotlin` — успешно. Не закоммичено.
 
 ---
 
