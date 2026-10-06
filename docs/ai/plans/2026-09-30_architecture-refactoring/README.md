@@ -240,6 +240,13 @@ pws-android :data:content-delivery      сеть/файлы/расшифровк
 | **09** | **[Дизайн-система](step-09-design-system.md)** | | | |
 | 09.1 | `designsystem/`: токены `AppTheme`, обёртки, ratchet-тест | core | sonnet | done |
 | 09.2…n | Перевод экранов по одному семейству на этап | core | sonnet | not started |
+| 09.2a | Перевод экранов: Books, BookSongs, BookLibrary | core | sonnet | not started |
+| 09.2b | Перевод экранов: Favorites, History | core | sonnet | not started |
+| 09.2c | Перевод экранов: Search, SearchResults | core | sonnet | not started |
+| 09.2d | Перевод экранов: Tags, TagSongs | core | sonnet | not started |
+| 09.2e | Перевод экранов: Settings, Onboarding | core | sonnet | not started |
+| 09.2f | Перевод экранов: Home, Library | core | sonnet | not started |
+| 09.2g | Перевод экранов: SongDetail, SongEdit | core | sonnet | not started |
 
 Зависимости между шагами: `00 → 01 → 02 → 03`; `04` и `05` после `03`; `06` после `02`
 (независим от 03–05, можно вести параллельной веткой); `07` после `06`; `09` после `03`
