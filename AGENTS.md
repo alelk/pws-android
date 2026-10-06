@@ -193,6 +193,13 @@ Apply on the shell root composable so Maestro can address Compose nodes by `test
 - ✅ **Domain + UI lives in `pws-core` first**; this repo only adds Android glue.
 - ✅ **Use Composite build** — never edit Maven-cached `pws-core` JARs to fix Android issues; edit
   the `pws-core` source.
+- ❌ **No Room DAO use outside `:data:db-android`** (shell and `:data:content-delivery` go through
+  repositories) — pinned by `DirectDaoAccessTest` (ratchet `KNOWN_DIRECT_DAO_USERS`, only shrinks).
+- ✅ **Flavors share one contract**: every `src/{ru,uk,full,rustore}/.../flavor/FlavorIntegration.kt`
+  declares the same public names — `FlavorContractTest`.
+- ❌ **RuStore SDK (`ru.rustore.*`) only under `src/rustore` / `src/testRustore`** —
+  `PaymentSdkIsolationTest`.
+- ❌ **No hardcoded `Toast.makeText(…, "text")` in the shell** — `ShellStringsTest` (ratchet).
 
 ### Secrets / signing
 
@@ -205,6 +212,8 @@ Apply on the shell root composable so Maestro can address Compose nodes by `test
 
 ### RuStore (`rustore` flavor) — compatibility with the published fork
 
+- ✅ **Storage names are pinned (G3)**: DataStore `app-settings`, `pws-app-preferences`, SharedPreferences
+  `pws_donation` / `pws_catalog_source`, DB `pws.db` — `StorageNamesPinnedTest`.
 - ❌ **Never rename, clear, delete or open a second DataStore on `pws-app-preferences`** (keys
   `purchase_full_access`, `purchase_subscription_until`). It is the paid status of existing RuStore
   users; `LegacyRuStoreEntitlementStore` is its only owner and writes are monotonic (grant/extend only).
@@ -221,6 +230,7 @@ Apply on the shell root composable so Maestro can address Compose nodes by `test
   `app-compose/proguard-rules.pro`. Такое правило отключает и shrinking, и обфускацию для целого
   дерева пакетов — именно так DEX однажды дорос до 36.8 МБ, а Google Play поставил
   «App optimization: Low». Любое keep-правило — точечное и с комментарием «зачем».
+  Закреплено тестом `ProguardRulesTest` (единственное осознанное исключение — `net.zetetic.database.**`).
   См. `docs/ai/plans/2026-09-10_app-optimization-r8_plan.md`.
 
 ### Static analysis (Detekt + ktlint)
