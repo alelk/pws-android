@@ -245,7 +245,7 @@ pws-android :data:content-delivery      сеть/файлы/расшифровк
 | 09.2c | Перевод экранов: Search, SearchResults | core | sonnet | done |
 | 09.2d | Перевод экранов: Tags, TagSongs | core | sonnet | done |
 | 09.2e | Перевод экранов: Settings, Onboarding | core | sonnet | done |
-| 09.2f | Перевод экранов: Home, Library | core | sonnet | not started |
+| 09.2f | Перевод экранов: Home, Library | core | sonnet | done |
 | 09.2g | Перевод экранов: SongDetail, SongEdit | core | sonnet | not started |
 
 Зависимости между шагами: `00 → 01 → 02 → 03`; `04` и `05` после `03`; `06` после `02`
