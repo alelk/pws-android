@@ -14,7 +14,7 @@ import io.github.alelk.pws.domain.preferences.model.ThemeMode
 import io.github.alelk.pws.domain.preferences.usecase.ObserveAppPreferencesUseCase
 import io.github.alelk.pws.domain.telemetry.Telemetry
 import io.github.alelk.pws.domain.telemetry.TelemetryEvent
-import io.github.alelk.pws.features.theme.AppTheme
+import io.github.alelk.pws.features.app.AppThemeFromPreferences
 import kotlinx.coroutines.flow.map
 import org.koin.android.ext.android.get
 
@@ -51,7 +51,7 @@ class PaymentActivity : ComponentActivity() {
     setContent {
       val themeMode by remember { get<ObserveAppPreferencesUseCase>()().map { it.themeMode } }
         .collectAsState(initial = ThemeMode.DEFAULT)
-      AppTheme(themeMode = themeMode) {
+      AppThemeFromPreferences(themeMode = themeMode) {
         PaymentScreen(controller = controller, onNavigateBack = { finish() })
       }
     }

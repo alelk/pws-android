@@ -238,7 +238,7 @@ pws-android :data:content-delivery      сеть/файлы/расшифровк
 | 08.3 | Перевод экранов: ScreenModel → ViewModel (по семействам) | core | sonnet | deferred |
 | 08.4 | Удалить Voyager и `:core:navigation` [R8] | оба | sonnet | deferred |
 | **09** | **[Дизайн-система](step-09-design-system.md)** | | | |
-| 09.1 | `designsystem/`: токены `AppTheme`, обёртки, ratchet-тест | core | sonnet | not started |
+| 09.1 | `designsystem/`: токены `AppTheme`, обёртки, ratchet-тест | core | sonnet | done |
 | 09.2…n | Перевод экранов по одному семейству на этап | core | sonnet | not started |
 
 Зависимости между шагами: `00 → 01 → 02 → 03`; `04` и `05` после `03`; `06` после `02`
