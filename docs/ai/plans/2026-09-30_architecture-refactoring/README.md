@@ -215,7 +215,7 @@ pws-android :data:content-delivery      сеть/файлы/расшифровк
 | **03** | **[Слой представления: долги по ratchet](step-03-presentation-hygiene.md)** | | | |
 | 03.1 | Объединить две модели SongDetail, убрать репозитории из UI | core | opus | done |
 | 03.2 | Эффекты через `Channel`, ошибки не глотаются | core | sonnet | done |
-| 03.3 | Разрезать `SongDetailScreen.kt` | core | sonnet | not started |
+| 03.3 | Разрезать `SongDetailScreen.kt` | core | sonnet | done |
 | 03.4 | Разрезать `SettingsScreen.kt`, `TagsScreen.kt`; убрать `koinInject` из composable | core | sonnet | not started |
 | **04** | **[Настройки как порт домена](step-04-preferences-port.md)** — ручной прогон | | | |
 | 04.1 | Порт `UserPreferencesRepository` + Android-адаптер над существующим DataStore | оба | opus | not started |

@@ -159,7 +159,12 @@ Maestro `e2e/flows/compose`.
 - Ни один файл пакета не превышает 600 строк; diff — перемещение без изменения логики.
 
 ### Заметки исполнителя
-<!-- -->
+**03.3 (sonnet, 2026-10-06) — done.**
+- Сделано (pws-core): `SongDetailScreen.kt` 1628 -> 448 строк; раскладка строго по таблице этапа: `SongLyricView.kt` (314), `SongHeaderSection.kt` (179), `SongReferencesSection.kt` (194), `SongTagsSection.kt` (190; `TagEditorSheet` — сюда же, как и `SongTagsRow`), `SongDetailSheets.kt` (400), `SongShareText.kt` (`buildShareText`). Тела функций не менялись (перенос построчно скриптом); `private` -> `internal` только у тех, что используются из другого файла; остальное (`ActionItem`, `MetadataItem`, `SongTagsRow`, `LyricPartView`, `IntrinsicChorusView`, `SongReferenceItem`, `LyricRenderItem`, `toRenderItems`, `SongDetailSheet`, `SongDetailPager`) осталось `private`. Импорты в каждом файле — только используемые. Максимальный файл пакета — 458 (`SongDetailStateHolder`), `SongDetailContent` отдельно не выделялся (экран < 600).
+- Тест: `SongShareTextTest` (2 кейса). Запись `song/detail/SongDetailScreen.kt` убрана из `KNOWN_OVERSIZED_FILES` (`ScreenFileSizeTest`).
+- Отклонения: (1) `MaterialThemeRatchetTest` — запись одного файла заменена шестью (файлы пакета, где остались прямые `MaterialTheme.`: Screen, Sheets, HeaderSection, LyricView, ReferencesSection, TagsSection). Формально список вырос по числу файлов, но число обращений не выросло; шаг 09 уберёт их все. (2) Baselines (доработка по требованию оркестратора): сначала рост (ktlint 2502 -> 2527, detekt 163 -> 186) из-за размноженных `WildcardImport`; затем wildcard-импорты во всех файлах пакета (Compose layout/material3/runtime/input.key и `features.resources.*` -> `Res` + конкретные строки, `label`) заменены явными, импорты отсортированы; тела функций не тронуты. Итог после регенерации: ktlint-baseline features 2496 (было 2502), detekt-baseline 156 (было 163) — растёт нигде. (3) Визуальная проверка экрана песни (скриншот до/после или Maestro `e2e/flows/compose`) не выполнялась — за оркестратором/владельцем.
+- Gate: pws-core `./gradlew build $(cat corex) --continue --max-workers=1` — BUILD SUCCESSFUL; pws-android `:app-compose:assembleRuDebug` — BUILD SUCCESSFUL. Вопросов владельцу нет. Не закоммичено.
+
 
 ---
 
