@@ -150,7 +150,36 @@ unit-тесте экрана. Защита: тест машины состоян
   апгрейд-матрица `tools/rustore-upgrade-test.md`.
 
 ### Заметки исполнителя
-<!-- -->
+- 2026-10-06, статус **done**. pws-core: `features/.../app/startup/AppStartupModel.kt` (`StartupUiState(gate, installedBookCount)`,
+  `skipOnboarding()`, `applyPendingConsentDefault(gate, settings)`; свой `CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)`,
+  в тестах — `backgroundScope`); `single { AppStartupModel(...) }` в `featuresModule`; `AppRoot` без `hasInstalledBooks` /
+  `onSkipOnboarding`, `Crossfade` по `StartupGate`; `LocalOnSkipOnboarding` удалён. pws-android: `single<AppStartupTasks> { AndroidAppStartupTasks(...) }`
+  в существующем `startupModule` (порядок модулей не менялся); из `MainActivity` убраны вся стартовая логика и пять `LaunchedEffect`/`remember`.
+- Перенесено один-в-один: сидирование через `afterMigration` (теперь один раз на процесс, а не на каждое пересоздание Activity);
+  `setUserProperty(INSTALLED_BOOKS, count.toString())` на каждое изменение счётчика, начиная с `0`; `onBooksInstalled` — через
+  `distinctUntilChanged` + `collectLatest` (как отменяющий `LaunchedEffect(installedBookCount)`); латч и таблица — `reduceStartup`/`latchOnboarding`.
+- Отклонения: (1) онбординг не может взять модель через `koinInject` (fitness `NoServiceLocatorInComposablesTest`, `KNOWN_*` пуст),
+  а лямбда в конструкторе Voyager-`Screen` сломала бы сохранение состояния при повороте — добавлен тонкий `OnboardingScreenModel`
+  (`koinScreenModel`, `factory`), который зовёт `AppStartupModel.skipOnboarding()`. (2) Согласие по умолчанию: правило «gate = App и
+  `pendingConsentDefault != null` → `onDataSendingEnabledChange(default)`» в модели, но вызывается из `AppRoot`
+  `LaunchedEffect(gate, telemetrySettings)` и получает gate и settings из одной композиции. Если бы модель сама сравнивала свой свежий
+  gate с последними сохранёнными settings, то после Skip она увидела бы старый `pending` и перезаписала бы ответ пользователя
+  (онбординг сначала сохраняет согласие, потом зовёт skip). Логика значения по умолчанию осталась в шелле (`TelemetrySettings`).
+- Тесты: `AppStartupModelTest` (7: мина «Loading до сидирования», Skip переживает нового потребителя, сидирование 1 раз,
+  `onBooksInstalled`/`installed_books` на каждое изменение счётчика, preloaded / существующий пользователь, согласие только при App);
+  `AppStartupWiringTest` в app-compose (3: модель + настоящий `AndroidAppStartupTasks` — без открытого гейта миграции только Loading, без
+  seed/retry/restore). Красным проверено: в модели 5 мутаций (skip no-op, `preloaded = false` на старте, seed дважды, без `distinctUntilChanged`,
+  без проверки gate для согласия) — каждая роняет свои тесты; Android: убрать `afterMigration` → падают `AndroidAppStartupTasksTest` + 2 теста wiring.
+  `LegacyMigrationGateTest`, `AndroidAppStartupTasksTest`, `StartupGateTest` не менялись.
+- Baseline'ы: ktlint `features` — 2347 → 2347 (перегенерирован, только сдвиг строк в AppRoot/FeaturesModule/OnboardingScreen);
+  ktlint `app-compose` — 117 → 112 (ушли `no-multi-spaces` из `booksGate`). detekt-baseline'ы не трогал (запись `LongParameterList:AppRoot.kt`
+  теперь устаревшая — у функции 6 параметров, detekt молчит). `KNOWN_*` не менялись.
+- R8: `minifyRu/RustoreReleaseWithR8` зелёные; `AppStartupModel`, `OnboardingScreenModel`, `AndroidAppStartupTasks` в mapping есть
+  (обфусцированы — Koin DSL берёт классы по ссылке, не по имени), keep-правила не нужны. Подписи нет — `assemble*Release` не запускал.
+- Gate: pws-core `build $(corex) --continue --max-workers=1` — SUCCESSFUL. pws-android: `testRu/RustoreDebugUnitTest` — падают только
+  3 `BackupManagerTest [SDK 37]` в каждом (окружение); `assembleRuDebug assembleRustoreDebug ktlintCheck detekt verifyRustoreReleaseInvariants
+  minifyRu/RustoreReleaseWithR8` — зелёные. Не закоммичено.
+- Вне объёма (для владельца / 05.3): `MainActivity` всё ещё 240 строк (внешние действия — это 05.3).
 
 ---
 

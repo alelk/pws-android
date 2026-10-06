@@ -42,6 +42,7 @@ import org.koin.core.context.stopKoin
 import org.koin.core.qualifier.named
 import org.koin.dsl.binds
 import org.koin.dsl.module
+import io.github.alelk.pws.features.platform.AppStartupTasks
 
 class PwsComposeApplication : Application() {
 
@@ -73,7 +74,7 @@ class PwsComposeApplication : Application() {
     // production statistics (flip the settings toggle to test the pipeline).
     //
     // On a first launch the store is still "pending" — isEnabled() is false — so the SDK activates
-    // without transmitting anything until the user has seen the disclosure (MainActivity resolves it).
+    // without transmitting anything until the user has seen the disclosure (AppStartupModel resolves it).
     val telemetryConsent = TelemetryConsentStore(this, defaultConsent = !BuildConfig.DEBUG)
     telemetry = AppMetricaTelemetry.activate(
       application = this,
@@ -126,6 +127,18 @@ class PwsComposeApplication : Application() {
     val legacyMigrationDone = CompletableDeferred<Unit>()
     val startupModule = module {
       single { LegacyMigrationGate(legacyMigrationDone) }
+      // The platform half of pws-core's AppStartupModel (featuresModule): seeding and the post-install
+      // migration retry / backup restore, both behind the gate above.
+      single<AppStartupTasks> {
+        AndroidAppStartupTasks(
+          context = androidContext(),
+          migrationGate = get(),
+          telemetry = get(),
+          seedBooksFromAssets = get(),
+          database = { get<PwsDatabase>() },
+          dataStore = { get<DataStore<Preferences>>() },
+        )
+      }
     }
 
     // The build's monetization mode for pws-core (UpsellHost, Settings). Loaded after

@@ -9,29 +9,23 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts.CreateDocument
 import androidx.activity.result.contract.ActivityResultContracts.OpenDocument
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
 import io.github.alelk.pws.android.compose.flavor.MONETIZATION
 import io.github.alelk.pws.android.compose.telemetry.AppMetricaTelemetry
 import io.github.alelk.pws.android.compose.telemetry.TelemetryConsentStore
 import io.github.alelk.pws.android.compose.flavor.flavorShowPaywall
 import io.github.alelk.pws.contentdelivery.install.ImportBundleFromFileUseCase
-import io.github.alelk.pws.contentdelivery.install.SeedBooksFromAssetsUseCase
-import io.github.alelk.pws.domain.booklibrary.usecase.ObserveInstalledBooksUseCase
 import io.github.alelk.pws.features.booklibrary.BookLibraryExternalActions
 import io.github.alelk.pws.domain.telemetry.Telemetry
 import io.github.alelk.pws.domain.telemetry.TelemetryAttr
 import io.github.alelk.pws.domain.telemetry.TelemetryEvent
 import io.github.alelk.pws.domain.telemetry.TelemetryResult
 import io.github.alelk.pws.features.telemetry.TelemetrySettings
-import kotlinx.coroutines.flow.map
 import org.koin.android.ext.android.get
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -43,8 +37,6 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import io.github.alelk.pws.portable.BackupService
-import io.github.alelk.pws.database.PwsDatabase
-import io.github.alelk.pws.database.PwsDatabaseProvider
 import io.github.alelk.pws.features.app.AppRoot
 import io.github.alelk.pws.features.settings.SettingsExternalActions
 import io.github.alelk.pws.features.song.detail.SongDetailExternalActions
@@ -95,81 +87,10 @@ class MainActivity : ComponentActivity() {
           onDataSendingEnabledChange = applyTelemetryConsent,
           privacyPolicyUrl = PRIVACY_POLICY_URL,
           // Non-null only until the first-launch disclosure in onboarding is answered; nothing is
-          // transmitted while it is.
+          // transmitted while it is. Paths that never show onboarding get this default applied by
+          // pws-core's AppStartupModel once the app opens.
           pendingConsentDefault = if (telemetryPending) telemetryConsent.defaultConsent else null,
         )
-      }
-
-      val hasInstalledBooks: Boolean? by remember {
-        get<ObserveInstalledBooksUseCase>().invoke().map { it.isNotEmpty() }
-      }.collectAsState(initial = null)
-
-      val installedBookCount: Int by remember {
-        get<ObserveInstalledBooksUseCase>().invoke().map { it.size }
-      }.collectAsState(initial = 0)
-
-      // First-launch import of bundles preloaded into the APK. Only "preloaded" build variants ship
-      // them (a Gradle task bakes selected bundles into assets/seed-books/); for clean variants this
-      // is a fast no-op. Tri-state gate:
-      //   null  = still checking/seeding — show the loading surface, never flash onboarding
-      //   true  = built-in (ASSET) content present → skip onboarding, open the app directly
-      //   false = clean build → fall through to the normal empty-DB onboarding flow
-      // Seeding waits for the legacy-database migration: a seeded book would make the new database
-      // non-empty and cost the user their data in every other book (2026-09-29 plan, C2).
-      val migrationGate = remember { get<LegacyMigrationGate>() }
-      var preloadedReady by remember { mutableStateOf<Boolean?>(null) }
-      LaunchedEffect(Unit) {
-        preloadedReady = migrationGate.afterMigration { get<SeedBooksFromAssetsUseCase>().invoke() }
-      }
-
-      // True once we know the user has no books AND there is no preloaded content — keeps us in
-      // onboarding until explicit skip. Gated on `preloadedReady == false` so a preloaded build's
-      // brief empty-DB window (before seeding commits) never latches us into onboarding.
-      var onboardingActive by remember { mutableStateOf(false) }
-      LaunchedEffect(hasInstalledBooks, preloadedReady) {
-        if (preloadedReady == false && hasInstalledBooks == false) onboardingActive = true
-      }
-
-      // Coarse audience slice: how much content this user has installed. A count, never the titles.
-      LaunchedEffect(installedBookCount) {
-        telemetry.setUserProperty(TelemetryAttr.INSTALLED_BOOKS, installedBookCount.toString())
-      }
-
-      // Re-apply pending user data on every new book install — a partially migrated legacy
-      // database and a pending backup restore are both kept until their books are installed, so
-      // each new install may unlock more records. Both only after the startup migration finished.
-      LaunchedEffect(installedBookCount) {
-        if (installedBookCount > 0) {
-          migrationGate.await()
-          withContext(Dispatchers.IO) {
-            if (PwsDatabaseProvider.hasPendingLegacyMigration(context)) {
-              runCatching { PwsDatabaseProvider.runLegacyMigration(context, get<PwsDatabase>(), countAttempt = false) }
-                .onSuccess { telemetry.reportLegacyMigration(it) }
-                .onFailure { telemetry.recordError(it, "legacy_migration_retry_failed") }
-            }
-            PwsBackupAgent
-              .applyPendingRestoreIfNeeded(context, get<PwsDatabase>(), get<DataStore<Preferences>>())
-          }
-        }
-      }
-
-      var onboardingSkipped by remember { mutableStateOf(false) }
-
-      // First-launch gate, resolved once for both the UI and the telemetry disclosure below.
-      val booksGate: Boolean? = when {
-        preloadedReady == null -> null      // still seeding/checking preloaded bundles
-        preloadedReady == true -> true      // preloaded (built-in) content present → open app
-        onboardingSkipped -> true           // user tapped Skip / Continue
-        onboardingActive -> false           // in onboarding: stay until explicit skip
-        else -> hasInstalledBooks           // existing users: pass through as-is
-      }
-
-      // The telemetry disclosure lives in onboarding, so paths that never show it — an existing
-      // install being updated, or a build with preloaded songbooks — would leave consent pending
-      // (and telemetry off) forever. Those users get the opt-out default instead; their disclosure
-      // is Settings → Privacy and the store listing.
-      LaunchedEffect(telemetryPending, booksGate) {
-        if (telemetryPending && booksGate == true) applyTelemetryConsent(telemetryConsent.defaultConsent)
       }
 
       var pendingBackupText by remember { mutableStateOf<String?>(null) }
@@ -310,8 +231,6 @@ class MainActivity : ComponentActivity() {
           onKeepScreenOnChanged = onKeepScreenOnChanged,
           settingsExternalActions = settingsExternalActions,
           songDetailExternalActions = songDetailExternalActions,
-          hasInstalledBooks = booksGate,
-          onSkipOnboarding = { onboardingSkipped = true },
           bookLibraryExternalActions = bookLibraryExternalActions,
           telemetrySettings = telemetrySettings,
         )
