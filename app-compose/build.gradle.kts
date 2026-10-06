@@ -293,6 +293,7 @@ dependencies {
 
   // Monitoring — crashes/ANR/non-fatals/analytics for every flavor (no Google Play Services needed)
   implementation(libs.appmetrica.analytics)
+  implementation(libs.timber)
 
   // Android
   implementation(libs.activity.compose)

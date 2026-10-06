@@ -227,4 +227,31 @@ wc -l app-compose/src/main/kotlin/io/github/alelk/pws/android/compose/MainActivi
 - `MainActivity` — только связывание; нет строковых литералов для пользователя; граф Koin под тестом.
 
 ### Заметки исполнителя
-<!-- -->
+- 2026-10-06, статус **done**. `MainActivity` 240 → 92 строки (только связывание). Новый пакет `app-compose/.../platform/`:
+  `AndroidUrlActions`, `AndroidShareActions` (ловят `ActivityNotFoundException` → тост `no_app_to_open_link` + `telemetry.recordError`),
+  `BackupFileActions` (экспорт двухфазный: текст → временный файл в `cacheDir`, имя файла хранит `rememberSaveable`, файл удаляется
+  после записи/отмены; имя из saved state принимается только для своих `pws_backup_export_*.tmp`), `BundleImportActions`,
+  `ShellToaster`, composable-обвязка `ActivityResultLaunchers.kt` (`rememberBackupLaunchers`, `rememberBundleImportLauncher`) и
+  `TelemetrySettingsHost.kt` (`rememberTelemetrySettings`, `PRIVACY_POLICY_URL` переехал из companion `MainActivity`).
+  Строки (7 ключей) — `main/res/values{,-ru,-uk,-pl}/strings.xml`; `it.message` пользователю не показывается, только в телеметрию
+  (`backup_export_failed`, `backup_import_failed`, `book_import_from_file_failed`, `no_app_to_open_link`).
+- DI: `PwsComposeApplication` 203 → ~125 строк; модули в `app-compose/.../di/` по файлу (`DatabaseModule`, `AppInfoModule`,
+  `DeviceLanguageModule`, `DonationModule`, `PreferencesModule`, `StartupModule`, `MonetizationModule`, `TelemetryModule`),
+  `appModules(AppModuleInputs)` возвращает список в прежнем порядке (database, appInfo, deviceLanguage, donation, repoRoom,
+  contentDelivery, useCases, features, preferences, startup, monetization, telemetry, flavor). `Timber.plant` перенесён в
+  `Application.onCreate` (в `PwsDatabaseProvider` удалены вызов и import; `libs.timber` добавлен в `app-compose`).
+- Тесты: `BackupFileActionsTest` (6), `ExternalActionsTest` (2), `AppModulesTest` (граф реального приложения под Robolectric: ключевые
+  типы + перекрытие дефолтов pws-core — preferences/monetization/telemetry); `ShellStringsTest`: `KNOWN_LITERAL_TOASTS` = пусто
+  (было `MainActivity.kt:7`) + новый тест паритета ключей по локалям en/ru/uk/pl. Красным не проверял (механические мутации не гонял).
+- Отклонения: (1) `StorageNamesPinnedTest` — `pws_donation` теперь закреплён за `di/DonationModule.kt` (имя хранилища то же, G3).
+  (2) Граф `AppStartupTasks`/репозиториев не резолвится в тесте (нужен нативный SQLCipher, в песочнице его нет) — покрыт `AppStartupWiringTest`.
+  (3) Конструкторы новых action-классов `internal` (ktlint `class-signature` против detekt `MaxLineLength` иначе не совместимы).
+  (4) ~~разбор бэкапа в потоке вызывающего~~ — исправлено по замечанию координатора: чтение байтов, `readFromString`,
+  `writeAsString`, запись temp-файла и копирование в Uri — всё в `Dispatchers.IO`. (5) Новые `recordError` для сбоев экспорта/импорта бэкапа (раньше исключения глотались).
+- Baseline'ы: ktlint `app-compose` 112 → 106 (перегенерирован, число упало); detekt не менялся. `KNOWN_*` только сократились.
+- Gate pws-android: `testRu/RustoreDebugUnitTest` — падают только 3 `BackupManagerTest [SDK 37]` в каждом; `assembleRuDebug
+  assembleRustoreDebug ktlintCheck detekt` — зелёные. pws-core не трогал. Не закоммичено.
+- Вручную проверить: экспорт бэкапа (файл создаётся, тост «сохранено»), экспорт + поворот экрана до выбора файла, отмена выбора,
+  импорт бэкапа и сборника из файла (тосты на ru/uk/pl), ссылки/почта/«поделиться» на устройстве без соответствующего приложения.
+- Красным проверено (после замечания): `featuresModule` переставлен после `telemetryModule` → падает `AppModulesTest`; убран `file.delete()` →
+  падают 2 теста `BackupFileActionsTest`; удалён ключ из `values-pl` → падает тест паритета `ShellStringsTest`. Все мутации откатаны, gate повторён: только 3 известных `BackupManagerTest [SDK 37]` на флейвор.

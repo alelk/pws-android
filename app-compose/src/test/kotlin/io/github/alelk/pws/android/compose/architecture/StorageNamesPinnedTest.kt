@@ -11,7 +11,7 @@ import io.kotest.matchers.shouldBe
  * status of RuStore users). Changing a name is a decision of the owner, not a refactoring: update this
  * list in the same change, with the reason.
  *
- * See it red: change `"pws_donation"` in `PwsComposeApplication.kt` to `"pws_donation2"` (or copy the
+ * See it red: change `"pws_donation"` in `di/DonationModule.kt` to `"pws_donation2"` (or copy the
  * literal `"pws.db"` into another main file) and run `./gradlew :app-compose:testRuDebugUnitTest`,
  * then revert.
  */
@@ -38,7 +38,7 @@ private val PINNED_STORAGE_NAMES: Map<String, String> =
     "app-settings" to "app-compose/src/main/kotlin/io/github/alelk/pws/android/compose/ThemePreferences.kt",
     "pws-app-preferences" to
       "app-compose/src/rustore/kotlin/io/github/alelk/pws/android/compose/payment/LegacyRuStoreEntitlementStore.kt",
-    "pws_donation" to "app-compose/src/main/kotlin/io/github/alelk/pws/android/compose/PwsComposeApplication.kt",
+    "pws_donation" to "app-compose/src/main/kotlin/io/github/alelk/pws/android/compose/di/DonationModule.kt",
     "pws_catalog_source" to
       "data/content-delivery/src/main/kotlin/io/github/alelk/pws/contentdelivery/di/ContentDeliveryModule.kt",
     "pws.db" to "data/db-android/src/main/kotlin/io/github/alelk/pws/database/PwsDatabaseProvider.kt",
