@@ -6,6 +6,8 @@ include(
 )
 
 pluginManagement {
+  // Shared build logic: precompiled `pws.android.*` convention plugins resolve by id like published plugins.
+  includeBuild("convention-plugins")
   repositories {
     gradlePluginPortal()
     mavenCentral()

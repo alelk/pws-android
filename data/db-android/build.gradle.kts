@@ -2,7 +2,7 @@ import java.security.SecureRandom
 import java.util.Properties
 
 plugins {
-  id("com.android.library")
+  id("pws.android.library")
   alias(libs.plugins.kotest.multiplatform)
 }
 
@@ -37,10 +37,8 @@ fun xorObfuscate(hexKey: String): Pair<String, String> {
 
 android {
   namespace = "io.github.alelk.pws.database"
-  compileSdk = rootProject.extra["sdkVersion"] as Int
 
   defaultConfig {
-    minSdk = 23
     buildConfigField("String", "DB_AUTHORITY", "\"com.alelk.pws.database\"")
     resValue("string", "db_authority", "com.alelk.pws.database")
     buildConfigField("boolean", "DB_ENCRYPTED", "true")
@@ -52,12 +50,7 @@ android {
   }
 
   lint {
-    targetSdk = rootProject.extra["sdkVersion"] as Int
-  }
-
-  compileOptions {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+    targetSdk = compileSdk
   }
 
   flavorDimensions.add("contentLevel")
@@ -98,32 +91,12 @@ android {
     }
     // Plain SQLite (no Keystore) — for local dev/testing without encryption overhead.
     // Bundle downloads still work; they use the same debug decrypt key as the debug build type.
-    create("localSeed") {
+    getByName("localSeed") {
       isMinifyEnabled = false
       buildConfigField("boolean", "DB_ENCRYPTED", "false")
       val (masked, mask) = xorObfuscate(dbDecryptKeyDebug)
       buildConfigField("byte[]", "DB_KEY_MASKED", masked)
       buildConfigField("byte[]", "DB_KEY_MASK", mask)
-    }
-  }
-
-
-  testOptions {
-    unitTests.isIncludeAndroidResources = true
-    unitTests.all {
-      it.jvmArgs(
-        "--add-opens=java.base/java.lang=ALL-UNNAMED",
-        "--add-opens=java.base/java.util=ALL-UNNAMED",
-        "--add-opens=java.base/java.io=ALL-UNNAMED",
-        "--add-opens=java.base/java.net=ALL-UNNAMED",
-        "--add-opens=java.base/java.security=ALL-UNNAMED",
-        "--add-opens=java.base/java.text=ALL-UNNAMED",
-        "--add-opens=java.base/java.nio=ALL-UNNAMED",
-        "--add-opens=java.base/java.util.concurrent=ALL-UNNAMED",
-        "--add-opens=java.base/java.lang.reflect=ALL-UNNAMED",
-        "--add-opens=java.base/jdk.internal.access=ALL-UNNAMED",
-        "--add-opens=java.desktop/java.awt.font=ALL-UNNAMED"
-      )
     }
   }
 }
@@ -150,8 +123,4 @@ dependencies {
   testImplementation(libs.kotest.runner.android)
   testImplementation(libs.kotest.extensions.android)
   testImplementation(libs.robolectric)
-}
-
-tasks.withType<Test> {
-  useJUnitPlatform()
 }

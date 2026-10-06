@@ -1,11 +1,8 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
-val sdkVersion by extra(37)
 val versionCode by extra(48)
 val versionName by extra(checkNotNull(projectDir.resolve("app.version").readText().lines().firstOrNull()?.trim()?.takeIf { it.isNotBlank() }) { "app.version empty" })
 val versionNameSuffix by extra(getDate().lowercase())
@@ -42,12 +39,6 @@ allprojects {
       // artifactory-external.vkpartner.ru endpoint does not contain the 2026 BOMs.
       url = uri("https://nexus-external.vkteam.ru/repository/maven-rustore-exposed/")
       content { includeGroup("ru.rustore.sdk") }
-    }
-  }
-
-  tasks.withType<KotlinCompile> {
-    compilerOptions {
-      jvmTarget.set(JvmTarget.JVM_21)
     }
   }
 }

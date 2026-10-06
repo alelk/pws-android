@@ -1,21 +1,12 @@
 import com.android.build.api.artifact.SingleArtifact
-import java.net.HttpURLConnection
-import java.net.URI
-import java.security.MessageDigest
+import io.github.alelk.pws.build.DownloadSeedBundlesTask
+import io.github.alelk.pws.build.RustoreInvariants
+import io.github.alelk.pws.build.StageMappingFileTask
+import io.github.alelk.pws.build.VerifyRustoreInvariantsTask
 import java.util.Properties
-import org.gradle.api.DefaultTask
-import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.provider.ListProperty
-import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.TaskAction
 
 plugins {
-  alias(libs.plugins.android.application)
+  id("pws.android.application")
   alias(libs.plugins.compose)
 }
 
@@ -76,51 +67,6 @@ logger.lifecycle(
     " — Gradle property pws.rustore.purchasesEnabled"
 )
 
-// Release invariants of the rustore build: it must install as an update over the published RuStore
-// fork (2.3.1, versionCode 38) — see plan 2026-09-29, §3 (I2–I5).
-object RustoreInvariants {
-  const val APPLICATION_ID = "io.github.alelk.pws.app"
-  const val DB_AUTHORITY = "io.github.alelk.pws.database"
-  const val LAST_FORK_VERSION_CODE = 38
-  const val MAX_MIN_SDK = 23
-}
-
-/**
- * Fails the rustore release build when it could not be installed as an update of the RuStore fork
- * (or would clash with its content provider). Wired into `preRustoreReleaseBuild`.
- */
-abstract class VerifyRustoreInvariantsTask : DefaultTask() {
-  @get:Input
-  abstract val applicationId: Property<String>
-
-  @get:Input
-  abstract val versionCode: Property<Int>
-
-  @get:Input
-  abstract val minSdk: Property<Int>
-
-  @get:Input
-  abstract val dbAuthority: Property<String>
-
-  @TaskAction
-  fun verify() {
-    val problems = buildList {
-      if (applicationId.get() != RustoreInvariants.APPLICATION_ID)
-        add("applicationId = ${applicationId.get()}, must be ${RustoreInvariants.APPLICATION_ID}")
-      if (versionCode.get() <= RustoreInvariants.LAST_FORK_VERSION_CODE)
-        add("versionCode = ${versionCode.get()}, must be > ${RustoreInvariants.LAST_FORK_VERSION_CODE} (last RuStore fork release)")
-      if (minSdk.get() > RustoreInvariants.MAX_MIN_SDK)
-        add("minSdk = ${minSdk.get()}, must be <= ${RustoreInvariants.MAX_MIN_SDK} (fork users would lose updates)")
-      if (dbAuthority.get() != RustoreInvariants.DB_AUTHORITY)
-        add("db_authority = ${dbAuthority.get()}, must be ${RustoreInvariants.DB_AUTHORITY}")
-    }
-    check(problems.isEmpty()) {
-      "rustore release invariants violated (plan 2026-09-29 §3):\n - " + problems.joinToString("\n - ")
-    }
-    logger.lifecycle("rustore invariants OK: ${applicationId.get()} vc=${versionCode.get()} minSdk=${minSdk.get()}")
-  }
-}
-
 // Books preloaded straight into the APK for specific flavors. For each listed flavor the
 // `generateSeedBundles<Variant>` task downloads the named bundles from the catalog at build time and
 // bakes them into `assets/seed-books/`, so the app ships with that content already installed as a
@@ -146,125 +92,8 @@ val seedBooksByFlavor: Map<String, List<String>> =
     ),
   )
 
-/**
- * Downloads the seed bundles for one variant from the catalog and writes them into
- * `<outputDir>/seed-books/`, which AGP wires into the variant's merged assets. Bundle file names
- * (`{bookId}-{bundleVariant}-{catalogVersion}.book.yaml.gz.enc`) are resolved from the catalog's
- * top-level `version`; each download is verified against the catalog `checksum` (SHA-256).
- *
- * Up-to-date checking is keyed on the declared inputs (book IDs / bundle variant / catalog URLs).
- * The remote catalog version is not an input, so run `clean` (or bump the seed list) to force a
- * refresh when the catalog publishes newer bundles.
- */
-abstract class DownloadSeedBundlesTask : DefaultTask() {
-  @get:Input
-  abstract val bookIds: ListProperty<String>
-
-  @get:Input
-  abstract val bundleVariant: Property<String>
-
-  @get:Input
-  abstract val catalogUrls: ListProperty<String>
-
-  @get:OutputDirectory
-  abstract val outputDir: DirectoryProperty
-
-  @TaskAction
-  fun download() {
-    val seedDir = outputDir.get().dir("seed-books").asFile
-    seedDir.deleteRecursively()
-    seedDir.mkdirs()
-
-    val ids = bookIds.get()
-    if (ids.isEmpty()) return
-    val variant = bundleVariant.get()
-    val urls = catalogUrls.get()
-
-    // Fetch the catalog from the first reachable mirror.
-    val catalog = urls.firstNotNullOfOrNull { url ->
-      runCatching { url to String(fetch(url), Charsets.UTF_8) }
-        .onFailure { logger.warn("Seed: catalog fetch failed from $url: ${it.message}") }
-        .getOrNull()
-    } ?: error("Seed: cannot fetch catalog for variant '$variant' from any mirror: $urls")
-    val (catalogUrl, catalogJson) = catalog
-
-    @Suppress("UNCHECKED_CAST")
-    val parsed = groovy.json.JsonSlurper().parseText(catalogJson) as Map<String, Any?>
-    val catalogVersion = parsed["version"] as? String
-      ?: error("Seed: catalog has no 'version' field ($catalogUrl)")
-
-    @Suppress("UNCHECKED_CAST")
-    val books = parsed["books"] as? List<Map<String, Any?>>
-      ?: error("Seed: catalog has no 'books' array ($catalogUrl)")
-
-    val checksumById: Map<String, String> = books.associate { entry ->
-      @Suppress("UNCHECKED_CAST")
-      val book = entry["book"] as Map<String, Any?>
-      (book["id"] as String) to (entry["checksum"] as String)
-    }
-
-    val base = catalogUrl.substringBeforeLast('/')
-    ids.forEach { id ->
-      val expected = checksumById[id]
-        ?: error("Seed: book '$id' not found in catalog for variant '$variant' ($catalogUrl)")
-      val fileName = "$id-$variant-$catalogVersion.book.yaml.gz.enc"
-      val bytes = fetch("$base/$fileName")
-      val actual = MessageDigest.getInstance("SHA-256").digest(bytes)
-        .joinToString("") { "%02x".format(it) }
-      check(actual == expected) {
-        "Seed: checksum mismatch for $fileName — expected $expected, got $actual"
-      }
-      seedDir.resolve(fileName).writeBytes(bytes)
-      logger.lifecycle("Seed: baked $fileName (${bytes.size} bytes) into assets/seed-books/")
-    }
-  }
-
-  private fun fetch(url: String): ByteArray {
-    val conn = URI(url).toURL().openConnection() as HttpURLConnection
-    conn.setRequestProperty("User-Agent", "pws-android-build/1.0 (+github.com/alelk/pws-android)")
-    conn.setRequestProperty("Accept", "application/octet-stream, application/json")
-    conn.connectTimeout = 30_000
-    conn.readTimeout = 120_000
-    conn.instanceFollowRedirects = true
-    try {
-      val code = conn.responseCode
-      check(code in 200..299) { "HTTP $code for $url" }
-      return conn.inputStream.use { it.readBytes() }
-    } finally {
-      conn.disconnect()
-    }
-  }
-}
-
-/**
- * Copies a minified variant's R8 `mapping.txt` out of `build/` into a stable, release-labelled
- * location so it can be uploaded to the AppMetrica console (Settings → "Mapping files"). Without a
- * mapping, release crash reports arrive obfuscated and are effectively unreadable.
- *
- * We deliberately do not use the official AppMetrica Gradle plugin: its current release (1.0.1)
- * drives the removed `com.android.build.gradle.api.ApplicationVariant` API and does not work on
- * AGP 9. Staging the file is AGP-version-proof; the upload itself is a manual (or CI) step,
- * documented in docs/monitoring.md.
- */
-abstract class StageMappingFileTask : DefaultTask() {
-  @get:InputFile
-  abstract val mappingFile: RegularFileProperty
-
-  @get:OutputFile
-  abstract val stagedFile: RegularFileProperty
-
-  @TaskAction
-  fun stage() {
-    val target = stagedFile.get().asFile
-    target.parentFile?.mkdirs()
-    mappingFile.get().asFile.copyTo(target, overwrite = true)
-    logger.lifecycle("AppMetrica: mapping staged at ${target.absolutePath} — upload it to the AppMetrica console for this release")
-  }
-}
-
 android {
   namespace = "io.github.alelk.pws.android.compose"
-  compileSdk = rootProject.extra["sdkVersion"] as Int
 
   signingConfigs {
     create("release-ru") {
@@ -289,8 +118,6 @@ android {
 
   defaultConfig {
     applicationId = "com.alelk.pws.pwapp"
-    minSdk = 23
-    targetSdk = rootProject.extra["sdkVersion"] as Int
     versionCode = rootProject.extra["versionCode"] as Int
     versionName = "${rootProject.extra["versionName"]}-${rootProject.extra["versionNameSuffix"]}"
     resValue("string", "db_authority", "com.alelk.pws.database")
@@ -348,7 +175,7 @@ android {
       buildConfigField("String", "CATALOG_URLS", "\"${catalogUrl("debug")}\"")
       buildConfigField("String", "BUNDLE_VARIANT", "\"debug\"")
     }
-    create("localSeed") {
+    getByName("localSeed") {
       isDebuggable = true
       isMinifyEnabled = false
       versionNameSuffix = "-localSeed"
@@ -370,33 +197,6 @@ android {
     localeFilters += listOf("en", "pl", "ru", "uk")
   }
 
-  compileOptions {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
-  }
-
-  testOptions {
-    unitTests.isIncludeAndroidResources = true
-    unitTests.all {
-      it.jvmArgs(
-        "--add-opens=java.base/java.lang=ALL-UNNAMED",
-        "--add-opens=java.base/java.util=ALL-UNNAMED",
-        "--add-opens=java.base/java.io=ALL-UNNAMED",
-        "--add-opens=java.base/java.net=ALL-UNNAMED",
-        "--add-opens=java.base/java.security=ALL-UNNAMED",
-        "--add-opens=java.base/java.text=ALL-UNNAMED",
-        "--add-opens=java.base/java.nio=ALL-UNNAMED",
-        "--add-opens=java.base/java.util.concurrent=ALL-UNNAMED",
-        "--add-opens=java.base/java.lang.reflect=ALL-UNNAMED",
-        "--add-opens=java.base/jdk.internal.access=ALL-UNNAMED",
-        "--add-opens=java.desktop/java.awt.font=ALL-UNNAMED"
-      )
-    }
-  }
-}
-
-kotlin {
-  jvmToolchain(21)
 }
 
 // rustoreDebug is signed with the RuStore release key when it is configured (as the fork did), so a
@@ -520,9 +320,6 @@ dependencies {
   testImplementation(libs.robolectric)
 }
 
-tasks.withType<Test> {
-  useJUnitPlatform()
-}
 
 
 
