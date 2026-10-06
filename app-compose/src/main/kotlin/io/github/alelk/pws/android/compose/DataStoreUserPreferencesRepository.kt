@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.map
  *
  * Key names (declared in `ThemePreferences.kt`), value formats and defaults are those the app has always
  * used (G3): users' stored settings are read with them. `app-theme` is also read and written by
- * [BackupManager].
+ * [DataStoreBackupSettings] (backup).
  */
 class DataStoreUserPreferencesRepository(private val dataStore: DataStore<Preferences>) : UserPreferencesRepository {
   // Mobile default: songs are paged by swipe, so the header arrows stay hidden unless enabled.
@@ -56,7 +56,7 @@ class DataStoreUserPreferencesRepository(private val dataStore: DataStore<Prefer
 
   /**
    * Writes only the keys whose value changed, as the old per-setting setters did: untouched settings
-   * stay absent (and keep following the defaults) and the backup exports exactly what the user set.
+   * stay absent and keep following the defaults.
    */
   private fun MutablePreferences.writeChanged(old: AppPreferences, new: AppPreferences) {
     if (new.themeMode != old.themeMode) this[appThemeKey] = new.themeMode.identifier

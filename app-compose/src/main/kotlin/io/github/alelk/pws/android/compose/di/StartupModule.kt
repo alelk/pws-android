@@ -1,8 +1,7 @@
 package io.github.alelk.pws.android.compose.di
 
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
 import io.github.alelk.pws.android.compose.AndroidAppStartupTasks
+import io.github.alelk.pws.android.compose.BackupManager
 import io.github.alelk.pws.android.compose.LegacyMigrationGate
 import io.github.alelk.pws.database.PwsDatabase
 import io.github.alelk.pws.features.platform.AppStartupTasks
@@ -25,7 +24,7 @@ internal fun startupModule(legacyMigrationDone: CompletableDeferred<Unit>) = mod
       telemetry = get(),
       seedBooksFromAssets = get(),
       database = { get<PwsDatabase>() },
-      dataStore = { get<DataStore<Preferences>>() },
+      backupManager = { get<BackupManager>() },
     )
   }
 }

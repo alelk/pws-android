@@ -226,7 +226,7 @@ pws-android :data:content-delivery      сеть/файлы/расшифровк
 | 05.3 | Платформенные действия, локализация сообщений, DI по файлам | android | sonnet | done |
 | **06** | **[Граница данных: один писатель](step-06-data-boundary.md)** — ручной прогон | | | |
 | 06.1 | `repo-room`: тестируемость на JVM, тесты репозиториев | core | opus | done |
-| 06.2 | Бэкап: use case'ы экспорта/восстановления в домене | оба | opus | not started |
+| 06.2 | Бэкап: use case'ы экспорта/восстановления в домене | оба | opus | done |
 | 06.3 | Импорт/удаление сборников через порты | оба | opus | not started |
 | **07** | **[Согласованность домена](step-07-domain-consistency.md)** | | | |
 | 07.1 | Единая форма use case; `AGENTS.md` ↔ `Either` | core | sonnet | not started |

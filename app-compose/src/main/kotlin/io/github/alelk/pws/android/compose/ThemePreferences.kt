@@ -11,7 +11,7 @@ import androidx.datastore.preferences.preferencesDataStore
 /**
  * The app settings DataStore and the names of its keys (G3: never rename). The values are read and
  * written through `UserPreferencesRepository` ([DataStoreUserPreferencesRepository]); `app-theme` is also
- * read and written by [BackupManager] and the legacy settings importer.
+ * read and written by the backup ([DataStoreBackupSettings]) and the legacy settings importer.
  */
 private val Context.dataStore by preferencesDataStore(name = "app-settings")
 internal val appThemeKey = stringPreferencesKey("app-theme")

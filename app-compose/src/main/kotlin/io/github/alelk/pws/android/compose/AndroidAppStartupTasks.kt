@@ -1,8 +1,6 @@
 package io.github.alelk.pws.android.compose
 
 import android.content.Context
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
 import io.github.alelk.pws.contentdelivery.install.SeedBooksFromAssetsUseCase
 import io.github.alelk.pws.database.LegacyMigrationOutcome
 import io.github.alelk.pws.database.PwsDatabase
@@ -33,7 +31,7 @@ class AndroidAppStartupTasks internal constructor(
     telemetry: Telemetry,
     seedBooksFromAssets: SeedBooksFromAssetsUseCase,
     database: () -> PwsDatabase,
-    dataStore: () -> DataStore<Preferences>,
+    backupManager: () -> BackupManager,
   ) : this(
     migrationGate = migrationGate,
     telemetry = telemetry,
@@ -41,7 +39,7 @@ class AndroidAppStartupTasks internal constructor(
       seedBooksFromAssets = { seedBooksFromAssets.invoke() },
       hasPendingLegacyMigration = { PwsDatabaseProvider.hasPendingLegacyMigration(context) },
       retryLegacyMigration = { PwsDatabaseProvider.runLegacyMigration(context, database(), countAttempt = false) },
-      applyPendingRestore = { PwsBackupAgent.applyPendingRestoreIfNeeded(context, database(), dataStore()) },
+      applyPendingRestore = { PwsBackupAgent.applyPendingRestoreIfNeeded(context, database(), backupManager()) },
     ),
   )
 

@@ -2,9 +2,7 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>CyclomaticComplexMethod:BackupManager.kt$BackupManager$suspend fun restoreBackup(backup: Backup)</ID>
     <ID>CyclomaticComplexMethod:MainActivity.kt$MainActivity$override fun onCreate(savedInstanceState: Bundle?)</ID>
-    <ID>LongMethod:BackupManager.kt$BackupManager$suspend fun restoreBackup(backup: Backup)</ID>
     <ID>LongMethod:MainActivity.kt$MainActivity$override fun onCreate(savedInstanceState: Bundle?)</ID>
     <ID>LongMethod:PwsComposeApplication.kt$PwsComposeApplication$override fun onCreate()</ID>
     <ID>MaxLineLength:BackupManagerTest.kt$BackupManagerTest$Arb.songNumberEntity(bookId = Arb.constant(bookId), songId = Arb.constant(SongId(1L)), number = Arb.constant(1), priority = Arb.constant(0)).next(rs)</ID>
@@ -30,7 +28,7 @@
     <ID>MaxLineLength:RuStoreCompatEntitlementRepositoryTest.kt$RuStoreCompatEntitlementRepositoryTest$val repo = repoAt("2026-09-29", fixedClock(LocalDateTime(2026, 9, 29, 23, 59, 59).toInstant(utc)), backgroundScope)</ID>
     <ID>MaxLineLength:RuStoreCompatEntitlementRepositoryTest.kt$RuStoreCompatEntitlementRepositoryTest$val store = LegacyRuStoreEntitlementStore(fileDataStore(legacyPreferencesFile("bad_date.preferences_pb")), telemetry)</ID>
     <ID>MaxLineLength:RuStoreCompatEntitlementRepositoryTest.kt$RuStoreCompatEntitlementRepositoryTest$val store = LegacyRuStoreEntitlementStore(fileDataStore(legacyPreferencesFile("corrupted.preferences_pb")), telemetry)</ID>
-    <ID>ReturnCount:PwsBackupAgent.kt$PwsBackupAgent.Companion$suspend fun applyPendingRestoreIfNeeded( context: Context, db: PwsDatabase, dataStore: DataStore&lt;Preferences&gt;, )</ID>
+    <ID>ReturnCount:PwsBackupAgent.kt$PwsBackupAgent.Companion$suspend fun applyPendingRestoreIfNeeded(context: Context, db: PwsDatabase, backupManager: BackupManager)</ID>
     <ID>SpreadOperator:PwsComposeApplication.kt$PwsComposeApplication$( databaseModule, appInfoModule, deviceLanguageModule, donationModule, repoRoomModule, contentDeliveryModule( catalogUrls = BuildConfig.CATALOG_URLS.split(",").map { it.trim() }, bundleVariant = BuildConfig.BUNDLE_VARIANT, keyProvider = { pwsContentKeyHex() }, ), useCasesModule, featuresModule, preferencesModule, startupModule, monetizationModule, // After featuresModule (overrides its NoOpTelemetry default), before the flavor modules so // a flavor could still substitute its own provider. telemetryModule, // Flavor overrides load last so they win (e.g. rustore overrides EntitlementRepository). *flavorKoinModules().toTypedArray(), )</ID>
     <ID>TooGenericExceptionCaught:AppMetricaTelemetry.kt$AppMetricaTelemetry.Companion$e: Throwable</ID>
     <ID>TooGenericExceptionCaught:PaymentController.kt$PaymentController$e: Throwable</ID>

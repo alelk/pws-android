@@ -5,13 +5,12 @@ import android.app.backup.BackupDataInput
 import android.app.backup.BackupDataOutput
 import android.content.Context
 import android.os.ParcelFileDescriptor
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
 import io.github.alelk.pws.database.PwsDatabase
-import io.github.alelk.pws.database.PwsDatabaseProvider
 import io.github.alelk.pws.portable.BackupService
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import org.koin.core.context.GlobalContext
 import java.io.File
 
 class PwsBackupAgent : BackupAgent() {
@@ -21,10 +20,11 @@ class PwsBackupAgent : BackupAgent() {
     data: BackupDataOutput,
     newState: ParcelFileDescriptor,
   ) {
-    val db = PwsDatabaseProvider.getDatabase(applicationContext)
-    val dataStore = applicationContext.appSettingsDataStore()
+    // Key/value backup runs the app's Application (and so Koin) normally. Should Koin still be missing, write
+    // nothing: the transport keeps the previous backup data of this key.
+    val backupManager = GlobalContext.getOrNull()?.get<BackupManager>() ?: return
     val yaml = runBlocking {
-      val backup = BackupManager(db, dataStore).exportBackup(source = "android-backup")
+      val backup = backupManager.exportBackup(source = "android-backup")
       BackupService().writeAsString(backup)
     }
     val bytes = yaml.toByteArray(Charsets.UTF_8)
@@ -54,11 +54,7 @@ class PwsBackupAgent : BackupAgent() {
     fun pendingRestoreFile(context: Context): File =
       File(context.filesDir, "pending_user_restore.yaml")
 
-    suspend fun applyPendingRestoreIfNeeded(
-      context: Context,
-      db: PwsDatabase,
-      dataStore: DataStore<Preferences>,
-    ) {
+    suspend fun applyPendingRestoreIfNeeded(context: Context, db: PwsDatabase, backupManager: BackupManager) {
       val file = pendingRestoreFile(context)
       if (!file.exists()) return
       // Defer restore until at least one book is installed — restoring user data
@@ -67,7 +63,7 @@ class PwsBackupAgent : BackupAgent() {
       if (db.bookDao().count() == 0) return
       val backup = runCatching { BackupService().readFromString(file.readText(Charsets.UTF_8)) }
         .getOrNull() ?: run { file.delete(); return }
-      runCatching { BackupManager(db, dataStore).restoreBackup(backup) }
+      runCatching { backupManager.restoreBackup(backup) }.onFailure { if (it is CancellationException) throw it }
       // Keep the file until every book referenced in the backup is installed so that
       // re-applying on subsequent book installs picks up the remaining records.
       val backupBookIds = (

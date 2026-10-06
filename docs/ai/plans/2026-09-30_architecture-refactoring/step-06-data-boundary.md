@@ -156,7 +156,66 @@ cd ../pws-android && ./gradlew build        # приложение на SQLCiphe
   восстанавливается сборкой шага; бэкап сборки шага читается предыдущим релизом.
 
 ### Заметки исполнителя
-<!-- -->
+- 2026-10-06, статус **done**. Схема Room (v15), `schemas/`, формат бэкапа, ключ `app-theme` не менялись;
+  `BackupCompatibilityTest` и `BackupManagerTest` не тронуты (SDK 34 зелёный; 3 падения `[SDK 37]` — окружение).
+- **Мина — сначала характеризация.** Сценарий с данными всех типов (`BackupScenario`, правки песни в двух сборниках,
+  избранное, 2 пользовательских тега, предопределённый тег, приоритеты, история, тема; на стороне восстановления — тег с тем же
+  именем, повтор избранного и истории, записи для неустановленных номеров/сборника, тег с именем предопределённого) и снимки
+  `BackupGolden` (YAML экспорта + дамп таблиц после восстановления) лежат в `pws-core/data/db-room/db-room-test-fixtures`
+  (`.../database/backup/`). Снимки записаны со **старого** `BackupManager` новым `BackupGoldenTest` (Robolectric SDK 34) и были
+  зелёными на нём; после переноса тот же тест зелёный без правки ожиданий. В pws-core `portable-data/src/jvmTest/.../BackupUseCasesTest`
+  гоняет use case'ы на реальных Room-репозиториях (bundled SQLite) против тех же снимков — тоже байт-в-байт.
+- Use case'ы в `:portable-data` (`io.github.alelk.pws.portable.backup`): `ExportBackupUseCase(source): Backup` (чтение в
+  `inRoTransaction`), `RestoreBackupUseCase(backup): Either<RestoreBackupError, RestoreReport>`. `BackupManager` — тонкий фасад
+  (Left → исключение, как и раньше бросал); use case'ы и фасад в Koin (`di/DatabaseModule.kt`). `BackupManager.kt` ушёл из
+  `KNOWN_DIRECT_DAO_USERS`. `PwsBackupAgent` остался в списке (`bookDao().count()`, `installedBookDao()` в
+  `applyPendingRestoreIfNeeded` — вне объёма этапа); `applyPendingRestoreIfNeeded` теперь принимает `BackupManager`, логика
+  отложенного восстановления не менялась.
+- Новые методы портов (SQL — те же DAO-методы, что вызывал `BackupManager`): `FavoriteReadRepository.getAllSongNumbers`,
+  `SongReadRepository.getAllEdited` / `SongWriteRepository.saveUserEdit` (сырой текст, без parse/toText — мина «правки
+  затёрты»), `TagReadRepository.getAllNotPredefined/findByName/nextCustomTagId`, `BookStatisticRepository.getAllEnabled`
+  (deprecated `getAllActive`, `@Suppress`), `HistoryReadRepository.getAllViews` / `HistoryWriteRepository.restoreView`. Новый
+  запрос `HistoryDao.count(bookId, songId, accessTimestamp)` (не схема): `restoreView` проверяет точный дубль вместо ловли
+  UNIQUE-нарушения — те же строки и те же `id` (проверено снимком). Фейки в тестах domain/features дополнены; `api:client`:
+  `getAllEdited` → пусто, `saveUserEdit` → Left «не поддерживается сервером».
+- **Атомарность.** Найдено: старый `restoreBackup` вообще не был в транзакции — каждая DAO-операция коммитилась сама, сбой
+  посередине оставлял частичную запись. Теперь всё в одной `inRwTransaction`: любой Left репозитория → внутреннее исключение →
+  откат → Left снаружи; тема (DataStore) применяется только после коммита. Тесты: Left / исключение / отмена на 2-й записи
+  истории (после песен, избранного, тегов, приоритетов) → дамп БД не изменился, тема не применена. Красным: без транзакции —
+  3 теста красные; `catch (Exception)` вместо своего исключения — красные «исключение» и «отмена»; без проверки дубля истории —
+  красный golden восстановления. `CancellationException` не глотается (helper `eitherCatching` в repo-room для новых методов;
+  `applyPendingRestoreIfNeeded` её пробрасывает).
+- **Отклонения / вопросы владельцу:**
+  1. В `:domain` добавлена зависимость `api(libs.kotlinx.datetime)`: локальное время просмотра хранится как `LocalDateTime`;
+     через `HistoryEntry.viewedAt: Instant` (системная TZ) оно искажалось бы в «дырах» перехода на летнее время.
+  2. ~~Тема через `UserPreferencesRepository` (экспорт только ≠ `system`)~~ — **отклонено оркестратором (G2)**, переделано:
+     узкий порт `BackupSettingsPort { read(): Map<String,String>; apply(Map<String,String>) }` в `:portable-data`
+     (`portable/backup/BackupSettingsPort.kt`), реализация в шелле `DataStoreBackupSettings` над тем же DataStore и
+     `appThemeKey` (сырое значение: не задан → ключа нет; задан `system` → `"system"`; мусор экспортируется как есть).
+     Use case'ы `UserPreferencesRepository` больше не используют. Применение — после коммита, с прежней валидацией
+     (`ThemeMode.byIdentifier(v).identifier == v`, иначе игнор). Тесты (pws-core `BackupUseCasesTest` на фейке порта и
+     pws-android `BackupGoldenTest` на реальном DataStore): не задан → ключа нет; `system` → экспортируется `"system"`;
+     восстановление `system` поверх `dark` → `system`; golden/compat без правки ожиданий. Красным: экспорт без `system` →
+     красный тест (2) в pws-core; порт, отбрасывающий `system`, → красные (2) и (3) в pws-android. Принятые оркестратором
+     отклонения: п. 1, 3, 4 ниже.
+  3. Отрицательный `bookPreference` (только в отредактированном вручную файле) теперь пропускается (`UpdateBookStatisticCommand`
+     требует ≥ 0); раньше записывался. Номер песни ≥ 1 000 000 во входе считается «не найден» (ограничение доменного `SongNumber`).
+  4. `PwsBackupAgent.onBackup` берёт `BackupManager` из Koin (`GlobalContext`); key/value-бэкап запускает Application обычным
+     образом, но если Koin не поднят — агент ничего не пишет (транспорт сохраняет прежние данные ключа). Раньше агент сам
+     открывал БД и DataStore.
+  5. Репозитории при восстановлении зовут `onDataChanged` (Android `BackupManager.dataChanged()`), раньше прямые DAO — нет.
+  6. `RestoreBackupUseCase`/`ExportBackupUseCase` — 11/8 зависимостей (`@Suppress("LongParameterList")`, по порту на вид данных).
+- Baseline'ы: ktlint repo-room 235 → 233, app-compose 106 → 94; domain/db-room/features/portable-data/api-client
+  регенерированы из-за сдвига строк, число не выросло; detekt app-compose 34 → 32 (две записи `BackupManager.restoreBackup`
+  ушли, ID `ReturnCount` `applyPendingRestoreIfNeeded` обновлён под новую сигнатуру). `ktlintFormat` не запускался.
+- Gate: pws-core `build` + corex — зелёный. pws-android `:app-compose:testRuDebugUnitTest :app-compose:testRustoreDebugUnitTest
+  :app-compose:assembleRuDebug :app-compose:assembleRustoreDebug :app-compose:ktlintCheck :app-compose:detekt` — всё зелёное,
+  кроме 3 `BackupManagerTest [SDK 37]` в каждом флейворе (UnsatisfiedLinkError, окружение); `BackupGoldenTest` 5/5 (после
+  доработки темы; gate повторён, результат тот же),
+  `BackupManagerTest` SDK 34 3/3, `DirectDaoAccessTest` зелёные.
+- Ручной прогон (владелец): `docs/testing-backup-real-device.md` в обе стороны; Auto Backup (`bmgr backupnow` → переустановка
+  → восстановление после установки сборника); экспорт/импорт через файл; SQLCipher-устройство (экспорт идёт в
+  `inRoTransaction` с `Flow.first()` внутри — на Robolectric и JVM работает, на устройстве не проверялось).
 
 ---
 

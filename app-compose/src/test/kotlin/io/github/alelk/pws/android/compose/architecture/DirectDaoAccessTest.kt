@@ -31,7 +31,6 @@ private val DAO_USE =
 /** Only shrinks (G10). Files outside `:data:db-android` that use DAOs directly. */
 private val KNOWN_DIRECT_DAO_USERS: List<String> =
   listOf(
-    "app-compose/src/main/kotlin/io/github/alelk/pws/android/compose/BackupManager.kt",
     "app-compose/src/main/kotlin/io/github/alelk/pws/android/compose/PwsBackupAgent.kt",
     "data/content-delivery/src/main/kotlin/io/github/alelk/pws/contentdelivery/install/BookImporterImpl.kt",
     "data/content-delivery/src/main/kotlin/io/github/alelk/pws/contentdelivery/install/BookUninstallerImpl.kt",
