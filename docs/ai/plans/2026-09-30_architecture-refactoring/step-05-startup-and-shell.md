@@ -86,7 +86,29 @@ unit-тесте экрана. Защита: тест машины состоян
 - Табличный тест зелёный и проверен красным (поменять одну ветку `reduceStartup` → падает).
 
 ### Заметки исполнителя
-<!-- -->
+- 2026-10-06, статус **done**. pws-core: `features/.../app/startup/StartupGate.kt` (`StartupInputs`, `StartupGate`,
+  `reduceStartup`, `latchOnboarding` — сигнатуры по плану), порт `features/.../platform/AppStartupTasks.kt`,
+  `jvmTest/.../app/startup/{StartupGateTest, FakeAppStartupTasks}.kt`. pws-android:
+  `app-compose/.../AndroidAppStartupTasks.kt` (+ `AndroidAppStartupTasksTest`); код перенесён из `MainActivity`
+  один-в-один (`afterMigration`, `await`, `countAttempt = false`, `Dispatchers.IO`, `reportLegacyMigration`,
+  `legacy_migration_retry_failed`, `count > 0`). `MainActivity` и Koin не трогал.
+- Мина: `preloaded == null` ⇒ всегда `Loading` и латч не срабатывает — онбординг (установка книг) невозможен до
+  конца миграции+сидирования. Тесты: таблица 36 комбинаций (литералом, + проверка покрытия), латч, сценарии с фейком;
+  Android — сидирование / повтор миграции / restore не стартуют при закрытом гейте. `LegacyMigrationGateTest` не менялся.
+- Проверено красным: core — 6 мутаций (`null`-ветка `hasInstalledBooks`, онбординг при `preloaded == null`,
+  перестановка skip/latch, латч без `preloaded == false` (дважды — до и после переформатирования), латч без `prev`) —
+  каждая роняет 2–7 тестов; android — убрать `afterMigration` / `await()` → падает ровно соответствующий тест.
+- Отклонения: `AndroidAppStartupTasks` имеет `internal`-конструктор с шовом `StartupOperations` (4 лямбды) и
+  `ioDispatcher` (detekt `LongParameterList` не дал передать лямбды по одной); публичный конструктор
+  `(context, migrationGate, telemetry, SeedBooksFromAssetsUseCase, database: () -> PwsDatabase, dataStore: () -> DataStore)`
+  — БД/DataStore лениво, как `get<…>()` в оригинале. Тесты используют `@file:OptIn`, сигнатура класса
+  `class X :\n  FunSpec({` — иначе ktlint `class-signature` (baseline не трогал).
+- Для 05.2: `telemetry.setUserProperty(INSTALLED_BOOKS, count)` (срабатывает и при 0) и применение дефолтного согласия
+  телеметрии при `App` в порт не входят — остаются заботой VM; `AndroidAppStartupTasks` в Koin не зарегистрирован.
+- Gate: pws-core `build $(corex) --continue --max-workers=1` — SUCCESSFUL (первый прогон упал на `:domain:jsBrowserTest`
+  — ChromeHeadless/OOM при двух живых демонах, после `--stop` зелёный). pws-android: `testRu/RustoreDebugUnitTest` —
+  падают только 3 `BackupManagerTest [SDK 37]` в каждом; `assembleRuDebug assembleRustoreDebug ktlintCheck detekt` —
+  зелёные. Baseline'ы detekt/ktlint и `KNOWN_*` не менялись. Не закоммичено.
 
 ---
 
