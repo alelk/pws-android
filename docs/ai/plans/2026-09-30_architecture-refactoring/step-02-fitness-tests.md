@@ -107,7 +107,13 @@
 - Тесты в сборке; размеры `KNOWN_*` записаны в заметки (это базовая линия для шагов 03, 09).
 
 ### Заметки исполнителя
-<!-- -->
+**02.2 (sonnet, 2026-10-06) — done.**
+- Сделано (pws-core, `:features` jvmTest, пакет `architecture/`): `EffectsChannelTest`, `NoSwallowedErrorsTest`, `ScreenFileSizeTest`, `NoServiceLocatorInComposablesTest`, `NoHardcodedUiStringsTest`, `ResourceKeysParityTest`, `ScreenModelPurityTest`, `MaterialThemeRatchetTest`. В `ScannedFile.kt` (хелпер 02.1) добавлены `name`, `lineCount`, `code` (источник без комментариев), `scanFeatures()` (guard >50 файлов), `screenModels()` (guard >5). `AGENTS.md §8` дополнен именами тестов.
+- Базовая линия `KNOWN_*` (для шагов 03, 09): MutableSharedFlow — 8 файлов (SongDetail/BySongId/Edit, Search, Favorites, History, Tags, Settings ScreenModel); пустые catch — 3 файла, 8 мест (`SettingsScreenModel`:1, `SongDetailBySongIdScreenModel`:3, `SongDetailScreenModel`:4; формат `файл:число`); файлы >600 строк — 2 (`SettingsScreen.kt`, `SongDetailScreen.kt`); `koinInject` вне разрешённых — 1 (`settings/SettingsScreen.kt`); хардкод-строки в `*Screen.kt`/`components/` — 0; пары `locale:key` без перевода — 65 (values-pl: 64 ключа — book_library_*, donation_prompt_*, settings_about/donation/license/version, song_edit_*, theme_system, tonality_*; values-uk: `song_edit_validation_text_format_invalid`); ScreenModel с UI-импортами — 3 (`SongEdit`, `Tags`, `TagSongs`); файлы с `MaterialTheme.` вне `theme/` — 32.
+- Отклонения от оценок плана: MutableSharedFlow 8 (не 5); пустых catch 8 (не ≈12; считаются только пустое/комментарий-только тело); `MaterialTheme.` 32 вне `theme/` (плановые 33 — это счёт вместе с `theme/Spacing.kt`); `NoHardcodedUiStrings` — 0 (остатки `"¶"`, `"123"`, `"$n. $title"` без букв). `koinInject` ловится и в форме `koinInject<T>()` (regex `koinInject\s*[(<]`), иначе SettingsScreen не находился.
+- Красным доказано (нарушение внесено, весь `:features:jvmTest` красный именно этим тестом, откат): MutableSharedFlow в `HomeScreenModel`; `catch (e: Exception) { /* ignore */ }` там же; +600 пустых строк в `TagChip.kt`; `koinInject<String>()` в `HomeScreen.kt`; `Text("Hello")` и `val contentDescription = "Back"` в `HomeScreen.kt`; удалён ключ из `values-ru` и добавлен ключ только в `values`; `import androidx.compose.ui.graphics.Color` в `HomeScreenModel`; `MaterialTheme.typography` в `HomeScreenModel`; ratchet на исчезнувшее нарушение (убрана запись `settings/SettingsScreen.kt` из KNOWN koinInject). Первая попытка Purity с полным именем без import осталась зелёной — правило смотрит на импорты, так и задумано.
+- Наблюдения: `ktlintFormat` в песочнице не работает (iOS-задачи, «Unknown host target»), ktlint/detekt-замечания правились вручную по выводу gate. Демон Gradle иногда падает при параллельных запусках — гонять строго по одному. Вопросов владельцу нет. Не закоммичено.
+
 
 ---
 
