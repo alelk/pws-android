@@ -16,6 +16,7 @@ import io.github.alelk.pws.database.pwsContentKeyHex
 import io.github.alelk.pws.domain.donationprompt.config.DonationConfig
 import io.github.alelk.pws.domain.donationprompt.repository.DonationPromptStateReadRepository
 import io.github.alelk.pws.domain.donationprompt.repository.DonationPromptStateWriteRepository
+import io.github.alelk.pws.domain.preferences.repository.UserPreferencesRepository
 import io.github.alelk.pws.domain.telemetry.NoOpTelemetry
 import io.github.alelk.pws.domain.telemetry.Telemetry
 import io.github.alelk.pws.domain.telemetry.TelemetryAttr
@@ -105,6 +106,12 @@ class PwsComposeApplication : Application() {
       single { PwsAppInfo(appVersion) }
     }
 
+    // The settings repository over the DataStore above. Loaded after featuresModule so it overrides
+    // its in-memory default.
+    val preferencesModule = module {
+      single<UserPreferencesRepository> { DataStoreUserPreferencesRepository(get<DataStore<Preferences>>()) }
+    }
+
     val telemetryModule = module {
       single<Telemetry> { telemetry }
       single { telemetryConsent }
@@ -156,6 +163,7 @@ class PwsComposeApplication : Application() {
         ),
         useCasesModule,
         featuresModule,
+        preferencesModule,
         startupModule,
         monetizationModule,
         // After featuresModule (overrides its NoOpTelemetry default), before the flavor modules so
