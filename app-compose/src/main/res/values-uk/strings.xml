@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="backup_saved">Резервну копію збережено</string>
+  <string name="backup_export_failed">Не вдалося експортувати</string>
+  <string name="backup_import_done">Імпорт завершено</string>
+  <string name="backup_import_failed">Не вдалося імпортувати</string>
+  <string name="bundle_imported">Збірник імпортовано</string>
+  <string name="bundle_import_failed">Не вдалося імпортувати збірник</string>
+  <string name="no_app_to_open_link">Не знайдено застосунок для відкриття</string>
+</resources>

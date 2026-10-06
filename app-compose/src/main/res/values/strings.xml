@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="app_name">P&amp;W Songs</string>
+
+  <string name="backup_saved">Backup saved</string>
+  <string name="backup_export_failed">Export failed</string>
+  <string name="backup_import_done">Import completed</string>
+  <string name="backup_import_failed">Import failed</string>
+  <string name="bundle_imported">Bundle imported</string>
+  <string name="bundle_import_failed">Bundle import failed</string>
+  <string name="no_app_to_open_link">No app found to open this</string>
 </resources>

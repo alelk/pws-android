@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="backup_saved">Kopia zapasowa zapisana</string>
+  <string name="backup_export_failed">Nie udało się wyeksportować</string>
+  <string name="backup_import_done">Import zakończony</string>
+  <string name="backup_import_failed">Nie udało się zaimportować</string>
+  <string name="bundle_imported">Zbiór zaimportowany</string>
+  <string name="bundle_import_failed">Nie udało się zaimportować zbioru</string>
+  <string name="no_app_to_open_link">Nie znaleziono aplikacji do otwarcia</string>
+</resources>

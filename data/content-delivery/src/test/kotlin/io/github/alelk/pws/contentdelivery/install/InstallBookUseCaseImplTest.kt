@@ -6,6 +6,7 @@ import br.com.colman.kotest.FeatureSpec
 import br.com.colman.kotest.android.extensions.robolectric.RobolectricTest
 import io.github.alelk.pws.contentdelivery.ContentKeyProvider
 import io.github.alelk.pws.contentdelivery.bookBundle
+import io.github.alelk.pws.contentdelivery.bookImporter
 import io.github.alelk.pws.contentdelivery.inMemoryPwsDb
 import io.github.alelk.pws.contentdelivery.portableBook
 import io.github.alelk.pws.contentdelivery.portableSong
@@ -71,7 +72,7 @@ class InstallBookUseCaseImplTest : FeatureSpec({
     }
     return InstallBookUseCaseImpl(
       context = ApplicationProvider.getApplicationContext<Context>(),
-      importer = BookImporterImpl(db),
+      importer = bookImporter(db),
       keyProvider = ContentKeyProvider { keyHex },
       httpClient = HttpClient(engine),
     )

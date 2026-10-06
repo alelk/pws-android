@@ -30,12 +30,12 @@ jobs:
           distribution: 'jetbrains'
           cache: gradle
 
-      - name: Run tests
+      - name: Build and run tests
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          ./gradlew :data:db-android:testRuDebugUnitTest data:content-delivery:check app-compose:check
-
+          # Release variants need signing secrets, which only release-build.yml has.
+          ./gradlew build -x assembleRuRelease -x assembleRustoreRelease -x assembleUkRelease -x assembleFullRelease
 
       - name: Build ruDebug & ukDebug
         env:
