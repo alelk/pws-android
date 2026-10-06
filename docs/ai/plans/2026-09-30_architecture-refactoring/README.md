@@ -213,7 +213,7 @@ pws-android :data:content-delivery      сеть/файлы/расшифровк
 | 02.2 | Правила UI-слоя и i18n-паритет | core | sonnet | done |
 | 02.3 | Правила шелла и данных в pws-android ∥ 02.2 | android | sonnet | done |
 | **03** | **[Слой представления: долги по ratchet](step-03-presentation-hygiene.md)** | | | |
-| 03.1 | Объединить две модели SongDetail, убрать репозитории из UI | core | opus | not started |
+| 03.1 | Объединить две модели SongDetail, убрать репозитории из UI | core | opus | done |
 | 03.2 | Эффекты через `Channel`, ошибки не глотаются | core | sonnet | not started |
 | 03.3 | Разрезать `SongDetailScreen.kt` | core | sonnet | not started |
 | 03.4 | Разрезать `SettingsScreen.kt`, `TagsScreen.kt`; убрать `koinInject` из composable | core | sonnet | not started |
