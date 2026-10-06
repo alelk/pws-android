@@ -69,7 +69,44 @@ cd ../pws-android && ./gradlew build        # приложение на SQLCiphe
   (убрать транзакцию → тест падает).
 
 ### Заметки исполнителя
-<!-- -->
+- 2026-10-06, статус **done**. Изменения только в pws-core; схема Room (v15) и `schemas/` не тронуты; pws-android не менялся.
+  `RoomTransactionRunner`, `repoRoomModule`, `SongSearchRepositoryImpl`, `searchGrouping.kt` → `repo-room/commonMain`
+  (`git mv`); `SearchGroupingTest` → `commonTest`; `androidHostTest`-исходников в repo-room больше нет.
+- Транзакции: общая реализация на Room KMP API — `useWriterConnection { immediateTransaction }` /
+  `useReaderConnection { deferredTransaction }`, без `expect/actual`. SQLCipher проверен чтением исходников Room 2.8.4 /
+  sqlite-framework 2.6.2 (на устройстве не проверялось — ручной прогон перед вливанием): в compatibility-режиме
+  (`SupportOpenHelperFactory`) Room ведёт эти транзакции через `PassthroughConnectionPool` + `compatTransactionCoroutineExecute`,
+  т. е. на том же транзакционном потоке, что `withTransaction`; `BEGIN IMMEDIATE/DEFERRED` переводятся в
+  `beginTransactionNonExclusive()` / `beginTransactionReadOnly()` (у `net.zetetic` SQLiteDatabase 4.18 оба метода есть).
+  Вложенность с существующими `db.withTransaction` в pws-android (импорт, бэкап) работает в обе стороны (вложенная
+  Android-транзакция). Отличия от старой реализации: (1) `inRoTransaction` теперь deferred/read-only, а не эксклюзивная;
+  (2) на JVM-пуле вложенный вызов — SAVEPOINT; `inRwTransaction` внутри `inRoTransaction` на JVM падает (Room не
+  повышает reader до writer) — в домене таких вложений нет, на Android (passthrough) поведение прежнее.
+- DI: `repoRoomModule` в `commonMain` делает `includes(repoRoomPlatformModule)` — `internal expect val` с биндингом
+  `named("onDataChanged")`: Android — `BackupManager(get<Context>()).dataChanged()` (как было), JVM/iOS (`nativeMain`) — no-op.
+  Публичный API модуля и `AppModules.kt` в pws-android не меняются.
+- Отклонение: чтобы `SongSearchRepositoryImpl` ушёл в `commonMain`, запросы `findBySongNumber`/`findBySongText` и
+  `SongSearchResultEntity` перенесены из Android-`SongDao` в `SongDaoBase`/`commonMain` db-room (SQL без изменений, Android API
+  не использовали). Это запросы, не схема: `schemas/` не изменились. Курсорные `getSuggestionsBy*` (SearchManager) остались в Android.
+  iOS-компиляция/KSP здесь не проверяются (песочница), сам перенос ради iOS ничего не добавлял.
+- Тесты: `repo-room/src/jvmTest` — реальная Room in-memory на `BundledSQLiteDriver` (linux-aarch64 работает), сущности из
+  `db-room-test-fixtures` с фиксированным seed. Все 12 классов-реализаций + `RoomTransactionRunner` + `RepoRoomModuleTest`
+  (Koin резолвит все порты на JVM): 62 новых теста (1 выключен, см. баг ниже), запись→чтение, `observe*` эмитит после записи (`emissionAfter`), удаление;
+  транзакции — коммит, откат при исключении, вложенный rw без дедлока, откат внешнего откатывает вложенный, ro внутри rw.
+  Сделано красным (8 мутаций, все в своё время упали и откатаны): транзакция убрана → 2 теста runner'а; `priority > 0` → `>= 0`
+  в поиске; `description`↔`preface` в маппинге книги; перевёрнутый `ToggleResult`; история без дедупликации;
+  `displayShortName` вместо `displayName` в `observeSongsByTag`; `installedAt + 1` в маппинге installed book.
+- **Найден баг (не чинил, вне объёма):** `SongReferenceRepositoryImpl.getReferencesToSong(refSongId)` вызывает
+  `SongReferenceDao.getBySongIds`, которая фильтрует по `song_id`, — возвращает ссылки ИЗ песни, а не НА неё (контракт порта:
+  «songs that reference this song»). Следствие: `GetSongReferencesWithDetailsUseCase` дублирует исходящие ссылки и не видит
+  входящие. Тест с правильным ожиданием есть и выключен (`enabled = false`, комментарий BUG) — проверен красным: ожидалось
+  `[1, 3]`, получено `[2]`. Владельцу: чинить в отдельной задаче (нужен запрос `WHERE ref_song_id IN (...)`), затем включить тест.
+- Попутные наблюдения (не трогал): репозитории оборачивают DAO в `runCatching` → ошибка внутри `inRwTransaction` превращается
+  в `Left` и транзакция коммитится (ловушка «Left commits»); `runCatching` глотает и `CancellationException`;
+  `FavoriteRepositoryImpl.clearAll` не зовёт `onDataChanged`; `SongTagRepositoryImpl` пишет в `println`.
+- Baseline'ы: ktlint repo-room 238 → 235, db-room 398 → 395 (регенерированы из-за переноса путей/сдвига строк); detekt не менялся;
+  `ktlintFormat` не запускался. Gate pws-core (`build` + corex) — зелёный; `:data:repo-room:jvmTest :data:repo-room:testAndroidHostTest`
+  — зелёные; pws-android `:app-compose:assembleRuDebug` — зелёный (SQLCipher-приложение собирается; Robolectric-тесты БД здесь не гоняются).
 
 ---
 
