@@ -57,7 +57,13 @@ cd ../pws-android && ./gradlew :app-compose:assembleRuDebug   # composite build 
 - В модулях нет повторяющейся конфигурации; `outgoingVariants` совпадают с «до»; gate зелёный.
 
 ### Заметки исполнителя
-<!-- -->
+**01.1 — статус: done** (не закоммичено; изменения в pws-core: `convention-plugins/`, `settings.gradle.kts`, `build.gradle.kts`, `build.gradle.kts` всех модулей).
+- Плагины (included build `convention-plugins/`, каталог из `../gradle/libs.versions.toml`): `pws.kmp.base` (jvm, toolchain 21, JUnit 5 + kotest-runner в jvmTest, junitXml, maven-publish), `pws.kmp` (+ios+js browser), `pws.kmp.nojs`, `pws.kmp.noios`, `pws.kmp.android`, `pws.kmp.android.nojs`, `pws.compose`, `pws.kmp.serialization` (надстройка: только плагин serialization, применяется рядом с любым `pws.kmp*`).
+- Отклонения: (1) вместо флага `pws { js = false }` — отдельные плагины по наборам целей (цели должны существовать до тела модуля, т.к. модули обращаются к `jsMain`); добавлен `pws.kmp.noios`, т.к. `api:*` = jvm+js без iOS; (2) `pws.kmp.serialization` не включает `pws.kmp`; (3) `domain-test-fixtures` (js = nodejs) и `api:client:di` (+nodejs) объявляют js-цель в модуле; (4) `ksp` и `io.kotest` остаются в модулях, порядок в `plugins {}` изменён: ksp раньше kotest (иначе kotest-плагин падает: «KSP neither found»); (5) `compose.resources` в `features` настраивается через `extensions.configure<ComposeExtension>`; (6) `androidSdkVersion` из корня удалён (в pws-android не используется), repositories google/mavenCentral перенесены в `dependencyResolutionManagement` settings; корень оставляет version, yarn-политику и publishing-репозитории.
+- Различие publishToMavenLocal --dry-run: исчезли 3 задачи `:api/:core/:data:publishToMavenLocal SKIPPED` — родительские каталоги без модуля, раньше получали maven-publish из `subprojects{}`. Остальное идентично.
+- Проверки до/после (снимки в /tmp/claude-1000/01.1/): `outgoingVariants` 13 модулей — идентичны; `:features:outgoingVariants` падает с ConcurrentModificationException и ДО правок (баг Gradle), поэтому для всех модулей дополнительно сравнены атрибуты/зависимости/capabilities потребляемых конфигураций, набор KotlinTarget, список compile-задач, jvmTarget, freeCompilerArgs, optIn — идентичны.
+- Gate: `check assemble -x <4 iOS compile>` в pws-core — BUILD SUCCESSFUL; `pws-android :app-compose:assembleRuDebug` — BUILD SUCCESSFUL.
+- Находки вне объёма: пустой `jsTest.dependencies {}` в `domain`; корневой `alias(androidLibrary)` не используется; iOS-компиляция не проверена в песочнице (только конфигурация).
 
 ---
 
