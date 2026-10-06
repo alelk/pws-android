@@ -37,12 +37,12 @@
         <error line="56" column="103" source="standard:trailing-comma-on-declaration-site" />
     </file>
     <file name="src/main/kotlin/io/github/alelk/pws/database/PwsDatabaseProvider.kt">
-        <error line="13" column="15" source="standard:property-naming" />
+        <error line="12" column="15" source="standard:property-naming" />
+        <error line="42" column="5" source="standard:function-signature" />
+        <error line="43" column="5" source="standard:function-signature" />
         <error line="44" column="5" source="standard:function-signature" />
-        <error line="45" column="5" source="standard:function-signature" />
-        <error line="46" column="5" source="standard:function-signature" />
-        <error line="46" column="34" source="standard:function-signature" />
-        <error line="47" column="37" source="standard:function-signature" />
+        <error line="44" column="34" source="standard:function-signature" />
+        <error line="45" column="37" source="standard:function-signature" />
     </file>
     <file name="src/main/kotlin/io/github/alelk/pws/database/SelfHealingOpenHelperFactory.kt">
         <error line="17" column="3" source="standard:class-signature" />
