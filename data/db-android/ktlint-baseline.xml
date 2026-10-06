@@ -321,10 +321,7 @@
         <error line="165" column="1" source="standard:no-blank-line-before-rbrace" />
     </file>
     <file name="src/test/kotlin/io/github/alelk/pws/database/MigrateLegacyDatabaseFileTest.kt">
-        <error line="29" column="39" source="standard:class-signature" />
-        <error line="46" column="56" source="standard:statement-wrapping" />
-        <error line="46" column="76" source="standard:statement-wrapping" />
-        <error line="46" column="86" source="standard:statement-wrapping" />
+        <error line="30" column="39" source="standard:class-signature" />
     </file>
     <file name="src/test/kotlin/io/github/alelk/pws/database/SelfHealingOpenHelperTest.kt">
         <error line="14" column="65" source="standard:function-signature" />
@@ -399,15 +396,5 @@
     </file>
     <file name="src/test/kotlin/io/github/alelk/pws/database/withSqliteDb.kt">
         <error line="1" column="1" source="standard:filename" />
-        <error line="7" column="38" source="standard:function-signature" />
-        <error line="7" column="55" source="standard:function-signature" />
-        <error line="7" column="97" source="standard:function-signature" />
-        <error line="7" column="123" source="standard:function-signature" />
-        <error line="7" column="157" source="standard:function-signature" />
-        <error line="7" column="160" source="standard:max-line-length" />
-        <error line="15" column="7" source="standard:multiline-if-else" />
-        <error line="22" column="136" source="standard:trailing-comma-on-call-site" />
-        <error line="34" column="31" source="standard:trailing-comma-on-declaration-site" />
-        <error line="35" column="7" source="standard:function-signature" />
     </file>
 </baseline>

@@ -14,6 +14,7 @@ import io.kotest.matchers.ints.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import java.io.File
+import kotlin.io.path.createTempDirectory
 
 /**
  * End-to-end legacy migration through the real file lookup ([migrateDataFromPrevDatabase]), as it
@@ -43,7 +44,8 @@ class MigrateLegacyDatabaseFileTest : FeatureSpec({
   fun placeForkDatabase(fixture: Pair<File, String> = v11Fixture) {
     context.getSharedPreferences("pws_legacy_migration", Context.MODE_PRIVATE).edit().clear().commit()
     quarantinedFile().delete()
-    val tmp = File("test-db/legacy-file-test").apply { deleteRecursively(); mkdirs() }
+    // Own temp dir: the per-flavor test tasks of this module run in parallel.
+    val tmp = createTempDirectory("pws-legacy-file-test").toFile()
     fixture.first.unzip(tmp)
     val target = legacyFile().apply { parentFile?.mkdirs() }
     File(tmp, fixture.second).copyTo(target, overwrite = true)
