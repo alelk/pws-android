@@ -9,7 +9,7 @@ import io.kotest.matchers.shouldBe
  * inside `:data:db-android`; the shell (`app-compose/src/main`) and `:data:content-delivery` reach data
  * through repositories / ports.
  * Why: a DAO call from the shell bypasses the repository layer (mapping, transactions, invariants) and
- * ties Android glue to the Room schema (G1: version 15 stays). Today's debt is the ratchet below (step 06).
+ * ties Android glue to the Room schema (G1: version 15 stays). The ratchet below was emptied in step 06.3.
  *
  * See it red: add `val d = db.songDao()` to any file in `app-compose/src/main` or
  * `data/content-delivery/src/main` and run `./gradlew :app-compose:testRuDebugUnitTest`, then revert.
@@ -29,11 +29,4 @@ private val DAO_USE =
   Regex("""^import\s+io\.github\.alelk\.pws\.database\.[\w.]*Dao\b|\b\w+Dao\(\)""", RegexOption.MULTILINE)
 
 /** Only shrinks (G10). Files outside `:data:db-android` that use DAOs directly. */
-private val KNOWN_DIRECT_DAO_USERS: List<String> =
-  listOf(
-    "app-compose/src/main/kotlin/io/github/alelk/pws/android/compose/PwsBackupAgent.kt",
-    "data/content-delivery/src/main/kotlin/io/github/alelk/pws/contentdelivery/install/BookImporterImpl.kt",
-    "data/content-delivery/src/main/kotlin/io/github/alelk/pws/contentdelivery/install/BookUninstallerImpl.kt",
-    "data/content-delivery/src/main/kotlin/io/github/alelk/pws/contentdelivery/install/SeedBooksFromAssetsUseCase.kt",
-    "data/content-delivery/src/main/kotlin/io/github/alelk/pws/contentdelivery/install/SmartSongBinder.kt",
-  )
+private val KNOWN_DIRECT_DAO_USERS: List<String> = emptyList()

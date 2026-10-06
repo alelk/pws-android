@@ -1,7 +1,9 @@
 package io.github.alelk.pws.contentdelivery.install
 
+import arrow.core.Either
 import br.com.colman.kotest.FeatureSpec
 import br.com.colman.kotest.android.extensions.robolectric.RobolectricTest
+import io.github.alelk.pws.contentdelivery.bookContentWriter
 import io.github.alelk.pws.contentdelivery.inMemoryPwsDb
 import io.github.alelk.pws.database.PwsDatabase
 import io.github.alelk.pws.database.book.bookEntity
@@ -13,11 +15,11 @@ import io.github.alelk.pws.database.song_tag.SongTagEntity
 import io.github.alelk.pws.database.tag.tagEntity
 import io.github.alelk.pws.domain.booklibrary.model.BookInstallSource
 import io.github.alelk.pws.domain.core.Version
+import io.github.alelk.pws.domain.core.error.DeleteError
 import io.github.alelk.pws.domain.core.ids.BookId
 import io.github.alelk.pws.domain.core.ids.SongId
 import io.github.alelk.pws.domain.core.ids.SongNumberId
 import io.github.alelk.pws.domain.core.ids.TagId
-import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
@@ -27,12 +29,13 @@ import io.kotest.property.arbitrary.constant
 import io.kotest.property.arbitrary.next
 
 /**
- * Tests for [BookUninstallerImpl] — removes a downloaded book and its data. The critical guarantee
+ * Tests for [UninstallBookUseCaseImpl] (formerly `BookUninstallerImpl`; the writes moved to pws-core's
+ * `BookContentWriter` in step 06.3) — removes a downloaded book and its data. The critical guarantee
  * is **orphan detection**: a song shared with another book must survive, while a song that belongs
  * only to the uninstalled book (and its favourites / tags via FK cascade) must be removed.
  */
 @RobolectricTest(sdk = [34, 37])
-class BookUninstallerImplTest : FeatureSpec({
+class UninstallBookUseCaseImplTest : FeatureSpec({
 
   val rs = RandomSource.seeded(20260621L)
   val book1 = BookId.parse("Book-1")
@@ -66,6 +69,8 @@ class BookUninstallerImplTest : FeatureSpec({
     db.installedBookDao().upsert(InstalledBookEntity(book2, Version(1, 0), 0, BookInstallSource.DOWNLOADED))
   }
 
+  suspend fun uninstall(db: PwsDatabase, id: BookId) = UninstallBookUseCaseImpl(bookContentWriter(db))(id)
+
   suspend fun <T> withDb(block: suspend (PwsDatabase) -> T): T {
     val db = inMemoryPwsDb()
     return try { block(db) } finally { db.close() }
@@ -75,7 +80,7 @@ class BookUninstallerImplTest : FeatureSpec({
     scenario("removes the book, its statistic and installed record but keeps the other book") {
       withDb { db ->
         seed(db)
-        BookUninstallerImpl(db).uninstall(book1)
+        uninstall(db, book1) shouldBe Either.Right(Unit)
 
         db.bookDao().getById(book1).shouldBeNull()
         db.bookStatisticDao().getById(book1).shouldBeNull()
@@ -88,7 +93,7 @@ class BookUninstallerImplTest : FeatureSpec({
     scenario("deletes an orphan song but keeps a song shared with another book") {
       withDb { db ->
         seed(db)
-        BookUninstallerImpl(db).uninstall(book1)
+        uninstall(db, book1) shouldBe Either.Right(Unit)
 
         db.songDao().getById(orphanSong).shouldBeNull()
         db.songDao().getById(sharedSong).shouldNotBeNull()
@@ -101,7 +106,7 @@ class BookUninstallerImplTest : FeatureSpec({
     scenario("cascades removal of the orphan's favourite and tag, keeps the shared song's favourite") {
       withDb { db ->
         seed(db)
-        BookUninstallerImpl(db).uninstall(book1)
+        uninstall(db, book1) shouldBe Either.Right(Unit)
 
         // orphan favourite gone (cascade via song_number), shared song's Book-2 favourite remains
         db.favoriteDao().count() shouldBe 1
@@ -116,14 +121,14 @@ class BookUninstallerImplTest : FeatureSpec({
     scenario("refuses to uninstall a built-in (ASSET) book") {
       withDb { db ->
         seed(db, book1Source = BookInstallSource.ASSET)
-        shouldThrow<IllegalStateException> { BookUninstallerImpl(db).uninstall(book1) }
+        uninstall(db, book1) shouldBe Either.Left(DeleteError.ValidationError("Cannot uninstall built-in book Book-1"))
         db.bookDao().getById(book1).shouldNotBeNull()  // nothing removed
       }
     }
 
     scenario("fails when the book is not installed") {
       withDb { db ->
-        shouldThrow<IllegalStateException> { BookUninstallerImpl(db).uninstall(BookId.parse("Unknown")) }
+        uninstall(db, BookId.parse("Unknown")) shouldBe Either.Left(DeleteError.NotFound)
       }
     }
   }

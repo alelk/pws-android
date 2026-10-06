@@ -2,8 +2,8 @@ package io.github.alelk.pws.contentdelivery.install
 
 import android.content.Context
 import io.github.alelk.pws.contentdelivery.ContentKeyProvider
-import io.github.alelk.pws.database.PwsDatabase
 import io.github.alelk.pws.domain.booklibrary.model.BookInstallSource
+import io.github.alelk.pws.domain.booklibrary.repository.InstalledBookReadRepository
 import io.github.alelk.pws.domain.telemetry.NoOpTelemetry
 import io.github.alelk.pws.domain.telemetry.Telemetry
 import io.github.alelk.pws.domain.telemetry.TelemetryAttr
@@ -21,7 +21,7 @@ import timber.log.Timber
  * variants have no such directory, so this use case is a fast no-op for them.
  *
  * Seeded books are marked [BookInstallSource.ASSET] → non-removable (enforced by
- * [BookUninstallerImpl]) and shown as "built-in" in the library UI.
+ * [UninstallBookUseCaseImpl]) and shown as "built-in" in the library UI.
  *
  * Idempotency is keyed by asset **file name**, which embeds the bundle version
  * (`{bookId}-{variant}-{version}.book.yaml.gz.enc`). A bundle is imported once and remembered in
@@ -31,7 +31,7 @@ import timber.log.Timber
  */
 class SeedBooksFromAssetsUseCase(
     private val context: Context,
-    private val db: PwsDatabase,
+    private val installedBooks: InstalledBookReadRepository,
     private val importer: BookImporterImpl,
     private val keyProvider: ContentKeyProvider,
     private val telemetry: Telemetry = NoOpTelemetry,
@@ -60,7 +60,7 @@ class SeedBooksFromAssetsUseCase(
         if (names.isEmpty()) {
             // Clean variant (no seed assets). Report whether built-in content already exists — it
             // may have been seeded by a previous launch of a preloaded build.
-            return db.installedBookDao().existsBySource(BookInstallSource.ASSET)
+            return installedBooks.existsBySource(BookInstallSource.ASSET)
         }
 
         val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
@@ -90,7 +90,7 @@ class SeedBooksFromAssetsUseCase(
         }
         prefs.edit().putStringSet(KEY_SEEDED, seeded).apply()
 
-        return db.installedBookDao().existsBySource(BookInstallSource.ASSET)
+        return installedBooks.existsBySource(BookInstallSource.ASSET)
     }
 
     companion object {

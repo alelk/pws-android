@@ -31,7 +31,7 @@ class AndroidAppStartupTasks internal constructor(
     telemetry: Telemetry,
     seedBooksFromAssets: SeedBooksFromAssetsUseCase,
     database: () -> PwsDatabase,
-    backupManager: () -> BackupManager,
+    applyPendingRestore: suspend () -> Unit,
   ) : this(
     migrationGate = migrationGate,
     telemetry = telemetry,
@@ -39,7 +39,7 @@ class AndroidAppStartupTasks internal constructor(
       seedBooksFromAssets = { seedBooksFromAssets.invoke() },
       hasPendingLegacyMigration = { PwsDatabaseProvider.hasPendingLegacyMigration(context) },
       retryLegacyMigration = { PwsDatabaseProvider.runLegacyMigration(context, database(), countAttempt = false) },
-      applyPendingRestore = { PwsBackupAgent.applyPendingRestoreIfNeeded(context, database(), backupManager()) },
+      applyPendingRestore = applyPendingRestore,
     ),
   )
 

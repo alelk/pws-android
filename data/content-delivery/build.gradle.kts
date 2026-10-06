@@ -13,10 +13,7 @@ android {
 
 dependencies {
   implementation(libs.pws.domain)
-  implementation(libs.pws.dbRoom)
   implementation(libs.pws.portableData)
-  implementation(libs.room.runtime)
-  implementation("androidx.room:room-ktx:${libs.versions.room.get()}")
 
   implementation(libs.ktor.client.core)
   implementation(libs.ktor.client.cio)
@@ -28,6 +25,10 @@ dependencies {
   implementation(libs.kotlinx.coroutines.core)
   implementation(libs.timber)
 
+  // The database writes live in pws-core (BookContentWriter in repo-room); the tests run them on an in-memory Room.
+  testImplementation(libs.pws.dbRoom)
+  testImplementation(libs.pws.repoRoom)
+  testImplementation(libs.room.runtime)
   testImplementation(libs.pws.dbRoomTestFixtures)
   testImplementation(libs.kotest.runner.junit5)
   testImplementation(libs.kotest.property)

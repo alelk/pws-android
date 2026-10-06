@@ -2,10 +2,6 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>CyclomaticComplexMethod:BookImporterImpl.kt$BookImporterImpl$suspend fun import(bundle: BookBundle, source: BookInstallSource = BookInstallSource.DOWNLOADED)</ID>
-    <ID>LongMethod:BookImporterImpl.kt$BookImporterImpl$suspend fun import(bundle: BookBundle, source: BookInstallSource = BookInstallSource.DOWNLOADED)</ID>
-    <ID>LoopWithTooManyJumpStatements:BookImporterImpl.kt$BookImporterImpl$for</ID>
-    <ID>LoopWithTooManyJumpStatements:SmartSongBinder.kt$SmartSongBinder$for</ID>
     <ID>MaxLineLength:BookImporterImplTest.kt$BookImporterImplTest$Arb.bookBundle(book = Arb.portableBook(id = Arb.constant(book2Id)), songs = Arb.constant(listOf(song2)), songReferences = Arb.constant(listOf(ref))).next(rs)</ID>
     <ID>MaxLineLength:BookImporterImplTest.kt$BookImporterImplTest$Arb.bookBundle(book = Arb.portableBook(id = Arb.constant(bookId)), songs = Arb.constant(listOf(song1)), songReferences = Arb.constant(listOf(ref))).next(rs)</ID>
     <ID>MaxLineLength:BookImporterImplTest.kt$BookImporterImplTest$Arb.bookBundle(book = Arb.portableBook(id = Arb.constant(bookId)), songs = Arb.constant(songs), tags = Arb.constant(listOf(tag))).next(rs)</ID>
@@ -14,16 +10,15 @@
     <ID>MaxLineLength:BookImporterImplTest.kt$BookImporterImplTest$importer.import(bundleOf(bookId, listOf(song(1L, 1, Version(1, 0)), song(2L, 2, Version(1, 0)), song(3L, 3, Version(1, 0)))))</ID>
     <ID>MaxLineLength:BookImporterImplTest.kt$BookImporterImplTest$val song1 = Arb.portableSong(id = Arb.constant(SongId(1L)), number = Arb.constant(SongNumber(bookId, 1))).next(rs)</ID>
     <ID>MaxLineLength:BookImporterImplTest.kt$BookImporterImplTest$val song2 = Arb.portableSong(id = Arb.constant(SongId(2L)), number = Arb.constant(SongNumber(book2Id, 1))).next(rs)</ID>
-    <ID>MaxLineLength:BookUninstallerImplTest.kt$BookUninstallerImplTest$Arb.songNumberEntity(bookId = Arb.constant(book1), songId = Arb.constant(orphanSong), number = Arb.constant(1)).next(rs)</ID>
-    <ID>MaxLineLength:BookUninstallerImplTest.kt$BookUninstallerImplTest$Arb.songNumberEntity(bookId = Arb.constant(book1), songId = Arb.constant(sharedSong), number = Arb.constant(2)).next(rs)</ID>
-    <ID>MaxLineLength:BookUninstallerImplTest.kt$BookUninstallerImplTest$Arb.songNumberEntity(bookId = Arb.constant(book2), songId = Arb.constant(sharedSong), number = Arb.constant(5)).next(rs)</ID>
+    <ID>MaxLineLength:UninstallBookUseCaseImplTest.kt$UninstallBookUseCaseImplTest$Arb.songNumberEntity(bookId = Arb.constant(book1), songId = Arb.constant(orphanSong), number = Arb.constant(1)).next(rs)</ID>
+    <ID>MaxLineLength:UninstallBookUseCaseImplTest.kt$UninstallBookUseCaseImplTest$Arb.songNumberEntity(bookId = Arb.constant(book1), songId = Arb.constant(sharedSong), number = Arb.constant(2)).next(rs)</ID>
+    <ID>MaxLineLength:UninstallBookUseCaseImplTest.kt$UninstallBookUseCaseImplTest$Arb.songNumberEntity(bookId = Arb.constant(book2), songId = Arb.constant(sharedSong), number = Arb.constant(5)).next(rs)</ID>
     <ID>MaxLineLength:MultiSourceBookCatalogRepository.kt$MultiSourceBookCatalogRepository$.</ID>
     <ID>MaxLineLength:MultiSourceBookCatalogRepositoryTest.kt$MultiSourceBookCatalogRepositoryTest$respond(catalogJson(if (isPrimary(request.url)) "Book-1" else "Book-2"), headers = headersOf(HttpHeaders.ContentType, "application/json"))</ID>
     <ID>MaxLineLength:SeedBooksFromAssetsUseCaseTest.kt$SeedBooksFromAssetsUseCaseTest$fun</ID>
     <ID>MaxLineLength:SeedBooksFromAssetsUseCaseTest.kt$SeedBooksFromAssetsUseCaseTest$useCase.seedBundles(listOf("Book-1-debug-1.0.book.yaml.gz.enc")) { bundleBytes(book, version = Version(1, 0), lyric = "v1") }</ID>
     <ID>MaxLineLength:SeedBooksFromAssetsUseCaseTest.kt$SeedBooksFromAssetsUseCaseTest$useCase.seedBundles(listOf("Book-1-debug-2.0.book.yaml.gz.enc")) { bundleBytes(book, version = Version(2, 0), lyric = "v2") }</ID>
     <ID>MaxLineLength:SeedBooksFromAssetsUseCaseTest.kt$SeedBooksFromAssetsUseCaseTest$val bundle = Arb.bookBundle(book = Arb.portableBook(id = Arb.constant(book)), songs = Arb.constant(listOf(song))).next(rs)</ID>
-    <ID>MaxLineLength:SmartSongBinder.kt$SmartSongBinder$SongNumberEntity(bookId = bookId, songId = target.songId, number = number, priority = target.priority)</ID>
     <ID>TooGenericExceptionCaught:ImportBundleFromFileUseCase.kt$ImportBundleFromFileUseCase$e: Exception</ID>
     <ID>TooGenericExceptionCaught:InstallBookUseCaseImpl.kt$InstallBookUseCaseImpl$e: Exception</ID>
   </CurrentIssues>

@@ -3,7 +3,10 @@ package io.github.alelk.pws.android.compose.di
 import io.github.alelk.pws.android.compose.AndroidAppStartupTasks
 import io.github.alelk.pws.android.compose.BackupManager
 import io.github.alelk.pws.android.compose.LegacyMigrationGate
+import io.github.alelk.pws.android.compose.PwsBackupAgent
 import io.github.alelk.pws.database.PwsDatabase
+import io.github.alelk.pws.domain.book.repository.BookReadRepository
+import io.github.alelk.pws.domain.booklibrary.repository.InstalledBookObserveRepository
 import io.github.alelk.pws.features.platform.AppStartupTasks
 import kotlinx.coroutines.CompletableDeferred
 import org.koin.android.ext.koin.androidContext
@@ -24,7 +27,14 @@ internal fun startupModule(legacyMigrationDone: CompletableDeferred<Unit>) = mod
       telemetry = get(),
       seedBooksFromAssets = get(),
       database = { get<PwsDatabase>() },
-      backupManager = { get<BackupManager>() },
+      applyPendingRestore = {
+        PwsBackupAgent.applyPendingRestoreIfNeeded(
+          context = androidContext(),
+          books = get<BookReadRepository>(),
+          installedBooks = get<InstalledBookObserveRepository>(),
+          backupManager = get<BackupManager>(),
+        )
+      },
     )
   }
 }

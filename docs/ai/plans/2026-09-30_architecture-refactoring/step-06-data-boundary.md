@@ -262,4 +262,65 @@ grep -rn "PwsDatabase\|Dao()" ../pws-android/data/content-delivery/src/main   # 
   файла, чистая установка `uk` (11 встроенных сборников) и `rustore`; апгрейд с предыдущего релиза.
 
 ### Заметки исполнителя
-<!-- -->
+- 2026-10-06, статус **done**. Схема Room (v15), `schemas/`, формат bundle/бэкапа, имена хранилищ и событий телеметрии
+  не менялись; `LegacyMigrationGate` и порядок старта не тронуты (отложенное восстановление по-прежнему за гейтом).
+- **Мина — сначала характеризация.** Сценарий `BookLibraryScenario` + снимки `BookLibraryGolden` в
+  `pws-core/data/db-room/db-room-test-fixtures/.../database/booklibrary/` (fixtures теперь `api(projects.portableData)`):
+  установка Book-1 (ссылка на неустановленную песню отложена, тег на отсутствующий номер, песня без id); установка Book-2
+  (общие песни 4/5, отложенная ссылка появляется, песня с не-первичным номером — priority 1); пользовательские данные
+  (правка песни 2, избранное, история, свой тег); обновление Book-1 до v2 (version gating, правка не затёрта и слот за ней,
+  swap 3↔4, remap, drop, add, пересчёт ссылок и тегов); повторный импорт той же версии; ASSET + переимпорт DOWNLOADED;
+  отказ удаления встроенного; удаление Book-1 (общая песня жива, каскад избранного/истории/тегов); повторное удаление →
+  not found. Снимок — все 10 таблиц каждого шага (без `installed_at`). Записан со **старого** кода (`BookLibraryGoldenTest`,
+  content-delivery, Robolectric SDK 34) и был зелёным на нём, вместе с 3 тестами «сбой посередине → БД не изменилась»
+  (триггер `RAISE(ABORT)` на `installed_books`/`books`, ссылка с неизвестным reason). Отложенное восстановление:
+  `PendingRestoreAfterInstallTest` (app-compose, свой golden в файле) — тоже записан и зелёный на старом коде. После переноса
+  все те же тесты зелёные без правки ожиданий (менялась только сборка объектов в тестах); в pws-core
+  `portable-data/src/jvmTest/.../booklibrary/BookLibraryUseCasesTest` гоняет новый код на bundled SQLite против того же golden.
+- **Выбор варианта:** порт `BookContentWriter` в домене (`install(content, source, installedAt)`, `uninstall(bookId)` — 2 метода)
+  с реализацией `BookContentWriterImpl` + `SmartSongBinder` (internal) в `:data:repo-room` — логика перенесена построчно.
+  Вариант «use case над мелкими методами репозиториев» потребовал бы ~12 новых методов портов. Доменная модель
+  `BookContent` (bundle как есть, без валидации; `Number(bookId, number)` без ограничения `< 1 000 000`; `reason` — сырая
+  строка, чтобы неизвестный reason у *отложенной* ссылки по-прежнему не ронял импорт). Маппинг `BookBundle.toBookContent()` и
+  `ImportBookBundleUseCase(writer, now)` — в `:portable-data` (`portable/booklibrary`). Koin: `BookContentWriter` в
+  `repoRoomModule`, `ImportBookBundleUseCase` в `contentDeliveryModule`.
+- `:data:content-delivery`: `BookImporterImpl` — тонкий адаптер (Left → бросает исходное исключение, как раньше;
+  логи Timber остались), `UninstallBookUseCaseImpl` → `BookContentWriter.uninstall` (те же Left, что давал разбор сообщений),
+  `SeedBooksFromAssetsUseCase` → `InstalledBookReadRepository`; `BookUninstallerImpl.kt`, `SmartSongBinder.kt` удалены;
+  db-room/room убраны из main-зависимостей (остались в test). `grep PwsDatabase|Dao()` по `src/main` — пусто.
+  `BookUninstallerImplTest` → `UninstallBookUseCaseImplTest` (`git mv`): те же сценарии, `shouldThrow<IllegalStateException>`
+  заменён на ожидаемые Left (`ValidationError("Cannot uninstall built-in book Book-1")`, `NotFound`) — это прежний
+  наблюдаемый результат `UninstallBookUseCaseImpl`.
+- **`DirectDaoAccessTest`: `KNOWN_DIRECT_DAO_USERS` пуст.** Для этого `PwsBackupAgent.applyPendingRestoreIfNeeded` переведён
+  на порты: `BookReadRepository.count()` (**новый метод порта**, Room — `bookDao.count()`, тот же SQL; api:client —
+  размер списка книг, т. к. эндпоинта нет, G5) и `InstalledBookObserveRepository.observeAll()`. Публичный конструктор
+  `AndroidAppStartupTasks` принимает `applyPendingRestore: suspend () -> Unit` вместо `backupManager` (иначе
+  LongParameterList), лямбду собирает `StartupModule`.
+- **Атомичность:** старый код был в `db.withTransaction` — сбой откатывал всё; новый — одна `inRwTransaction`, ошибки
+  внутри — исключения (Left не возвращается изнутри блока → «Left commits» не возникает), снаружи → Left.
+  `CancellationException` пробрасывается. Изменений поведения по атомарности нет. Красным: без транзакции — 3 теста
+  «сбой посередине» + 2 «отмена»; без защиты слота отредактированной песни — golden; без `catch CancellationException` —
+  2 теста отмены.
+- **Изменения поведения:** (1) Debug-логи «deferred N refs», «orphans deleted», «drop #N» пропали (pws-core без Timber);
+  info-логи импорта/удаления остались. (2) Удаление: при отказе теперь `Timber.w`. Иных нет. Сохранено как было
+  (характеризация, не чинил): удаление сборника удаляет и **отредактированную пользователем** песню, если она только в нём;
+  `song_tags` предопределённого тега не очищаются при обновлении (песня 3 остаётся с `prayer`).
+- Baseline'ы: ktlint repo-room 233 → 232 (регенерирован, сдвиг строк), content-delivery 647 → 401 (удалённый код,
+  регенерирован), app-compose 94 → 94 (регенерирован, сдвиг строк в `PwsBackupAgent`); detekt content-delivery 24 → 19
+  (записи удалённого кода; ID `BookUninstallerImplTest` → `UninstallBookUseCaseImplTest`), app-compose 32 → 32 (ID
+  `ReturnCount` `applyPendingRestoreIfNeeded` под новую сигнатуру). В pws-core новые нарушения не добавлялись
+  (`@Suppress` с причиной для `class-signature`/`LoopWithTooManyJumpStatements`/`TooGenericExceptionCaught` в новом коде).
+  `ktlintFormat` не запускался.
+- Gate: pws-core `build` + corex — зелёный (с `--max-workers=1`: при 2 воркерах демон убивался по памяти на `jsBrowserTest`).
+  pws-android `:app-compose:testRuDebugUnitTest :app-compose:testRustoreDebugUnitTest :app-compose:assembleRuDebug
+  :app-compose:assembleRustoreDebug :app-compose:ktlintCheck :app-compose:detekt` — зелёные, кроме 3 `BackupManagerTest
+  [SDK 37]` в каждом флейворе. `:data:content-delivery:test` (флейворов нет) — падают только `[SDK 37]` (как в базовом
+  списке до изменений); SDK 34 всё зелёное (Seed/Uninstall при полном прогоне падали «No space left on device» в /tmp, при
+  отдельном прогоне зелёные). content-delivery `ktlintCheck`/`detekt` — зелёные.
+- Ручной прогон (владелец): установка из каталога, обновление (с отредактированной песней), удаление (с избранным),
+  импорт из файла, чистая установка `uk` (11 встроенных) и `rustore`, апгрейд с предыдущего релиза; Auto Backup
+  с отложенным восстановлением после установки сборника; SQLCipher-устройство (транзакция `immediateTransaction` через
+  passthrough-пул, см. 06.1).
+- Вопросы владельцу: (1) ок ли новый метод `BookReadRepository.count()` (нужен, чтобы очистить ratchet; api:client считает
+  размер списка); (2) удаление сборника удаляет отредактированную песню, живущую только в нём, — сохранено как было,
+  чинить ли отдельно.

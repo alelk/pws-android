@@ -5,7 +5,8 @@ import android.app.backup.BackupDataInput
 import android.app.backup.BackupDataOutput
 import android.content.Context
 import android.os.ParcelFileDescriptor
-import io.github.alelk.pws.database.PwsDatabase
+import io.github.alelk.pws.domain.book.repository.BookReadRepository
+import io.github.alelk.pws.domain.booklibrary.repository.InstalledBookObserveRepository
 import io.github.alelk.pws.portable.BackupService
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.first
@@ -54,13 +55,18 @@ class PwsBackupAgent : BackupAgent() {
     fun pendingRestoreFile(context: Context): File =
       File(context.filesDir, "pending_user_restore.yaml")
 
-    suspend fun applyPendingRestoreIfNeeded(context: Context, db: PwsDatabase, backupManager: BackupManager) {
+    suspend fun applyPendingRestoreIfNeeded(
+      context: Context,
+      books: BookReadRepository,
+      installedBooks: InstalledBookObserveRepository,
+      backupManager: BackupManager,
+    ) {
       val file = pendingRestoreFile(context)
       if (!file.exists()) return
       // Defer restore until at least one book is installed — restoring user data
       // (favorites, history) against an empty book catalog silently loses all records
       // because song lookup by (bookId, number) returns nothing.
-      if (db.bookDao().count() == 0) return
+      if (books.count() == 0) return
       val backup = runCatching { BackupService().readFromString(file.readText(Charsets.UTF_8)) }
         .getOrNull() ?: run { file.delete(); return }
       runCatching { backupManager.restoreBackup(backup) }.onFailure { if (it is CancellationException) throw it }
@@ -71,7 +77,7 @@ class PwsBackupAgent : BackupAgent() {
           (backup.history?.map { it.songNumber.bookId } ?: emptyList()) +
           (backup.songs?.map { it.number.bookId } ?: emptyList())
         ).toSet()
-      val installedBookIds = db.installedBookDao().observeAll().first().map { it.bookId }.toSet()
+      val installedBookIds = installedBooks.observeAll().first().map { it.bookId }.toSet()
       if (backupBookIds.isEmpty() || backupBookIds.all { it in installedBookIds }) file.delete()
     }
   }
