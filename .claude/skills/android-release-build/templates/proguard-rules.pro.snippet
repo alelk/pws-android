@@ -1,0 +1,88 @@
+# =============================================================================
+#  R8 / ProGuard — :app
+#
+#  RULE #1: DO NOT ADD `-keep class <package>.** { *; }` (nor `-keep class ** { *; }`).
+#
+#  Such a rule forbids R8 to remove, rename AND optimize a whole package tree. On a real app
+#  eleven of them produced a 36.8 MB DEX and Play's "App optimization: Low" (18/18/19%).
+#  Enforced by ProguardRulesTest (the only allowed wide keeps are listed there, with reasons).
+#
+#  Something breaks only in release? Do NOT widen a keep. Find the exact class/member:
+#    build/outputs/mapping/<variant>/usage.txt          — what R8 removed
+#    build/outputs/mapping/<variant>/mapping.txt        — what it renamed, and to what
+#    build/outputs/mapping/<variant>/seeds.txt          — what keep rules currently hold
+#    build/outputs/mapping/<variant>/configuration.txt  — final config incl. library consumer rules
+#  and add the narrowest rule below, with a comment: what reads it by name, where, what broke.
+# =============================================================================
+
+# ── Readable stack traces ────────────────────────────────────────────────────
+# mapping.txt of every released variant is archived (named by versionName + versionCode)
+# and uploaded to the crash reporter. Cheap (~0.1–0.2 MB).
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
+
+# ── kotlinx.serialization (R8 full mode) ─────────────────────────────────────
+# Annotations so the -if rules can see @Serializable; Signature for generic types.
+# Official rules from the kotlinx.serialization README ("Android").
+-keepattributes Signature
+-keepattributes RuntimeVisibleAnnotations,RuntimeVisibleParameterAnnotations,AnnotationDefault
+-if @kotlinx.serialization.Serializable class **
+-keepclassmembers class <1> {
+    static <1>$Companion Companion;
+}
+-if @kotlinx.serialization.Serializable class ** {
+    static **$* *;
+}
+-keepclassmembers class <2>$<3> {
+    kotlinx.serialization.KSerializer serializer(...);
+}
+-if @kotlinx.serialization.Serializable class ** {
+    public static ** INSTANCE;
+}
+-keepclassmembers class <1> {
+    public static <1> INSTANCE;
+    kotlinx.serialization.KSerializer serializer(...);
+}
+# A @Serializable class without explicit @SerialName is serialized under its FQCN; stored files
+# must stay readable across app versions. -keepnames still lets R8 drop unused classes.
+-keepnames @kotlinx.serialization.Serializable class com.example.app.**
+
+# ── Room ─────────────────────────────────────────────────────────────────────
+# Room.databaseBuilder(ctx, AppDatabase::class.java, …) loads "<FQCN>_Impl" by name.
+-keep class * extends androidx.room.RoomDatabase { <init>(); }
+
+# ── protobuf-lite (DataStore / Tink) ─────────────────────────────────────────
+# protobuf-lite reads generated message fields BY NAME. Renaming them loses settings (DataStore)
+# or makes EncryptedSharedPreferences unreadable (Tink) — only on UPDATE, never on fresh install.
+# Fields only: the classes themselves may still be removed and renamed.
+-keepclassmembers class * extends androidx.datastore.preferences.protobuf.GeneratedMessageLite {
+    <fields>;
+}
+-keepclassmembers class * extends com.google.crypto.tink.shaded.protobuf.GeneratedMessageLite {
+    <fields>;
+}
+
+# ── JNI ──────────────────────────────────────────────────────────────────────
+# The one justified wide keep: native code calls these Java classes/methods by name.
+# Listed in ProguardRulesTest.KNOWN_WIDE_KEEPS with this reason. Measure its cost (classes kept).
+-keep class com.example.nativelib.** { *; }
+
+# ── Class names used as data ─────────────────────────────────────────────────
+# Screen analytics send `screen::class.simpleName`; without this the dashboard shows "a", "b".
+-keepnames class * implements com.example.app.navigation.Screen
+
+# ── -dontwarn: optional dependencies absent on Android ───────────────────────
+# ONLY lines copied from build/outputs/mapping/<variant>/missing_rules.txt, each with its origin.
+# Never -keep here.
+
+# Tink / errorprone annotations (transitive of androidx.security:security-crypto)
+-dontwarn javax.annotation.**
+-dontwarn com.google.errorprone.annotations.**
+
+# ── Deliberately ABSENT ──────────────────────────────────────────────────────
+#  kotlin.** / kotlinx.**      — stdlib needs no keep; coroutines ship consumer rules.
+#  androidx.compose.**         — R8-compatible; a wide keep here kept ~11 400 icon classes.
+#  androidx.room.** (whole)    — room-runtime ships consumer rules; only the _Impl lookup above.
+#  org.koin.**                 — resolves by KClass, not by string.
+#  com.example.app.**          — our own code must shrink and obfuscate.
+#  <analytics/crash SDK>       — ships its own consumer rules.

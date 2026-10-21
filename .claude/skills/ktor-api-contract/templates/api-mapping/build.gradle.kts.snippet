@@ -1,0 +1,21 @@
+plugins {
+    id("app.kmp")
+}
+
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            implementation(projects.domain)
+            implementation(projects.api.contract)
+            implementation(libs.arrow.core)
+            implementation(libs.kotlinx.datetime)
+        }
+        commonTest.dependencies {
+            implementation(libs.kotest.framework.engine)
+            implementation(libs.kotest.assertions)
+        }
+        jvmTest.dependencies {
+            implementation(libs.kotest.runner.junit5)
+        }
+    }
+}

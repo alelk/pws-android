@@ -1,0 +1,21 @@
+plugins {
+    // KMP + kotlinx.serialization through the convention plugin (single Kotlin classpath).
+    id("app.kmp.serialization")
+}
+
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            implementation(libs.kotlinx.serialization.json)
+            api(libs.ktor.resources)                  // @Resource routes are part of the contract
+        }
+        commonTest.dependencies {
+            implementation(libs.kotest.framework.engine)
+            implementation(libs.kotest.assertions)
+            implementation(libs.kotest.json)
+        }
+        jvmTest.dependencies {
+            implementation(libs.kotest.runner.junit5)  // + ContractConventionsTest reads the sources
+        }
+    }
+}
