@@ -2,11 +2,12 @@ rootProject.name = "pws-android"
 include(
   ":data:db-android",
   ":data:content-delivery",
-  //":app",
   ":app-compose"
 )
 
 pluginManagement {
+  // Shared build logic: precompiled `pws.android.*` convention plugins resolve by id like published plugins.
+  includeBuild("convention-plugins")
   repositories {
     gradlePluginPortal()
     mavenCentral()
@@ -15,14 +16,6 @@ pluginManagement {
 }
 plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
-}
-
-dependencyResolutionManagement {
-  versionCatalogs {
-    create("libs") {
-      from(files("libs.versions.toml"))
-    }
-  }
 }
 
 val localCoreDir = File(rootDir.parent, "pws-core")

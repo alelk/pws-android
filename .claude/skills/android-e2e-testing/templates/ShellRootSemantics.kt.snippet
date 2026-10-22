@@ -1,0 +1,23 @@
+// Shell root composable (the single place, e.g. AppRoot / MainActivity content).
+// Without this, Compose testTags are invisible to UiAutomator / Maestro and every `id:` selector
+// reports "Element not found".
+import androidx.compose.foundation.layout.Box
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
+
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun AppShell(content: @Composable () -> Unit) {
+  Box(Modifier.semantics { testTagsAsResourceId = true }) {
+    content()
+  }
+}
+
+// Selectors in production code — one place per id, literal strings (the parity test greps them):
+//   Modifier.testTag("action:save")
+//   Modifier.semantics { contentDescription = "home" }
+//
+// If a tag inside a dialog / bottom sheet is "not found", that sheet is its own window: repeat
+// the semantics modifier on the sheet content.

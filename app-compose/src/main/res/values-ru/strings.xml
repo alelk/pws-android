@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="backup_saved">Резервная копия сохранена</string>
+  <string name="backup_export_failed">Не удалось экспортировать</string>
+  <string name="backup_import_done">Импорт завершён</string>
+  <string name="backup_import_failed">Не удалось импортировать</string>
+  <string name="bundle_imported">Сборник импортирован</string>
+  <string name="bundle_import_failed">Не удалось импортировать сборник</string>
+  <string name="no_app_to_open_link">Не найдено приложение для открытия</string>
+</resources>

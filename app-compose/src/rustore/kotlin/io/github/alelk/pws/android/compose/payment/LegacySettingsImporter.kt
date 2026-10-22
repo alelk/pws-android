@@ -7,9 +7,9 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import io.github.alelk.pws.android.compose.appThemeKey
 import io.github.alelk.pws.android.compose.songTextExpandedKey
+import io.github.alelk.pws.domain.preferences.model.ThemeMode
 import io.github.alelk.pws.domain.telemetry.NoOpTelemetry
 import io.github.alelk.pws.domain.telemetry.Telemetry
-import io.github.alelk.pws.features.theme.ThemeMode
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 

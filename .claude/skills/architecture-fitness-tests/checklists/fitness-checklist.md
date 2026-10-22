@@ -1,0 +1,22 @@
+# Fitness Tests Checklist
+
+- [ ] Every "must/never" in architecture docs and skill checklists is either a fitness test or marked as review-only with a reason
+- [ ] Each spec starts with a guard test: root exists, a numeric floor is reached, the pattern matches the allowed owner
+- [ ] `KNOWN_*` are `Map<item, reason>` compared by exact equality on the keys; ratchets only shrink, pinned maps change only by decision
+- [ ] Every protection has a lock and a pair ("a stranger is refused", "one's own is not")
+- [ ] Exemption lists are backed by a written criterion (property), not only names
+- [ ] Each test's KDoc states the rule, the defect it prevents and where the rule is documented
+- [ ] Failure messages list the offenders
+- [ ] Each new test was observed failing on a deliberately broken input
+- [ ] All fitness tests run inside `./gradlew build` (jvmTest / test), not in a separate job
+- [ ] Domain: context order + package cycles; capability ownership (callers / construction / knowledge / perimeter)
+- [ ] Domain: closed sets — table == `sealedSubclasses`, classifier `when` without `else`, no comparisons or hand lists
+- [ ] Contract: discriminators, snake_case, naming, one JSON policy, envelopes, creates carry `id`, client interface shape
+- [ ] Server: API surface from the live routing tree with `auth=` per provider, `rl=` (all buckets), marker columns
+- [ ] Server: public, second-principal and unlimited routes are closed maps with reasons; `default` bucket first
+- [ ] Server: each per-route policy has a marker node; its domain list is cross-checked against the tree both ways
+- [ ] Wire: enum values pinned (`wire-vocabulary.txt`); no literal error code; no screen reads `message`
+- [ ] Schema: RLS flags (+ pinned exempt count), tenant keys/FKs, FK indexes, version columns, journal and column grants, uuid FKs, text ceilings, domains
+- [ ] UI: theme/design-system rules, layers, no wire strings/DTOs, Entry/Content, effects, file size, screen list
+- [ ] i18n: locale key parity, font glyph coverage
+- [ ] Agent guides (`AGENTS.md`/`CLAUDE.md`) say: fix the code, don't edit the list, when a fitness test fails

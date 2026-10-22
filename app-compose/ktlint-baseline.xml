@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<baseline version="1.0">
+    <file name="build.gradle.kts">
+        <error line="26" column="52" source="standard:function-signature" />
+        <error line="53" column="84" source="standard:trailing-comma-on-call-site" />
+        <error line="67" column="54" source="standard:trailing-comma-on-call-site" />
+        <error line="91" column="18" source="standard:trailing-comma-on-call-site" />
+        <error line="199" column="1" source="standard:no-blank-line-before-rbrace" />
+        <error line="206" column="42" source="standard:argument-list-wrapping" />
+        <error line="207" column="41" source="standard:argument-list-wrapping" />
+        <error line="222" column="104" source="standard:trailing-comma-on-call-site" />
+        <error line="230" column="59" source="standard:trailing-comma-on-call-site" />
+        <error line="238" column="84" source="standard:trailing-comma-on-call-site" />
+        <error line="243" column="77" source="standard:trailing-comma-on-call-site" />
+        <error line="244" column="12" source="standard:trailing-comma-on-call-site" />
+        <error line="258" column="81" source="standard:trailing-comma-on-call-site" />
+        <error line="324" column="1" source="standard:no-consecutive-blank-lines" />
+    </file>
+    <file name="src/main/kotlin/io/github/alelk/pws/android/compose/PwsBackupAgent.kt">
+        <error line="20" column="5" source="standard:function-signature" />
+        <error line="21" column="5" source="standard:function-signature" />
+        <error line="22" column="5" source="standard:function-signature" />
+        <error line="22" column="36" source="standard:function-signature" />
+        <error line="37" column="5" source="standard:function-signature" />
+        <error line="38" column="5" source="standard:function-signature" />
+        <error line="39" column="5" source="standard:function-signature" />
+        <error line="39" column="36" source="standard:function-signature" />
+        <error line="55" column="53" source="standard:function-signature" />
+        <error line="71" column="31" source="standard:statement-wrapping" />
+        <error line="71" column="45" source="standard:statement-wrapping" />
+        <error line="71" column="53" source="standard:statement-wrapping" />
+    </file>
+    <file name="src/main/kotlin/io/github/alelk/pws/android/compose/donation/SharedPrefsDonationPromptStateRepository.kt">
+        <error line="19" column="3" source="standard:class-signature" />
+        <error line="19" column="40" source="standard:class-signature" />
+        <error line="20" column="40" source="standard:class-signature" />
+        <error line="37" column="1" source="standard:no-consecutive-blank-lines" />
+    </file>
+    <file name="src/main/kotlin/io/github/alelk/pws/android/compose/telemetry/AppMetricaTelemetry.kt">
+        <error line="102" column="40" source="standard:no-multi-spaces" />
+    </file>
+    <file name="src/rustore/kotlin/io/github/alelk/pws/android/compose/payment/LegacyRuStoreEntitlementStore.kt">
+        <error line="66" column="3" source="standard:class-signature" />
+        <error line="67" column="3" source="standard:class-signature" />
+        <error line="67" column="52" source="standard:class-signature" />
+        <error line="117" column="64" source="standard:function-signature" />
+    </file>
+    <file name="src/rustore/kotlin/io/github/alelk/pws/android/compose/payment/PaymentProvider.kt">
+        <error line="22" column="3" source="standard:class-signature" />
+        <error line="23" column="3" source="standard:class-signature" />
+        <error line="24" column="3" source="standard:class-signature" />
+        <error line="25" column="3" source="standard:class-signature" />
+        <error line="26" column="3" source="standard:class-signature" />
+        <error line="26" column="32" source="standard:class-signature" />
+    </file>
+    <file name="src/rustore/kotlin/io/github/alelk/pws/android/compose/payment/PaymentScreen.kt">
+        <error line="51" column="5" source="standard:function-naming" />
+        <error line="52" column="3" source="standard:function-signature" />
+        <error line="53" column="3" source="standard:function-signature" />
+        <error line="53" column="30" source="standard:function-signature" />
+        <error line="88" column="13" source="standard:function-naming" />
+        <error line="89" column="3" source="standard:function-signature" />
+        <error line="90" column="3" source="standard:function-signature" />
+        <error line="91" column="3" source="standard:function-signature" />
+        <error line="92" column="3" source="standard:function-signature" />
+        <error line="92" column="32" source="standard:function-signature" />
+        <error line="134" column="13" source="standard:function-naming" />
+        <error line="147" column="13" source="standard:function-naming" />
+        <error line="167" column="13" source="standard:function-naming" />
+        <error line="182" column="13" source="standard:function-naming" />
+    </file>
+    <file name="src/rustore/kotlin/io/github/alelk/pws/android/compose/payment/PurchaseSyncService.kt">
+        <error line="27" column="3" source="standard:class-signature" />
+        <error line="28" column="3" source="standard:class-signature" />
+        <error line="28" column="78" source="standard:class-signature" />
+        <error line="55" column="46" source="standard:function-signature" />
+    </file>
+    <file name="src/rustore/kotlin/io/github/alelk/pws/android/compose/payment/RuStorePaymentProvider.kt">
+        <error line="26" column="3" source="standard:class-signature" />
+        <error line="26" column="35" source="standard:class-signature" />
+        <error line="34" column="50" source="standard:function-signature" />
+        <error line="40" column="75" source="standard:function-signature" />
+        <error line="55" column="59" source="standard:function-signature" />
+        <error line="78" column="69" source="standard:function-signature" />
+    </file>
+    <file name="src/rustore/kotlin/io/github/alelk/pws/android/compose/payment/RustoreSdkOpts.kt">
+        <error line="9" column="39" source="standard:function-signature" />
+    </file>
+    <file name="src/test/kotlin/io/github/alelk/pws/android/compose/BackupManagerTest.kt">
+        <error line="3" column="1" source="standard:import-ordering" />
+        <error line="48" column="27" source="standard:class-signature" />
+        <error line="78" column="8" source="standard:trailing-comma-on-call-site" />
+        <error line="84" column="8" source="standard:trailing-comma-on-call-site" />
+        <error line="107" column="21" source="standard:trailing-comma-on-call-site" />
+        <error line="154" column="24" source="standard:statement-wrapping" />
+        <error line="177" column="24" source="standard:statement-wrapping" />
+    </file>
+    <file name="src/test/kotlin/io/github/alelk/pws/android/compose/DataStoreUserPreferencesRepositoryTest.kt">
+        <error line="136" column="57" source="standard:function-signature" />
+    </file>
+    <file name="src/test/kotlin/io/github/alelk/pws/android/compose/LegacyMigrationGateTest.kt">
+        <error line="21" column="33" source="standard:class-signature" />
+        <error line="72" column="37" source="standard:argument-list-wrapping" />
+        <error line="72" column="66" source="standard:argument-list-wrapping" />
+        <error line="72" column="86" source="standard:argument-list-wrapping" />
+        <error line="73" column="25" source="standard:argument-list-wrapping" />
+        <error line="76" column="37" source="standard:argument-list-wrapping" />
+        <error line="76" column="67" source="standard:argument-list-wrapping" />
+        <error line="76" column="90" source="standard:argument-list-wrapping" />
+        <error line="77" column="25" source="standard:argument-list-wrapping" />
+    </file>
+    <file name="src/testRustore/kotlin/io/github/alelk/pws/android/compose/flavor/RustoreKoinModulesTest.kt">
+        <error line="19" column="32" source="standard:class-signature" />
+    </file>
+    <file name="src/testRustore/kotlin/io/github/alelk/pws/android/compose/payment/LegacySettingsImporterTest.kt">
+        <error line="14" column="36" source="standard:class-signature" />
+    </file>
+    <file name="src/testRustore/kotlin/io/github/alelk/pws/android/compose/payment/LegacyTestSupport.kt">
+        <error line="46" column="37" source="standard:function-signature" />
+    </file>
+    <file name="src/testRustore/kotlin/io/github/alelk/pws/android/compose/payment/PurchaseSyncServiceTest.kt">
+        <error line="19" column="33" source="standard:class-signature" />
+    </file>
+    <file name="src/testRustore/kotlin/io/github/alelk/pws/android/compose/payment/RuStoreCompatEntitlementRepositoryTest.kt">
+        <error line="39" column="48" source="standard:class-signature" />
+        <error line="72" column="44" source="standard:function-literal" />
+        <error line="72" column="44" source="standard:wrapping" />
+        <error line="72" column="46" source="standard:statement-wrapping" />
+        <error line="97" column="6" source="standard:wrapping" />
+        <error line="97" column="7" source="standard:statement-wrapping" />
+        <error line="97" column="7" source="standard:function-literal" />
+    </file>
+</baseline>

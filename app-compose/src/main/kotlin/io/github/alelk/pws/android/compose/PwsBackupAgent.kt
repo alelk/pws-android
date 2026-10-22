@@ -5,13 +5,13 @@ import android.app.backup.BackupDataInput
 import android.app.backup.BackupDataOutput
 import android.content.Context
 import android.os.ParcelFileDescriptor
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import io.github.alelk.pws.database.PwsDatabase
-import io.github.alelk.pws.database.PwsDatabaseProvider
+import io.github.alelk.pws.domain.book.repository.BookReadRepository
+import io.github.alelk.pws.domain.booklibrary.repository.InstalledBookObserveRepository
 import io.github.alelk.pws.portable.BackupService
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import org.koin.core.context.GlobalContext
 import java.io.File
 
 class PwsBackupAgent : BackupAgent() {
@@ -21,10 +21,11 @@ class PwsBackupAgent : BackupAgent() {
     data: BackupDataOutput,
     newState: ParcelFileDescriptor,
   ) {
-    val db = PwsDatabaseProvider.getDatabase(applicationContext)
-    val dataStore = applicationContext.appSettingsDataStore()
+    // Key/value backup runs the app's Application (and so Koin) normally. Should Koin still be missing, write
+    // nothing: the transport keeps the previous backup data of this key.
+    val backupManager = GlobalContext.getOrNull()?.get<BackupManager>() ?: return
     val yaml = runBlocking {
-      val backup = BackupManager(db, dataStore).exportBackup(source = "android-backup")
+      val backup = backupManager.exportBackup(source = "android-backup")
       BackupService().writeAsString(backup)
     }
     val bytes = yaml.toByteArray(Charsets.UTF_8)
@@ -56,18 +57,19 @@ class PwsBackupAgent : BackupAgent() {
 
     suspend fun applyPendingRestoreIfNeeded(
       context: Context,
-      db: PwsDatabase,
-      dataStore: DataStore<Preferences>,
+      books: BookReadRepository,
+      installedBooks: InstalledBookObserveRepository,
+      backupManager: BackupManager,
     ) {
       val file = pendingRestoreFile(context)
       if (!file.exists()) return
       // Defer restore until at least one book is installed — restoring user data
       // (favorites, history) against an empty book catalog silently loses all records
       // because song lookup by (bookId, number) returns nothing.
-      if (db.bookDao().count() == 0) return
+      if (books.count() == 0) return
       val backup = runCatching { BackupService().readFromString(file.readText(Charsets.UTF_8)) }
         .getOrNull() ?: run { file.delete(); return }
-      runCatching { BackupManager(db, dataStore).restoreBackup(backup) }
+      runCatching { backupManager.restoreBackup(backup) }.onFailure { if (it is CancellationException) throw it }
       // Keep the file until every book referenced in the backup is installed so that
       // re-applying on subsequent book installs picks up the remaining records.
       val backupBookIds = (
@@ -75,7 +77,7 @@ class PwsBackupAgent : BackupAgent() {
           (backup.history?.map { it.songNumber.bookId } ?: emptyList()) +
           (backup.songs?.map { it.number.bookId } ?: emptyList())
         ).toSet()
-      val installedBookIds = db.installedBookDao().observeAll().first().map { it.bookId }.toSet()
+      val installedBookIds = installedBooks.observeAll().first().map { it.bookId }.toSet()
       if (backupBookIds.isEmpty() || backupBookIds.all { it in installedBookIds }) file.delete()
     }
   }

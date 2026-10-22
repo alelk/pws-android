@@ -6,7 +6,6 @@ import io.github.alelk.pws.database.security.KeyManager
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import net.zetetic.database.sqlcipher.SupportOpenHelperFactory
-import timber.log.Timber
 
 object PwsDatabaseProvider {
   @Volatile
@@ -17,7 +16,6 @@ object PwsDatabaseProvider {
   }
 
   private fun buildDatabase(context: Context): PwsDatabase {
-    if (BuildConfig.DEBUG) Timber.plant(Timber.DebugTree())
     System.loadLibrary("sqlcipher")
     initDatabase(context)
     val passphrase = if (BuildConfig.DB_ENCRYPTED) KeyManager.getOrCreatePassphrase(context) else ByteArray(0)

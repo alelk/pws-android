@@ -7,7 +7,6 @@ Current modules from `settings.gradle.kts` and their responsibilities.
 | Module                   | Purpose                                                                        |
 |--------------------------|--------------------------------------------------------------------------------|
 | `:app-compose`           | **Primary host.** Compose Activity, DI bootstrap, DataStore, backup, donations |
-| `:app`                   | **Legacy** View-based app. Frozen — bug-fix only, no new features              |
 | `:data:db-android`       | Android Room provider, SQLCipher integration, asset decryption, migrations     |
 | `:data:content-delivery` | Book catalog (Ktor HTTP), encrypted bundle download + import, Koin DI wiring   |
 
@@ -43,8 +42,6 @@ resolve via GitHub Packages.
             ├► pws-core :features ─► pws-core :domain, :core:navigation
             ├► pws-core :portable-data ─► pws-core :domain
             └► pws-core :api:client (DI-selected, currently unused on Android)
-
-:app  (legacy, isolated)
 ```
 
 Direction rule: `:app-compose` and data modules depend on `pws-core` modules. **Never the other way
@@ -96,10 +93,6 @@ data/content-delivery/src/main/kotlin/io/github/alelk/pws/contentdelivery/
 HttpClient singleton (CIO engine) created in `ContentDeliveryModule`, shared by catalog +
 downloader.
 
-### `:app` (legacy)
-
-Don't open unless explicitly asked. Frozen.
-
 ### E2E
 
 ```
@@ -118,7 +111,7 @@ e2e/
 | Compile `:data:db-android`        | `./gradlew :data:db-android:compileRuDebugKotlin` |
 | Build `:data:content-delivery`    | `./gradlew :data:content-delivery:assembleDebug`  |
 | Test `:data:db-android`           | `./gradlew :data:db-android:testRuDebugUnitTest`  |
-| Full app build (all flavors)      | `./build.sh`                                      |
+| Full app build (all flavors)      | `./build-compose.sh`                              |
 | E2E smoke (Maestro, RU flavor)    | `./e2e/scripts/run-local.sh --flavor ru`          |
 
 Last reviewed: 2026-06-19

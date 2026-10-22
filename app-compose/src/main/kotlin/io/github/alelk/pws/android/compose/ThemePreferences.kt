@@ -4,116 +4,25 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import io.github.alelk.pws.features.theme.ThemeMode
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 
+/**
+ * The app settings DataStore and the names of its keys (G3: never rename). The values are read and
+ * written through `UserPreferencesRepository` ([DataStoreUserPreferencesRepository]); `app-theme` is also
+ * read and written by the backup ([DataStoreBackupSettings]) and the legacy settings importer.
+ */
 private val Context.dataStore by preferencesDataStore(name = "app-settings")
 internal val appThemeKey = stringPreferencesKey("app-theme")
-private val songTextScaleKey = floatPreferencesKey("song-text-scale")
+internal val songTextScaleKey = floatPreferencesKey("song-text-scale")
 internal val songTextExpandedKey = booleanPreferencesKey("song-text-expanded")
-private val favoritesSortModeKey = stringPreferencesKey("favorites-sort-mode")
-private val favoritesAscendingKey = booleanPreferencesKey("favorites-ascending")
-private val useDynamicColorKey = booleanPreferencesKey("use-dynamic-color")
-private val keepScreenOnKey = booleanPreferencesKey("keep-screen-on")
-private val songLineHeightMultiplierKey = floatPreferencesKey("song-line-height-multiplier")
-private val songSerifFontKey = booleanPreferencesKey("song-serif-font")
-private val showSongNavButtonsKey = booleanPreferencesKey("show-song-nav-buttons")
-
-fun Context.themeModeFlow(): Flow<ThemeMode> =
-  dataStore.data.map { prefs ->
-    ThemeMode.byIdentifier(prefs[appThemeKey])
-  }
-
-suspend fun Context.setThemeMode(themeMode: ThemeMode) {
-  dataStore.edit { prefs ->
-    prefs[appThemeKey] = themeMode.identifier
-  }
-}
-
-fun Context.songTextScaleFlow(): Flow<Float> =
-  dataStore.data.map { prefs ->
-    prefs[songTextScaleKey] ?: 1.0f
-  }
-
-suspend fun Context.setSongTextScale(value: Float) {
-  dataStore.edit { prefs ->
-    prefs[songTextScaleKey] = value
-  }
-}
-
-fun Context.songTextExpandedFlow(): Flow<Boolean> =
-  dataStore.data.map { prefs ->
-    prefs[songTextExpandedKey] ?: true
-  }
-
-suspend fun Context.setSongTextExpanded(value: Boolean) {
-  dataStore.edit { prefs ->
-    prefs[songTextExpandedKey] = value
-  }
-}
-
-fun Context.favoritesSortModeFlow(): Flow<String> =
-  dataStore.data.map { prefs ->
-    prefs[favoritesSortModeKey] ?: "ADDED_DATE"
-  }
-
-suspend fun Context.setFavoritesSortMode(value: String) {
-  dataStore.edit { prefs ->
-    prefs[favoritesSortModeKey] = value
-  }
-}
-
-fun Context.favoritesAscendingFlow(): Flow<Boolean> =
-  dataStore.data.map { prefs ->
-    prefs[favoritesAscendingKey] ?: false
-  }
-
-suspend fun Context.setFavoritesAscending(value: Boolean) {
-  dataStore.edit { prefs ->
-    prefs[favoritesAscendingKey] = value
-  }
-}
-
-fun Context.useDynamicColorFlow(): Flow<Boolean> =
-  dataStore.data.map { prefs -> prefs[useDynamicColorKey] ?: false }
-
-suspend fun Context.setUseDynamicColor(value: Boolean) {
-  dataStore.edit { prefs -> prefs[useDynamicColorKey] = value }
-}
-
-fun Context.keepScreenOnFlow(): Flow<Boolean> =
-  dataStore.data.map { prefs -> prefs[keepScreenOnKey] ?: false }
-
-suspend fun Context.setKeepScreenOn(value: Boolean) {
-  dataStore.edit { prefs -> prefs[keepScreenOnKey] = value }
-}
-
-fun Context.songLineHeightMultiplierFlow(): Flow<Float> =
-  dataStore.data.map { prefs -> prefs[songLineHeightMultiplierKey] ?: 1.0f }
-
-suspend fun Context.setSongLineHeightMultiplier(value: Float) {
-  dataStore.edit { prefs -> prefs[songLineHeightMultiplierKey] = value }
-}
-
-fun Context.songSerifFontFlow(): Flow<Boolean> =
-  dataStore.data.map { prefs -> prefs[songSerifFontKey] ?: false }
-
-suspend fun Context.setSongSerifFont(value: Boolean) {
-  dataStore.edit { prefs -> prefs[songSerifFontKey] = value }
-}
-
-// Default false mirrors PlatformDefaultShowSongNavButtons on native mobile:
-// swipe pages between songs, so the header arrows stay hidden unless enabled.
-fun Context.showSongNavButtonsFlow(): Flow<Boolean> =
-  dataStore.data.map { prefs -> prefs[showSongNavButtonsKey] ?: false }
-
-suspend fun Context.setShowSongNavButtons(value: Boolean) {
-  dataStore.edit { prefs -> prefs[showSongNavButtonsKey] = value }
-}
+internal val favoritesSortModeKey = stringPreferencesKey("favorites-sort-mode")
+internal val favoritesAscendingKey = booleanPreferencesKey("favorites-ascending")
+internal val useDynamicColorKey = booleanPreferencesKey("use-dynamic-color")
+internal val keepScreenOnKey = booleanPreferencesKey("keep-screen-on")
+internal val songLineHeightMultiplierKey = floatPreferencesKey("song-line-height-multiplier")
+internal val songSerifFontKey = booleanPreferencesKey("song-serif-font")
+internal val showSongNavButtonsKey = booleanPreferencesKey("show-song-nav-buttons")
 
 fun Context.appSettingsDataStore(): DataStore<Preferences> = dataStore

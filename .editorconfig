@@ -1,8 +1,13 @@
-[{*.kt,*.kts}]
+root = true
 
+[{*.kt,*.kts}]
 charset = utf-8
+indent_style = space
 indent_size = 2
 max_line_length = 160
+insert_final_newline = true
+# ktlint: the code predates ktlint; the intellij_idea style is the closest to the actual layout.
+ktlint_code_style = intellij_idea
 
 [**/src/**.xml]
 charset = utf-8

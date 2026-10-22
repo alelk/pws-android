@@ -3,6 +3,7 @@ package io.github.alelk.pws.contentdelivery.install
 import br.com.colman.kotest.FeatureSpec
 import br.com.colman.kotest.android.extensions.robolectric.RobolectricTest
 import io.github.alelk.pws.contentdelivery.bookBundle
+import io.github.alelk.pws.contentdelivery.bookImporter
 import io.github.alelk.pws.contentdelivery.inMemoryPwsDb
 import io.github.alelk.pws.contentdelivery.portableBook
 import io.github.alelk.pws.contentdelivery.portableSong
@@ -80,7 +81,7 @@ class BookImporterImplTest : FeatureSpec({
     scenario("inserts the book, all songs and their numbers, and marks the book DOWNLOADED") {
       checkAll(15, bundleForBook(bookId)) { bundle ->
         withDb { db ->
-          BookImporterImpl(db).import(bundle)
+          bookImporter(db).import(bundle)
 
           db.bookDao().getById(bookId).shouldNotBeNull()
           db.bookStatisticDao().getById(bookId).shouldNotBeNull().priority shouldBe bundle.book.priority
@@ -94,14 +95,14 @@ class BookImporterImplTest : FeatureSpec({
   feature("install source") {
     scenario("marks the book ASSET when imported as a preloaded built-in") {
       withDb { db ->
-        BookImporterImpl(db).import(bundleForBook(bookId).next(rs), source = BookInstallSource.ASSET)
+        bookImporter(db).import(bundleForBook(bookId).next(rs), source = BookInstallSource.ASSET)
         db.installedBookDao().getByBookId(bookId).shouldNotBeNull().source shouldBe BookInstallSource.ASSET
       }
     }
 
     scenario("never downgrades an existing ASSET book to DOWNLOADED on re-import") {
       withDb { db ->
-        val importer = BookImporterImpl(db)
+        val importer = bookImporter(db)
         val bundle = bundleForBook(bookId).next(rs)
         importer.import(bundle, source = BookInstallSource.ASSET)
         // a later catalog update / re-seed imports the same book with the default source
@@ -114,7 +115,7 @@ class BookImporterImplTest : FeatureSpec({
   feature("user-edited songs are preserved on re-import") {
     scenario("does not overwrite the lyric of a song marked edited") {
       withDb { db ->
-        val importer = BookImporterImpl(db)
+        val importer = bookImporter(db)
         val song = Arb.portableSong(
           id = Arb.constant(SongId(1L)),
           number = Arb.constant(SongNumber(bookId, 1)),
@@ -142,7 +143,7 @@ class BookImporterImplTest : FeatureSpec({
   feature("cross-book song references") {
     scenario("defers a reference until the referenced song's book is installed") {
       withDb { db ->
-        val importer = BookImporterImpl(db)
+        val importer = bookImporter(db)
         val book2Id = BookId.parse("Book-2")
         val ref = Arb.songReference(songId = Arb.constant(SongId(1L)), refSongId = Arb.constant(SongId(2L))).next(rs)
 
@@ -176,7 +177,7 @@ class BookImporterImplTest : FeatureSpec({
           songs = Arb.constant(setOf(SongNumber(bookId, 1))),
         ).next(rs)
 
-        BookImporterImpl(db).import(
+        bookImporter(db).import(
           Arb.bookBundle(book = Arb.portableBook(id = Arb.constant(bookId)), songs = Arb.constant(songs), tags = Arb.constant(listOf(tag))).next(rs)
         )
 
@@ -190,7 +191,7 @@ class BookImporterImplTest : FeatureSpec({
     scenario("importing the same bundle twice does not duplicate rows") {
       checkAll(15, bundleForBook(bookId)) { bundle ->
         withDb { db ->
-          val importer = BookImporterImpl(db)
+          val importer = bookImporter(db)
           importer.import(bundle)
           importer.import(bundle)
           db.songDao().count() shouldBe bundle.songs.size
@@ -202,7 +203,7 @@ class BookImporterImplTest : FeatureSpec({
   feature("smart song-number binding") {
     scenario("remaps a number to a new song id and cleans up the old orphan") {
       withDb { db ->
-        val importer = BookImporterImpl(db)
+        val importer = bookImporter(db)
         importer.import(bundleOf(bookId, listOf(song(id = 1L, number = 1, version = Version(1, 0)))))
         // optimizer reassigned the id: number 1 now points to song 2
         importer.import(bundleOf(bookId, listOf(song(id = 2L, number = 1, version = Version(1, 0)))))
@@ -215,7 +216,7 @@ class BookImporterImplTest : FeatureSpec({
 
     scenario("survives a song-id swap between two numbers without a constraint crash") {
       withDb { db ->
-        val importer = BookImporterImpl(db)
+        val importer = bookImporter(db)
         importer.import(bundleOf(bookId, listOf(song(1L, 1, Version(1, 0)), song(2L, 2, Version(1, 0)))))
         // numbers trade song ids — the case a per-number upsert cannot express
         importer.import(bundleOf(bookId, listOf(song(1L, 2, Version(1, 0)), song(2L, 1, Version(1, 0)))))
@@ -227,7 +228,7 @@ class BookImporterImplTest : FeatureSpec({
 
     scenario("drops a number that disappeared from the re-imported bundle") {
       withDb { db ->
-        val importer = BookImporterImpl(db)
+        val importer = bookImporter(db)
         importer.import(bundleOf(bookId, listOf(song(1L, 1, Version(1, 0)), song(2L, 2, Version(1, 0)), song(3L, 3, Version(1, 0)))))
         importer.import(bundleOf(bookId, listOf(song(1L, 1, Version(1, 0)), song(2L, 2, Version(1, 0)))))
 
@@ -239,7 +240,7 @@ class BookImporterImplTest : FeatureSpec({
 
     scenario("keeps a user-edited song on its number even when the bundle remaps it") {
       withDb { db ->
-        val importer = BookImporterImpl(db)
+        val importer = bookImporter(db)
         importer.import(bundleOf(bookId, listOf(song(1L, 1, Version(1, 0), lyric = "original"))))
         db.songDao().update(db.songDao().getById(SongId(1L))!!.copy(lyric = "my edit", edited = true))
 
@@ -254,7 +255,7 @@ class BookImporterImplTest : FeatureSpec({
   feature("song version gating") {
     scenario("ignores an older bundle version and applies a newer one") {
       withDb { db ->
-        val importer = BookImporterImpl(db)
+        val importer = bookImporter(db)
         importer.import(bundleOf(bookId, listOf(song(1L, 1, Version(2, 0), lyric = "v2"))))
 
         importer.import(bundleOf(bookId, listOf(song(1L, 1, Version(1, 0), lyric = "v1"))))   // older → ignored
@@ -269,7 +270,7 @@ class BookImporterImplTest : FeatureSpec({
   feature("update preserves user data") {
     scenario("favorites, history and cross-book numbers survive a book update") {
       withDb { db ->
-        val importer = BookImporterImpl(db)
+        val importer = bookImporter(db)
         val book2 = BookId.parse("Book-2")
         // song 1 lives in both books
         importer.import(bundleOf(bookId, listOf(song(1L, 1, Version(1, 0)))))
@@ -292,7 +293,7 @@ class BookImporterImplTest : FeatureSpec({
   feature("song references are recalculated on re-import") {
     scenario("removes a reference that is no longer present in the bundle") {
       withDb { db ->
-        val importer = BookImporterImpl(db)
+        val importer = bookImporter(db)
         val ref = Arb.songReference(songId = Arb.constant(SongId(1L)), refSongId = Arb.constant(SongId(2L))).next(rs)
         importer.import(bundleOf(bookId, listOf(song(1L, 1, Version(1, 0)), song(2L, 2, Version(1, 0))), refs = listOf(ref)))
         db.songReferenceDao().getById(SongId(1L), SongId(2L)).shouldNotBeNull()

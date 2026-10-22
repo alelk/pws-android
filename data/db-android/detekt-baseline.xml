@@ -1,0 +1,79 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>CyclomaticComplexMethod:PwsDb2xDataProvider.kt$PwsDb2xDataProvider$override suspend fun getBooks(): Result&lt;List&lt;BookMigrationData&gt;&gt;</ID>
+    <ID>CyclomaticComplexMethod:migrateDataFromPrevDatabase.kt$internal suspend fun MigrationDbSource.migrateDataTo(currentDatabase: PwsDatabase): Result&lt;MigrationReport&gt;</ID>
+    <ID>LongMethod:PwsDb1xDataProvider.kt$PwsDb1xDataProvider$override suspend fun getBooks(): Result&lt;List&lt;BookMigrationData&gt;&gt;</ID>
+    <ID>LongMethod:PwsDb2xDataProvider.kt$PwsDb2xDataProvider$override suspend fun getBooks(): Result&lt;List&lt;BookMigrationData&gt;&gt;</ID>
+    <ID>LongMethod:migrateDataFromPrevDatabase.kt$internal suspend fun MigrationDbSource.migrateDataTo(currentDatabase: PwsDatabase): Result&lt;MigrationReport&gt;</ID>
+    <ID>LongParameterList:MigrationDbSource.kt$MigrationDbSource$( distinct: Boolean, table: String, columns: Array&lt;String&gt;, selection: String?, selectionArgs: Array&lt;String&gt;?, groupBy: String?, having: String?, orderBy: String?, limit: String? )</ID>
+    <ID>MatchingDeclarationName:discardHalfCreatedDatabase.kt$DatabaseFileState</ID>
+    <ID>MaxLineLength:DiscardHalfCreatedDatabaseTest.kt$DiscardHalfCreatedDatabaseTest$discardHalfCreatedDatabase(file, passphrase) { _, _ -&gt; DatabaseFileState(userVersion = 0, objectCount = 0) } shouldBe false</ID>
+    <ID>MaxLineLength:DiscardHalfCreatedDatabaseTest.kt$DiscardHalfCreatedDatabaseTest$discardHalfCreatedDatabase(file, passphrase) { _, _ -&gt; DatabaseFileState(userVersion = 0, objectCount = 6) } shouldBe true</ID>
+    <ID>MaxLineLength:DiscardHalfCreatedDatabaseTest.kt$DiscardHalfCreatedDatabaseTest$discardHalfCreatedDatabase(file, passphrase) { _, _ -&gt; DatabaseFileState(userVersion = 15, objectCount = 42) } shouldBe false</ID>
+    <ID>MaxLineLength:KeyManager.kt$KeyManager$KeyGenParameterSpec.Builder(KEYSTORE_ALIAS, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)</ID>
+    <ID>MaxLineLength:MigrateLegacyDatabaseFileTest.kt$MigrateLegacyDatabaseFileTest$openReadOnlyDatabase(legacyFile(), ByteArray(0))!!.use { PwsDb2xDataProvider(it).getFavorites().getOrThrow().distinct().size }</ID>
+    <ID>MaxLineLength:PwsDataProvider.kt$PwsDataProvider$.</ID>
+    <ID>MaxLineLength:PwsDataProvider.kt$PwsDataProvider$override</ID>
+    <ID>MaxLineLength:PwsDataProvider.kt$PwsDataProvider.Companion$addURI(BuildConfig.DB_AUTHORITY, "songs/${SearchManager.SUGGEST_URI_PATH_QUERY}/#", URI_MATCH_SUGGESTIONS_BY_NUMBER)</ID>
+    <ID>MaxLineLength:PwsDataProvider.kt$PwsDataProvider.Companion$addURI(BuildConfig.DB_AUTHORITY, "songs/${SearchManager.SUGGEST_URI_PATH_QUERY}/*", URI_MATCH_SUGGESTIONS_BY_NAME)</ID>
+    <ID>MaxLineLength:PwsDb1xDataProvider.kt$PwsDb1xDataProvider$check(values.all { it.predefined == tag.predefined }) { "expected all tag ${tag.id} to be predefined=${tag.predefined}" }</ID>
+    <ID>MaxLineLength:PwsDb1xDataProvider.kt$PwsDb1xDataProvider$columns = arrayOf("p.text as text", "p.bibleref as bibleref", "p.tonalities as tonalities", "pn.number as number", "b.edition as edition")</ID>
+    <ID>MaxLineLength:PwsDb1xDataProvider.kt$PwsDb1xDataProvider$columns = arrayOf("t.id as id", "t.name as name", "t.color as color", "t.predefined as predefined", "b.edition as book_id", "pn.number as song_number")</ID>
+    <ID>MaxLineLength:PwsDb1xDataProvider.kt$PwsDb1xDataProvider$table = "favorites as f inner join psalmnumbers as pn on f.psalmnumberid=pn._id inner join books as b on pn.bookid=b._id"</ID>
+    <ID>MaxLineLength:PwsDb1xDataProvider.kt$PwsDb1xDataProvider$table = "history as h inner join psalmnumbers as pn on h.psalmnumberid=pn._id inner join books as b on pn.bookid=b._id"</ID>
+    <ID>MaxLineLength:PwsDb1xDataProvider.kt$PwsDb1xDataProvider$val displayName = if (displayNameIdx &gt;= 0) cursor.getStringOrNull(displayNameIdx)?.takeIf { it.isNotBlank() } ?: name else name</ID>
+    <ID>MaxLineLength:PwsDb1xDataProviderTest.kt$PwsDb1xDataProviderTest$patches = listOf(TestDbPatch.V6toV7, TestDbPatch.V1xInsertCustomTags, TestDbPatch.V7toV8, TestDbPatch.V8toV9, TestDbPatch.V9toV10)</ID>
+    <ID>MaxLineLength:PwsDb2xDataProvider.kt$PwsDb2xDataProvider$RawBook</ID>
+    <ID>MaxLineLength:PwsDb2xDataProvider.kt$PwsDb2xDataProvider$check(values.all { it.predefined == tag.predefined }) { "expected all tag ${tag.id} to be predefined=${tag.predefined}" }</ID>
+    <ID>MaxLineLength:PwsDb2xDataProvider.kt$PwsDb2xDataProvider$columns = arrayOf("s.lyric as lyric", "s.bibleref as bibleref", "s.tonalities as tonalities", "sn.number as number", "sn.book_id as book_id")</ID>
+    <ID>MaxLineLength:PwsDb2xDataProvider.kt$PwsDb2xDataProvider$columns = arrayOf("t.id as id", "t.name as name", "t.color as color", "t.predefined as predefined", "sn.book_id as book_id", "sn.number as song_number")</ID>
+    <ID>MaxLineLength:PwsDb2xDataProvider.kt$PwsDb2xDataProvider$songNumbers = if (bookId != null &amp;&amp; songNumber != null) mapOf(BookId.parse(bookId.trim()) to setOf(songNumber)) else mapOf()</ID>
+    <ID>MaxLineLength:PwsDb2xDataProvider.kt$PwsDb2xDataProvider$val displayName = if (displayNameIdx &gt;= 0) cursor.getStringOrNull(displayNameIdx)?.takeIf { it.isNotBlank() } ?: name else name</ID>
+    <ID>MaxLineLength:PwsDb2xDataProvider.kt$PwsDb2xDataProvider$val locale = if (localeIdx &gt;= 0) cursor.getStringOrNull(localeIdx)?.let { runCatching { Locale.of(it) }.getOrNull() } ?: Locale.RU else Locale.RU</ID>
+    <ID>MaxLineLength:PwsDb2xDataProvider.kt$PwsDb2xDataProvider$val shortName = if (shortNameIdx &gt;= 0) cursor.getStringOrNull(shortNameIdx)?.takeIf { it.isNotBlank() } ?: name else name</ID>
+    <ID>MaxLineLength:PwsDb2xDataProvider.kt$PwsDb2xDataProvider$val version = if (versionIdx &gt;= 0) cursor.getStringOrNull(versionIdx)?.let { runCatching { Version.fromString(it) }.getOrNull() } ?: Version(0, 0) else Version(0, 0)</ID>
+    <ID>MaxLineLength:PwsDb2xDataProviderTest.kt$PwsDb2xDataProviderTest$last() shouldBe HistoryItem(SongNumber(weWillSingAndPraise, 5), LocalDateTime.parse("2026-06-18T15:34:44.403645"))</ID>
+    <ID>MaxLineLength:TestDbPatch.kt$TestDbPatch.V1xInsertCustomTags$ |VALUES (20, 'custom-00002'), (21, 'custom-00002'), (22, 'custom-00002'), (30, 'custom-00003'), (40, 'custom-00004')</ID>
+    <ID>MaxLineLength:TestDbPatch.kt$TestDbPatch.V6toV7$ USING fts4(name, bibleref, text, author, composer, translator, tokenize=porter, content=`psalms`)</ID>
+    <ID>MaxLineLength:TestDbPatch.kt$TestDbPatch.V7toV8$ FOREIGN KEY (psalmnumberid) REFERENCES psalmnumbers(_id) ON DELETE CASCADE ON UPDATE NO ACTION)</ID>
+    <ID>MaxLineLength:TestDbPatch.kt$TestDbPatch.V7toV8$db.execSQL("""INSERT INTO favorites_new (position, psalmnumberid) SELECT position, psalmnumberid FROM favorites""".trimIndent())</ID>
+    <ID>MaxLineLength:TestDbPatch.kt$TestDbPatch.V9toV10$ |USING fts4(name, bibleref, text, author, composer, translator, tokenize=unicode61 `remove_diacritics=1`, content=`psalms`)</ID>
+    <ID>MaxLineLength:discardHalfCreatedDatabase.kt$SQLCipherDatabase.openDatabase(dbFile.absolutePath, passphrase, null, SQLCipherDatabase.OPEN_READWRITE, null)</ID>
+    <ID>MaxLineLength:discardHalfCreatedDatabase.kt$Timber.w("database $dbFile did not open, but it holds data (user_version=${state.userVersion}, ${state.objectCount} schema objects) — keeping it")</ID>
+    <ID>MaxLineLength:discardHalfCreatedDatabase.kt$Timber.w("database $dbFile is a leftover of an interrupted creation (user_version=0, ${state.objectCount} schema objects) — deleting it")</ID>
+    <ID>MaxLineLength:fetchData.kt$.</ID>
+    <ID>MaxLineLength:fetchData.kt$Timber.d("skip fetching '$collectionName' from pws database version=$version, path=$path (supported database version: $dbVersion)")</ID>
+    <ID>MaxLineLength:fetchData.kt$}</ID>
+    <ID>MaxLineLength:migrateDataFromPrevDatabase.kt$.</ID>
+    <ID>MaxLineLength:migrateDataFromPrevDatabase.kt$currentDatabase.tagDao().insert(TagEntity(id = tag.id, name = tag.name, color = tag.color, priority = 0, predefined = true))</ID>
+    <ID>MaxLineLength:migrateDataFromPrevDatabase.kt$currentDatabase.tagDao().insert(TagEntity(id = tagId, name = tag.name, color = tag.color, priority = 1000, predefined = false))</ID>
+    <ID>MaxLineLength:migrateDataFromPrevDatabase.kt$else -&gt; if (exhausted) LegacyMigrationOutcome.Result.FAILED_GAVE_UP else LegacyMigrationOutcome.Result.FAILED_RETRY</ID>
+    <ID>MaxLineLength:migrateDataFromPrevDatabase.kt$report.isSuccess -&gt; if (exhausted) LegacyMigrationOutcome.Result.PARTIAL_GAVE_UP else LegacyMigrationOutcome.Result.PARTIAL_RETRY</ID>
+    <ID>MaxLineLength:migrateDataFromPrevDatabase.kt$val songIdBySongNumber = getSongNumberEntities(allSongNumbers).associate { SongNumber(it.bookId, it.number) to it.songId }</ID>
+    <ID>MaxLineLength:migrateDataFromPrevDatabase.kt$val songNumbersByTagId = allTags.associate { t -&gt; t.id to t.songNumbers.flatMap { (bookId, numbers) -&gt; numbers.map { SongNumber(bookId, it) } } }</ID>
+    <ID>MaxLineLength:openReadOnlyDatabase.kt$val db = SQLCipherDatabase.openDatabase(dbFile.absolutePath, passphrase, null, SQLCipherDatabase.OPEN_READONLY, null)</ID>
+    <ID>MaxLineLength:withSqliteDb.kt$SQLiteDatabase.openDatabase(targetFile.path, null, if (readOnly) SQLiteDatabase.OPEN_READONLY else SQLiteDatabase.OPEN_READWRITE)</ID>
+    <ID>MaxLineLength:withSqliteDb.kt$internal inline</ID>
+    <ID>NestedBlockDepth:unzip.kt$fun File.unzip(destDirectory: File)</ID>
+    <ID>NestedBlockDepth:withSqliteDb.kt$internal inline fun &lt;T&gt; withSqliteDb(dbZipFile: File, patches: List&lt;TestDbPatch&gt; = emptyList(), readOnly: Boolean = true, body: (db: MigrationDbSource) -&gt; T): T</ID>
+    <ID>NewLineAtEndOfFile:HistoryItem.kt$io.github.alelk.pws.database.support.HistoryItem.kt</ID>
+    <ID>NewLineAtEndOfFile:PwsDataProvider.kt$io.github.alelk.pws.database.provider.PwsDataProvider.kt</ID>
+    <ID>NewLineAtEndOfFile:PwsDb1xDataProvider.kt$io.github.alelk.pws.database.support.PwsDb1xDataProvider.kt</ID>
+    <ID>NewLineAtEndOfFile:PwsDb1xDataProviderTest.kt$io.github.alelk.pws.database.support.PwsDb1xDataProviderTest.kt</ID>
+    <ID>NewLineAtEndOfFile:PwsDb2xDataProvider.kt$io.github.alelk.pws.database.support.PwsDb2xDataProvider.kt</ID>
+    <ID>NewLineAtEndOfFile:PwsDb2xDataProviderTest.kt$io.github.alelk.pws.database.support.PwsDb2xDataProviderTest.kt</ID>
+    <ID>NewLineAtEndOfFile:PwsDbDataProvider.kt$io.github.alelk.pws.database.support.PwsDbDataProvider.kt</ID>
+    <ID>NewLineAtEndOfFile:Tag.kt$io.github.alelk.pws.database.support.Tag.kt</ID>
+    <ID>NewLineAtEndOfFile:TestDbPatch.kt$io.github.alelk.pws.database.TestDbPatch.kt</ID>
+    <ID>NewLineAtEndOfFile:fetchData.kt$io.github.alelk.pws.database.support.fetchData.kt</ID>
+    <ID>NewLineAtEndOfFile:setupTimberForTest.kt$io.github.alelk.pws.database.setupTimberForTest.kt</ID>
+    <ID>NewLineAtEndOfFile:unzip.kt$io.github.alelk.pws.database.helper.unzip.kt</ID>
+    <ID>ReturnCount:openReadOnlyDatabase.kt$internal fun openReadOnlyDatabase(dbFile: File, passphrase: ByteArray): MigrationDbSource?</ID>
+    <ID>TooGenericExceptionCaught:openReadOnlyDatabase.kt$e: Throwable</ID>
+    <ID>UnusedPrivateProperty:PwsDb1xDataProvider.kt$PwsDb1xDataProvider$val bookByInternalId = books.associateBy { it.internalId }</ID>
+    <ID>VariableNaming:PwsDb1xDataProvider.kt$PwsDb1xDataProvider$val TIMESTAMP_FORMAT = LocalDateTime.Format { date(LocalDate.Formats.ISO); char(' '); time(LocalTime.Formats.ISO) }</ID>
+    <ID>VariableNaming:PwsDb2xDataProvider.kt$PwsDb2xDataProvider$val TIMESTAMP_FORMAT = LocalDateTime.Format { date(LocalDate.Formats.ISO); char(' '); time(LocalTime.Formats.ISO) }</ID>
+  </CurrentIssues>
+</SmellBaseline>

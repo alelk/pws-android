@@ -1,32 +1,18 @@
 package io.github.alelk.pws.android.compose
 
 import android.app.Application
-import android.content.Context
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
+import android.database.sqlite.SQLiteDatabase
 import cafe.adriel.voyager.core.registry.ScreenRegistry
-import io.github.alelk.pws.android.compose.donation.SharedPrefsDonationPromptStateRepository
+import io.github.alelk.pws.android.compose.di.AppModuleInputs
+import io.github.alelk.pws.android.compose.di.appModules
+import io.github.alelk.pws.android.compose.flavor.flavorStartupTasks
 import io.github.alelk.pws.android.compose.telemetry.AppMetricaTelemetry
 import io.github.alelk.pws.android.compose.telemetry.TelemetryConsentStore
-import io.github.alelk.pws.contentdelivery.di.contentDeliveryModule
-import io.github.alelk.pws.data.repository.room.di.repoRoomModule
-import io.github.alelk.pws.database.PwsDatabase
 import io.github.alelk.pws.database.PwsDatabaseProvider
-import io.github.alelk.pws.database.pwsContentKeyHex
-import io.github.alelk.pws.domain.donationprompt.config.DonationConfig
-import io.github.alelk.pws.domain.donationprompt.repository.DonationPromptStateReadRepository
-import io.github.alelk.pws.domain.donationprompt.repository.DonationPromptStateWriteRepository
 import io.github.alelk.pws.domain.telemetry.NoOpTelemetry
 import io.github.alelk.pws.domain.telemetry.Telemetry
 import io.github.alelk.pws.domain.telemetry.TelemetryAttr
-import io.github.alelk.pws.features.app.PwsAppInfo
-import io.github.alelk.pws.android.compose.flavor.MONETIZATION
-import io.github.alelk.pws.android.compose.flavor.flavorKoinModules
-import io.github.alelk.pws.android.compose.flavor.flavorStartupTasks
-import io.github.alelk.pws.features.monetization.MonetizationMode
 import io.github.alelk.pws.features.di.appScreenModule
-import io.github.alelk.pws.features.di.featuresModule
-import io.github.alelk.pws.features.di.useCasesModule
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -38,9 +24,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.GlobalContext
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
-import org.koin.core.qualifier.named
-import org.koin.dsl.binds
-import org.koin.dsl.module
+import timber.log.Timber
 
 class PwsComposeApplication : Application() {
 
@@ -59,11 +43,24 @@ class PwsComposeApplication : Application() {
           android.util.Log.e("PwsApp", "Background task failed", e)
           // Background failures used to die in logcat only; now they surface as non-fatals.
           telemetry.recordError(e, "background_task_failed")
-        }
+        },
     )
 
   override fun onCreate() {
     super.onCreate()
+
+    if (BuildConfig.DEBUG) Timber.plant(Timber.DebugTree())
+
+    // Native SQLite warm-up, synchronous, on this thread, before anything below can start a
+    // background thread of its own — AppMetrica's SDK does, right away, as part of activation.
+    // Under Robolectric the native sqlite runtime does one-time lazy JNI registration on first use;
+    // racing that first call from two threads at once can throw UnsatisfiedLinkError on
+    // SQLiteConnectionNatives for whichever thread loses (surfaced by PendingRestoreAfterInstallTest,
+    // which opens a real Room database right after startup). Doing a throwaway open+close here,
+    // single-threaded, means every later caller — ours or a third-party SDK's — sees an
+    // already-initialized native layer. No real device has this lazy-init step, so the cost there is
+    // negligible.
+    SQLiteDatabase.create(null).close()
 
     val appVersion = packageManager.getPackageInfo(packageName, 0).versionName ?: "Unknown"
 
@@ -72,7 +69,7 @@ class PwsComposeApplication : Application() {
     // production statistics (flip the settings toggle to test the pipeline).
     //
     // On a first launch the store is still "pending" — isEnabled() is false — so the SDK activates
-    // without transmitting anything until the user has seen the disclosure (MainActivity resolves it).
+    // without transmitting anything until the user has seen the disclosure (AppStartupModel resolves it).
     val telemetryConsent = TelemetryConsentStore(this, defaultConsent = !BuildConfig.DEBUG)
     telemetry = AppMetricaTelemetry.activate(
       application = this,
@@ -95,47 +92,8 @@ class PwsComposeApplication : Application() {
       appScreenModule()
     }
 
-    val databaseModule = module {
-      single<PwsDatabase> { PwsDatabaseProvider.getDatabase(androidContext()) }
-      single<DataStore<Preferences>> { androidContext().appSettingsDataStore() }
-      single { BackupManager(get<PwsDatabase>(), get<DataStore<Preferences>>()) }
-    }
-
-    val appInfoModule = module {
-      single { PwsAppInfo(appVersion) }
-    }
-
-    val telemetryModule = module {
-      single<Telemetry> { telemetry }
-      single { telemetryConsent }
-    }
-
-    val deviceLanguageModule = module {
-      single(named("deviceLanguage")) { java.util.Locale.getDefault().language }
-    }
-
-    // Opens once the legacy-database migration has finished; seeding, onboarding and the pending
-    // backup restore wait for it (see LegacyMigrationGate).
+    // Opens once the legacy-database migration has finished (see LegacyMigrationGate, di/StartupModule).
     val legacyMigrationDone = CompletableDeferred<Unit>()
-    val startupModule = module {
-      single { LegacyMigrationGate(legacyMigrationDone) }
-    }
-
-    // The build's monetization mode for pws-core (UpsellHost, Settings). Loaded after
-    // featuresModule so it overrides its `None` default.
-    val monetizationModule = module {
-      single<MonetizationMode> { MONETIZATION }
-    }
-
-    val donationModule = module {
-      // Donation prompt is on only for donation-mode builds; premium-selling builds suppress it.
-      single { DonationConfig(enabled = MONETIZATION.donationsEnabled, boostyUrl = "https://boosty.to/hymna") }
-      single {
-        SharedPrefsDonationPromptStateRepository(
-          androidContext().getSharedPreferences("pws_donation", Context.MODE_PRIVATE)
-        )
-      } binds arrayOf(DonationPromptStateReadRepository::class, DonationPromptStateWriteRepository::class)
-    }
 
     // Defensive: guards against a stray already-started Koin instance (e.g. Robolectric
     // re-instantiating the Application without a clean process restart between test runs).
@@ -143,27 +101,7 @@ class PwsComposeApplication : Application() {
 
     startKoin {
       androidContext(this@PwsComposeApplication)
-      modules(
-        databaseModule,
-        appInfoModule,
-        deviceLanguageModule,
-        donationModule,
-        repoRoomModule,
-        contentDeliveryModule(
-          catalogUrls = BuildConfig.CATALOG_URLS.split(",").map { it.trim() },
-          bundleVariant = BuildConfig.BUNDLE_VARIANT,
-          keyProvider = { pwsContentKeyHex() },
-        ),
-        useCasesModule,
-        featuresModule,
-        startupModule,
-        monetizationModule,
-        // After featuresModule (overrides its NoOpTelemetry default), before the flavor modules so
-        // a flavor could still substitute its own provider.
-        telemetryModule,
-        // Flavor overrides load last so they win (e.g. rustore overrides EntitlementRepository).
-        *flavorKoinModules().toTypedArray(),
-      )
+      modules(appModules(AppModuleInputs(appVersion, telemetry, telemetryConsent, legacyMigrationDone)))
     }
 
     // Legacy data first, strictly before anything installs books (C2 in the 2026-09-29 plan). The

@@ -1,0 +1,38 @@
+# Detekt profile. Static analysis covers test source sets too (see the pws.static-analysis
+# convention plugin) — tests are about a third of the codebase and are where copy-paste
+# accumulates fastest.
+#
+# Test *support* code, though, is a different shape from production code: object mothers
+# take one parameter per field on purpose (that is what makes call sites readable), and a
+# support file legitimately holds several small declarations. Relaxing those rules for
+# `**/fixtures/**` and `**/fakes/**` keeps the gate meaningful for real test logic instead
+# of turning it into noise everyone learns to ignore.
+complexity:
+  LongParameterList:
+    functionThreshold: 8    # use-cases often have many deps
+    excludes: &testSupport
+      - '**/src/*Test/kotlin/**/fixtures/**'
+      - '**/src/*Test/kotlin/**/fakes/**'
+      - '**/src/test/kotlin/**/Fakes.kt'
+      - '**/*TestSupport.kt'
+      - '**/src/*Test/kotlin/**/Fake*.kt'
+  TooManyFunctions:
+    thresholdInFiles: 20
+    thresholdInClasses: 15     # API facades / ViewModels group related calls
+    thresholdInInterfaces: 15
+
+style:
+  MagicNumber:
+    active: false            # domain value classes handle this
+  ReturnCount:
+    excludes: *testSupport
+    # Guard clauses ("no assignee -> nothing to do", "no wallet -> nothing to reverse") are
+    # the clearest way to state a precondition; counting them towards the limit would push
+    # the code towards nested ifs, which is the thing the rule exists to prevent.
+    excludeGuardClauses: true
+
+naming:
+  FunctionNaming:
+    active: false            # operator fun invoke() is fine
+  MatchingDeclarationName:
+    excludes: *testSupport

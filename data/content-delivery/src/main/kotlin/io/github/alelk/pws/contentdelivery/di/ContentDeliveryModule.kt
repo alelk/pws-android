@@ -5,20 +5,21 @@ import io.github.alelk.pws.contentdelivery.ContentKeyProvider
 import io.github.alelk.pws.contentdelivery.catalog.MultiSourceBookCatalogRepository
 import io.github.alelk.pws.contentdelivery.catalog.SharedPrefsPreferredCatalogSourceStore
 import io.github.alelk.pws.contentdelivery.install.BookImporterImpl
-import io.github.alelk.pws.contentdelivery.install.BookUninstallerImpl
 import io.github.alelk.pws.contentdelivery.install.ImportBundleFromFileUseCase
 import io.github.alelk.pws.contentdelivery.install.InstallBookUseCaseImpl
 import io.github.alelk.pws.contentdelivery.install.SeedBooksFromAssetsUseCase
 import io.github.alelk.pws.contentdelivery.install.UninstallBookUseCaseImpl
 import io.github.alelk.pws.contentdelivery.install.UpdateBookUseCaseImpl
-import io.github.alelk.pws.database.PwsDatabase
 import io.github.alelk.pws.domain.booklibrary.model.ContentSource
 import io.github.alelk.pws.domain.booklibrary.repository.BookCatalogRepository
+import io.github.alelk.pws.domain.booklibrary.repository.BookContentWriter
+import io.github.alelk.pws.domain.booklibrary.repository.InstalledBookReadRepository
 import io.github.alelk.pws.domain.booklibrary.usecase.InstallBookUseCase
 import io.github.alelk.pws.domain.booklibrary.usecase.UninstallBookUseCase
 import io.github.alelk.pws.domain.booklibrary.usecase.UpdateBookUseCase
 import io.github.alelk.pws.domain.telemetry.NoOpTelemetry
 import io.github.alelk.pws.domain.telemetry.Telemetry
+import io.github.alelk.pws.portable.booklibrary.ImportBookBundleUseCase
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.HttpRedirect
@@ -56,9 +57,9 @@ fun contentDeliveryModule(
         )
     } bind BookCatalogRepository::class
 
-    single { BookImporterImpl(get<PwsDatabase>()) }
+    single { ImportBookBundleUseCase(get<BookContentWriter>()) }
 
-    single { BookUninstallerImpl(get<PwsDatabase>()) }
+    single { BookImporterImpl(get<ImportBookBundleUseCase>()) }
 
     single {
         ImportBundleFromFileUseCase(
@@ -72,7 +73,7 @@ fun contentDeliveryModule(
     single {
         SeedBooksFromAssetsUseCase(
             context = androidContext(),
-            db = get<PwsDatabase>(),
+            installedBooks = get<InstalledBookReadRepository>(),
             importer = get<BookImporterImpl>(),
             keyProvider = keyProvider,
             telemetry = telemetry(),
@@ -94,7 +95,7 @@ fun contentDeliveryModule(
     } bind UpdateBookUseCase::class
 
     single {
-        UninstallBookUseCaseImpl(get<BookUninstallerImpl>())
+        UninstallBookUseCaseImpl(get<BookContentWriter>())
     } bind UninstallBookUseCase::class
 }
 
