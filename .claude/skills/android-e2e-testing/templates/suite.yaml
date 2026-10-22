@@ -1,0 +1,13 @@
+appId: ${APP_ID}
+name: "Smoke suite (read-only)"
+---
+# Read-only flows: safe to run in any order on any state. Mutation flows live in suite-full.yaml
+# and each begins with cold-start (clearState). The runner also keeps SMOKE_FLOWS / FULL_FLOWS
+# lists so it can run each flow as its own JUnit unit; keep the two lists in sync with this file
+# (E2eSelectorParityTest-style guard: flows on disk == flows listed).
+#
+# Run: maestro test e2e/flows/<app>/suite.yaml --env-file e2e/config/compose.env --env APP_ID=<id>
+
+- runFlow: 01-app-launch.yaml
+- runFlow: 02-search-basic.yaml
+- runFlow: 08-navigation-tabs.yaml

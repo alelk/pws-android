@@ -34,6 +34,11 @@ locking, isolation or "a `Left` rolls back what was written before it" (and its 
 The product's "done" scenario across all layers with Testcontainers and faked external providers
 (e.g. create tasks → submit a report with a fake voice transcript → fake AI review → daily digest).
 
+## Native Android app
+
+The top layer is a small black-box suite on the built release APK, not a Testcontainers scenario →
+[`android-e2e-testing`](../../android-e2e-testing/SKILL.md).
+
 ## UI
 
 ViewModels (event → state → effect), pure screen models, navigation codecs; fitness tests for

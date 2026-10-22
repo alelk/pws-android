@@ -2,7 +2,7 @@
 name: kotlin-testing-strategy
 description: Use when deciding what to test and how in a Kotlin (KMP) + Ktor + PostgreSQL project — the pyramid (domain use-cases on fakes in commonTest, repositories on Testcontainers with real RLS, routes via testApplication, a few end-to-end flows), fakes that honour port contracts, object mothers and TestClock, Kotest FunSpec on the JVM, and the special test forms that catch defects unit tests cannot — N concurrent requests through the route, a counter that triggers through HTTP, refusal before reading an upload, SQL predicate == domain predicate parity, partial-failure retries, real-byte fixtures, adversarial AI inputs, a wall walk sending one principal's token to every route of another over the live routing tree, fault injection by a database trigger (fail-open side effects), "a refusal after a write leaves no row", an erasure census over pg_catalog — plus guard / lock / pair (a stranger refused, one's own not), proving each test red on a broken implementation, and "bug → failing test first".
 metadata:
-  version: "1.1.0"
+  version: "1.1.1"
   requires: "kotlin-domain-modeling, exposed-postgres, ktor-backend"
   project-types: "any-kotlin-project-with-business-logic"
 ---
@@ -23,6 +23,8 @@ metadata:
   non-superuser role; never H2.
 - **Routes** — the real plugin stack over fakes (or over Testcontainers for e2e).
 - **UI** — ViewModels and pure screen logic on fakes ([compose-multiplatform-ui / testing.md](../compose-multiplatform-ui/references/testing.md)).
+- **Native Android artifact** — the built release APK on a device (R8, flavors, first run, upgrade) is
+  [`android-e2e-testing`](../android-e2e-testing/SKILL.md); the "end-to-end" above is the server scenario.
 - **Conventions** — fitness tests ([`architecture-fitness-tests`](../architecture-fitness-tests/SKILL.md)).
 
 Everything runs in `./gradlew build`. Docker is a CI requirement, not an option.

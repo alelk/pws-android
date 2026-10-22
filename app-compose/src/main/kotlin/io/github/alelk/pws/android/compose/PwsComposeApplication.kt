@@ -1,6 +1,7 @@
 package io.github.alelk.pws.android.compose
 
 import android.app.Application
+import android.database.sqlite.SQLiteDatabase
 import cafe.adriel.voyager.core.registry.ScreenRegistry
 import io.github.alelk.pws.android.compose.di.AppModuleInputs
 import io.github.alelk.pws.android.compose.di.appModules
@@ -49,6 +50,17 @@ class PwsComposeApplication : Application() {
     super.onCreate()
 
     if (BuildConfig.DEBUG) Timber.plant(Timber.DebugTree())
+
+    // Native SQLite warm-up, synchronous, on this thread, before anything below can start a
+    // background thread of its own — AppMetrica's SDK does, right away, as part of activation.
+    // Under Robolectric the native sqlite runtime does one-time lazy JNI registration on first use;
+    // racing that first call from two threads at once can throw UnsatisfiedLinkError on
+    // SQLiteConnectionNatives for whichever thread loses (surfaced by PendingRestoreAfterInstallTest,
+    // which opens a real Room database right after startup). Doing a throwaway open+close here,
+    // single-threaded, means every later caller — ours or a third-party SDK's — sees an
+    // already-initialized native layer. No real device has this lazy-init step, so the cost there is
+    // negligible.
+    SQLiteDatabase.create(null).close()
 
     val appVersion = packageManager.getPackageInfo(packageName, 0).versionName ?: "Unknown"
 

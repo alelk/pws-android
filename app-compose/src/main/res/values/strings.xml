@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <string name="app_name">P&amp;W Songs</string>
+  <string name="app_name" translatable="false">P&amp;W Songs</string>
 
   <string name="backup_saved">Backup saved</string>
   <string name="backup_export_failed">Export failed</string>
