@@ -64,14 +64,17 @@ class CurrentDatabaseTest : FeatureSpec({
     scenario("migrates to v16: songs_fts is rebuilt over the folded view, Room's FTS triggers are gone") {
       withPwsDb(currentDbZip, readOnly = true) { db ->
         db.useReaderConnection { c ->
-          suspend fun strings(sql: String) = c.usePrepared(sql) { st -> buildList { while (st.step()) add(st.getText(0)) } }
+          suspend fun strings(sql: String) =
+            c.usePrepared(sql) { st -> buildList { while (st.step()) add(st.getText(0)) } }
           suspend fun long(sql: String) = c.usePrepared(sql) { st ->
             st.step()
             st.getLong(0)
           }
           long("PRAGMA user_version") shouldBe 16
           strings("SELECT sql FROM sqlite_master WHERE name = 'songs_fts'") shouldBe listOf(SongSearchSchema.createFts)
-          strings("SELECT name FROM sqlite_master WHERE type = 'trigger' AND tbl_name = 'songs'") shouldContainExactlyInAnyOrder
+          strings(
+            "SELECT name FROM sqlite_master WHERE type = 'trigger' AND tbl_name = 'songs'",
+          ) shouldContainExactlyInAnyOrder
             SongSearchSchema.triggers.keys
           long("SELECT count(*) FROM songs_fts_docsize") shouldBe 157
           long("SELECT count(*) FROM songs_fts WHERE songs_fts MATCH '\"господ*\"'") shouldBeGreaterThan 0

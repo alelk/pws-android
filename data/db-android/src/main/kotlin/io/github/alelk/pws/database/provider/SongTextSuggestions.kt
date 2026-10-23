@@ -25,6 +25,7 @@ internal fun emptySuggestions(): Cursor = MatrixCursor(EMPTY_SUGGESTION_COLUMNS)
  * FTS syntax is neutralised). Nothing searchable in the input, or any SQLite failure, yields an empty cursor —
  * a content provider must not throw because of what the user typed.
  */
+@Suppress("TooGenericExceptionCaught") // a content provider must not throw: any failure -> empty cursor
 internal fun SongDao.suggestionsByText(rawText: String, limit: Int): Cursor {
   val ftsQuery = buildFtsPrefixQuery(rawText)
   if (ftsQuery.isEmpty()) return emptySuggestions()

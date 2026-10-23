@@ -64,7 +64,8 @@ class SongTextSuggestionsTest : FeatureSpec({
           }
         texts("ганок") shouldBe listOf("Ґанок") // by name
         texts("ГАНОК") shouldBe listOf("Ґанок")
-        texts("ижак") shouldBe listOf("Ґанок") // by lyric: the name does not match, TEXT_1 still shows the original name
+        // by lyric: the name does not match, TEXT_1 still shows the original name
+        texts("ижак") shouldBe listOf("Ґанок")
         texts("пять") shouldBe listOf("Ґанок") // «пʼять» (U+02BC) in the lyric
         texts("п'ять") shouldBe listOf("Ґанок")
         texts("едини") shouldBe listOf("Ґанок")

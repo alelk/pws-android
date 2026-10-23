@@ -75,19 +75,27 @@ class SearchSchemaAndroidTest : FeatureSpec({
   suspend fun PwsDatabase.integrityCheck() = useWriterConnection { it.execSQL(SongSearchSchema.INTEGRITY_CHECK) }
 
   /** The same checks on any engine. */
+  @Suppress("LongMethod") // one scenario, run unchanged on every engine
   suspend fun checkSearchSchema(engine: String, open: (String) -> PwsDatabase) {
     val name = "search-schema-$engine.db"
     context().deleteDatabase(name)
     val db = open(name)
     try {
-      println("$engine: sqlite ${db.strings("SELECT sqlite_version()")}, compile options ${db.strings("PRAGMA compile_options")}")
+      println(
+        "$engine: sqlite ${db.strings("SELECT sqlite_version()")}, " +
+          "compile options ${db.strings("PRAGMA compile_options")}",
+      )
 
       // fresh database: view, FTS4 over the view, our triggers only
       db.strings("SELECT sql FROM sqlite_master WHERE name = 'songs_fts'") shouldBe listOf(SongSearchSchema.createFts)
-      db.strings("SELECT sql FROM sqlite_master WHERE name = 'songs_search_v'") shouldBe listOf(SongSearchSchema.createView)
-      db.strings("SELECT name FROM sqlite_master WHERE type = 'trigger' AND tbl_name = 'songs'") shouldContainExactlyInAnyOrder
+      db.strings("SELECT sql FROM sqlite_master WHERE name = 'songs_search_v'") shouldBe
+        listOf(SongSearchSchema.createView)
+      db.strings(
+        "SELECT name FROM sqlite_master WHERE type = 'trigger' AND tbl_name = 'songs'",
+      ) shouldContainExactlyInAnyOrder
         SongSearchSchema.triggers.keys
-      // R9: REPLACE fires the BEFORE DELETE trigger only with recursive_triggers on; Room sets it on the write connection
+      // R9: REPLACE fires the BEFORE DELETE trigger only with recursive_triggers on;
+      // Room sets it on the write connection
       val recursiveTriggers = db.useWriterConnection { c ->
         c.usePrepared("PRAGMA recursive_triggers") {
           it.step()
@@ -137,7 +145,9 @@ class SearchSchemaAndroidTest : FeatureSpec({
     // re-open: the open callback finds everything in place, nothing is rebuilt or lost
     val again = open(name)
     try {
-      again.strings("SELECT name FROM sqlite_master WHERE type = 'trigger' AND tbl_name = 'songs'") shouldContainExactlyInAnyOrder
+      again.strings(
+        "SELECT name FROM sqlite_master WHERE type = 'trigger' AND tbl_name = 'songs'",
+      ) shouldContainExactlyInAnyOrder
         SongSearchSchema.triggers.keys
       again.indexed("ижачок") shouldBe listOf(3L)
       again.integrityCheck()
@@ -158,7 +168,9 @@ class SearchSchemaAndroidTest : FeatureSpec({
         if (sqlCipherLoaded) {
           Enabled.enabled
         } else {
-          Enabled.disabled("SQLCipher native library is not loadable on this JVM — run on a device/emulator (plan T-0.1)")
+          Enabled.disabled(
+            "SQLCipher native library is not loadable on this JVM — run on a device/emulator (plan T-0.1)",
+          )
         }
       },
     ) {
