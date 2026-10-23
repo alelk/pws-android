@@ -22,7 +22,7 @@ object PwsDatabaseProvider {
     return Room
       .databaseBuilder(context.applicationContext, PwsDatabase::class.java, DATABASE_NAME)
       .openHelperFactory(SelfHealingOpenHelperFactory(SupportOpenHelperFactory(passphrase), passphrase))
-      .addMigrations(MIGRATION_14_15)
+      .withPwsSchema()
       .build()
   }
 

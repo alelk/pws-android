@@ -1,8 +1,14 @@
 package io.github.alelk.pws.database
 
+import androidx.room.execSQL
+import androidx.room.useReaderConnection
+import androidx.room.useWriterConnection
 import br.com.colman.kotest.FeatureSpec
 import br.com.colman.kotest.android.extensions.robolectric.RobolectricTest
+import io.github.alelk.pws.database.search.SongSearchSchema
 import io.github.alelk.pws.domain.core.ids.BookId
+import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
+import io.kotest.matchers.longs.shouldBeGreaterThan
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import java.io.File
@@ -51,6 +57,26 @@ class CurrentDatabaseTest : FeatureSpec({
 
         // a known book from the seed catalogue is readable
         db.bookDao().getById(BookId.parse("Gusli")).shouldNotBeNull()
+      }
+    }
+
+    // Room opens the v14 asset through MIGRATION_14_15 + MIGRATION_15_16 (KMP form, SupportSQLite mode here).
+    scenario("migrates to v16: songs_fts is rebuilt over the folded view, Room's FTS triggers are gone") {
+      withPwsDb(currentDbZip, readOnly = true) { db ->
+        db.useReaderConnection { c ->
+          suspend fun strings(sql: String) = c.usePrepared(sql) { st -> buildList { while (st.step()) add(st.getText(0)) } }
+          suspend fun long(sql: String) = c.usePrepared(sql) { st ->
+            st.step()
+            st.getLong(0)
+          }
+          long("PRAGMA user_version") shouldBe 16
+          strings("SELECT sql FROM sqlite_master WHERE name = 'songs_fts'") shouldBe listOf(SongSearchSchema.createFts)
+          strings("SELECT name FROM sqlite_master WHERE type = 'trigger' AND tbl_name = 'songs'") shouldContainExactlyInAnyOrder
+            SongSearchSchema.triggers.keys
+          long("SELECT count(*) FROM songs_fts_docsize") shouldBe 157
+          long("SELECT count(*) FROM songs_fts WHERE songs_fts MATCH '\"господ*\"'") shouldBeGreaterThan 0
+        }
+        db.useWriterConnection { it.execSQL(SongSearchSchema.INTEGRITY_CHECK) }
       }
     }
   }

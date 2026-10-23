@@ -17,6 +17,7 @@ import io.github.alelk.pws.database.backup.BackupScenario.dumpUserTables
 import io.github.alelk.pws.database.backup.BackupScenario.seedCatalog
 import io.github.alelk.pws.database.backup.BackupScenario.seedRestoreTarget
 import io.github.alelk.pws.database.backup.BackupScenario.seedUserData
+import io.github.alelk.pws.database.withPwsSchema
 import io.github.alelk.pws.domain.core.Color
 import io.github.alelk.pws.domain.core.Locale
 import io.github.alelk.pws.domain.core.Version
@@ -48,7 +49,7 @@ class BackupGoldenTest :
 
     fun inMemoryDb(): PwsDatabase {
       val ctx = ApplicationProvider.getApplicationContext<Context>()
-      return Room.inMemoryDatabaseBuilder(ctx, PwsDatabase::class.java).allowMainThreadQueries().build()
+      return Room.inMemoryDatabaseBuilder(ctx, PwsDatabase::class.java).withPwsSchema().allowMainThreadQueries().build()
     }
 
     fun dataStore(scope: CoroutineScope): DataStore<Preferences> {

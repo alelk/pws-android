@@ -108,10 +108,9 @@ app-compose/src/main/kotlin/io/github/alelk/pws/android/compose/
   └ donation/                    flavor-specific donation flow
 
 data/db-android/src/main/kotlin/io/github/alelk/pws/database/
-  ├ PwsDatabaseProvider.kt       Room.databaseBuilder() + SupportOpenHelperFactory(passphrase)
+  ├ PwsDatabaseProvider.kt       Room.databaseBuilder() + SupportOpenHelperFactory(passphrase) + withPwsSchema()
   ├ initDatabase.kt              first-launch asset extraction + sqlcipher_export
   ├ migrateDataFromPrevDatabase.kt  3.2.2 → 3.3.0 migration of user data
-  ├ migrations.kt                Room schema migrations (MIGRATION_14_15, ...)
   ├ markBuiltInBooks.kt          marks built-in books as source=ASSET on first launch
   ├ PwsContentKey.kt             public wrapper around DbKeyConfig.keyHex()
   ├ openReadOnlyDatabase.kt      read-only access to legacy DB files
@@ -270,8 +269,10 @@ Apply on the shell root composable so Maestro can address Compose nodes by `test
 ### Change DB schema
 
 1. Update Room entities/DAOs in `pws-core` (`:data:db-room`), bump `PwsDatabase.version`.
-2. Write migration `MIGRATION_N_N+1` in `:data:db-android/migrations.kt`, wire in
-   `PwsDatabaseProvider` `.addMigrations(...)`.
+2. Write migration `MIGRATION_N_N+1` (KMP form, `migrate(SQLiteConnection)`) in pws-core
+   `:data:db-room` `PwsSchema.kt` and add it to `PWS_MIGRATIONS` — every builder (`PwsDatabaseProvider`, tests) gets it
+   through `withPwsSchema()`. Never build a `PwsDatabase` without `withPwsSchema()`: it also creates `songs_fts`,
+   which Room does not manage (`SongSearchSchema`).
 3. Update repository implementations in `pws-core` (`:data:repo-room`).
 4. If adding a TypeConverter (enum, value class, etc.) — add to `DbTypeConverters.kt` in
    `:data:db-room`.

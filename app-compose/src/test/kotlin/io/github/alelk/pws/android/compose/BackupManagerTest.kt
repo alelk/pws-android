@@ -18,6 +18,7 @@ import io.github.alelk.pws.database.song_number.songNumberEntity
 import io.github.alelk.pws.database.history.HistoryEntity
 import io.github.alelk.pws.database.song_tag.SongTagEntity
 import io.github.alelk.pws.database.tag.tagEntity
+import io.github.alelk.pws.database.withPwsSchema
 import io.github.alelk.pws.domain.core.Color
 import io.github.alelk.pws.domain.core.ids.BookId
 import io.github.alelk.pws.domain.core.ids.SongId
@@ -56,7 +57,7 @@ class BackupManagerTest : FeatureSpec({
 
   fun inMemoryDb(): PwsDatabase {
     val ctx = ApplicationProvider.getApplicationContext<Context>()
-    return Room.inMemoryDatabaseBuilder(ctx, PwsDatabase::class.java).allowMainThreadQueries().build()
+    return Room.inMemoryDatabaseBuilder(ctx, PwsDatabase::class.java).withPwsSchema().allowMainThreadQueries().build()
   }
 
   fun dataStore(scope: CoroutineScope): DataStore<Preferences> {
