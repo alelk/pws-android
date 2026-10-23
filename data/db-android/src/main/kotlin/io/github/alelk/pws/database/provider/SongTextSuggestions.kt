@@ -29,7 +29,13 @@ internal fun SongDao.suggestionsByText(rawText: String, limit: Int): Cursor {
   val ftsQuery = buildFtsPrefixQuery(rawText)
   if (ftsQuery.isEmpty()) return emptySuggestions()
   return try {
-    getSuggestionsBySongName(ftsQuery, limit).takeIf { it.count > 0 } ?: getSuggestionsBySongLyric(ftsQuery, limit)
+    val byName = getSuggestionsBySongName(ftsQuery, limit)
+    if (byName.count > 0) {
+      byName
+    } else {
+      byName.close()
+      getSuggestionsBySongLyric(ftsQuery, limit)
+    }
   } catch (e: Exception) {
     Timber.w(e, "text suggestions failed (query length = ${rawText.length})")
     emptySuggestions()

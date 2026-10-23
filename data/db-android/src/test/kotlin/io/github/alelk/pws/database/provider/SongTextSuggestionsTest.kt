@@ -27,10 +27,10 @@ class SongTextSuggestionsTest : FeatureSpec({
 
   beforeContainer { setupTimberForTest() }
 
-  suspend fun PwsDatabase.seedSong() {
+  suspend fun PwsDatabase.seedSong(name: String = "Святий Боже", lyric: String = "Святий Боже, святий кріпкий") {
     val rs = RandomSource.seeded(42L)
     val book: BookEntity = Arb.bookEntity().next(rs)
-    val song: SongEntity = Arb.songEntity().next(rs).copy(id = SongId(1), name = "Святий Боже", lyric = "Святий Боже, святий кріпкий", edited = false)
+    val song: SongEntity = Arb.songEntity().next(rs).copy(id = SongId(1), name = name, lyric = lyric, edited = false)
     bookDao().insert(listOf(book))
     bookStatisticDao().insert(listOf(BookStatisticEntity(id = book.id, priority = 10)))
     songDao().insert(listOf(song))
@@ -47,6 +47,28 @@ class SongTextSuggestionsTest : FeatureSpec({
         cursor.count shouldBe 1
         cursor.moveToFirst()
         cursor.getString(cursor.getColumnIndexOrThrow(SearchManager.SUGGEST_COLUMN_TEXT_1)) shouldBe "Святий Боже"
+      } finally {
+        db.close()
+      }
+    }
+
+    scenario("folded letters and apostrophes find the song and the original text is shown") {
+      val db = pwsDbForTest(inMemory = true, name = "suggestions-test.db")
+      try {
+        db.seedSong(name = "Ґанок", lyric = "Єдиний їжак і пʼять яблук")
+        fun texts(input: String): List<String> =
+          db.songDao().suggestionsByText(input, limit = 10).use { c ->
+            buildList {
+              while (c.moveToNext()) add(c.getString(c.getColumnIndexOrThrow(SearchManager.SUGGEST_COLUMN_TEXT_1)))
+            }
+          }
+        texts("ганок") shouldBe listOf("Ґанок") // by name
+        texts("ГАНОК") shouldBe listOf("Ґанок")
+        texts("ижак") shouldBe listOf("Ґанок") // by lyric: the name does not match, TEXT_1 still shows the original name
+        texts("пять") shouldBe listOf("Ґанок") // «пʼять» (U+02BC) in the lyric
+        texts("п'ять") shouldBe listOf("Ґанок")
+        texts("едини") shouldBe listOf("Ґанок")
+        texts("відсутнє") shouldBe emptyList()
       } finally {
         db.close()
       }
