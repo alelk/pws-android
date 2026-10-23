@@ -32,14 +32,14 @@ jobs:
 
       - name: Build and run tests
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GPR_TOKEN }}
         run: |
           # Release variants need signing secrets, which only release-build.yml has.
           ./gradlew build -x assembleRuRelease -x assembleRustoreRelease -x assembleUkRelease -x assembleFullRelease
 
       - name: Build ruDebug & ukDebug
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GPR_TOKEN }}
         run: |
           ./gradlew buildRuDebugPreBundle buildUkDebugPreBundle
 

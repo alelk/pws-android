@@ -80,7 +80,7 @@ jobs:
       - name: Build ru Release
         if: ${{ inputs.flavor_ru }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GPR_TOKEN }}
           DB_DECRYPT_KEY_PROD: ${{ secrets.DB_DECRYPT_KEY_PROD }}
           # Absent secret → app ships with telemetry disabled (NoOpTelemetry), build still succeeds.
           APPMETRICA_API_KEY: ${{ secrets.APPMETRICA_API_KEY }}
@@ -95,7 +95,7 @@ jobs:
       - name: Build uk Release
         if: ${{ inputs.flavor_uk }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GPR_TOKEN }}
           DB_DECRYPT_KEY_PROD: ${{ secrets.DB_DECRYPT_KEY_PROD }}
           # Absent secret → app ships with telemetry disabled (NoOpTelemetry), build still succeeds.
           APPMETRICA_API_KEY: ${{ secrets.APPMETRICA_API_KEY }}
@@ -110,7 +110,7 @@ jobs:
       - name: Build rustore Release
         if: ${{ inputs.flavor_rustore }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GPR_TOKEN }}
           DB_DECRYPT_KEY_PROD: ${{ secrets.DB_DECRYPT_KEY_PROD }}
           # Absent secret → app ships with telemetry disabled (NoOpTelemetry), build still succeeds.
           APPMETRICA_API_KEY: ${{ secrets.APPMETRICA_API_KEY }}
