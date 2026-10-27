@@ -179,6 +179,9 @@ android {
       isDebuggable = true
       isMinifyEnabled = false
       versionNameSuffix = "-localSeed"
+      // A buildType without its own signingConfig falls back to the flavor's (release-ru/uk/rustore),
+      // whose keystore only exists in release-build.yml. Sign with the debug key instead.
+      signingConfig = signingConfigs.getByName("debug")
       buildConfigField("String", "CATALOG_URLS", "\"${catalogUrl("debug")}\"")
       buildConfigField("String", "BUNDLE_VARIANT", "\"debug\"")
     }
