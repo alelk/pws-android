@@ -92,6 +92,10 @@ val seedBooksByFlavor: Map<String, List<String>> =
     ),
   )
 
+/** Flavors whose release must be signed (CI release job); empty locally and in the PR build. */
+val requireSigningFor: Set<String> =
+  (findProperty("requireReleaseSigning") as String?).orEmpty().split(',').map { it.trim() }.filter { it.isNotEmpty() }.toSet()
+
 android {
   namespace = "io.github.alelk.pws.android.compose"
 
@@ -161,10 +165,25 @@ android {
       isMinifyEnabled = true
       isShrinkResources = true
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-      productFlavors.getByName("ru").signingConfig = signingConfigs.getByName("release-ru")
-      productFlavors.getByName("full").signingConfig = signingConfigs.getByName("release-ru")
-      productFlavors.getByName("uk").signingConfig = signingConfigs.getByName("release-uk")
-      productFlavors.getByName("rustore").signingConfig = signingConfigs.getByName("release-rustore")
+      // Signing is assigned per flavor, only when its credentials are complete. Without them the
+      // release variant is unsigned (fine for `./gradlew build`, R8 and DEX measurement); a release
+      // job names the flavors it ships in -PrequireReleaseSigning=ru,full — a missing credential
+      // for those fails configuration instead of producing an unsigned artifact.
+      mapOf(
+        "ru" to "release-ru",
+        "full" to "release-ru",
+        "uk" to "release-uk",
+        "rustore" to "release-rustore",
+      ).forEach { (flavor, config) ->
+        val signing = signingConfigs.getByName(config)
+        if (signing.storeFile != null && signing.keyAlias != null && signing.storePassword != null && signing.keyPassword != null) {
+          productFlavors.getByName(flavor).signingConfig = signing
+        } else if (flavor in requireSigningFor) {
+          throw GradleException("Flavor '$flavor': signing config '$config' is incomplete, refusing an unsigned release")
+        } else {
+          logger.lifecycle("Flavor '$flavor': signing config '$config' is incomplete → release will be UNSIGNED")
+        }
+      }
       buildConfigField("String", "CATALOG_URLS", "\"${catalogUrl("release")}\"")
       buildConfigField("String", "BUNDLE_VARIANT", "\"release\"")
     }
