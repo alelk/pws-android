@@ -1,0 +1,12 @@
+version: 2
+updates:
+  # Actions are pinned to commit SHAs (version kept in a trailing comment); Dependabot moves the SHA.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+  # The pinned semantic-release toolchain (.github/release/package-lock.json).
+  - package-ecosystem: npm
+    directory: /.github/release
+    schedule:
+      interval: monthly
