@@ -23,18 +23,23 @@ class PwsDatabaseBuilderTest :
     }
 
     test("the rule detects a builder without withPwsSchema") {
-      pwsBuilders("val db = Room.inMemoryDatabaseBuilder(c, PwsDatabase::class.java).build()").single() shouldBe false
-      pwsBuilders("val db = Room\n  .databaseBuilder(c, PwsDatabase::class.java, n)\n  .withPwsSchema()\n  .build()").single() shouldBe true
+      pwsBuilders("val db = Room.inMemoryDatabaseBuilder(c, PwsDatabase::class.java).build()")
+        .single() shouldBe false
+      pwsBuilders("val db = Room\n  .databaseBuilder(c, PwsDatabase::class.java, n)\n  .withPwsSchema()\n  .build()")
+        .single() shouldBe true
     }
 
     test("every PwsDatabase builder uses withPwsSchema()") {
       // this file holds deliberately wrong sample builders in string literals
-      val actual = sources.violations { f -> !f.relativePath.endsWith("/PwsDatabaseBuilderTest.kt") && pwsBuilders(f.code).any { !it } }
+      val actual = sources.violations { f ->
+        !f.relativePath.endsWith("/PwsDatabaseBuilderTest.kt") && pwsBuilders(f.code).any { !it }
+      }
       withClue("Builders without withPwsSchema():\n${actual.joinToString("\n")}") { actual shouldBe emptyList() }
     }
   })
 
-private val BUILDER = Regex("""\bRoom\s*\.\s*(?:inMemoryDatabaseBuilder|databaseBuilder)\b([\s\S]*?)\.\s*build\s*\(\)""")
+private val BUILDER =
+  Regex("""\bRoom\s*\.\s*(?:inMemoryDatabaseBuilder|databaseBuilder)\b([\s\S]*?)\.\s*build\s*\(\)""")
 private val WITH_SCHEMA = Regex("""\.\s*withPwsSchema\s*\(\)""")
 
 /** One flag per `PwsDatabase` builder in [code]: `true` when it calls `withPwsSchema()`. */

@@ -47,7 +47,10 @@ class PendingRestoreAfterInstallTest :
       scenario("records are restored as their books get installed; the file goes once all books are installed") {
         runTest {
           val ctx = ApplicationProvider.getApplicationContext<Context>()
-          val db = Room.inMemoryDatabaseBuilder(ctx, PwsDatabase::class.java).withPwsSchema().allowMainThreadQueries().build()
+          val db = Room.inMemoryDatabaseBuilder(ctx, PwsDatabase::class.java)
+            .withPwsSchema()
+            .allowMainThreadQueries()
+            .build()
           val dsFile = File(ctx.filesDir, "ds-${UUID.randomUUID()}.preferences_pb")
           val backupManager = BackupManager(db, PreferenceDataStoreFactory.create(scope = backgroundScope) { dsFile })
           val importer = BookImporterImpl(ImportBookBundleUseCase(BookContentWriterImpl(db, RoomTransactionRunner(db))))

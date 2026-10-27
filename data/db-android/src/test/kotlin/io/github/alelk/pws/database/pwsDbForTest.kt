@@ -7,8 +7,18 @@ import java.io.File
 
 fun pwsDbForTest(inMemory: Boolean, name: String): PwsDatabase {
   val context = ApplicationProvider.getApplicationContext<Context>()
-  return if (inMemory) Room.inMemoryDatabaseBuilder(context, PwsDatabase::class.java).withPwsSchema().build()
-  else Room.databaseBuilder(context, PwsDatabase::class.java, name).withPwsSchema().build()
+  // the content-provider cursor queries (suggestionsByText) are not suspend: production calls them on a binder thread
+  return if (inMemory) {
+    Room.inMemoryDatabaseBuilder(context, PwsDatabase::class.java)
+      .allowMainThreadQueries()
+      .withPwsSchema()
+      .build()
+  } else {
+    Room.databaseBuilder(context, PwsDatabase::class.java, name)
+      .allowMainThreadQueries()
+      .withPwsSchema()
+      .build()
+  }
 }
 
 /**

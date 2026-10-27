@@ -28,7 +28,6 @@ class PwsDataProvider : ContentProvider() {
   override fun query(uri: Uri, projection: Array<String>?, selection: String?, selectionArgs: Array<String>?, sortOrder: String?): Cursor? {
     val cursor =
       when (URI_MATCHER.match(uri)) {
-
         URI_MATCH_SUGGESTIONS_BY_NUMBER -> {
           val songNumber = uri.lastPathSegment?.toIntOrNull() ?: return null
           val limit = uri.getQueryParameter(SearchManager.SUGGEST_PARAMETER_LIMIT)?.toIntOrNull()
@@ -57,7 +56,6 @@ class PwsDataProvider : ContentProvider() {
   override fun insert(uri: Uri, values: ContentValues?): Uri? = null
   override fun delete(uri: Uri, selection: String?, selectionArgs: Array<out String>?): Int = -1
   override fun update(uri: Uri, values: ContentValues?, selection: String?, selectionArgs: Array<String>?): Int = -1
-
 
   companion object {
     const val URI_MATCH_SUGGESTIONS_BY_NUMBER = 1
