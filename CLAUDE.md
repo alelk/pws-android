@@ -45,6 +45,7 @@ Other plans in [`docs/ai/plans/`](docs/ai/plans/):
 - `2026-06-27_global-book-library_plan.md` — global library: multi-source (GitHub Pages + Cloudflare R2).
 - `2026-07-08_universal-apk-onboarding_plan.md` — первый запуск, универсальный APK.
 - `2026-09-10_app-optimization-r8_plan.md` — R8 optimization (18% obfuscation / 19% shrinking).
+- `2026-10-23_ukrainian-search_plan.md` — поиск по песням: украинский (ґ/є/ї/і, апострофы), санитизация FTS-запроса.
 
 When the user references "current plan" without a name, default to the architecture refactoring plan.
 

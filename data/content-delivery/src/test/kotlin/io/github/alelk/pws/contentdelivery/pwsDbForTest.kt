@@ -8,12 +8,14 @@ import io.github.alelk.pws.data.repository.room.booklibrary.BookContentWriterImp
 import io.github.alelk.pws.data.repository.room.installed_book.InstalledBookRepositoryImpl
 import io.github.alelk.pws.data.repository.room.transaction.RoomTransactionRunner
 import io.github.alelk.pws.database.PwsDatabase
+import io.github.alelk.pws.database.withPwsSchema
 import io.github.alelk.pws.portable.booklibrary.ImportBookBundleUseCase
 
 /** Creates a fresh in-memory [PwsDatabase] for a single test run. */
 fun inMemoryPwsDb(): PwsDatabase {
   val context = ApplicationProvider.getApplicationContext<Context>()
   return Room.inMemoryDatabaseBuilder(context, PwsDatabase::class.java)
+    .withPwsSchema()
     .allowMainThreadQueries()
     .build()
 }

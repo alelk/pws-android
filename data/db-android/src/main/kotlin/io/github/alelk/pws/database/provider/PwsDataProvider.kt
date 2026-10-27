@@ -28,7 +28,6 @@ class PwsDataProvider : ContentProvider() {
   override fun query(uri: Uri, projection: Array<String>?, selection: String?, selectionArgs: Array<String>?, sortOrder: String?): Cursor? {
     val cursor =
       when (URI_MATCHER.match(uri)) {
-
         URI_MATCH_SUGGESTIONS_BY_NUMBER -> {
           val songNumber = uri.lastPathSegment?.toIntOrNull() ?: return null
           val limit = uri.getQueryParameter(SearchManager.SUGGEST_PARAMETER_LIMIT)?.toIntOrNull()
@@ -38,13 +37,10 @@ class PwsDataProvider : ContentProvider() {
         }
 
         URI_MATCH_SUGGESTIONS_BY_NAME -> {
-          val searchText = uri.lastPathSegment?.trim()?.replace(Regex("\\s+"), "*")?.let { "$it*" } ?: return null
+          val searchText = uri.lastPathSegment ?: return null
           val limit = uri.getQueryParameter(SearchManager.SUGGEST_PARAMETER_LIMIT)?.toIntOrNull()
-          val result = songDao
-            .getSuggestionsBySongName(searchText, limit ?: 50)
-            .takeIf { it.count > 0 }
-            ?: songDao.getSuggestionsBySongLyric(searchText, limit ?: 50)
-          Timber.d("get songs suggestions by text $searchText with limit $limit: count = ${result.count}")
+          val result = songDao.suggestionsByText(searchText, limit ?: 50)
+          Timber.d("get songs suggestions by text with limit $limit: count = ${result.count}")
           result
         }
 
@@ -60,7 +56,6 @@ class PwsDataProvider : ContentProvider() {
   override fun insert(uri: Uri, values: ContentValues?): Uri? = null
   override fun delete(uri: Uri, selection: String?, selectionArgs: Array<out String>?): Int = -1
   override fun update(uri: Uri, values: ContentValues?, selection: String?, selectionArgs: Array<String>?): Int = -1
-
 
   companion object {
     const val URI_MATCH_SUGGESTIONS_BY_NUMBER = 1

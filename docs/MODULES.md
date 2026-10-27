@@ -31,7 +31,7 @@ resolve via GitHub Packages.
 ```text
 :app-compose ──► :data:db-android
             │     ├► pws-core :data:repo-room ─► pws-core :data:db-room ─► pws-core :domain
-            │     └► migrations.kt, markBuiltInBooks.kt, PwsContentKey.kt
+            │     └► markBuiltInBooks.kt, PwsContentKey.kt
             │
             ├► :data:content-delivery
             │     ├► pws-core :domain (BookCatalogRepository, InstallBookUseCase interfaces)
