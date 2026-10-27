@@ -218,15 +218,16 @@ android {
     // (values = en, values-pl, values-ru, values-uk).
     localeFilters += listOf("en", "pl", "ru", "uk")
   }
-
 }
 
 // rustoreDebug is signed with the RuStore release key when it is configured (as the fork did), so a
 // debuggable build installs over the published fork 2.3.1 and `run-as io.github.alelk.pws.app` can
 // inspect its files (upgrade tests, tools/rustore-upgrade-test.md). Without the key: debug key.
 val rustoreSigningConfigured = listOf(
-  "android.release.keystorePathRustore", "android.release.keyAliasRuRustore",
-  "android.release.keyPasswordRustore", "android.release.storePasswordRustore",
+  "android.release.keystorePathRustore",
+  "android.release.keyAliasRuRustore",
+  "android.release.keyPasswordRustore",
+  "android.release.storePasswordRustore",
 ).all { !(project.findProperty(it) as String?).isNullOrBlank() }
 
 androidComponents {
@@ -241,7 +242,7 @@ androidComponents {
         versionCode.set(variant.outputs.single().versionCode.map { it })
         minSdk.set(variant.minSdk.apiLevel)
         dbAuthority.set(
-          variant.resValues.getting(variant.makeResValueKey("string", "db_authority")).map { it.value }
+          variant.resValues.getting(variant.makeResValueKey("string", "db_authority")).map { it.value },
         )
       }
       tasks.matching { it.name == "preRustoreReleaseBuild" }.configureEach { dependsOn(guard) }
@@ -249,7 +250,7 @@ androidComponents {
 
     variant.resValues.put(
       variant.makeResValueKey("string", "versionName"),
-      com.android.build.api.variant.ResValue(variant.name)
+      com.android.build.api.variant.ResValue(variant.name),
     )
 
     // Minified variants: stage mapping.txt under output/appmetrica-mapping/, named by variant and
@@ -257,13 +258,13 @@ androidComponents {
     if (variant.buildType == "release") {
       val release = "${rootProject.extra["versionName"]}-${rootProject.extra["versionCode"]}"
       tasks.register<StageMappingFileTask>(
-        "stageAppMetricaMapping${variant.name.replaceFirstChar { it.uppercase() }}"
+        "stageAppMetricaMapping${variant.name.replaceFirstChar { it.uppercase() }}",
       ) {
         mappingFile.set(variant.artifacts.get(SingleArtifact.OBFUSCATION_MAPPING_FILE))
         stagedFile.set(
           rootProject.layout.projectDirectory.file(
-            "output/appmetrica-mapping/mapping-${variant.name}-$release.txt"
-          )
+            "output/appmetrica-mapping/mapping-${variant.name}-$release.txt",
+          ),
         )
       }
     }
@@ -277,7 +278,7 @@ androidComponents {
       // (debug, localSeed) uses the debug variant — matching BUNDLE_VARIANT and the runtime key.
       val bundleVariant = if (variant.buildType == "release") "release" else "debug"
       val seedTask = tasks.register<DownloadSeedBundlesTask>(
-        "generateSeedBundles${variant.name.replaceFirstChar { it.uppercase() }}"
+        "generateSeedBundles${variant.name.replaceFirstChar { it.uppercase() }}",
       ) {
         bookIds.set(seedBooks)
         this.bundleVariant.set(bundleVariant)
@@ -342,7 +343,3 @@ dependencies {
   testImplementation(libs.kotest.extensions.android)
   testImplementation(libs.robolectric)
 }
-
-
-
-
