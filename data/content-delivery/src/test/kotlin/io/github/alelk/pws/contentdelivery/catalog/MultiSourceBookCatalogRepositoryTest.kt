@@ -22,7 +22,7 @@ import io.ktor.client.engine.mock.respondError
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.runBlocking
 import io.github.alelk.pws.portable.model.BookCatalogEntry as PortableEntry
 
@@ -66,8 +66,8 @@ class MultiSourceBookCatalogRepositoryTest : FeatureSpec({
     scenario("picks the fastest source and remembers it") {
       runBlocking {
         val engine = MockEngine { request ->
-          // secondary is deliberately slow so the race is deterministic — primary wins
-          if (!isPrimary(request.url)) delay(500)
+          // secondary never answers (cancelled once primary wins); a fixed delay could lose on a cold CI runner
+          if (!isPrimary(request.url)) awaitCancellation()
           respond(catalogJson(if (isPrimary(request.url)) "Book-1" else "Book-2"), headers = headersOf(HttpHeaders.ContentType, "application/json"))
         }
         val store = InMemorySourceStore(value = null)
