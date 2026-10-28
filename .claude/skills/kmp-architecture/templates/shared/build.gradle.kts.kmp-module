@@ -1,0 +1,31 @@
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+
+plugins {
+    alias(libs.plugins.kotlin.multiplatform)   // with convention plugins: id("app.kmp") instead
+    alias(libs.plugins.kotlin.serialization)  // remove if no DTOs
+    // alias(libs.plugins.kotest)             // io.kotest.multiplatform — only if its
+    //                                        // compiler plugin supports this Kotlin version
+}
+
+kotlin {
+    jvm()
+
+    // Web target: wasmJs is the default. Swap for `js(IR) { browser() }` only for a shell
+    // that must run without WasmGC — never enable both. See references/web-target.md.
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs { browser() }
+
+    sourceSets {
+        commonMain.dependencies {
+            implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.arrow.core)
+        }
+        commonTest.dependencies {
+            implementation(libs.kotest.framework.engine)
+            implementation(libs.kotest.assertions)
+        }
+        jvmTest.dependencies {
+            implementation(libs.kotest.runner.junit5)
+        }
+    }
+}

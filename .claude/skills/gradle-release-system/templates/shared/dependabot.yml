@@ -1,0 +1,9 @@
+version: 2
+updates:
+  # Every third-party action should be pinned to a commit SHA (ci-hardening.md) — a moved tag
+  # can run anything with GITHUB_TOKEN. Dependabot bumps the SHA and keeps the version comment
+  # in sync; nothing here moves a tag by hand.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

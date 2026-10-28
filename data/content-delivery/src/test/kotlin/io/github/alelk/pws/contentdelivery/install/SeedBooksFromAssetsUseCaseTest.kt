@@ -6,7 +6,9 @@ import br.com.colman.kotest.FeatureSpec
 import br.com.colman.kotest.android.extensions.robolectric.RobolectricTest
 import io.github.alelk.pws.contentdelivery.ContentKeyProvider
 import io.github.alelk.pws.contentdelivery.bookBundle
+import io.github.alelk.pws.contentdelivery.bookImporter
 import io.github.alelk.pws.contentdelivery.inMemoryPwsDb
+import io.github.alelk.pws.contentdelivery.installedBookRepository
 import io.github.alelk.pws.contentdelivery.portableBook
 import io.github.alelk.pws.contentdelivery.portableSong
 import io.github.alelk.pws.database.PwsDatabase
@@ -54,7 +56,8 @@ class SeedBooksFromAssetsUseCaseTest : FeatureSpec({
   fun seeder(db: PwsDatabase): SeedBooksFromAssetsUseCase {
     val context = ApplicationProvider.getApplicationContext<Context>()
     context.getSharedPreferences("pws_seed_books", Context.MODE_PRIVATE).edit().clear().commit()
-    return SeedBooksFromAssetsUseCase(context, db, BookImporterImpl(db), ContentKeyProvider { "00".repeat(32) })
+    val keyProvider = ContentKeyProvider { "00".repeat(32) }
+    return SeedBooksFromAssetsUseCase(context, installedBookRepository(db), bookImporter(db), keyProvider)
   }
 
   suspend fun <T> withDb(block: suspend (PwsDatabase) -> T): T {

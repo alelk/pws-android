@@ -1,0 +1,130 @@
+# Version catalogue — the ONLY place versions live (libraries AND plugins).
+#
+# This set compiles together end to end (JVM server + wasmJs Compose client) as verified in a
+# production-shaped project in 2026-09. Bump deliberately, one family at a time, and read the
+# release notes for the alpha artifacts (navigation3, lifecycle-*-navigation3) — their APIs move.
+# Delete what the project does not use.
+[versions]
+kotlin            = "2.4.10"
+ktor              = "3.5.1"
+exposed           = "1.3.0"
+koin              = "4.2.2"
+serialization     = "1.11.0"
+coroutines        = "1.11.0"
+datetime          = "0.7.1"
+arrow             = "2.2.3"
+# Kotest runs on the JVM via the JUnit 5 platform. The multiplatform Gradle/compiler plugin
+# is deliberately unused — it lags the Kotlin compiler (see kmp-architecture).
+kotest            = "6.2.2"
+logback           = "1.5.18"
+flyway            = "11.8.0"
+compose           = "1.10.3"
+hoplite           = "2.9.0"
+password4j        = "1.8.2"
+# Jakarta Mail implementation for an SMTP adapter, and an in-process SMTP relay for its tests.
+angus-mail        = "2.0.3"
+greenmail         = "2.1.3"
+multiplatform-nav3-ui           = "1.0.0-alpha05"
+compose-multiplatform-lifecycle = "2.10.0-alpha05"
+kotlinx-collections-immutable   = "0.4.0"
+kotlinx-browser   = "0.3"
+turbine           = "1.2.0"
+shadow            = "9.6.1"
+detekt            = "1.23.8"
+ktlint            = "13.1.0"
+
+[libraries]
+# Kotlin
+kotlinx-coroutines-core   = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core",   version.ref = "coroutines" }
+kotlinx-serialization-json= { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
+kotlinx-datetime          = { module = "org.jetbrains.kotlinx:kotlinx-datetime",           version.ref = "datetime" }
+kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinx-collections-immutable" }
+
+# Ktor server
+ktor-server-core          = { module = "io.ktor:ktor-server-core",                 version.ref = "ktor" }
+ktor-server-netty         = { module = "io.ktor:ktor-server-netty",                version.ref = "ktor" }
+ktor-server-content-neg   = { module = "io.ktor:ktor-server-content-negotiation",  version.ref = "ktor" }
+ktor-serialization-json   = { module = "io.ktor:ktor-serialization-kotlinx-json",  version.ref = "ktor" }
+ktor-server-auth          = { module = "io.ktor:ktor-server-auth",                 version.ref = "ktor" }
+ktor-server-auth-jwt      = { module = "io.ktor:ktor-server-auth-jwt",             version.ref = "ktor" }
+ktor-server-call-id       = { module = "io.ktor:ktor-server-call-id",              version.ref = "ktor" }
+ktor-server-call-logging  = { module = "io.ktor:ktor-server-call-logging",         version.ref = "ktor" }
+ktor-server-status-pages  = { module = "io.ktor:ktor-server-status-pages",         version.ref = "ktor" }
+ktor-server-resources     = { module = "io.ktor:ktor-server-resources",            version.ref = "ktor" }
+ktor-server-rate-limit    = { module = "io.ktor:ktor-server-rate-limit",           version.ref = "ktor" }
+ktor-server-cors          = { module = "io.ktor:ktor-server-cors",                 version.ref = "ktor" }
+ktor-server-sse           = { module = "io.ktor:ktor-server-sse",                  version.ref = "ktor" }
+ktor-server-forwarded-hdr = { module = "io.ktor:ktor-server-forwarded-header",     version.ref = "ktor" }
+ktor-server-test-host     = { module = "io.ktor:ktor-server-test-host",            version.ref = "ktor" }
+
+# Ktor client
+ktor-client-core          = { module = "io.ktor:ktor-client-core",                 version.ref = "ktor" }
+ktor-client-cio           = { module = "io.ktor:ktor-client-cio",                  version.ref = "ktor" }
+ktor-client-js            = { module = "io.ktor:ktor-client-js",                   version.ref = "ktor" }
+ktor-client-content-neg   = { module = "io.ktor:ktor-client-content-negotiation",  version.ref = "ktor" }
+ktor-client-auth          = { module = "io.ktor:ktor-client-auth",                 version.ref = "ktor" }
+ktor-client-resources     = { module = "io.ktor:ktor-client-resources",            version.ref = "ktor" }
+ktor-client-mock          = { module = "io.ktor:ktor-client-mock",                 version.ref = "ktor" }
+ktor-resources            = { module = "io.ktor:ktor-resources",                   version.ref = "ktor" }
+
+# Exposed (1.x — imports live under org.jetbrains.exposed.v1.*)
+exposed-core              = { module = "org.jetbrains.exposed:exposed-core",             version.ref = "exposed" }
+exposed-jdbc              = { module = "org.jetbrains.exposed:exposed-jdbc",             version.ref = "exposed" }
+exposed-json              = { module = "org.jetbrains.exposed:exposed-json",             version.ref = "exposed" }
+exposed-kotlin-datetime   = { module = "org.jetbrains.exposed:exposed-kotlin-datetime",  version.ref = "exposed" }
+
+# Koin
+koin-core                 = { module = "io.insert-koin:koin-core",     version.ref = "koin" }
+koin-ktor                 = { module = "io.insert-koin:koin-ktor",     version.ref = "koin" }
+koin-compose              = { module = "io.insert-koin:koin-compose",  version.ref = "koin" }
+
+# Arrow (optional — for Either-based error handling)
+arrow-core                = { module = "io.arrow-kt:arrow-core",       version.ref = "arrow" }
+
+# Navigation 3 + ViewModel (Compose Multiplatform)
+jetbrains-navigation3-ui                  = { module = "org.jetbrains.androidx.navigation3:navigation3-ui",                  version.ref = "multiplatform-nav3-ui" }
+jetbrains-lifecycle-viewmodel-navigation3 = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-navigation3",  version.ref = "compose-multiplatform-lifecycle" }
+jetbrains-lifecycle-runtime-compose       = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose",         version.ref = "compose-multiplatform-lifecycle" }
+koin-compose-viewmodel                    = { module = "io.insert-koin:koin-compose-viewmodel",                              version.ref = "koin" }
+
+# Browser interop for the web shell (typed window/document/localStorage/history).
+kotlinx-browser           = { module = "org.jetbrains.kotlinx:kotlinx-browser", version.ref = "kotlinx-browser" }
+
+# DB
+flyway-core               = { module = "org.flywaydb:flyway-core",                 version.ref = "flyway" }
+flyway-database-postgresql= { module = "org.flywaydb:flyway-database-postgresql",  version.ref = "flyway" }
+hikaricp                  = { module = "com.zaxxer:HikariCP",          version = "6.3.0" }
+postgresql                = { module = "org.postgresql:postgresql",     version = "42.7.5" }
+
+# Password hashing (Argon2id) — proven library, no home-grown crypto .
+password4j                = { module = "com.password4j:password4j", version.ref = "password4j" }
+angus-mail                = { module = "org.eclipse.angus:angus-mail",       version.ref = "angus-mail" }
+greenmail                 = { module = "com.icegreen:greenmail",             version.ref = "greenmail" }
+
+# Config
+hoplite-core              = { module = "com.sksamuel.hoplite:hoplite-core",  version.ref = "hoplite" }
+hoplite-yaml              = { module = "com.sksamuel.hoplite:hoplite-yaml",  version.ref = "hoplite" }
+
+# Logging
+logback-classic           = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+kotlin-logging            = { module = "io.github.oshai:kotlin-logging-jvm", version = "7.0.3" }
+
+# Testing
+kotest-framework-engine   = { module = "io.kotest:kotest-framework-engine",  version.ref = "kotest" }
+kotest-runner-junit5      = { module = "io.kotest:kotest-runner-junit5",     version.ref = "kotest" }
+kotest-assertions         = { module = "io.kotest:kotest-assertions-core",   version.ref = "kotest" }
+kotest-json               = { module = "io.kotest:kotest-assertions-json",   version.ref = "kotest" }
+mockk                     = { module = "io.mockk:mockk",                     version = "1.14.2" }
+testcontainers-postgresql = { module = "org.testcontainers:postgresql",      version = "1.20.6" }
+kotlinx-coroutines-test   = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
+turbine                   = { module = "app.cash.turbine:turbine",           version.ref = "turbine" }
+
+[plugins]
+kotlin-jvm           = { id = "org.jetbrains.kotlin.jvm",                    version.ref = "kotlin" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform",          version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization",   version.ref = "kotlin" }
+compose              = { id = "org.jetbrains.compose",                       version.ref = "compose" }
+compose-compiler     = { id = "org.jetbrains.kotlin.plugin.compose",         version.ref = "kotlin" }
+shadow               = { id = "com.gradleup.shadow",                          version.ref = "shadow" }
+detekt               = { id = "io.gitlab.arturbosch.detekt",                 version.ref = "detekt" }
+ktlint               = { id = "org.jlleitschuh.gradle.ktlint",               version.ref = "ktlint" }

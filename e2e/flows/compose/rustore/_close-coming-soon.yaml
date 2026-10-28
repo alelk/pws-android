@@ -1,0 +1,13 @@
+appId: ${APP_ID}
+name: "_rustore helper: assert the coming-soon sheet and close it"
+---
+- extendedWaitUntil:
+    visible:
+      id: "${SHEET_PRO_COMING_SOON}"
+    timeout: ${TIMEOUT_MEDIUM}
+- tapOn:
+    id: "${ACTION_PRO_COMING_SOON_OK}"
+- extendedWaitUntil:
+    notVisible:
+      id: "${SHEET_PRO_COMING_SOON}"
+    timeout: ${TIMEOUT_MEDIUM}

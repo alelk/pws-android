@@ -1,0 +1,9 @@
+// Root build script: shared project coordinates only.
+// No plugins are applied here — build logic lives in convention plugins
+// (convention-plugins/), applied per module as `app.kmp` / `app.jvm` / `app.compose`.
+
+allprojects {
+    // The product version has one source of truth: app.version (rewritten by the release).
+    version = rootProject.file("app.version").readText().trim()
+    group = "io.github.myorg"
+}

@@ -66,7 +66,23 @@ Pending разрешается ровно один раз, в `MainActivity`:
 
 События: `screen_view`, `song_open`, `search` (только длина запроса + число результатов),
 `book_install`, `book_update`, `book_uninstall`, `book_import`, `onboarding_complete`,
-`paywall_shown`, `purchase`, `donation_prompt`.
+`paywall_shown`, `purchase`, `donation_prompt`, `premium_upsell_shown`, `entitlement_resolved`,
+`legacy_migration`.
+
+RuStore (plan 2026-09-29):
+
+- `premium_upsell_shown` — заблокированный Pro-гейт показал апселл: `feature` (`favorites`,
+  `song_edit`, `song_tags`, `share`, `theme` или `settings`), `mode` (`paywall` / `coming_soon`).
+  По смыслу заменяет `paywall_shown` для гейтов; `paywall_shown` остаётся и считает фактические
+  открытия экрана оплаты (только при включённых продажах).
+- `entitlement_resolved` — один раз за процесс: `kind` (`lifetime` / `subscription` / `expired` /
+  `none` / `read_failed`), `source=legacy_rustore`. Без дат и идентификаторов покупок.
+- `legacy_migration` — перенос данных из старой БД: `source` (имя файла), `result`
+  (`complete` / `partial_retry` / `partial_gave_up` / `failed_retry` / `failed_gave_up`),
+  `items_found`, `items_migrated`, `attempt`, `duration_ms`. Только числа.
+- Non-fatal: `entitlement_read_failed`, `entitlement_bad_subscription_date` (без самой строки),
+  `entitlement_unknown_timeout`, `legacy_migration_gave_up`, `legacy_settings_read_failed`,
+  `flavor_startup_failed`.
 
 User properties: `flavor`, `bundle_variant`, `device_language`, `installed_books`.
 

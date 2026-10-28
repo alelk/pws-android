@@ -51,9 +51,6 @@ yarn-debug.log*
 *.log
 /data/db-android/test-db/
 
-# Claude
-.claude/skills
-
 # Junie
 .junie/skills
 .junie/mcp

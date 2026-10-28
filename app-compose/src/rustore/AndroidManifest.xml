@@ -4,12 +4,38 @@
   manifest merger (matched on activity name). Adds:
    - the RuStore Pay SDK auto-init meta-data (no explicit RuStorePayClient.init),
    - a VIEW + BROWSABLE deeplink intent-filter on PaymentActivity, which forwards
-     the return intent into the SDK after paying in RuStore.
+     the return intent into the SDK after paying in RuStore (while purchases are
+     disabled PaymentActivity just forwards to MainActivity),
+   - the launcher entry under the component name of the RuStore fork (see below).
   The scheme MUST equal `sdk_pay_scheme_value` below.
 -->
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools">
 
   <application>
+
+    <!--
+      The fork (2.2.0–2.3.1) launched io.github.alelk.pws.android.app.feature.home.MainActivity.
+      Launchers pin shortcuts / home-screen icons by component name, so after the update the icon
+      would vanish or turn "app not installed". The launcher entry therefore keeps the old component
+      name as an alias of the new MainActivity, and MainActivity's own launcher filter is removed so
+      there is exactly one app icon.
+    -->
+    <activity android:name=".MainActivity">
+      <intent-filter tools:node="removeAll" />
+    </activity>
+
+    <activity-alias
+      android:name="io.github.alelk.pws.android.app.feature.home.MainActivity"
+      android:exported="true"
+      android:targetActivity=".MainActivity">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <action android:name="android.intent.action.VIEW" />
+        <action android:name="android.intent.action.SENDTO" />
+        <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+    </activity-alias>
 
     <activity
       android:name=".payment.PaymentActivity"

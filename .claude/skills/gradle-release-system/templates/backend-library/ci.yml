@@ -1,0 +1,80 @@
+name: CI
+
+on:
+  push:
+    branches: [main, next]
+  pull_request:
+    branches: [main, next]
+
+permissions:
+  contents: write
+  packages: write
+  checks: write
+
+# One run per ref; a newer push cancels an older PR run (never a release run on main/next).
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v6
+        with:
+          java-version: "21"
+          distribution: temurin
+          # No `cache: gradle` here — it caches the same paths as setup-gradle below and the
+          # two can conflict (gradle/actions docs). setup-gradle owns the cache.
+
+      # Gradle's own action: build cache, configuration cache, dependency graph, job summary.
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build and Test
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ./gradlew build check
+
+      - name: Publish Test Results
+        uses: mikepenz/action-junit-report@v6
+        if: success() || failure()
+        with:
+          report_paths: "**/build/test-results/test/TEST-*.xml"
+
+      - name: Set up Node 20
+        uses: actions/setup-node@v7
+        with:
+          node-version: "20"
+        if: github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'next')
+
+      - name: Install semantic-release plugins
+        if: github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'next')
+        run: >
+          npm install --global
+          semantic-release@24
+          @semantic-release/changelog@6
+          @semantic-release/git@10
+          @semantic-release/github@11
+          @semantic-release/exec@6
+
+      - name: Release
+        if: github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'next')
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release
+
+      - name: Upload app.version
+        if: github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'next')
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-version
+          path: app.version
+          retention-days: 30

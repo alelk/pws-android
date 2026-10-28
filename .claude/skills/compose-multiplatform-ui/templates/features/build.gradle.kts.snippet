@@ -1,0 +1,36 @@
+plugins {
+    // KMP (jvm + wasmJs) + Compose + compose compiler + serialization (NavKey routes), all from one
+    // convention plugin — never alias(...) Kotlin-family plugins here.
+    id("app.compose")
+}
+
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            implementation(projects.domain)
+            implementation(projects.api.client)
+            implementation(projects.api.mapping)
+            implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.kotlinx.datetime)
+            // Stable collection types for UI state (a raw List defeats skipping assumptions).
+            implementation(libs.kotlinx.collections.immutable)
+
+            // Navigation 3 + androidx ViewModel + lifecycle-aware collection + Koin.
+            implementation(libs.jetbrains.navigation3.ui)
+            implementation(libs.jetbrains.lifecycle.viewmodel.navigation3)
+            implementation(libs.jetbrains.lifecycle.runtime.compose)
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose)
+            implementation(libs.koin.compose.viewmodel)
+        }
+        commonTest.dependencies {
+            implementation(libs.kotest.framework.engine)
+            implementation(libs.kotest.assertions)
+            implementation(libs.kotlinx.coroutines.test)
+            implementation(libs.turbine)
+        }
+        jvmTest.dependencies {
+            implementation(libs.kotest.runner.junit5)   // + conventions/ source-scanning tests
+        }
+    }
+}

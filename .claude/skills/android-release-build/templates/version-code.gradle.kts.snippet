@@ -1,0 +1,41 @@
+// ─── Root build.gradle.kts: versionName from app.version, versionCode monotonic ───
+// app.version stays the single product-version source (kotlin-project-layout); the release
+// pipeline (gradle-release-system) rewrites only that file.
+
+val appVersionName: String by extra(
+  checkNotNull(rootProject.file("app.version").readText().trim().takeIf { it.isNotBlank() }) { "app.version is empty" }
+)
+
+// Highest versionCode ever uploaded to ANY listing this app updates (incl. a store or fork it
+// replaces). Raise it, never lower it.
+val VERSION_CODE_FLOOR = 48
+
+// Scheme A (default): derived — MAJOR * 1_000_000 + MINOR * 1_000 + PATCH * 10 + build slot.
+// The build slot (0..9) separates prerelease uploads of the same x.y.z (`-rc.N` → N, capped at 9)
+// from the final release (9), so rc builds sort BELOW the release they precede.
+// Optional: CI may pass -PversionCodeOverride=<int> for a hotfix re-upload of the same version.
+val appVersionCode: Int by extra(
+  run {
+    (findProperty("versionCodeOverride") as String?)?.toInt()?.let { return@run it }
+    val match = Regex("""^(\d+)\.(\d+)\.(\d+)(?:-rc\.(\d+))?$""").matchEntire(appVersionName)
+      ?: throw GradleException("app.version '$appVersionName' is not MAJOR.MINOR.PATCH[-rc.N]")
+    val (major, minor, patch, rc) = match.destructured
+    require(minor.toInt() < 1_000 && patch.toInt() < 100) { "minor/patch out of range for the versionCode scheme" }
+    val slot = if (rc.isEmpty()) 9 else minOf(rc.toInt(), 8)
+    major.toInt() * 1_000_000 + minor.toInt() * 1_000 + patch.toInt() * 10 + slot
+  }.also { code ->
+    // Upper bound of Play's versionCode; also catches a scheme that overflowed.
+    check(code in (VERSION_CODE_FLOOR + 1)..2_100_000_000) {
+      "versionCode $code must be > $VERSION_CODE_FLOOR (last published) and <= 2100000000"
+    }
+  }
+)
+
+// Scheme B (explicit counter) — replace the block above with:
+//   val appVersionCode: Int by extra(49) // bump in the SAME commit as every store upload
+// and keep the floor check. Simple, but nothing bumps it for you: two uploads with one code are
+// rejected by the store, and a forgotten bump is found at upload time, not build time.
+
+allprojects {
+  version = appVersionName
+}

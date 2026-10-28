@@ -1,0 +1,37 @@
+appId: ${APP_ID}
+name: "NN - <one line: what boundary this flow proves>"
+tags:
+  - mutation        # exactly ONE kind: smoke (read-only, no clearState) | mutation | diagnostic (in no run)
+  # - device-state  # add when the flow toggles airplane mode / locale / font scale: the runner runs those last
+---
+# The kind is the tag above - the runner and E2eSelectorParityTest read it, so it is not repeated here.
+# Precondition: release APK of the flavor under test; clean state via cold-start.
+# Why this is E2E and not a ViewModel test: <the artifact-level risk it covers>.
+
+- runFlow: _helpers/cold-start.yaml
+
+# Setup the data this flow needs — never rely on another flow's leftovers.
+- tapOn:
+    id: "${NAV_SEARCH}"
+- extendedWaitUntil:
+    visible:
+      id: "${FIELD_SEARCH}"
+    timeout: ${TIMEOUT_MEDIUM}
+
+# Act
+- tapOn:
+    id: "${FIELD_SEARCH}"
+- inputText: "${SEARCH_QUERY_NUMERIC}"
+
+# Anything that may have focused a text field, before a bottom-nav tap:
+- runFlow: _helpers/dismiss-keyboard.yaml
+
+# End on a POSITIVE assertion — something only the expected screen has.
+- extendedWaitUntil:
+    visible:
+      id: "${SONG_ITEM_ONE}"
+    timeout: ${TIMEOUT_LONG}
+- assertVisible:
+    id: "${SONG_ITEM_ONE}"
+
+- takeScreenshot: "${SCREENSHOTS_DIR}/NN-name"

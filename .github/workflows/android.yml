@@ -2,73 +2,169 @@ name: Android CI
 
 on:
   push:
-    branches: [ "master" , "next" ]
+    branches: [ "master", "next" ]
   pull_request:
     branches: [ "master", "next" ]
 
-permissions:
-  contents: write
-  issues: write
-  pull-requests: write
-  packages: write
-  checks: write
-  pages: write
-  id-token: write
+# Nothing by default; each job names what it needs (docs: engineering-ai-skills › ci-hardening).
+permissions: {}
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
+    timeout-minutes: 60
+    # A PR next -> master is the commit the push run already builds (and `release` needs that run);
+    # skip the duplicate. PRs from forks and other branches still build. Never a shared cancelling
+    # concurrency group instead (docs: gradle-release-system › ci-hardening, "One commit, two runs").
+    if: >-
+      github.event_name != 'pull_request'
+      || github.event.pull_request.head.repo.full_name != github.repository
+      || (github.head_ref != 'master' && github.head_ref != 'next')
+    # A newer push to the same PR/branch supersedes the running build.
+    concurrency:
+      group: ci-build-${{ github.event.pull_request.number || github.ref }}
+      cancel-in-progress: true
+    permissions:
+      contents: read
+      checks: write # test report
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: set up JDK 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
         with:
           java-version: '21'
           distribution: 'jetbrains'
-          cache: gradle
+          # No `cache: gradle` — setup-gradle below owns the Gradle caches.
 
-      - name: Run tests
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
+
+      # Release variants are built unsigned here (no keystore); release-build.yml signs and verifies.
+      # The init script prints `[timing]` for every task over 10 s and the 25 slowest into the log and
+      # the job summary; the step timeout makes a slow build fail under this step's name.
+      - name: Build and run tests
+        timeout-minutes: 50
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          ./gradlew :data:db-android:testRuDebugUnitTest data:content-delivery:check app-compose:check
+          GITHUB_TOKEN: ${{ secrets.GPR_TOKEN }}
+        # The R8 release variants run in `release-variants` (parallel jobs: AGP runs R8 one task at a
+        # time, ~24 min on a 2-vCPU runner). Together the two jobs are exactly `build`; keep this
+        # -x list and that matrix in sync, and `release` needs both.
+        run: >-
+          ./gradlew --init-script gradle/ci-task-timings.init.gradle.kts build
+          -x :app-compose:assembleRuRelease -x :app-compose:assembleUkRelease
+          -x :app-compose:assembleFullRelease -x :app-compose:assembleRustoreRelease
 
-
+      # Bundle-only tasks (bundle*DebugResources, manifest-for-bundle) are not in `build`.
       - name: Build ruDebug & ukDebug
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          ./gradlew buildRuDebugPreBundle buildUkDebugPreBundle
+          GITHUB_TOKEN: ${{ secrets.GPR_TOKEN }}
+        timeout-minutes: 10
+        run: ./gradlew --init-script gradle/ci-task-timings.init.gradle.kts buildRuDebugPreBundle buildUkDebugPreBundle
 
       - name: Publish Test Results
-        uses: mikepenz/action-junit-report@v4
+        uses: mikepenz/action-junit-report@6ef3fdcfcd5f0b5d14df3e659ef19b8c6820f93d # v6.6.1
         if: success() || failure()
         with:
-          report_paths: '**/build/test-results/test/TEST-*.xml'
+          report_paths: '**/build/test-results/**/TEST-*.xml'
+
+      # A job cut by its timeout ends "cancelled" with the same words as an OOM kill: name the cause.
+      - name: Diagnostics
+        if: cancelled() || failure()
+        continue-on-error: true
+        run: |
+          free -m
+          ps -eo rss,etime,args --sort=-rss | head -15
+          sudo dmesg 2>/dev/null | grep -iE 'out of memory|killed process' | tail -5 || true
+
+  # R8 of every store flavor, one runner each. Part of the `build` gate (see the -x list above), so
+  # `release` waits for it too.
+  release-variants:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: >-
+      github.event_name != 'pull_request'
+      || github.event.pull_request.head.repo.full_name != github.repository
+      || (github.head_ref != 'master' && github.head_ref != 'next')
+    concurrency:
+      group: ci-release-variants-${{ matrix.flavor }}-${{ github.event.pull_request.number || github.ref }}
+      cancel-in-progress: true
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        flavor: [ Ru, Uk, Full, Rustore ]
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: set up JDK 21
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          java-version: '21'
+          distribution: 'jetbrains'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
+
+      # Unsigned (no keystore here); release-build.yml signs and verifies.
+      - name: Assemble ${{ matrix.flavor }} release (R8)
+        timeout-minutes: 25
+        env:
+          GITHUB_TOKEN: ${{ secrets.GPR_TOKEN }}
+        run: ./gradlew --init-script gradle/ci-task-timings.init.gradle.kts :app-compose:assemble${{ matrix.flavor }}Release
+
+      - name: Diagnostics
+        if: cancelled() || failure()
+        continue-on-error: true
+        run: |
+          free -m
+          ps -eo rss,etime,args --sort=-rss | head -15
+
+  release:
+    needs: [build, release-variants]
+    if: github.event_name == 'push' && (github.ref_name == 'master' || github.ref_name == 'next')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # Never cancelled mid-flight (tag, CHANGELOG commit, GitHub release); the newest pending run
+    # replaces older pending ones, which is enough: semantic-release works from the branch head.
+    concurrency:
+      group: ci-release-${{ github.ref }}
+      cancel-in-progress: false
+    permissions:
+      contents: write # tag, release, CHANGELOG/app.version commit
+      issues: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0 # semantic-release reads the full history
 
       - name: Set up Node 20
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '20.18.0'
-        if: success() && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/next')
 
-      - name: Install Semantic Release plugins
-        run: npm install --global semantic-release@24.1.2 @semantic-release/changelog@6.0.3 @semantic-release/git@10.0.1 @semantic-release/github@9.2.5 @semantic-release/exec@6.0.3
-        if: success() && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/next')
+      # Exact versions from a committed lockfile; install scripts of transitive code never run in the
+      # job that holds a write token.
+      - name: Install semantic-release
+        run: npm ci --prefix .github/release --ignore-scripts --no-audit --no-fund
 
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release
-        if: success() && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/next')
+        run: .github/release/node_modules/.bin/semantic-release
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: APP Version
           path: app.version
           retention-days: 30
-        if: success() && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/next')

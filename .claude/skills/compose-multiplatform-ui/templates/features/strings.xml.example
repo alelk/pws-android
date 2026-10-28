@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">My App</string>
+    <string name="common_back">Back</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_search">Search</string>
+    <string name="nav_settings">Settings</string>
+</resources>

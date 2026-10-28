@@ -1,0 +1,206 @@
+name: CI
+
+# docker-app, single-workflow variant (references/single-workflow-release-image.md):
+# build → release → image in the release job. A release made with GITHUB_TOKEN does not trigger
+# other workflows, so a separate `on: release` publish workflow would never fire.
+# Before the repository matters: pin every action to a commit SHA (references/ci-hardening.md).
+
+on:
+  push:
+    branches: [main, next]
+    # Optional (references/ci-hardening.md, "Superseded runs and docs-only changes"): read the
+    # caveats first. Lists are repeated, not shared by a YAML anchor.
+    # paths-ignore: ["docs/**", "*.md"]   # root *.md only; resource *.md may be code
+  pull_request:
+    branches: [main, next]
+    # paths-ignore: ["docs/**", "*.md"]
+  workflow_dispatch:
+
+# Nothing by default: each job names what it needs. The build reads; only the release writes.
+permissions: {}
+
+# No workflow-level `concurrency`: build and release need opposite policies (below).
+
+jobs:
+  # The gate: exactly the local `./gradlew build`.
+  build:
+    # A newer push to the same PR / branch supersedes the running build; on a single runner the
+    # stale ones would otherwise queue up. Safe: the build writes nothing. Cancelling still runs
+    # the `if: always()` cleanup steps.
+    # A PR whose head is a release branch of this repository (next -> main) is the commit the `push` run
+    # builds, and `release` needs the push run. Skip the PR run (references/ci-hardening.md, "One commit,
+    # two runs"); never solve it with a shared cancelling concurrency group.
+    # if: >-
+    #   github.event_name != 'pull_request'
+    #   || github.event.pull_request.head.repo.full_name != github.repository
+    #   || (github.head_ref != 'main' && github.head_ref != 'next')
+    concurrency:
+      group: ci-build-${{ github.event.pull_request.number || github.ref }}
+      cancel-in-progress: true
+    runs-on: ubuntu-latest
+    # runs-on: [ self-hosted, <runner-label> ]   # to switch: swap these two lines
+    timeout-minutes: 45
+    permissions:
+      contents: read
+      checks: write # the test report's check run
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-java@v6
+        with:
+          java-version: "21"
+          distribution: temurin
+          # No `cache: gradle`: setup-gradle owns the Gradle caches.
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Verify Docker is available (for Testcontainers)
+        run: docker info
+
+      # Optional: `--init-script gradle/ci-task-timings.init.gradle.kts` (templates/shared) prints the
+      # slowest tasks into the log and the job summary; `--profile` adds the HTML report (upload it).
+      - name: Build and test
+        run: ./gradlew build
+
+      - name: Publish test results
+        if: success() || failure()
+        uses: mikepenz/action-junit-report@v6
+        with:
+          report_paths: "**/build/test-results/**/TEST-*.xml"
+
+      # Matters on a self-hosted runner, harmless on a hosted one: idle daemons outlive the job.
+      - name: Stop build daemons
+        if: always()
+        run: |
+          ./gradlew --stop || true
+          pkill -f "[K]otlinCompileDaemon" || true
+
+  release:
+    needs: build
+    if: github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'next')
+    # Never cancelled: a release killed between image, tag and GitHub release is half-made. A newer
+    # run waits (GitHub keeps only the newest pending one; semantic-release works from the branch head).
+    concurrency:
+      group: ci-release-${{ github.ref }}
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write      # tag, release, CHANGELOG commit
+      issues: write
+      pull-requests: write
+      packages: write      # GHCR
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-java@v6
+        with:
+          java-version: "21"
+          distribution: temurin
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "20"
+
+      # Exact versions from .github/release/package-lock.json, never a floating range.
+      - name: Install semantic-release from the lockfile
+        run: npm ci --prefix .github/release --ignore-scripts --no-audit --no-fund
+
+      - name: Determine version (dry-run)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: .github/release/node_modules/.bin/semantic-release --dry-run || true
+
+      # The dry-run wrote the NEXT version into app.version when a release is due; the committed one
+      # (git show HEAD:app.version) is the last released. The image is published BEFORE the release:
+      # a failed image then leaves no tag, and the re-run retries instead of finding "nothing to release".
+      - name: Is a release due?
+        id: due
+        run: |
+          before="$(git show HEAD:app.version)"
+          after="$(cat app.version)"
+          if [ "$after" != "$before" ]; then
+            echo "due=true" >> "$GITHUB_OUTPUT"
+            echo "version=${after}" >> "$GITHUB_OUTPUT"
+          else
+            echo "due=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # TODO: module paths. verifyReleaseJar: references/release-artifact-verification.md
+      - name: Assemble release artifacts
+        run: |
+          ./gradlew :server:app:shadowJar :server:app:verifyReleaseJar :webapp:wasmJsBrowserDistribution
+          tar -czf webapp.tar.gz -C webapp/build/dist/wasmJs/productionExecutable/ .
+
+      - name: Stop build daemons
+        if: always()
+        run: |
+          ./gradlew --stop || true
+          pkill -f "[K]otlinCompileDaemon" || true
+
+      - name: Image context from the release artifacts
+        id: image_context
+        if: steps.due.outputs.due == 'true'
+        run: |
+          meta="$(deploy/bin/image-context.sh server/app/build/libs/app-*.jar webapp.tar.gz build/image-context)"
+          echo "meta=${meta}" >> "$GITHUB_OUTPUT"
+
+      # On a persistent self-hosted runner (references/ci-hardening.md, "A slow network on a self-hosted
+      # runner"): qemu `with: { cache-image: false, platforms: arm64 }`; buildx `with: { name: <builder>,
+      # keep-state: true }` and then no `cache-from/to: type=gha` below.
+      - uses: docker/setup-qemu-action@v3
+        if: steps.due.outputs.due == 'true'
+
+      - uses: docker/setup-buildx-action@v3
+        if: steps.due.outputs.due == 'true'
+
+      - uses: docker/login-action@v3
+        if: steps.due.outputs.due == 'true'
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish image
+        if: steps.due.outputs.due == 'true'
+        uses: docker/build-push-action@v6
+        with:
+          context: build/image-context
+          file: deploy/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          # TODO: name the build arg your Dockerfile requires (e.g. a schema fingerprint label).
+          build-args: BUILD_META=${{ steps.image_context.outputs.meta }}
+          tags: ghcr.io/${{ github.repository }}:${{ steps.due.outputs.version }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=min
+
+      - name: Release
+        id: release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # The committed version: the dry-run already wrote the NEXT one into the working copy.
+          before="$(git show HEAD:app.version)"
+          .github/release/node_modules/.bin/semantic-release
+          after="$(cat app.version)"
+          # Released in THIS run = the version moved AND its tag exists. The tag alone would
+          # republish (overwrite) the previous, already deployed version on every non-release push.
+          if [ "$after" != "$before" ] && git ls-remote --exit-code --tags origin "refs/tags/v${after}" >/dev/null; then
+            echo "released=true" >> "$GITHUB_OUTPUT"
+            echo "version=${after}" >> "$GITHUB_OUTPUT"
+            # The image above was built for the version the dry-run named: anything else is a release
+            # without an image — fail loudly, name the image.yml run to do.
+            if [ "${{ steps.due.outputs.version }}" != "$after" ]; then
+              echo "::error::v${after} was released but its image was not published; run the Image workflow with release_tag=v${after}"
+              exit 1
+            fi
+          else
+            echo "released=false" >> "$GITHUB_OUTPUT"
+          fi

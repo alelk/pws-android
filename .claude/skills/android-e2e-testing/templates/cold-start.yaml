@@ -1,0 +1,25 @@
+appId: ${APP_ID}
+name: "_helper: clean cold start"
+---
+# First step of every mutation flow: guarantees isolation from the previous flow's leftovers.
+# On a cleared state the first-run screen (onboarding) may appear before the main navigation;
+# the optional subflow handles it, then we wait for Home.
+
+- launchApp:
+    clearState: true
+
+- waitForAnimationToEnd:
+    timeout: 5000
+
+- runFlow:
+    when:
+      visible:
+        id: "${ACTION_SKIP_ONBOARDING}"
+    commands:
+      - tapOn:
+          id: "${ACTION_SKIP_ONBOARDING}"
+
+- extendedWaitUntil:
+    visible:
+      id: "${NAV_HOME}"
+    timeout: ${TIMEOUT_COLD_START}

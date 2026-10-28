@@ -1,0 +1,12 @@
+appId: ${APP_ID}
+name: "_harness: canary - this flow MUST fail"
+---
+# Harness test, not an app test. scripts/run-e2e.sh runs it first and treats a PASS as fatal: if an assertion
+# about an id that exists nowhere can go green, no green result of the real flows means anything.
+# Lives in _harness/ (skipped by `maestro test <folder>`); never tagged, never in a run. The one literal id in
+# the suite - on purpose, it must not be in compose.env or the parity test would demand it in source.
+- launchApp
+- extendedWaitUntil:
+    visible:
+      id: "e2e-canary-never-exists"
+    timeout: ${TIMEOUT_SHORT}

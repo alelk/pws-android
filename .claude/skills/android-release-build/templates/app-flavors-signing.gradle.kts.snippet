@@ -1,0 +1,158 @@
+// ─── Android app module: flavors, BuildConfig routing, per-flavor signing ───
+// Merge into the application module's build.gradle.kts (plugins/dependencies blocks elided).
+// Flavor names (free / pro / storeB), property names and URLs are placeholders.
+//
+// Credentials: Gradle properties only — `-P…`, ~/.gradle/gradle.properties, or env
+// ORG_GRADLE_PROJECT_<name> (CI). Property names are camelCase without dots so the env form works.
+// NB: findProperty() does NOT see local.properties.
+
+import com.android.build.api.dsl.ApplicationExtension
+
+/** True in CI release jobs: a missing credential is a configuration error, not an unsigned APK. */
+val requireReleaseSigning: Boolean =
+  (findProperty("requireReleaseSigning") as String?)?.toBoolean() ?: false
+
+/** Feature switch for one flavor, off unless the release job turns it on explicitly. */
+val storeBBillingEnabled: Boolean =
+  (findProperty("storeBBillingEnabled") as String?)?.toBoolean() ?: false
+
+// Remote config per build type: release reads release content, everything else reads debug content.
+fun catalogUrls(bundleVariant: String): String =
+  listOf("https://cdn-a.example.com", "https://cdn-b.example.com")
+    .joinToString(",") { "$it/v1/catalog-$bundleVariant.json" } // a list travels as one String
+
+/**
+ * Registers `name` only when all four properties are set; returns null otherwise.
+ * `keystorePrefix` selects the keystore (shared by several keys), `aliasProperty` the key in it.
+ */
+fun ApplicationExtension.releaseSigning(
+  name: String,
+  keystorePrefix: String,
+  aliasProperty: String,
+): com.android.build.api.dsl.ApkSigningConfig? {
+  val props =
+    mapOf(
+      "storeFile" to "${keystorePrefix}KeystorePath",
+      "storePassword" to "${keystorePrefix}StorePassword",
+      "keyPassword" to "${keystorePrefix}KeyPassword",
+      "keyAlias" to aliasProperty,
+    ).mapValues { (_, prop) -> (findProperty(prop) as String?)?.takeIf { it.isNotBlank() } }
+
+  val missing = props.filterValues { it == null }.keys
+  if (missing.isNotEmpty()) {
+    val message = "Signing '$name': missing ${missing.joinToString()} → release will be UNSIGNED"
+    if (requireReleaseSigning) throw GradleException(message) // CI: never upload an unsigned build
+    logger.lifecycle(message) // local: unsigned APK is still fine for R8 / DEX measurement
+    return null
+  }
+  return signingConfigs.create(name) {
+    storeFile = file(props.getValue("storeFile")!!)
+    storePassword = props.getValue("storePassword")
+    keyAlias = props.getValue("keyAlias")
+    keyPassword = props.getValue("keyPassword")
+  }
+}
+
+android {
+  namespace = "com.example.app"
+
+  defaultConfig {
+    applicationId = "com.example.app"
+    versionCode = rootProject.extra["appVersionCode"] as Int
+    versionName = rootProject.extra["appVersionName"] as String
+    // Defaults for EVERY variant: code in src/main reads these without knowing the flavor.
+    buildConfigField("boolean", "BILLING_ENABLED", "false")
+    resValue("string", "content_authority", "com.example.app.content")
+  }
+
+  // Credentials for keys of the same owner may share one keystore (different aliases);
+  // a store with an installed base pinned to another certificate gets its own keystore.
+  val playFree = releaseSigning("releaseFree", keystorePrefix = "releasePlay", aliasProperty = "releaseFreeKeyAlias")
+  val playPro = releaseSigning("releasePro", keystorePrefix = "releasePlay", aliasProperty = "releaseProKeyAlias")
+  val storeB = releaseSigning("releaseStoreB", keystorePrefix = "releaseStoreB", aliasProperty = "releaseStoreBKeyAlias")
+
+  flavorDimensions += "distribution"
+
+  productFlavors {
+    create("free") {
+      dimension = "distribution"
+      versionNameSuffix = "-free"
+      playFree?.let { signingConfig = it }
+    }
+    create("pro") {
+      dimension = "distribution"
+      applicationIdSuffix = ".pro" // identity: never change after the first upload
+      versionNameSuffix = "-pro"
+      resValue("string", "content_authority", "com.example.app.pro.content") // authorities must differ per installed app
+      playPro?.let { signingConfig = it }
+    }
+    create("storeB") {
+      dimension = "distribution"
+      applicationId = "com.example.app.b" // pinned by the store's installed base
+      versionNameSuffix = "-storeB"
+      resValue("string", "content_authority", "com.example.app.b.content")
+      buildConfigField("boolean", "BILLING_ENABLED", "$storeBBillingEnabled")
+      // This store's SDK and its keep rules exist only in this flavor.
+      proguardFiles("proguard-rules-storeB.pro")
+      storeB?.let { signingConfig = it }
+    }
+  }
+
+  buildTypes {
+    getByName("release") {
+      // NO signingConfig here: a build type's signingConfig overrides the flavor's and would sign
+      // every store with one key.
+      isMinifyEnabled = true
+      isShrinkResources = true
+      proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+      buildConfigField("String", "CATALOG_URLS", "\"${catalogUrls("release")}\"")
+      buildConfigField("String", "BUNDLE_VARIANT", "\"release\"")
+    }
+    getByName("debug") {
+      // Keeps the default debug signingConfig (build type wins over flavor — intended here).
+      versionNameSuffix = "-debug"
+      buildConfigField("String", "CATALOG_URLS", "\"${catalogUrls("debug")}\"")
+      buildConfigField("String", "BUNDLE_VARIANT", "\"debug\"")
+    }
+  }
+
+  buildFeatures {
+    buildConfig = true
+    resValues = true
+  }
+}
+
+dependencies {
+  // Flavor-scoped: free/pro APKs never contain the store-B SDK (pin with a source-scanning test).
+  "storeBImplementation"(libs.storeb.billing)
+}
+
+// ─── Release invariants of a flavor with an installed base (fail before compiling) ───
+abstract class VerifyReleaseInvariantsTask : DefaultTask() {
+  @get:Input abstract val applicationId: Property<String>
+  @get:Input abstract val versionCode: Property<Int>
+  @get:Input abstract val minSdk: Property<Int>
+
+  @TaskAction
+  fun verify() {
+    val problems = buildList {
+      if (applicationId.get() != "com.example.app.b") add("applicationId = ${applicationId.get()}")
+      if (versionCode.get() <= 120) add("versionCode = ${versionCode.get()}, must be > 120 (last published)")
+      if (minSdk.get() > 23) add("minSdk = ${minSdk.get()}, must be <= 23 (installed users would lose updates)")
+    }
+    check(problems.isEmpty()) { "storeB release invariants violated:\n - " + problems.joinToString("\n - ") }
+  }
+}
+
+androidComponents {
+  onVariants(selector().withName("storeBRelease")) { variant ->
+    val guard = tasks.register<VerifyReleaseInvariantsTask>("verifyStoreBReleaseInvariants") {
+      applicationId.set(variant.applicationId)
+      versionCode.set(variant.outputs.single().versionCode.map { it })
+      minSdk.set(variant.minSdk.apiLevel)
+    }
+    tasks.matching { it.name == "preStoreBReleaseBuild" }.configureEach { dependsOn(guard) }
+  }
+}
+// In a real project move VerifyReleaseInvariantsTask (and its constants) into the convention build
+// so it is compiled once and unit-testable.

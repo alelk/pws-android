@@ -1,0 +1,16 @@
+appId: ${APP_ID}
+name: "_helper: free the bottom nav bar from the soft keyboard"
+---
+# Call on a root tab before tapping a bottom-nav tab whenever the previous step may have left a
+# text field focused. A full-size IME hides the nav bar from Maestro's hierarchy (nodes are
+# ABSENT, not just untappable), so no timeout helps.
+#
+# NEVER use `hideKeyboard` (Maestro 2.5.1 sends the app to the launcher).
+# The guard keys off the keyboard itself, NOT off "nav bar is missing": the bar is also missing
+# while the app is still rendering, and Back there exits the app.
+- runFlow:
+    when:
+      visible:
+        id: "${IME_SPACE_KEY}"
+    commands:
+      - back

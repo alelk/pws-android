@@ -2,6 +2,8 @@ package io.github.alelk.pws.android.compose.flavor
 
 import android.content.Context
 import io.github.alelk.pws.features.monetization.MonetizationMode
+import io.github.alelk.pws.features.premium.PremiumFeature
+import org.koin.core.Koin
 import org.koin.core.module.Module
 
 /**
@@ -13,5 +15,10 @@ val MONETIZATION: MonetizationMode = MonetizationMode.Donations
 
 fun flavorKoinModules(): List<Module> = emptyList()
 
+/** No flavor-specific startup work in the free builds. */
+@Suppress("UNUSED_PARAMETER")
+suspend fun flavorStartupTasks(koin: Koin) = Unit
+
 /** No paywall in the free builds — premium gates never fire. */
-fun flavorShowPaywall(context: Context) = Unit
+@Suppress("UNUSED_PARAMETER")
+fun flavorShowPaywall(context: Context, feature: PremiumFeature?) = Unit

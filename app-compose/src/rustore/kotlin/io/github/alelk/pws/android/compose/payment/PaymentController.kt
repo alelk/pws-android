@@ -39,11 +39,14 @@ data class PaymentUiState(
 
 /**
  * Drives the paywall UI. Wraps a [PaymentProvider] and reconciles online purchases into the offline
- * DataStore via [PurchaseSyncService].
+ * entitlement via [PurchaseSyncService] (monotonic: it can grant or extend, never revoke).
  *
- * Soft degradation (monetisation currently disabled): every provider call is guarded — a failure
- * sets [PaymentUiState.error] and leaves the offline entitlement untouched, so the paywall shows a
- * message instead of crashing and premium features unlocked offline keep working.
+ * Exists only when purchases are enabled (`PremiumSales`); in `PremiumComingSoon` it is not even
+ * registered in Koin, so the Pay SDK is never touched.
+ *
+ * Soft degradation: every provider call is guarded — a failure sets [PaymentUiState.error] and
+ * leaves the offline entitlement untouched, so the paywall shows a message instead of crashing and
+ * premium features unlocked offline keep working.
  */
 class PaymentController(
   private val provider: PaymentProvider,
@@ -87,7 +90,8 @@ class PaymentController(
   private suspend fun loadPurchases() {
     try {
       val purchases = provider.purchases()
-      _uiState.update { it.copy(purchases = purchases) }
+      // Only paid purchases / active subscriptions are "owned"; the sync applies the same filter.
+      _uiState.update { it.copy(purchases = purchases.filter { p -> p.isPaid }) }
       purchaseSync.sync(purchases)
     } catch (e: Throwable) {
       _uiState.update { it.copy(error = PaymentError.PurchasesLoadingFailed(e)) }
@@ -111,6 +115,10 @@ class PaymentController(
       when (val result = provider.purchase(productId)) {
         is PurchaseResult.Success -> {
           reportPurchase(TelemetryResult.OK)
+          // Lifetime is granted at once (a later purchases() hiccup must not lose it); a
+          // subscription's expiry arrives with the purchases list below.
+          runCatching { purchaseSync.onPurchaseSucceeded(productId) }
+            .onFailure { e -> telemetry.recordError(e, "purchase_grant_failed", mapOf(TelemetryAttr.STAGE to "grant")) }
           loadPurchases()
         }
 

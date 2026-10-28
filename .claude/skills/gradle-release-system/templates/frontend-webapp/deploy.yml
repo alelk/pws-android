@@ -1,0 +1,22 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Download release asset
+        run: |
+          echo "TODO: implement deployment for your target environment"
+          echo "This workflow is intentionally a stub — customise it per project."

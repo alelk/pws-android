@@ -59,10 +59,6 @@ Android-specific Room provider with two-layer encryption (see [`data-security.md
 | Legacy read              | `openReadOnlyDatabase()` (plain SQLite + future SQLCipher)  |
 | Schema/DAO               | (lives in `pws-core:data:db-room`)                          |
 
-### 3. Legacy — `:app`
-
-View-based application. **Frozen.** Bug-fix only — no new features. Lives alongside `:app-compose` until removal is scheduled.
-
 ---
 
 ## Cross-repo composite build

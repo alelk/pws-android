@@ -1,0 +1,162 @@
+name: Cleanup Old Package Versions
+
+on:
+  workflow_dispatch:
+    inputs:
+      min_versions_to_keep:
+        description: 'Количество последних версий, которые нужно оставить (на каждый пакет)'
+        required: true
+        default: 5
+        type: number
+      ignore_versions:
+        description: 'Regex для версий, которые нельзя удалять (например: "^2\\.24\\.")'
+        required: false
+        default: ''
+        type: string
+      dry_run:
+        description: 'Пробный запуск — только вывести список, не удалять'
+        required: false
+        default: true
+        type: boolean
+
+permissions:
+  packages: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Delete old Maven package versions
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const owner        = context.repo.owner;
+            const minToKeep    = Number(${{ inputs.min_versions_to_keep }});
+            const ignoreInput  = `${{ inputs.ignore_versions }}`.trim();
+            const dryRun       = Boolean(${{ inputs.dry_run }});
+            const PKG_PREFIX   = 'io.github.alelk.pws';
+
+            const ignoreRegex  = ignoreInput ? new RegExp(ignoreInput) : null;
+
+            console.log('='.repeat(60));
+            console.log(`Owner            : ${owner}`);
+            console.log(`Min keep         : ${minToKeep}`);
+            console.log(`Ignore pattern   : ${ignoreInput || '(none)'}`);
+            console.log(`Dry run          : ${dryRun}`);
+            console.log(`Package prefix   : ${PKG_PREFIX}`);
+            console.log('='.repeat(60));
+
+            // ── helpers ──────────────────────────────────────────────────
+            async function listPackages() {
+              try {
+                return await github.paginate(
+                  github.rest.packages.listPackagesForUser,
+                  { username: owner, package_type: 'maven', per_page: 100 }
+                );
+              } catch {
+                return await github.paginate(
+                  github.rest.packages.listPackagesForOrganization,
+                  { org: owner, package_type: 'maven', per_page: 100 }
+                );
+              }
+            }
+
+            async function listVersions(pkgName) {
+              try {
+                return await github.paginate(
+                  github.rest.packages.getAllPackageVersionsForPackageOwnedByUser,
+                  { username: owner, package_type: 'maven', package_name: pkgName, per_page: 100 }
+                );
+              } catch {
+                return await github.paginate(
+                  github.rest.packages.getAllPackageVersionsForAPackageOwnedByOrg,
+                  { org: owner, package_type: 'maven', package_name: pkgName, per_page: 100 }
+                );
+              }
+            }
+
+            async function deleteVersion(pkgName, versionId, versionName) {
+              try {
+                await github.rest.packages.deletePackageVersionForUser({
+                  username: owner, package_type: 'maven',
+                  package_name: pkgName, package_version_id: versionId
+                });
+              } catch {
+                await github.rest.packages.deletePackageVersionForOrg({
+                  org: owner, package_type: 'maven',
+                  package_name: pkgName, package_version_id: versionId
+                });
+              }
+              console.log(`    ✗ deleted  ${versionName}`);
+            }
+
+            // ── main ─────────────────────────────────────────────────────
+            const allPackages = await listPackages();
+            const packages    = allPackages.filter(p =>
+              p.name.startsWith(PKG_PREFIX) &&
+              p.repository?.name === context.repo.repo
+            );
+
+            console.log(`\nFound ${packages.length} packages linked to "${context.repo.repo}" with prefix "${PKG_PREFIX}"\n`);
+
+            let totalToDelete = 0;
+            let totalDeleted  = 0;
+
+            for (const pkg of packages) {
+              const versions = await listVersions(pkg.name);
+
+              // newest first
+              versions.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+              // pre-release: содержит -rc., -alpha., -beta., -snapshot. и т.п.
+              const isPreRelease = (name) => /-(rc|alpha|beta|snapshot)[.\d]/i.test(name);
+
+              // split: kept vs deletable
+              // Стабильные релизы всегда сохраняются.
+              // Из пре-релизов оставляем minToKeep последних, остальные удаляем.
+              let kept = 0;
+              const toDelete = [];
+              for (const v of versions) {
+                if (!isPreRelease(v.name)) continue; // стабильный релиз — не трогаем
+                const ignored = ignoreRegex?.test(v.name) ?? false;
+                if (ignored || kept < minToKeep) {
+                  if (!ignored) kept++;
+                } else {
+                  toDelete.push(v);
+                }
+              }
+
+              totalToDelete += toDelete.length;
+
+              if (toDelete.length === 0) {
+                console.log(`  ✓ ${pkg.name}  (${versions.length} versions — nothing to delete)`);
+                continue;
+              }
+
+              console.log(`  → ${pkg.name}  (${versions.length} total, deleting ${toDelete.length}):`);
+              for (const v of toDelete) {
+                console.log(`      ${v.name}  created: ${v.created_at}`);
+              }
+
+              if (!dryRun) {
+                for (const v of toDelete) {
+                  try {
+                    await deleteVersion(pkg.name, v.id, v.name);
+                    totalDeleted++;
+                  } catch (err) {
+                    console.error(`    ✗ FAILED to delete ${pkg.name}@${v.name}: ${err.message}`);
+                  }
+                }
+              }
+            }
+
+            console.log('\n' + '='.repeat(60));
+            if (dryRun) {
+              console.log(`Dry run complete. Would delete ${totalToDelete} version(s). No changes made.`);
+            } else {
+              console.log(`Done. Deleted ${totalDeleted} / ${totalToDelete} version(s).`);
+            }
+

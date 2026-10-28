@@ -1,0 +1,166 @@
+name: Publish Docker Images
+
+# Triggered manually. Downloads pre-built artifacts from a GitHub Release
+# and builds runtime-only Docker images (no Gradle rebuild).
+#
+# Inputs:
+#   release_tag — GitHub Release tag (e.g. v1.2.3)
+#   target      — which image: server | webapp | both
+#   extra_tag   — additional Docker tag (e.g. latest)
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "GitHub Release tag to fetch artifacts from (e.g. v1.2.3)"
+        required: true
+        type: string
+      target:
+        description: "Image to publish: server | webapp | both"
+        required: true
+        default: "both"
+        type: choice
+        options:
+          - server
+          - webapp
+          - both
+      extra_tag:
+        description: "Additional Docker tag (e.g. latest)"
+        required: false
+        default: "latest"
+        type: string
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+  # TODO: change IMAGE_NAME_SERVER / IMAGE_NAME_WEBAPP if needed
+  IMAGE_NAME_SERVER: ${{ github.repository }}-server
+  IMAGE_NAME_WEBAPP: ${{ github.repository }}-webapp
+
+jobs:
+  publish-server:
+    name: Publish server image
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: ${{ inputs.target == 'server' || inputs.target == 'both' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Download release assets
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # TODO: adjust artifact names to match your project
+          gh release download "${{ inputs.release_tag }}" \
+            --pattern "*.jar" \
+            --pattern "app.version" \
+            --dir ./release-assets
+          cp release-assets/*.jar .
+          cp release-assets/app.version .
+
+      - name: Read version
+        id: version
+        run: |
+          VERSION=$(cat app.version | tr -d '[:space:]')
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (server)
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_SERVER }}
+          tags: |
+            type=raw,value=${{ inputs.extra_tag }},enable=${{ inputs.extra_tag != '' }}
+            type=raw,value=${{ steps.version.outputs.version }}
+            type=raw,value=${{ inputs.release_tag }}
+
+      - name: Build and push server image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          # TODO: adjust path to Dockerfile.ci
+          file: Dockerfile.ci
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          # TODO: adjust JAR_PATH build-arg
+          build-args: JAR_PATH=app.jar
+          cache-from: type=gha,scope=server-ci
+          cache-to: type=gha,mode=max,scope=server-ci
+
+  publish-webapp:
+    name: Publish webapp image
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: ${{ inputs.target == 'webapp' || inputs.target == 'both' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Download release assets
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # TODO: adjust artifact names
+          gh release download "${{ inputs.release_tag }}" \
+            --pattern "*.tar.gz" \
+            --pattern "app.version" \
+            --dir ./release-assets
+          cp release-assets/*.tar.gz .
+          cp release-assets/app.version .
+
+      - name: Read version
+        id: version
+        run: |
+          VERSION=$(cat app.version | tr -d '[:space:]')
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (webapp)
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_WEBAPP }}
+          tags: |
+            type=raw,value=${{ inputs.extra_tag }},enable=${{ inputs.extra_tag != '' }}
+            type=raw,value=${{ steps.version.outputs.version }}
+            type=raw,value=${{ inputs.release_tag }}
+
+      - name: Build and push webapp image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          # TODO: adjust path to webapp Dockerfile.ci
+          file: webapp/Dockerfile.ci
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          # TODO: adjust DIST_ARCHIVE build-arg
+          build-args: DIST_ARCHIVE=webapp.tar.gz
+          cache-from: type=gha,scope=webapp-ci
+          cache-to: type=gha,mode=max,scope=webapp-ci

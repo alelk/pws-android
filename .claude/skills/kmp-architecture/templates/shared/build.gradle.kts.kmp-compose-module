@@ -1,0 +1,25 @@
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+
+plugins {
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.compose)
+    alias(libs.plugins.compose.compiler)
+}
+
+kotlin {
+    jvm()
+
+    // Compose Multiplatform on the web renders to a canvas (Skiko); wasmJs is its
+    // recommended target. See references/web-target.md before switching to js(IR).
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs { browser() }
+
+    sourceSets {
+        commonMain.dependencies {
+            implementation(compose.runtime)
+            implementation(compose.foundation)
+            implementation(compose.material3)
+            implementation(compose.components.resources)
+        }
+    }
+}

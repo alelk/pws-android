@@ -1,21 +1,12 @@
 import com.android.build.api.artifact.SingleArtifact
-import java.net.HttpURLConnection
-import java.net.URI
-import java.security.MessageDigest
+import io.github.alelk.pws.build.DownloadSeedBundlesTask
+import io.github.alelk.pws.build.RustoreInvariants
+import io.github.alelk.pws.build.StageMappingFileTask
+import io.github.alelk.pws.build.VerifyRustoreInvariantsTask
 import java.util.Properties
-import org.gradle.api.DefaultTask
-import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.provider.ListProperty
-import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.TaskAction
 
 plugins {
-  alias(libs.plugins.android.application)
+  id("pws.android.application")
   alias(libs.plugins.compose)
 }
 
@@ -63,6 +54,19 @@ if (appMetricaApiKey.isBlank()) {
   )
 }
 
+// ── RuStore purchases ─────────────────────────────────────────────────────────
+// Off by default: RuStore monetisation is not enabled on the account yet, so the rustore build ships
+// as MonetizationMode.PremiumComingSoon — paid users keep Pro, everyone else sees "Pro — coming soon",
+// and the RuStore Pay SDK is never called. Turning sales on = building with
+// -Ppws.rustore.purchasesEnabled=true (CI input `rustore_purchases_enabled`). See
+// docs/ai/plans/2026-09-29_rustore-release-compat-pro-coming-soon_plan.md.
+val rustorePurchasesEnabled: Boolean =
+  (project.findProperty("pws.rustore.purchasesEnabled") as String?)?.toBoolean() ?: false
+logger.lifecycle(
+  "RuStore purchases: ${if (rustorePurchasesEnabled) "ENABLED (PremiumSales)" else "disabled (PremiumComingSoon)"}" +
+    " — Gradle property pws.rustore.purchasesEnabled"
+)
+
 // Books preloaded straight into the APK for specific flavors. For each listed flavor the
 // `generateSeedBundles<Variant>` task downloads the named bundles from the catalog at build time and
 // bakes them into `assets/seed-books/`, so the app ships with that content already installed as a
@@ -88,125 +92,12 @@ val seedBooksByFlavor: Map<String, List<String>> =
     ),
   )
 
-/**
- * Downloads the seed bundles for one variant from the catalog and writes them into
- * `<outputDir>/seed-books/`, which AGP wires into the variant's merged assets. Bundle file names
- * (`{bookId}-{bundleVariant}-{catalogVersion}.book.yaml.gz.enc`) are resolved from the catalog's
- * top-level `version`; each download is verified against the catalog `checksum` (SHA-256).
- *
- * Up-to-date checking is keyed on the declared inputs (book IDs / bundle variant / catalog URLs).
- * The remote catalog version is not an input, so run `clean` (or bump the seed list) to force a
- * refresh when the catalog publishes newer bundles.
- */
-abstract class DownloadSeedBundlesTask : DefaultTask() {
-  @get:Input
-  abstract val bookIds: ListProperty<String>
-
-  @get:Input
-  abstract val bundleVariant: Property<String>
-
-  @get:Input
-  abstract val catalogUrls: ListProperty<String>
-
-  @get:OutputDirectory
-  abstract val outputDir: DirectoryProperty
-
-  @TaskAction
-  fun download() {
-    val seedDir = outputDir.get().dir("seed-books").asFile
-    seedDir.deleteRecursively()
-    seedDir.mkdirs()
-
-    val ids = bookIds.get()
-    if (ids.isEmpty()) return
-    val variant = bundleVariant.get()
-    val urls = catalogUrls.get()
-
-    // Fetch the catalog from the first reachable mirror.
-    val catalog = urls.firstNotNullOfOrNull { url ->
-      runCatching { url to String(fetch(url), Charsets.UTF_8) }
-        .onFailure { logger.warn("Seed: catalog fetch failed from $url: ${it.message}") }
-        .getOrNull()
-    } ?: error("Seed: cannot fetch catalog for variant '$variant' from any mirror: $urls")
-    val (catalogUrl, catalogJson) = catalog
-
-    @Suppress("UNCHECKED_CAST")
-    val parsed = groovy.json.JsonSlurper().parseText(catalogJson) as Map<String, Any?>
-    val catalogVersion = parsed["version"] as? String
-      ?: error("Seed: catalog has no 'version' field ($catalogUrl)")
-
-    @Suppress("UNCHECKED_CAST")
-    val books = parsed["books"] as? List<Map<String, Any?>>
-      ?: error("Seed: catalog has no 'books' array ($catalogUrl)")
-
-    val checksumById: Map<String, String> = books.associate { entry ->
-      @Suppress("UNCHECKED_CAST")
-      val book = entry["book"] as Map<String, Any?>
-      (book["id"] as String) to (entry["checksum"] as String)
-    }
-
-    val base = catalogUrl.substringBeforeLast('/')
-    ids.forEach { id ->
-      val expected = checksumById[id]
-        ?: error("Seed: book '$id' not found in catalog for variant '$variant' ($catalogUrl)")
-      val fileName = "$id-$variant-$catalogVersion.book.yaml.gz.enc"
-      val bytes = fetch("$base/$fileName")
-      val actual = MessageDigest.getInstance("SHA-256").digest(bytes)
-        .joinToString("") { "%02x".format(it) }
-      check(actual == expected) {
-        "Seed: checksum mismatch for $fileName — expected $expected, got $actual"
-      }
-      seedDir.resolve(fileName).writeBytes(bytes)
-      logger.lifecycle("Seed: baked $fileName (${bytes.size} bytes) into assets/seed-books/")
-    }
-  }
-
-  private fun fetch(url: String): ByteArray {
-    val conn = URI(url).toURL().openConnection() as HttpURLConnection
-    conn.setRequestProperty("User-Agent", "pws-android-build/1.0 (+github.com/alelk/pws-android)")
-    conn.setRequestProperty("Accept", "application/octet-stream, application/json")
-    conn.connectTimeout = 30_000
-    conn.readTimeout = 120_000
-    conn.instanceFollowRedirects = true
-    try {
-      val code = conn.responseCode
-      check(code in 200..299) { "HTTP $code for $url" }
-      return conn.inputStream.use { it.readBytes() }
-    } finally {
-      conn.disconnect()
-    }
-  }
-}
-
-/**
- * Copies a minified variant's R8 `mapping.txt` out of `build/` into a stable, release-labelled
- * location so it can be uploaded to the AppMetrica console (Settings → "Mapping files"). Without a
- * mapping, release crash reports arrive obfuscated and are effectively unreadable.
- *
- * We deliberately do not use the official AppMetrica Gradle plugin: its current release (1.0.1)
- * drives the removed `com.android.build.gradle.api.ApplicationVariant` API and does not work on
- * AGP 9. Staging the file is AGP-version-proof; the upload itself is a manual (or CI) step,
- * documented in docs/monitoring.md.
- */
-abstract class StageMappingFileTask : DefaultTask() {
-  @get:InputFile
-  abstract val mappingFile: RegularFileProperty
-
-  @get:OutputFile
-  abstract val stagedFile: RegularFileProperty
-
-  @TaskAction
-  fun stage() {
-    val target = stagedFile.get().asFile
-    target.parentFile?.mkdirs()
-    mappingFile.get().asFile.copyTo(target, overwrite = true)
-    logger.lifecycle("AppMetrica: mapping staged at ${target.absolutePath} — upload it to the AppMetrica console for this release")
-  }
-}
+/** Flavors whose release must be signed (CI release job); empty locally and in the PR build. */
+val requireSigningFor: Set<String> =
+  (findProperty("requireReleaseSigning") as String?).orEmpty().split(',').map { it.trim() }.filter { it.isNotEmpty() }.toSet()
 
 android {
   namespace = "io.github.alelk.pws.android.compose"
-  compileSdk = rootProject.extra["sdkVersion"] as Int
 
   signingConfigs {
     create("release-ru") {
@@ -231,12 +122,12 @@ android {
 
   defaultConfig {
     applicationId = "com.alelk.pws.pwapp"
-    minSdk = 23
-    targetSdk = rootProject.extra["sdkVersion"] as Int
     versionCode = rootProject.extra["versionCode"] as Int
     versionName = "${rootProject.extra["versionName"]}-${rootProject.extra["versionNameSuffix"]}"
     resValue("string", "db_authority", "com.alelk.pws.database")
     buildConfigField("String", "APPMETRICA_API_KEY", "\"$appMetricaApiKey\"")
+    // Store purchases (paywall + payment SDK). Only the rustore flavor can turn this on.
+    buildConfigField("boolean", "PURCHASES_ENABLED", "false")
   }
 
   flavorDimensions.add("contentLevel")
@@ -259,9 +150,10 @@ android {
     }
     create("rustore") {
       dimension = "contentLevel"
-      applicationId = "io.github.alelk.pws.app"
+      applicationId = RustoreInvariants.APPLICATION_ID
       versionNameSuffix = "-rustore"
-      resValue("string", "db_authority", "io.github.alelk.pws.database")
+      resValue("string", "db_authority", RustoreInvariants.DB_AUTHORITY)
+      buildConfigField("boolean", "PURCHASES_ENABLED", "$rustorePurchasesEnabled")
       // Платёжный SDK RuStore живёт только в этом флейворе — и его keep-правила тоже.
       // Флейворы ru/uk/full не должны платить размером за чужие правила.
       proguardFiles("proguard-rules-rustore.pro")
@@ -273,10 +165,25 @@ android {
       isMinifyEnabled = true
       isShrinkResources = true
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-      productFlavors.getByName("ru").signingConfig = signingConfigs.getByName("release-ru")
-      productFlavors.getByName("full").signingConfig = signingConfigs.getByName("release-ru")
-      productFlavors.getByName("uk").signingConfig = signingConfigs.getByName("release-uk")
-      productFlavors.getByName("rustore").signingConfig = signingConfigs.getByName("release-rustore")
+      // Signing is assigned per flavor, only when its credentials are complete. Without them the
+      // release variant is unsigned (fine for `./gradlew build`, R8 and DEX measurement); a release
+      // job names the flavors it ships in -PrequireReleaseSigning=ru,full — a missing credential
+      // for those fails configuration instead of producing an unsigned artifact.
+      mapOf(
+        "ru" to "release-ru",
+        "full" to "release-ru",
+        "uk" to "release-uk",
+        "rustore" to "release-rustore",
+      ).forEach { (flavor, config) ->
+        val signing = signingConfigs.getByName(config)
+        if (signing.storeFile != null && signing.keyAlias != null && signing.storePassword != null && signing.keyPassword != null) {
+          productFlavors.getByName(flavor).signingConfig = signing
+        } else if (flavor in requireSigningFor) {
+          throw GradleException("Flavor '$flavor': signing config '$config' is incomplete, refusing an unsigned release")
+        } else {
+          logger.lifecycle("Flavor '$flavor': signing config '$config' is incomplete → release will be UNSIGNED")
+        }
+      }
       buildConfigField("String", "CATALOG_URLS", "\"${catalogUrl("release")}\"")
       buildConfigField("String", "BUNDLE_VARIANT", "\"release\"")
     }
@@ -287,10 +194,13 @@ android {
       buildConfigField("String", "CATALOG_URLS", "\"${catalogUrl("debug")}\"")
       buildConfigField("String", "BUNDLE_VARIANT", "\"debug\"")
     }
-    create("localSeed") {
+    getByName("localSeed") {
       isDebuggable = true
       isMinifyEnabled = false
       versionNameSuffix = "-localSeed"
+      // A buildType without its own signingConfig falls back to the flavor's (release-ru/uk/rustore),
+      // whose keystore only exists in release-build.yml. Sign with the debug key instead.
+      signingConfig = signingConfigs.getByName("debug")
       buildConfigField("String", "CATALOG_URLS", "\"${catalogUrl("debug")}\"")
       buildConfigField("String", "BUNDLE_VARIANT", "\"debug\"")
     }
@@ -308,41 +218,39 @@ android {
     // (values = en, values-pl, values-ru, values-uk).
     localeFilters += listOf("en", "pl", "ru", "uk")
   }
-
-  compileOptions {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
-  }
-
-  testOptions {
-    unitTests.isIncludeAndroidResources = true
-    unitTests.all {
-      it.jvmArgs(
-        "--add-opens=java.base/java.lang=ALL-UNNAMED",
-        "--add-opens=java.base/java.util=ALL-UNNAMED",
-        "--add-opens=java.base/java.io=ALL-UNNAMED",
-        "--add-opens=java.base/java.net=ALL-UNNAMED",
-        "--add-opens=java.base/java.security=ALL-UNNAMED",
-        "--add-opens=java.base/java.text=ALL-UNNAMED",
-        "--add-opens=java.base/java.nio=ALL-UNNAMED",
-        "--add-opens=java.base/java.util.concurrent=ALL-UNNAMED",
-        "--add-opens=java.base/java.lang.reflect=ALL-UNNAMED",
-        "--add-opens=java.base/jdk.internal.access=ALL-UNNAMED",
-        "--add-opens=java.desktop/java.awt.font=ALL-UNNAMED"
-      )
-    }
-  }
 }
 
-kotlin {
-  jvmToolchain(21)
-}
+// rustoreDebug is signed with the RuStore release key when it is configured (as the fork did), so a
+// debuggable build installs over the published fork 2.3.1 and `run-as io.github.alelk.pws.app` can
+// inspect its files (upgrade tests, tools/rustore-upgrade-test.md). Without the key: debug key.
+val rustoreSigningConfigured = listOf(
+  "android.release.keystorePathRustore",
+  "android.release.keyAliasRuRustore",
+  "android.release.keyPasswordRustore",
+  "android.release.storePasswordRustore",
+).all { !(project.findProperty(it) as String?).isNullOrBlank() }
 
 androidComponents {
   onVariants { variant ->
+    if (variant.name == "rustoreDebug" && rustoreSigningConfigured) {
+      variant.signingConfig.setConfig(android.signingConfigs.getByName("release-rustore"))
+    }
+
+    if (variant.name == "rustoreRelease") {
+      val guard = tasks.register<VerifyRustoreInvariantsTask>("verifyRustoreReleaseInvariants") {
+        applicationId.set(variant.applicationId)
+        versionCode.set(variant.outputs.single().versionCode.map { it })
+        minSdk.set(variant.minSdk.apiLevel)
+        dbAuthority.set(
+          variant.resValues.getting(variant.makeResValueKey("string", "db_authority")).map { it.value },
+        )
+      }
+      tasks.matching { it.name == "preRustoreReleaseBuild" }.configureEach { dependsOn(guard) }
+    }
+
     variant.resValues.put(
       variant.makeResValueKey("string", "versionName"),
-      com.android.build.api.variant.ResValue(variant.name)
+      com.android.build.api.variant.ResValue(variant.name),
     )
 
     // Minified variants: stage mapping.txt under output/appmetrica-mapping/, named by variant and
@@ -350,13 +258,13 @@ androidComponents {
     if (variant.buildType == "release") {
       val release = "${rootProject.extra["versionName"]}-${rootProject.extra["versionCode"]}"
       tasks.register<StageMappingFileTask>(
-        "stageAppMetricaMapping${variant.name.replaceFirstChar { it.uppercase() }}"
+        "stageAppMetricaMapping${variant.name.replaceFirstChar { it.uppercase() }}",
       ) {
         mappingFile.set(variant.artifacts.get(SingleArtifact.OBFUSCATION_MAPPING_FILE))
         stagedFile.set(
           rootProject.layout.projectDirectory.file(
-            "output/appmetrica-mapping/mapping-${variant.name}-$release.txt"
-          )
+            "output/appmetrica-mapping/mapping-${variant.name}-$release.txt",
+          ),
         )
       }
     }
@@ -370,7 +278,7 @@ androidComponents {
       // (debug, localSeed) uses the debug variant — matching BUNDLE_VARIANT and the runtime key.
       val bundleVariant = if (variant.buildType == "release") "release" else "debug"
       val seedTask = tasks.register<DownloadSeedBundlesTask>(
-        "generateSeedBundles${variant.name.replaceFirstChar { it.uppercase() }}"
+        "generateSeedBundles${variant.name.replaceFirstChar { it.uppercase() }}",
       ) {
         bookIds.set(seedBooks)
         this.bundleVariant.set(bundleVariant)
@@ -408,6 +316,7 @@ dependencies {
 
   // Monitoring — crashes/ANR/non-fatals/analytics for every flavor (no Google Play Services needed)
   implementation(libs.appmetrica.analytics)
+  implementation(libs.timber)
 
   // Android
   implementation(libs.activity.compose)
@@ -434,10 +343,3 @@ dependencies {
   testImplementation(libs.kotest.extensions.android)
   testImplementation(libs.robolectric)
 }
-
-tasks.withType<Test> {
-  useJUnitPlatform()
-}
-
-
-
