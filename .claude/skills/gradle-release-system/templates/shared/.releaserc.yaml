@@ -1,0 +1,44 @@
+# semantic-release configuration
+# Copy this file to the root of your target project and adjust as needed.
+
+branches:
+  - main
+  - name: next
+    prerelease: rc
+
+plugins:
+  # 1. Analyse commits using Conventional Commits
+  - "@semantic-release/commit-analyzer"
+
+  # 2. Generate release notes
+  - "@semantic-release/release-notes-generator"
+
+  # 3. Update CHANGELOG.md
+  - - "@semantic-release/changelog"
+    - changelogFile: CHANGELOG.md
+      changelogTitle: "# CHANGELOG"
+
+  # 4. Run prepare.sh and publish.sh via exec hooks
+  - - "@semantic-release/exec"
+    - verifyReleaseCmd: |
+        echo "${nextRelease.version}" > .nextRelease.txt
+        bash prepare.sh
+      publishCmd: bash publish.sh
+
+  # 5. Commit updated files back to the repo
+  - - "@semantic-release/git"
+    - assets:
+        - CHANGELOG.md
+        - app.version
+      message: "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+
+  # 6. Create / update GitHub Release
+  # TODO: adjust asset paths to match your project build output
+  - - "@semantic-release/github"
+    - assets:
+        - path: path/to/app.jar
+          label: "Server fat JAR"
+        - path: webapp.tar.gz
+          label: "Web App JS bundle"
+        - path: app.version
+          label: "Version file"

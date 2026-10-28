@@ -2,7 +2,7 @@
 name: kotlin-domain-modeling
 description: Use when designing or modifying entities, use-cases, repository ports, commands, events or error types in the domain layer of a Kotlin (KMP) project. Covers verb-named single-method use-cases with the command in the same file, Arrow Either + Raise DSL (either/ensure/bind), DomainError design, @JvmInline value-class ids with client-generated UUIDv7 and idempotent create, TransactionRunner with an explicit TenantContext where a Left rolls the transaction back (inRwTransactionKeepingWrites + a KNOWN_COMMITS_ON_LEFT ratchet for the few writes that must outlive a refusal), optimistic locking via expectedVersion, Outcome + transactional EventOutbox events stamped by an injected Clock, status machines as pure tables, long operations stored as a state, rules judged by one reader as of a date (derive, don't store), OptionalField PATCH semantics, keyset pagination, and fakes + object-mother fixtures for commonTest. KMP-safe (no java.* in commonMain). Apply after kotlin-clean-architecture.
 metadata:
-  version: "4.0.0"
+  version: "4.1.0"
   requires: "kotlin-project-layout, kotlin-clean-architecture"
   project-types: "any-kotlin-project-with-business-logic"
 ---
@@ -96,6 +96,33 @@ class StartTask(                                   // verb + noun; no "UseCase"/
 - `kotlin.Result` is never a domain return type.
 - Repositories never open transactions; every tenant-scoped read takes the tenant id explicitly.
 - `commonMain` has zero `java.*` imports (substitution table in `value-types.md`).
+
+## Post-commit event funnel (single process, no outbox)
+
+For "something changed → react" inside **one process with no server** (recompute derived state,
+refresh a widget, reload open screens), wrap `TransactionRunner` in a decorator: when an
+`inRwTransaction` block returns `Right` and commits, it calls the registered after-commit
+listeners in order, then publishes a small sealed change event (`RecordsChanged`, `BulkReplaced`,
+`SettingsChanged`) on an in-process `SharedFlow` port that consumers subscribe to. This is
+**additive** to "a `Left` rolls back": that contract is unchanged, and a rolled-back block calls
+no listener and publishes nothing.
+
+- **Listeners run only after commit.** Defect prevented: a reaction to a write that was then
+  rolled back, or each call site reimplementing the reaction inconsistently (one swallowing it,
+  screens never learning they are stale).
+- **A listener's failure is logged to diagnostics, never propagated.** It does not undo the
+  committed save, stop sibling listeners or suppress the event. Defect: a saved write reported as
+  failed (or lost) because a secondary reaction threw.
+- **Listeners' own writes use a narrower, non-reentrant variant** (e.g. `inRwTransactionSilently`)
+  that calls no listeners; the files allowed to use it are pinned by a dedicated fitness test
+  ratchet (same shape as `KNOWN_COMMITS_ON_LEFT`). Defect: a listener's write re-triggering itself
+  in a loop, or ordinary use-cases quietly bypassing the funnel.
+
+Need delivery to another process, a separate worker or retries? Use the transactional outbox
+([`outbox-and-background-jobs`](../outbox-and-background-jobs/SKILL.md)) instead.
+Evidence: a single-process KMP app replaced several divergent per-call-site reactions with this
+decorator; its decision record rejected an outbox table as dead weight in the schema and in every
+backup file.
 
 ## Templates
 

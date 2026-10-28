@@ -25,15 +25,25 @@ Versions: Maestro CLI 2.x (the traps below were observed on 2.5.1 — re-verify 
 ```
 e2e/
   config/compose.env          ids, timeouts, test data (one file, KEY="value")
-  flows/<app>/NN-name.yaml    numbered: stable order, selectable by number
+  flows/<app>/config.yaml     workspace config: skips subflows and `diagnostic` on a hand-run
+  flows/<app>/NN-name.yaml    numbered, selectable by number; its kind is the `tags:` in its header
   flows/<app>/_helpers/       subflows (cold-start, dismiss-keyboard, open-item…)
-  flows/<app>/<flavor>/       flavor-only flows (own suite.yaml)
+  flows/<app>/_harness/       canary-must-fail.yaml - the flow that MUST be red
+  flows/<app>/<flavor>/       flavor-only numbered flows, tagged the same way
   scripts/run-<app>.sh        runner
   artifacts/ reports/ screenshots/   git-ignored
 ```
 
-- Flow header: `appId: ${APP_ID}` + `name:`. The first comment says the **kind** (smoke / mutation
-  / diagnostic) and the **precondition** (clean state, debuggable build, a planted state file).
+- Flow header: `appId: ${APP_ID}`, `name:` and `tags:` — exactly one kind (`smoke` / `mutation` /
+  `diagnostic`), plus `device-state` for a flow that toggles airplane mode, locale or font scale.
+  The first comment says the **precondition** (clean state, debuggable build, a planted state file).
+- Tags are the only place a flow's kind lives. The runner picks and orders by them (smoke →
+  mutation → `device-state` last), `config.yaml` excludes `diagnostic` on a hand-run, and the
+  parity test fails on a flow with no kind, two kinds or an unknown tag. Write the block list
+  (`tags:` then `- smoke`): the runner reads exactly that, and a flow it cannot read stops the run
+  instead of running unplaced. Maestro's own `--include-tags` / `--exclude-tags` use the same tags.
+- Env values reach flows only as `--env KEY=VALUE` (the CLI documents `-e/--env`, no env-file
+  flag): the runner forwards `compose.env`; a bare `maestro test` needs every `--env` spelled out.
 - A flow reads like the scenario; mechanics are subflows. Over ~25 steps → split or lower a layer.
 
 ## Timeouts
@@ -100,9 +110,29 @@ Either pick the flows' content from what is seeded/bundled in the artifact, or m
 step an explicit, tolerant subflow (`optional: true` taps, a generous wait) — and cover the
 offline path with its own flow ([`state-and-flavors.md`](state-and-flavors.md)).
 
+## The harness must be able to fail
+
+"End on a positive assertion" is a rule every flow author can forget; the runner holds two locks
+that do not depend on anyone remembering ([`run-e2e.sh`](../templates/run-e2e.sh)):
+
+- **Canary.** `_harness/canary-must-fail.yaml` launches the app and waits for an id that exists
+  nowhere. The runner runs it first and aborts (`[FATAL]`, exit 2) if it passes — the
+  runner/Maestro pair would then report green for anything. It cannot say *why* it failed (a dead
+  device fails it too, and then the real flows fail as well), and it is skipped when flows are
+  picked by number, which is debugging, not a verdict.
+- **Foreground check.** After a green flow `dumpsys window` must still show `<appId>/` as the
+  focused window or app, otherwise the flow counts as failed. This is the lock for the
+  `hideKeyboard` incident (green against the launcher). Match `<appId>/` with the slash:
+  `com.example.app` is a prefix of `com.example.app.b`. A flow that ends on a system picker fails it
+  too — flows end back in the app. The `dumpsys` format depends on the Android version: if it ever
+  changes every flow fails loudly (the safe direction); fix `focus_lines`, do not drop the check.
+- Prove both once: point the canary at an id that exists (the run must abort) and end a flow on the
+  launcher (`pressKey: home` as its last step — it must be reported red). Revert both.
+
 ## Debugging a red flow
 
-1. Run it alone by number, with `--clean` if it is a mutation flow.
+1. Run it alone by number, with `--clean` if it is a mutation flow. `diagnostic` flows run only
+   this way.
 2. Open `artifacts/<run>/<flow>/` — screenshot and view-hierarchy dump at the failing command.
    "Not found" with the right screenshot = occlusion or missing `testTagsAsResourceId`.
 3. Only then change the flow. Never raise a timeout to hide a wrong selector.

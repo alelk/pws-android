@@ -57,6 +57,16 @@ duplicates the other.
   *Why:* a build type's `signingConfig` overrides the flavor's — one global assignment signs every
   store with the same key, which a store that already has users under another certificate rejects
   as an update.
+- ✅ **Every non-release build type gets an explicit `signingConfig = signingConfigs.getByName("debug")`** —
+  including custom ones (`localSeed`, `staging`, `benchmark`). *Why:* a build type with no
+  `signingConfig` falls back to the **flavor's** release key; in a PR build without keystore secrets
+  `./gradlew build` then dies in `package<Flavor><BuildType>` ("SigningConfig … is missing required
+  property storeFile") after the whole compile — pws-android lost an 8-minute CI run to it.
+- ✅ In a multi-flavor app `-PrequireReleaseSigning` names the flavors being shipped
+  (`-PrequireReleaseSigning=ru,full`), not a boolean: a job that builds one flavor must not demand the
+  keystores of the others. Incomplete credentials for a flavor outside the list → that flavor's release
+  stays unsigned with a lifecycle log line, so the PR build can run plain `./gradlew build` with no
+  `-x assemble<Flavor>Release` exclusions.
 - ✅ A flavor whose installed base is pinned to an existing certificate (a store you migrated from,
   a fork) gets its **own keystore**, and CI **verifies the certificate SHA-256 of the built APK and
   AAB** against a pinned value before upload. Verify the artifact, not the Gradle config.
@@ -126,6 +136,9 @@ Step-by-step → [`USAGE.md`](USAGE.md). Verify → [`checklists/release-build-c
   convention plugins, `./gradlew build` as the gate.
 - [`architecture-fitness-tests`](../architecture-fitness-tests/SKILL.md) — ratchet and guard
   conventions the `ProguardRulesTest` follows.
+- [`room-local-persistence`](../room-local-persistence/SKILL.md) — the release build this skill
+  signs and shrinks is what the device-level safe-mode/migration checks run against; R8 keep rules
+  for Room.
 
 ## Evidence
 

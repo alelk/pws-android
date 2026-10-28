@@ -32,10 +32,11 @@ A row without a risk that only the artifact shows is not an E2E flow.
 
 ```
 e2e/config/compose.env
+e2e/flows/compose/config.yaml                                     ← templates/ (no suite lists: the kind is a tag)
 e2e/flows/compose/_helpers/{cold-start,dismiss-keyboard}.yaml     ← templates/
-e2e/flows/compose/01-app-launch.yaml …                            ← from flow-template.yaml
-e2e/flows/compose/{suite,suite-full}.yaml
-e2e/scripts/run-e2e.sh                                            ← template, edit default_app_id + lists
+e2e/flows/compose/_harness/canary-must-fail.yaml                  ← templates/
+e2e/flows/compose/01-app-launch.yaml …                            ← from flow-template.yaml (set its `tags:`)
+e2e/scripts/run-e2e.sh                                            ← template, edit default_app_id
 ```
 
 Add `e2e/artifacts/`, `e2e/reports/`, `e2e/screenshots/` to `.gitignore`.
@@ -48,6 +49,10 @@ visible. Run it on each flavor: `./e2e/scripts/run-e2e.sh --flavor <f>`. Make it
 APK, then add the mutation flows one boundary at a time (clean state, write, read back, positive
 assertion), then the regression flows for escaped artifact-level defects.
 
+Before trusting a green run, see the harness red once: the run must print `[OK] canary failed as
+expected` first (point the canary at an id that exists — the run must abort with `[FATAL]`; revert),
+and a flow whose id you break in `compose.env` must go red.
+
 ## 5. Host-side scenarios
 
 Backup/restore, planted state, offline → [`references/state-and-flavors.md`](references/state-and-flavors.md).
@@ -59,7 +64,8 @@ Rule: Maestro does UI, the runner does adb, and the runner restores the device o
 
 - `AGENTS.md`: the command, the flavors it covers, "E2E is a pre-publish gate — local" (or CI).
 - Release workflow/doc says the same thing the workflow does. No notice-only "E2E" step.
-- Release checklist line: flavors run, app version, date, what was **not** run.
+- Release checklist line: flavors run, app version, commit and APK SHA-256 (copy
+  `e2e/reports/<run>/run-info.txt`), date, what was **not** run.
 
 ## 7. Keep it small
 

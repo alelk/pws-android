@@ -17,6 +17,7 @@ Quick-reference for common mistakes in Compose Multiplatform + Navigation 3 code
 | Platform calls directly in ViewModel (share, clipboard, haptic)          | Platform coupling; untestable in commonTest             | Emit `Effect`; shell executes it                                                                                                          |
 | `remember { SomeViewModel() }`                                           | Lifecycle not managed by entry ViewModelStore           | Always `koinViewModel<T>()`                                                                                                               |
 | Non-serializable objects in route (`NavKey`) parameters                  | Crashes when the back stack is restored                 | Only stable, serializable values in route data classes                                                                                    |
+| Domain data class (even with stable `id`) as `LazyColumn`/`items` `key`  | `IllegalArgumentException: Type of the key ... is not supported` — key must fit in a `Bundle` (`SaveableStateHolder`), Android only | Map to a primitive/`String` first: `key = { it.ref.toListKeyString() }`, not `key = { it.ref }` |
 | `server:*` imports in `features` module                                  | Breaks shell/features architectural boundary            | Use domain interfaces only                                                                                                                |
 | `runCatching { api.call() }` in a ViewModel                              | Swallows `CancellationException` and bugs alike          | Client returns `Either<ApiError, T>`; fold it (`launchRequest`)                                                                          |
 | `ViewModel` passed into a `Content` composable                           | Content no longer previewable/testable; hidden coupling  | `Content(state, onEvent, on*)`                                                                                                           |
@@ -85,6 +86,20 @@ LaunchedEffect(cards) {
     snapshotFlow { dropIndexFor(listState, cards, pointerY) }
         .collect { gapIndex = it }
 }
+```
+
+## BAD / GOOD: Composite object as lazy-list key
+
+```kotlin
+// BAD — EntityRef is a plain data class (enum + String), not Parcelable/primitive. It looks like
+// a stable id (equals/hashCode work fine for diffing) but Compose's SaveableStateHolder tries to
+// put the key in a Bundle to restore scroll/saved state and crashes at runtime on Android:
+// "IllegalArgumentException: Type of the key EntityRef(...) is not supported."
+cardItems(items = records, key = { it.ref }) { ... }
+
+// GOOD — reduce to a String before it becomes a key; keep the domain type everywhere else
+val EntityRef.listKey: String get() = "${kind.key}:$id"
+cardItems(items = records, key = { it.ref.listKey }) { ... }
 ```
 
 ## BAD / GOOD: Blocking refresh with full-screen spinner

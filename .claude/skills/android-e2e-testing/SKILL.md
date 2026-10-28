@@ -1,8 +1,8 @@
 ---
 name: android-e2e-testing
-description: Use when deciding whether and how to end-to-end test a native Android app (Compose, offline-first, several store flavors) — what E2E is for (the built release APK: R8, flavors, signing, first run, migration, backup/restore — what unit and ViewModel tests cannot see), why a small black-box Maestro suite on the real release artifact is enough and a big one is a liability, locale-independent selectors (testTag / contentDescription ids shared through one env file, testTagsAsResourceId on the shell root), a selector-parity fitness test, flows split into smoke (read-only) / mutation (clearState) / diagnostic, shared subflows (cold-start, onboarding, keyboard), host-side steps Maestro cannot do (adb run-as state injection, file transfer, airplane mode with an EXIT trap), a per-flavor runner script (applicationId map, install, clean state, retries, JUnit per flow), the Maestro hideKeyboard / occluded-node traps, flake discipline, and the release gate — local pre-publish run vs CI emulator (KVM, macOS runner, Firebase Test Lab), an honest "E2E not run" instead of a disabled step that still says gate.
+description: Use when deciding whether and how to end-to-end test a native Android app (Compose, offline-first, several store flavors) — what E2E is for (the built release APK: R8, flavors, signing, first run, migration, backup/restore), why a small deterministic black-box Maestro suite on the real release artifact is enough, locale-independent selectors (testTag / contentDescription ids in one env file, testTagsAsResourceId) with a selector-parity fitness test, flows typed by Maestro tags (smoke / mutation / diagnostic, device-state last) instead of hand-kept suite lists, shared subflows, host-side adb steps (run-as, file transfer, airplane mode with an EXIT trap), a per-flavor runner (no silent uninstall, JUnit per flow, run-info with commit and APK SHA-256), a canary flow that must fail and a foreground check so the harness cannot go green on nothing, the hideKeyboard / occluded-node traps, and an honest release gate (local run vs CI emulator with a KVM probe; "E2E not run", never a notice-only step).
 metadata:
-  version: "1.0.0"
+  version: "1.1.0"
   requires: "kotlin-testing-strategy, android-release-build"
   project-types: "android-app, compose-multiplatform-android-shell"
 ---
@@ -63,10 +63,15 @@ test; "the release APK of flavor X opens, finds a song and the favorites tab sho
 - ✅ A **selector-parity fitness test** runs in `./gradlew build`: every id in the env file exists
   as a literal in production source ([template](templates/E2eSelectorParityTest.kt)). *Why:* the
   suite never runs in the everyday gate, so a renamed tag is otherwise found at release time.
-- ✅ Every flow declares its state: **smoke** = read-only, may share state; **mutation** = starts
-  with a `clearState` cold start subflow; **diagnostic** = not in any suite while stabilising.
-  A mutation flow that relies on a previous flow's leftovers is a defect. *Why:* order-dependent
-  suites fail only when one flow is rerun alone, which is exactly when you debug.
+- ✅ Every flow declares its **kind** in its header as Maestro `tags:` — exactly one of `smoke`
+  (read-only, may share state), `mutation` (starts with a `clearState` cold-start subflow),
+  `diagnostic` (in no run while stabilising) — plus `device-state` when it toggles airplane mode,
+  locale or font scale (those run last). The runner picks and orders flows by tag
+  ([template](templates/flow-template.yaml)) and the parity test enforces one kind and a closed tag
+  set; there is no suite list to keep in sync. A mutation flow that relies on a previous flow's
+  leftovers is a defect. *Why:* runner arrays, suite files and files on disk drift apart silently,
+  and a flow in none of them is a test nobody runs; order-dependent suites fail only when one flow
+  is rerun alone, which is exactly when you debug.
 - ✅ Common sequences are **subflows** (`_helpers/`): cold start, dismiss onboarding, open song,
   dismiss keyboard. A selector or timeout changes in one place. Timeouts are env constants
   (`TIMEOUT_COLD_START`, …), never literals in flows.
@@ -77,18 +82,27 @@ test; "the release APK of flavor X opens, finds a song and the favorites tab sho
 - ✅ Every flow ends on a **positive assertion** about the app (`assertVisible` of something only
   the expected screen has). A flow whose last checks are all `assertNotVisible` can pass on the
   wrong screen. *Why:* see the rule above — "nothing is shown" is true on the launcher too.
+- ✅ The **harness proves it can fail**. The runner first runs a canary flow that asserts an id
+  existing nowhere and treats a green canary as fatal; and a flow that passes only counts if the app
+  still owns the screen afterwards (`dumpsys window` focus matches `<appId>/`). *Why:* the
+  `hideKeyboard` run was green against the launcher; "end on a positive assertion" is a discipline
+  per flow, these two are locks on the runner
+  ([runner](templates/run-e2e.sh), [canary](templates/canary-must-fail.yaml)).
 - ✅ Anything Maestro's sandbox cannot do (adb, `run-as`, file copy between phases, airplane mode)
   lives in the **runner script**, with an `EXIT` trap that restores device state (network on).
   *Why:* a flow that fails after turning airplane mode on leaves the device offline for the next
   flow and the next run → [`references/state-and-flavors.md`](references/state-and-flavors.md).
 - ✅ The runner takes `--flavor`, maps flavor → `applicationId`, resolves the APK from
-  `app.version`, installs, optionally `pm clear`s, retries per flow, writes **one JUnit file per
-  flow** and exits non-zero on any failure ([template](templates/run-e2e.sh)).
+  `app.version`, installs with `install -r` and **never uninstalls on its own** (`--reinstall` is
+  explicit and wipes data, which an upgrade smoke must keep), optionally `pm clear`s, retries per
+  flow, writes **one JUnit file per flow** plus `run-info.txt` (commit, APK SHA-256, Maestro
+  version, device; a warning when the APK is older than HEAD) and exits non-zero on any failure
+  ([template](templates/run-e2e.sh)).
 - ✅ Retries are for infrastructure flake, default `0` locally. A flow that passes only on retry is
   a bug in the flow or the app — record it, do not hide it.
 - ❌ **Never** keep a release step named "E2E" that only prints a notice. Either the gate runs, or
   the workflow and docs say *"E2E is a manual pre-publish step"* and the release checklist records
-  the run (flavors, version, date). *Why:* a disabled step that still reads as a quality gate is
+  the run (flavors, version, commit and APK SHA-256 from `run-info.txt`, date). *Why:* a disabled step that still reads as a quality gate is
   false assurance → [`references/release-gate.md`](references/release-gate.md).
 - ✅ Artifacts of a run (JUnit, screenshots, hierarchy dumps) go to git-ignored directories.
 
@@ -96,12 +110,13 @@ test; "the release APK of flavor X opens, finds a song and the favorites tab sho
 
 | Path                                                                       | Purpose                                                                  |
 |----------------------------------------------------------------------------|--------------------------------------------------------------------------|
-| [`templates/run-e2e.sh`](templates/run-e2e.sh)                             | Per-flavor runner: device check, install, clean, retries, JUnit, network EXIT trap |
+| [`templates/run-e2e.sh`](templates/run-e2e.sh)                             | Per-flavor runner: tag-driven flow order, canary, foreground check, install without silent uninstall, retries, JUnit, `run-info.txt`, network EXIT trap |
 | [`templates/compose.env.example`](templates/compose.env.example)           | Selector ids + timeouts + test data shared by all flows                  |
 | [`templates/cold-start.yaml`](templates/cold-start.yaml)                   | `clearState` launch + optional onboarding + wait for Home                |
 | [`templates/dismiss-keyboard.yaml`](templates/dismiss-keyboard.yaml)       | Back guarded by "keyboard visible"                                       |
-| [`templates/flow-template.yaml`](templates/flow-template.yaml)             | A mutation flow: setup, act, positive assertion, screenshot              |
-| [`templates/suite.yaml`](templates/suite.yaml)                             | Smoke vs full bundle entrypoints                                         |
+| [`templates/flow-template.yaml`](templates/flow-template.yaml)             | A mutation flow: kind tag, setup, act, positive assertion, screenshot    |
+| [`templates/config.yaml`](templates/config.yaml)                           | Maestro workspace config: skips subflows and `diagnostic` flows on a hand-run |
+| [`templates/canary-must-fail.yaml`](templates/canary-must-fail.yaml)       | The flow that MUST be red; the runner aborts if it is green              |
 | [`templates/ShellRootSemantics.kt.snippet`](templates/ShellRootSemantics.kt.snippet) | `testTagsAsResourceId` on the shell root                       |
 | [`templates/E2eSelectorParityTest.kt`](templates/E2eSelectorParityTest.kt) | Kotest fitness test: env ids ⊆ source literals, guard + pair + ratchet   |
 
@@ -154,7 +169,7 @@ pws-android (verified 2026-10-22):
 - `e2e/flows/compose/rustore/` + `scripts/rustore-entitlement.sh` — per-flavor gating proven with a
   state file planted via `adb exec-in run-as` on a debuggable build.
 - `.github/workflows/release-build.yml` — the E2E steps are `echo "::notice::E2E tests are
-  temporarily disabled."` (ubuntu runner has no KVM; a macOS runner was tried and then reverted),
+  temporarily disabled."` (reason given: "ubuntu runner has no KVM"; a macOS runner was tried and then reverted — a claim to probe, not assume, see `references/release-gate.md`),
   while `docs/release-workflow.md` still calls E2E for `ru` a "quality gate". The suite is in
   practice a local pre-publish run. This is the failure mode the "never a notice-only step" rule is
   about.

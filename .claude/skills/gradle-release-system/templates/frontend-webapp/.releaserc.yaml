@@ -1,0 +1,36 @@
+# semantic-release configuration for frontend-webapp profile.
+# This extends the shared config with GitHub Release asset upload.
+# Copy to the root of your target project and adjust paths.
+
+branches:
+  - main
+  - name: next
+    prerelease: rc
+
+plugins:
+  - "@semantic-release/commit-analyzer"
+  - "@semantic-release/release-notes-generator"
+
+  - - "@semantic-release/changelog"
+    - changelogFile: CHANGELOG.md
+      changelogTitle: "# CHANGELOG"
+
+  - - "@semantic-release/exec"
+    - verifyReleaseCmd: |
+        echo "${nextRelease.version}" > .nextRelease.txt
+        bash prepare.sh
+      publishCmd: bash publish.sh
+
+  - - "@semantic-release/git"
+    - assets:
+        - CHANGELOG.md
+        - app.version
+      message: "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+
+  # Upload distribution archive as GitHub Release asset
+  # TODO: adjust path and label to your actual build output
+  - - "@semantic-release/github"
+    - assets:
+        - path: webapp/build/dist/wasmJs/webapp.tar.gz
+          label: "Web App Distribution (${nextRelease.version})"
+

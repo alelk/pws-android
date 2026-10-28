@@ -1,7 +1,10 @@
 appId: ${APP_ID}
 name: "NN - <one line: what boundary this flow proves>"
+tags:
+  - mutation        # exactly ONE kind: smoke (read-only, no clearState) | mutation | diagnostic (in no run)
+  # - device-state  # add when the flow toggles airplane mode / locale / font scale: the runner runs those last
 ---
-# Kind: mutation            (smoke = read-only, no clearState; diagnostic = in no suite)
+# The kind is the tag above - the runner and E2eSelectorParityTest read it, so it is not repeated here.
 # Precondition: release APK of the flavor under test; clean state via cold-start.
 # Why this is E2E and not a ViewModel test: <the artifact-level risk it covers>.
 

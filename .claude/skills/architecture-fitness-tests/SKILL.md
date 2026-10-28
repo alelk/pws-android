@@ -2,7 +2,7 @@
 name: architecture-fitness-tests
 description: Use when a rule of the codebase (layering, naming, API shape, schema invariants, UI conventions, i18n parity, "only X may do Y") is written in a document or checklist but nothing fails when it is broken — turn it into a fitness test that runs inside ./gradlew build. Covers source-scanning Kotest tests with KNOWN_* ratchets as Map<item, reason> compared by exact equality, vacuity guards with floors, guard/lock/pair triples, capability ownership (who may call, construct or even name a port; perimeters between contexts), closed-set guards (sealedSubclasses == table, when without else, no hand lists), bounded-context order and package cycles (Tarjan), contract conventions (discriminators, snake_case, request naming, client ids on creates, one JSON policy), the HTTP surface pinned from the live Ktor routing tree as a security matrix (auth provider, rate bucket, custom marker nodes like audit=), wire vocabulary and error-code locks, schema invariants via pg_catalog, UI/locale rules, Konsist/ArchUnit trade-offs.
 metadata:
-  version: "1.1.0"
+  version: "1.2.0"
   requires: "kotlin-project-layout"
   project-types: "any-kotlin-project"
 ---
@@ -66,6 +66,32 @@ private val KNOWN_MATERIAL_THEME_USES: Map<String, String> =
   for the next reader; each should have a documented reason.
 - ❌ Don't let exemption lists grow silently; don't add `@Suppress`-style escape hatches to the test.
 
+### Derived-set port budget + module size budget
+
+- ✅ The set of ports a UI layer must not touch is **derived, not listed**: (interfaces the storage
+  adapters implement) ∩ (interfaces declared in the domain). On top of it, a few **named read
+  members** are allowed (`settings.get()` yes, `settings.update` no; `readings.latest` yes,
+  `allReadings` no). Same spec: a ViewModel constructor ≤ N dependencies (navigation target and
+  saved-state handle excluded), a ViewModel file < M lines — state and pure helpers move out.
+- Defect: a hand-kept "ports the UI may use" list rots — a new port is forgotten or copy-pasted in
+  unreviewed, while the derived set covers it the moment an adapter implements it; without budgets a
+  screen's ViewModel accretes dependencies until it is unreviewable and nothing ever fails.
+- Scanning is regex-light, so the spec carries its own "sample rules catch synthetic violations"
+  cases (vacuity floor) beside the floor on `dataPorts().size`.
+- Evidence: `FeatureReadsTest` — `dataPorts()` intersection, three-member read allow-list, two numeric budgets.
+
+### Platform descriptors are sources too
+
+- ✅ Any descriptor that silently controls data exposure or transfer — manifest XML, backup rules,
+  plist, `app.json`, CI YAML — gets the same closed-set assertion as a Kotlin allow-list: parse it
+  **as XML/YAML**, not as text, and assert the exact include/exclude set per mechanism.
+- Defect: OS backup and device transfer live in manifest attributes and an XML resource no source
+  review looks at; a new data directory or a local auth-token store ships without updating them, and
+  what reaches the user's cloud account or a new device changes unnoticed.
+- Evidence: `DataTransferRulesTest` — manifest attributes reference the rule files; device transfer
+  includes exactly the database + journals, attachments, backups and settings, and excludes the cloud
+  token; cloud backup and legacy full backup exclude every domain.
+
 ## Catalogue (templates in `templates/`)
 
 | Area       | Test                          | Pins                                                                                   |
@@ -101,6 +127,8 @@ guard/lock/pair, red before the code exists) ·
 - [`ktor-api-contract`](../ktor-api-contract/SKILL.md) — the contract rules `ContractConventionsTest` pins.
 - [`format-locks`](../format-locks/SKILL.md) — wire vocabulary and stored JSONB shapes pinned by golden files.
 - [`the-mine-and-locks`](../the-mine-and-locks/SKILL.md) — naming a step's defect and the locks that prove it absent.
+- [`room-local-persistence`](../room-local-persistence/SKILL.md) — the XML-descriptor test shape
+  (platform transfer/backup rules) and `NoDestructiveMigrationTest` as a source-scan ratchet example.
 
 ## Apply this skill
 

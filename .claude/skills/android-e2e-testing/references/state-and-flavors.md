@@ -18,8 +18,9 @@
   flavors), and which flows apply.
 - `APP_ID` is forwarded to Maestro explicitly (`--env APP_ID=…`): flows say `appId: ${APP_ID}` and
   fail with "Unable to launch app undefined" if the runner only forwards keys found in the env file.
-- Flavor-only behaviour gets its own folder and `suite.yaml` (`flows/<app>/<flavor>/`), not
-  `if flavor` branches inside shared flows.
+- Flavor-only behaviour gets its own folder (`flows/<app>/<flavor>/`, numbered and tagged like the
+  other flows; the runner adds the folder of the selected `--flavor` to its pool, and numbers stay
+  unique across both), not `if flavor` branches inside shared flows.
 - Smoke each shipped flavor at least once per release: same flows, different `--flavor`. The
   wrong-id / wrong-seed / wrong-key defect lives exactly here.
 
@@ -57,15 +58,17 @@ fixture copied from elsewhere ([`backup-restore-drill`](../../backup-restore-dri
 - `setAirplaneMode` inside a flow is fine for an "offline first run" test. The runner installs
   `trap restore_network EXIT` that re-enables connectivity (two fallbacks: `cmd connectivity
   airplane-mode disable`, then `settings put global airplane_mode_on 0` + broadcast).
-- Keep flows that toggle device state **last** in the full suite so a connectivity hiccup cannot
-  cascade into the others.
+- Tag flows that toggle device state `device-state`: the runner puts them **last** in `--full`, so
+  a connectivity hiccup cannot cascade into the others.
 - The same pattern for any other toggle (locale change, font scale, time zone): restore on EXIT.
 
 ## Upgrade smoke (the one flow people skip)
 
 1. Install the **previously published** APK (kept per release in the artifact store), launch, create
    user data (or plant the state file).
-2. `adb install -r` the new APK over it. Do not `pm clear`.
+2. `adb install -r` the new APK over it (the runner does exactly this, `--apk` points it at the new
+   build, and it never uninstalls on its own). Do not `pm clear`. If `install -r` fails (signature,
+   downgrade), fix that — `--reinstall` wipes the very data this test exists to keep.
 3. Launch: assert Home, the user's data (a favorite, a tag, settings), no safe-mode screen.
 
 This is where protobuf field renames (DataStore, encrypted prefs), Room migrations and R8 changes

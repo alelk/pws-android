@@ -1,0 +1,11 @@
+# Workspace config of the flows folder: e2e/flows/<app>/config.yaml (Maestro reads it for `maestro test <folder>`).
+#
+# There are NO suite lists: a flow's kind is the `tags:` in its own header (smoke | mutation | diagnostic,
+# plus device-state), and scripts/run-e2e.sh picks and orders flows by those tags. Real runs go through the
+# runner - it forwards compose.env as `--env KEY=VALUE` (Maestro has no env-file flag) and runs each flow as
+# its own JUnit unit. This file only makes a hand-run `maestro test e2e/flows/<app> --env APP_ID=<id> ...`
+# safe: it skips subflows and flows that are unstable on purpose.
+flows:
+  - "*"            # the root of this folder only: _helpers/ and _harness/ are subflows, never run on their own
+excludeTags:
+  - diagnostic     # unstable on purpose; run by number while stabilising

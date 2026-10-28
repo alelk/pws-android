@@ -38,6 +38,7 @@
 - [ ] State flips at expiry (or midnight for day-granularity) while the process lives
 - [ ] Gate: bounded wait on `Unknown`, drop without upsell on timeout; `None`/`Expired` upsell
 - [ ] Exactly one `UpsellRequest` collector
+- [ ] Gates sit only on create-past-the-limit and premium actions (send/export); no read/view path consults the entitlement — test: `None` with items over the limit, list/detail still show them, create refused
 
 ## Sync and purchase
 

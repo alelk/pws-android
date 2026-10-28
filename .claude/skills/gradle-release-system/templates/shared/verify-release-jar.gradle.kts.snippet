@@ -1,0 +1,50 @@
+// ─── Release-jar verification (server application module's build.gradle.kts) ───
+// Reads the jar that shadowJar produced, not the sources: what ships is what is checked.
+// CI: ./gradlew :server:app:shadowJar :server:app:verifyReleaseJar
+
+import java.util.zip.ZipFile
+
+// The thin jar gets its own name, so a release glob `app-*.jar` can only match the shadow jar.
+tasks.jar {
+    archiveBaseName = "server-app-thin"
+}
+
+tasks.shadowJar {
+    archiveBaseName = "app"
+    archiveClassifier = ""
+    mergeServiceFiles()
+    // Second lock: a developer's local override never travels in a jar (the first lock is that it
+    // is read from the working directory, never from src/main/resources).
+    exclude("application-local*.yaml")
+}
+
+/** Third lock: fails when the built jar carries a local configuration file. */
+abstract class VerifyReleaseJarTask : DefaultTask() {
+    @get:InputFile
+    abstract val jar: RegularFileProperty
+
+    @TaskAction
+    fun verify() {
+        val offending =
+            ZipFile(jar.get().asFile).use { zip ->
+                zip.entries().asSequence()
+                    .map { it.name }
+                    .filter { it.substringAfterLast('/').startsWith("application-local") }
+                    .toList()
+            }
+        check(offending.isEmpty()) {
+            "the release jar carries local configuration (secrets of whoever built it): $offending"
+        }
+    }
+}
+
+tasks.register<VerifyReleaseJarTask>("verifyReleaseJar") {
+    group = "verification"
+    description = "Fails if the shadow jar contains application-local*.yaml."
+    jar = tasks.shadowJar.flatMap { it.archiveFile }
+}
+
+// The release job calls shadowJar explicitly; the everyday gate (`build`) does not pay for a fat jar.
+tasks.named("assemble") {
+    setDependsOn(dependsOn.filterNot { it == tasks.shadowJar })
+}

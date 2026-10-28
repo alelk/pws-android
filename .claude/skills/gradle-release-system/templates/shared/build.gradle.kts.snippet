@@ -1,0 +1,18 @@
+// ─── app.version as single source of truth ───
+// Add this block to the root build.gradle.kts of the target project.
+
+val appVersionFile = rootProject.file("app.version")
+val appVersion: String = if (appVersionFile.exists()) {
+    appVersionFile.readText().trim().ifBlank { "0.0.1-SNAPSHOT" }
+} else {
+    "0.0.1-SNAPSHOT"
+}
+
+allprojects {
+    version = appVersion
+}
+
+// ─── Notes ───
+// • `app.version` is written by `prepare.sh` during the semantic-release lifecycle.
+// • For backend-library, pass `-Pversion=<value>` in `publish.sh` to override at publish time.
+// • The file is committed back by semantic-release after each release.

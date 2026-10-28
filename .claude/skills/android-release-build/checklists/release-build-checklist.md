@@ -22,6 +22,7 @@
       `*.keystore`, `keystore.properties`, `local.properties`.
 - [ ] Credentials read with `findProperty()` from `~/.gradle/gradle.properties` / `-P` /
       `ORG_GRADLE_PROJECT_*` — not expected from `local.properties`.
+- [ ] Every non-release build type (incl. custom: `localSeed`, `staging`) sets `signingConfig = debug`; PR CI runs plain `./gradlew build` with no `-x assemble*Release`.
 - [ ] Missing credentials locally → unsigned APK + log line; CI passes `-PrequireReleaseSigning=true`.
 - [ ] `signingConfig` set per flavor; the `release` build type has none.
 - [ ] Flavors with a pinned certificate have their own keystore and secrets.

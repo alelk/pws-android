@@ -13,7 +13,7 @@
 | 7  | `derivedStateOf` wrapping cheap boolean / string expressions               | Use only when derived from fast-changing Compose state with coarse output |
 | 8  | `rememberSaveable` for whole-screen state or domain objects                | Small UI-local values only (tab index, scroll position)                   |
 | 9  | State reads too high in tree (`LazyListState`, animation offset, keyboard) | Read close to the use site                                                |
-| 10 | Missing list keys or index-based keys                                      | Stable domain ID: `items(items, key = { it.id }) { ... }`                 |
+| 10 | Missing list keys or index-based keys                                      | Stable domain ID *as a primitive/`String`*, not a composite object — see [`anti-patterns.md`](anti-patterns.md): `items(items, key = { it.id }) { ... }` |
 
 ## API Decision Table
 

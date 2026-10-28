@@ -2,7 +2,7 @@
 name: android-store-billing
 description: Use when an Android app sells premium features through a store billing SDK — RuStore Pay, Google Play Billing, Huawei/Samsung IAP — as in-app purchases, a lifetime unlock or a subscription. Covers: the SDK behind a store-agnostic PaymentProvider port scoped to one product-flavor source set, with a fitness test failing the build if another source set references the SDK package; a MonetizationMode axis (Donations/PremiumSales/PremiumComingSoon/None) keeping the payment stack out of DI until sales are on; an offline-first entitlement repository where local persisted state is truth and the store only reconciles; a monotonic purchase sync that may grant/extend but never revokes entitlement, counting only confirmed/paid statuses (PAID vs CONFIRMED, PENDING vs PURCHASED); lifetime granted on purchase success; soft-failing SDK calls; Unknown vs None at the premium gate; carrying an older app's paid flag across an update without a corruption handler; refunds as an explicit decision; and tests proving each red.
 metadata:
-  version: "1.0.0"
+  version: "1.1.0"
   requires: "kotlin-clean-architecture, architecture-fitness-tests"
   project-types: "android-app, compose-mobile, full-stack-kmp-app"
 ---
@@ -66,6 +66,15 @@ other flavors: no SDK dependency, AlwaysActive (or their own) EntitlementReposit
   truth; the store only reconciles into it. The unlock must work offline, without the store app, and
   in a build whose SDK is never called. *Why:* a network/SDK failure would otherwise lock a paying
   user out of what they bought (invariant I7 in the evidence plan).
+- ❌ **Never gate reading what already exists on the current entitlement.** Check it only when the
+  user **creates** something new past the free limit, or triggers a premium-only **action** (send,
+  export a premium report). Records over the free limit stay visible and editable, attachments still
+  display. *Defect:* a gate re-evaluated on every read means a refund, a lapsed subscription or a
+  store check failing after a reinstall instantly hides data the user paid to create, which reads as
+  data loss or theft even though nothing was deleted. *Lock:* a test that drops the entitlement to
+  `None` with items over the limit and asserts the list and detail still show them while create is
+  refused. *Evidence:* a shipped app's ADRs on tier limits and pre-SDK entitlement: "rights are asked
+  only at creation", "loss of the paid tier hides nothing".
 - ❌ **Never count a purchase that is not final.** Only statuses the store guarantees as paid and
   irreversible grant: RuStore one-step `CONFIRMED` (not `PAID` — the funds-on-hold state of a
   two-step payment that can still become `REVERSED`), subscription `ACTIVE` (not `PAUSED`,

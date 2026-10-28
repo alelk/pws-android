@@ -122,6 +122,11 @@ on iOS Safari. Dev-server config for all three →
   what the `commonMain` purity rule actually needs.
 - Web tests need a browser/Node runner; don't make `wasmJsTest` a CI gate before that
   runner is configured. `compileTestKotlinWasmJs` already proves `commonTest` is portable.
+- A `jsTest`/`wasmJsTest` that actually launches a browser (not the "no tests discovered"
+  case above) is a CI-runner dependency, not just a Gradle one: `ubuntu-latest` ships Chrome
+  preinstalled, a self-hosted runner doesn't. Provisioning it (and the root/`--no-sandbox`
+  trap that comes with most self-hosted-runner Docker images) →
+  [`gradle-release-system`'s ci-hardening](../../gradle-release-system/references/ci-hardening.md).
 
 ## Useful commands
 

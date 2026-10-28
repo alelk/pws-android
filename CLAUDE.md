@@ -22,6 +22,7 @@ This repo carries a copy of the `pws-core` skill catalogue. Invoke via the `Skil
 | `voyager-navigation`        | Navigation changes (mostly in `pws-core`)                   |
 | `ktor-api-contract`         | API/DTO changes (lives in `pws-core`)                       |
 | `android-e2e-testing`       | Maestro E2E flows, `e2e/` runner, selectors, release gate   |
+| `gradle-release-system`     | GitHub CI, semantic-release, CI hardening, slow-build timings |
 
 Each skill's `SKILL.md` is the entrypoint. Most apply to `pws-core`; this repo is mostly Android
 glue.

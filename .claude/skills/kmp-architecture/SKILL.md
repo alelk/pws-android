@@ -2,7 +2,7 @@
 name: kmp-architecture
 description: Use when configuring Kotlin Multiplatform modules — choosing targets (jvm, wasmJs, js, android), keeping commonMain free of java.* (the purity gate is compileKotlinWasmJs inside ./gradlew build, not a browser test run), disabling the unavailable wasm browser test task under Gradle 9, Kotest on the JVM via JUnit 5 instead of the lagging Kotest MPP plugin, interfaces + Koin over expect/actual for services, wasmJs/js browser config, browser interop (kotlinx-browser, external + js()), secure-context gotchas, and Docker gotchas for Kotlin web builds. Apply after kotlin-project-layout for any KMP-shaped project.
 metadata:
-  version: "2.1.0"
+  version: "2.2.0"
   requires: "kotlin-project-layout"
   project-types: "kmp-library, full-stack-kmp-app"
 ---
