@@ -1,5 +1,23 @@
 # PWS Android
 
+# [3.8.0](https://github.com/alelk/pws-android/compare/v3.7.1...v3.8.0) (2026-10-28)
+
+
+### Bug Fixes
+
+* **android:** sanitize system search suggestions query ([e9679ee](https://github.com/alelk/pws-android/commit/e9679ee9b0a1d6e07145ea3dc4fd2136e0ead34e))
+* fix build issues ([d34c198](https://github.com/alelk/pws-android/commit/d34c198fdd4d52ea33d7a60db875c845c429cb97))
+* fix ci ([fd55853](https://github.com/alelk/pws-android/commit/fd558538ccb92767fb3c04223a14d113ee10b5cc))
+* **test:** isolate db-android test databases from parallel flavor runs ([8101377](https://github.com/alelk/pws-android/commit/81013779d2b5077dfdcc63a3a53bbca1142fc745))
+
+
+### Features
+
+* **app:** add Android startup tasks behind the migration gate ([815bede](https://github.com/alelk/pws-android/commit/815bede685a7e177d75148345654469cba15ac2e))
+* **app:** add DataStore-backed user preferences repository ([29e2c83](https://github.com/alelk/pws-android/commit/29e2c836791a5347b2ceaa9350e86732df959413))
+* **db:** build PwsDatabase via withPwsSchema() (schema v16) ([da068f0](https://github.com/alelk/pws-android/commit/da068f01dbe43312b12129733d2d9ad745749182))
+* support rustore flavor ([d547029](https://github.com/alelk/pws-android/commit/d547029eac9528471bf6ab241b2578566f37eab4))
+
 # [3.8.0-rc.2](https://github.com/alelk/pws-android/compare/v3.8.0-rc.1...v3.8.0-rc.2) (2026-10-28)
 
 
