@@ -48,11 +48,10 @@ class SearchSchemaAndroidTest :
 
     val sqlCipherLoaded: Boolean by lazy { runCatching { System.loadLibrary("sqlcipher") }.isSuccess }
 
-    fun frameworkDb(name: String) =
-      Room.databaseBuilder(context(), PwsDatabase::class.java, name)
-        .allowMainThreadQueries()
-        .withPwsSchema()
-        .build()
+    fun frameworkDb(name: String) = Room.databaseBuilder(context(), PwsDatabase::class.java, name)
+      .allowMainThreadQueries()
+      .withPwsSchema()
+      .build()
 
     fun sqlCipherDb(name: String) = Room.databaseBuilder(context(), PwsDatabase::class.java, name)
       .allowMainThreadQueries()

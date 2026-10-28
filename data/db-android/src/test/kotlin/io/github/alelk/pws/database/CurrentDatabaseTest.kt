@@ -65,8 +65,9 @@ class CurrentDatabaseTest :
       scenario("migrates to v16: songs_fts is rebuilt over the folded view, Room's FTS triggers are gone") {
         withPwsDb(currentDbZip, readOnly = true) { db ->
           db.useReaderConnection { c ->
-            suspend fun strings(sql: String) =
-              c.usePrepared(sql) { st -> buildList { while (st.step()) add(st.getText(0)) } }
+            suspend fun strings(sql: String) = c.usePrepared(sql) { st ->
+              buildList { while (st.step()) add(st.getText(0)) }
+            }
             suspend fun long(sql: String) = c.usePrepared(sql) { st ->
               st.step()
               st.getLong(0)

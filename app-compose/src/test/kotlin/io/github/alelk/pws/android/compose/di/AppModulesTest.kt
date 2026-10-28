@@ -19,7 +19,11 @@ import io.github.alelk.pws.features.monetization.MonetizationMode
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.types.shouldBeInstanceOf
+import io.kotest.matchers.types.shouldBeSameInstanceAs
+import kotlinx.coroutines.CompletableDeferred
+import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.GlobalContext
+import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.core.qualifier.named
 
@@ -58,7 +62,21 @@ class AppModulesTest :
 
         koin.get<UserPreferencesRepository>().shouldBeInstanceOf<DataStoreUserPreferencesRepository>()
         koin.get<MonetizationMode>() shouldBe MONETIZATION
-        koin.get<Telemetry>() shouldNotBe NoOpTelemetry
+      }
+
+      // Not asserted on the app's own Telemetry: without APPMETRICA_API_KEY (CI) it is NoOpTelemetry by design.
+      scenario("telemetry module overrides the NoOp default of featuresModule") {
+        // The Application's Koin may be gone (afterTest of the previous scenario) or still running.
+        runCatching { stopKoin() }
+        val probe: Telemetry = object : Telemetry by NoOpTelemetry {}
+        val context = ApplicationProvider.getApplicationContext<PwsComposeApplication>()
+        val consent = TelemetryConsentStore(context, defaultConsent = false)
+        val inputs = AppModuleInputs("test", probe, consent, CompletableDeferred())
+        startKoin {
+          androidContext(context)
+          modules(appModules(inputs))
+        }
+        GlobalContext.get().get<Telemetry>() shouldBeSameInstanceAs probe
       }
     }
   })
