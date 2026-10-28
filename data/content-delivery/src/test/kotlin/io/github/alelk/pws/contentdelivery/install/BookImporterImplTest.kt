@@ -84,7 +84,8 @@ class BookImporterImplTest : FeatureSpec({
           bookImporter(db).import(bundle)
 
           db.bookDao().getById(bookId).shouldNotBeNull()
-          db.bookStatisticDao().getById(bookId).shouldNotBeNull().priority shouldBe bundle.book.priority
+          val statistic = db.bookStatisticDao().getById(bookId).shouldNotBeNull()
+          statistic.priority shouldBe maxOf(bundle.book.priority, 1) // a first install is never disabled (0 -> 1)
           db.songDao().count() shouldBe bundle.songs.size
           db.installedBookDao().getByBookId(bookId).shouldNotBeNull().source shouldBe BookInstallSource.DOWNLOADED
         }
