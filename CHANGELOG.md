@@ -1,5 +1,12 @@
 # PWS Android
 
+## [3.8.1](https://github.com/alelk/pws-android/compare/v3.8.0...v3.8.1) (2026-11-02)
+
+
+### Bug Fixes
+
+* update app version ([b43f02a](https://github.com/alelk/pws-android/commit/b43f02a75ac2f3ce58d648fa9e3e58d7ac17bdd6))
+
 # [3.8.0](https://github.com/alelk/pws-android/compare/v3.7.1...v3.8.0) (2026-10-28)
 
 
