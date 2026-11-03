@@ -41,7 +41,7 @@ jobs:
           # No `cache: gradle` — setup-gradle below owns the Gradle caches.
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
+        uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
 
       # Release variants are built unsigned here (no keystore); release-build.yml signs and verifies.
       # The init script prints `[timing]` for every task over 10 s and the 25 slowest into the log and
@@ -111,7 +111,7 @@ jobs:
           distribution: 'jetbrains'
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
+        uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
 
       # Unsigned (no keystore here); release-build.yml signs and verifies.
       - name: Assemble ${{ matrix.flavor }} release (R8)
