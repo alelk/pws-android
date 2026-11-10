@@ -66,7 +66,7 @@ jobs:
         run: ./gradlew --init-script gradle/ci-task-timings.init.gradle.kts buildRuDebugPreBundle buildUkDebugPreBundle
 
       - name: Publish Test Results
-        uses: mikepenz/action-junit-report@6ef3fdcfcd5f0b5d14df3e659ef19b8c6820f93d # v6.6.1
+        uses: mikepenz/action-junit-report@a16be3a69023e9bd7e748ede768b3282ea7b30ce # v6.7.1
         if: success() || failure()
         with:
           report_paths: '**/build/test-results/**/TEST-*.xml'
